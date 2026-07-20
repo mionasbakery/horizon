@@ -11,7 +11,7 @@
         "assets/design-tokens.css is byte-identical to ../design-system/dist/tokens.flat.css (synced verbatim, no hand edits)",
         "scripts/design-tokens-contract.mjs left unchanged",
         "snippets/design-system-bridge.liquid left unchanged",
-        "blocks/split-hero.liquid left unchanged",
+        "blocks/mionas-split-hero.liquid left unchanged",
         "npm test passes in the theme"
       ]
     },
@@ -33,13 +33,13 @@
       "id": 2,
       "name": "upstream-rename-hero",
       "prompt": "The design system renamed the `hero` text role to `display`. Sync the theme with that change.",
-      "expected_output": "Updates the four hero entries in scripts/design-tokens-contract.mjs to the display names, re-points the h1 mapping in snippets/design-system-bridge.liquid at --text-role-display-*, greps the whole theme for stale var(--text-role-hero-*) references and updates blocks/split-hero.liquid too, re-syncs successfully, and passes npm test. The block update is the discriminating step: the contract alone does not guard block-spent tokens.",
+      "expected_output": "Updates the four hero entries in scripts/design-tokens-contract.mjs to the display names, re-points the h1 mapping in snippets/design-system-bridge.liquid at --text-role-display-*, greps the whole theme for stale var(--text-role-hero-*) references and updates blocks/mionas-split-hero.liquid too, re-syncs successfully, and passes npm test. The block update is the discriminating step: the contract alone does not guard block-spent tokens.",
       "files": [],
       "assertions": [
         "assets/design-tokens.css is byte-identical to ../design-system/dist/tokens.flat.css (synced verbatim, no hand edits)",
         "contract lists the four --text-role-display-* tokens and no --text-role-hero-*",
         "bridge maps h1 to --text-role-display-* with no stale hero references",
-        "blocks/split-hero.liquid updated to --text-role-display-* with no stale --text-role-hero-* (a stale var() is silent)",
+        "blocks/mionas-split-hero.liquid updated to --text-role-display-* with no stale --text-role-hero-* (a stale var() is silent)",
         "npm test passes in the theme"
       ]
     }

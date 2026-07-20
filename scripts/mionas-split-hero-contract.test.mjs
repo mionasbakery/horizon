@@ -1,4 +1,4 @@
-// Guards the two static traps in blocks/split-hero.liquid that no visual check would catch.
+// Guards the two static traps in blocks/mionas-split-hero.liquid that no visual check would catch.
 // See docs/superpowers/specs/2026-07-17-split-hero-block-design.md, "Typography" and "The two
 // colours with no token".
 //
@@ -15,7 +15,7 @@ const blockPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
   "..",
   "blocks",
-  "split-hero.liquid"
+  "mionas-split-hero.liquid"
 );
 
 const readBlock = () => readFileSync(blockPath, "utf8");

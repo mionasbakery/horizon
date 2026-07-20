@@ -5,9 +5,9 @@
   A different file, blocks/text.liquid, is Horizon's built-in "Text" block (t:names.text) -- an
   editorial rich-text block with its own custom-size typography system flowing through
   snippets/design-system-bridge.liquid. This block does not touch that one -- it exposes the
-  design system's fixed role/variant vocabulary directly, the way split-hero.liquid exposes the
-  stamp role for its eyebrow. This block is named "Text Role" in the block picker to distinguish
-  it from "Text" (Role/Color/HTML tag settings here, vs. Type preset there). See
+  design system's fixed role/variant vocabulary directly, the way mionas-split-hero.liquid exposes
+  the stamp role for its eyebrow. This block is named "Mionas: Text role" in the block picker to
+  distinguish it from "Text" (Role/Color/HTML tag settings here, vs. Type preset there). See
   docs/superpowers/specs/2026-07-20-text-role-block-design.md.
 
   `tag` and `role` are independent settings, same as Text.tsx's `as` and `role` props -- a
@@ -133,7 +133,7 @@
 
 {% schema %}
 {
-  "name": "Text Role",
+  "name": "Mionas: Text role",
   "tag": null,
   "settings": [
     {
@@ -193,7 +193,7 @@
   ],
   "presets": [
     {
-      "name": "Text Role",
+      "name": "Mionas: Text role",
       "category": "t:categories.basic"
     }
   ]

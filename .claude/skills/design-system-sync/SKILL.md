@@ -74,7 +74,7 @@ to make it pass. Contract entries are pruned only when the theme genuinely stops
 ## Renames are silent outside the contract
 
 The contract only guards bridge tokens. Blocks spend many more —
-`blocks/split-hero.liquid` alone uses `--space-*`, `--surface-paper`, `--text-role-stamp-*`,
+`blocks/mionas-split-hero.liquid` alone uses `--space-*`, `--surface-paper`, `--text-role-stamp-*`,
 `--button-inverse-*`, `--color-blau-sitges` — and a stale `var(--old-name)` in a block does not
 error; the style just falls back to unset. So after any design-system rename or removal:
 
@@ -88,7 +88,7 @@ is load-bearing enough to add to `EXPECTED_TOKENS` so future renames fail loudly
 ## Mirroring a design-system component in the theme
 
 Design-system React components (`../design-system/src/react/`) define the look; theme blocks
-reproduce it in Liquid + CSS. `blocks/split-hero.liquid` (mirroring `SplitHero`) is the reference
+reproduce it in Liquid + CSS. `blocks/mionas-split-hero.liquid` (mirroring `SplitHero`) is the reference
 example, with its design doc in `docs/superpowers/specs/`. When creating or updating a mirror:
 
 - Take structure, spacing, colors, and typography from the component's `.module.css` and its
@@ -101,7 +101,7 @@ example, with its design doc in `docs/superpowers/specs/`. When creating or upda
 - A design the system hasn't tokenized yet (a color with no token): declare the literal **once** as
   a block-local custom property, and swap it for the token when the design system emits one.
 - Guard the traps a screenshot can't show with a `scripts/<block>-contract.test.mjs` (see
-  `split-hero-contract.test.mjs`): fonts that silently fall back, literals that must stay
+  `mionas-split-hero-contract.test.mjs`): fonts that silently fall back, literals that must stay
   single-sourced, no other hardcoded colors.
 
 ## Verify before done
