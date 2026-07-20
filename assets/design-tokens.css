@@ -3,6 +3,11 @@
  */
 
 :root {
+  --breadcrumb-link-base-foreground: #687076;
+  --breadcrumb-link-state-hover-foreground: #101413;
+  --breadcrumb-link-state-active-foreground: #101413;
+  --breadcrumb-link-state-active-font-weight: 700;
+  --breadcrumbs-base-gap: 4px;
   --button-base-radius: 999px;
   --button-base-font-family: Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --button-base-font-weight: 500;
@@ -56,6 +61,11 @@
   --checkbox-checked-foreground: #ffffff;
   --checkbox-state-disabled-opacity: 0.5;
   --checkbox-state-focused-border-color: #0b078c;
+  --feature-card-base-aspect-ratio: 1.6;
+  --feature-card-base-background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.82) 100%);
+  --feature-card-overlay-padding: 16px;
+  --feature-card-title-font-weight: 700;
+  --feature-card-subtitle-opacity: 0.9;
   --footer-base-background: #101413;
   --footer-base-padding: calc(16px * 2);
   --footer-section-padding: calc(24px * 2);
@@ -101,6 +111,13 @@
   --product-card-base-padding-inline: 16px;
   --product-card-price-font-weight: 600;
   --product-card-price-foreground: #101413;
+  --review-card-rating-filled-color: #c9a022;
+  --review-card-rating-empty-color: #cfcac2;
+  --review-card-rating-icon-size: 20px;
+  --review-card-quote-foreground: #101413;
+  --review-card-attribution-foreground: #687076;
+  --review-card-avatar-size: 40px;
+  --review-card-avatar-radius: 999px;
   --split-hero-base-font-family: Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --split-hero-primary-background: #0b078c;
   --split-hero-primary-foreground: #ffffff;
@@ -136,6 +153,7 @@
   --color-warm-200: #ece8e2;
   --color-warm-300: #cfcac2;
   --color-blue-900: #0b078c;
+  --color-gold-500: #c9a022;
   --color-neutral-100: #f2f4f8;
   --color-neutral-400: #687076;
   --color-neutral-900: #101413;
@@ -195,6 +213,7 @@
   --brand-accent: #af200b;
   --brand-accent-inverse: #ffd9b0;
   --brand-tint: rgba(11, 7, 140, 0.08);
+  --brand-scrim: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.82) 100%);
   --feedback-danger: #af200b;
   --surface-default: #ffffff;
   --surface-screen: #fff8f0;

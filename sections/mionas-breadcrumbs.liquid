@@ -1,0 +1,201 @@
+{%- comment -%}
+  Mirrors the design-system Breadcrumbs + BreadcrumbLink components
+  (../design-system/src/react/Breadcrumbs) as a standalone section. No native Horizon file
+  produces a breadcrumb trail at all -- grepped for "breadcrumb" across sections/, snippets/ and
+  settings_schema.json and found nothing -- so there is nothing to reskin; this is a fork by
+  necessity, not by choice.
+
+  A section, not a block: the trail needs to sit above main content on whichever templates a
+  merchant wants it on (product, collection, page, blog, article, search), each independently
+  added/removed/reordered from that template's own entry in the theme editor's section list --
+  that's Section's job per mionas-component's "section, block, or snippet" guidance. It doesn't
+  compose into one specific parent the way a Button or SplitHero does, so it isn't a block.
+
+  The trail itself needs no settings: it reads Shopify's own template context (template.name,
+  collection, blog, page_title, request.path) to build the crumbs, the same way any breadcrumb
+  implementation would. Only the two pieces of copy a merchant would actually want to localize are
+  settings: the Home label and the landmark's accessible name (the design system's own doc says
+  "Set label to localize the landmark's accessible name").
+
+  Every crumb renders as a real <a>, including the current page -- matching BreadcrumbLink, which
+  is always a Link/anchor; Breadcrumbs.tsx marks the last one current via aria-current="page"
+  rather than swapping it for inert text, and BreadcrumbLink's own CSS keys its "current" look off
+  that attribute rather than a prop. See .cursor/rules/breadcrumb-accessibility.mdc for the
+  underlying WAI-ARIA pattern (nav landmark + ordered list + aria-current) this follows.
+
+  section_width / background_color / padding controls are the same boilerplate every other Horizon
+  section carries (see sections/collection-links.liquid) -- merchants get sizing controls to
+  match, and contrast-override.liquid gives correct text/link contrast on a custom background for
+  free rather than a new bridge rule.
+{%- endcomment -%}
+{% liquid
+  assign home_label = section.settings.home_label | default: 'Home'
+  assign landmark_label = section.settings.label | default: 'Breadcrumb'
+
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <nav
+    class="mionas-breadcrumbs"
+    aria-label="{{ landmark_label }}"
+    {{ section.shopify_attributes }}
+  >
+    <ol class="mionas-breadcrumbs__list">
+      <li class="mionas-breadcrumbs__item">
+        <a href="{{ routes.root_url }}" class="mionas-breadcrumbs__link">{{ home_label }}</a>
+        <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+      </li>
+
+      {%- case template.name -%}
+        {%- when 'product' -%}
+          {%- if collection -%}
+            <li class="mionas-breadcrumbs__item">
+              <a href="{{ collection.url }}" class="mionas-breadcrumbs__link">{{ collection.title }}</a>
+              <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+            </li>
+          {%- endif -%}
+        {%- when 'article' -%}
+          <li class="mionas-breadcrumbs__item">
+            <a href="{{ blog.url }}" class="mionas-breadcrumbs__link">{{ blog.title }}</a>
+            <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+          </li>
+      {%- endcase -%}
+
+      <li class="mionas-breadcrumbs__item">
+        <a
+          href="{{ request.path }}"
+          class="mionas-breadcrumbs__link"
+          aria-current="page"
+        >{{ page_title }}</a>
+      </li>
+    </ol>
+  </nav>
+</div>
+
+{% stylesheet %}
+  .mionas-breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--breadcrumbs-base-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mionas-breadcrumbs__item {
+    display: flex;
+    align-items: center;
+    gap: var(--breadcrumbs-base-gap);
+  }
+
+  /* Family routes through the theme's own loaded body font, never the design system's
+     --link-base-font-family directly -- that token is an inert string with no font file behind
+     it (design-system-sync's "fonts are the exception" rule), so it would only render correctly
+     by coincidence. Weight and size aren't font names, so they're safe to spend as-is. */
+  .mionas-breadcrumbs__link {
+    font-family: var(--font-body--family);
+    font-weight: var(--link-base-font-weight);
+    font-size: var(--link-size-sm-font-size);
+    text-decoration: none;
+    color: var(--breadcrumb-link-base-foreground);
+  }
+
+  .mionas-breadcrumbs__link:hover {
+    text-decoration: underline;
+    color: var(--breadcrumb-link-state-hover-foreground);
+  }
+
+  .mionas-breadcrumbs__link[aria-current='page'] {
+    color: var(--breadcrumb-link-state-active-foreground);
+    font-weight: var(--breadcrumb-link-state-active-font-weight);
+  }
+
+  /* Mirrors Breadcrumbs.tsx rendering the separator as <Text variant="secondary">: only a colour
+     token, no font-size of its own -- the glyph inherits whatever size surrounds it. */
+  .mionas-breadcrumbs__separator {
+    color: var(--text-color-secondary);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Breadcrumbs",
+  "settings": [
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Home label",
+      "default": "Home"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Accessible name",
+      "default": "Breadcrumb",
+      "info": "Announced by screen readers to describe the trail. Not shown visually."
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Breadcrumbs",
+      "category": "t:categories.links"
+    }
+  ]
+}
+{% endschema %}
