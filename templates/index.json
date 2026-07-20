@@ -136,64 +136,11 @@
         "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "background_media": "none",
-        "background_color": "",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_color": "",
-        "border_radius": 0,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "section_QnDXRF": {
-      "type": "section",
-      "blocks": {
-        "split_hero_CUcG47": {
-          "type": "mionas-split-hero",
-          "settings": {
-            "eyebrow": "Especialidad en cookies",
-            "heading": "Cookies recién horneadas, directas a tu casa",
-            "description": "<p>Las horneamos los <strong>martes y miércoles</strong> y las enviamos el mismo día. Recíbelas en 24-48h y disfrútalas como recién hechas.</p>",
-            "image": "shopify://shop_images/DSC_0008_resize.jpg",
-            "media_position": "left",
-            "panel_color": "beige",
-            "cta_label": "Comprar cookies",
-            "cta_link": "shopify://collections/comprar-cookies",
-            "secondary_label": "Nuestra historia",
-            "secondary_link": "shopify://pages/sobre-nosotros"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "split_hero_CUcG47"
-      ],
-      "name": "Hero",
-      "settings": {
-        "content_direction": "row",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "center",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 0,
-        "section_width": "page-width",
+        "section_width": "full-width",
         "section_height": "medium",
         "section_height_custom": 50,
         "background_media": "none",
-        "background_color": "#f7f2e3",
+        "background_color": "{{ settings.color_palette.color3 }}",
         "video_position": "cover",
         "background_image_position": "cover",
         "toggle_overlay": false,
@@ -411,7 +358,6 @@
   },
   "order": [
     "section_663QR9",
-    "section_QnDXRF",
     "product_list_NtrmPD"
   ]
 }
