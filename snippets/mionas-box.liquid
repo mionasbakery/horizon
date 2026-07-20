@@ -1,0 +1,209 @@
+{% comment %}
+  Mirrors the design-system Box component (../design-system/src/react/Box) — a layout primitive
+  with no editor presence of its own, meant to be `{% render %}`-ed from other Mionas
+  sections/blocks. Owns no tokens; every class below spends a --space-*, --radius-* or --surface-*
+  token from assets/design-tokens.css, matching Box.module.css step for step.
+
+  Column-stacking by default (like an RN <View>), matching Box.tsx's .root.
+
+  Accepts:
+    content     - required, the inner markup (build via {% capture %} before rendering)
+    tag         - 'div' (default) or 'button'
+    p/px/py/pt/pb/pl/pr, gap/gap_x/gap_y - '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg'
+    radius      - 'sm' | 'md' | 'lg' | 'xl' | 'full'
+    bg          - 'default' | 'screen' | 'paper' | 'subtle'
+    direction, align, justify, wrap, align_self - passed straight through as inline style,
+                  same as Box.tsx's layout props (no token involved)
+    flex        - number, passed straight through as inline style
+    class       - extra classes to append
+    attributes  - raw string appended to the tag, e.g. block.shopify_attributes
+
+  Usage:
+    {% capture box_content %}
+      <p>Pa de vidre</p>
+    {% endcapture %}
+    {% render 'mionas-box', content: box_content, direction: 'row', gap: 'sm', p: 'md', bg: 'paper', radius: 'lg' %}
+{% endcomment %}
+{% liquid
+  assign box_tag = tag | default: 'div'
+
+  assign box_classes = 'mionas-box'
+  if p
+    assign box_classes = box_classes | append: ' mionas-box--p-' | append: p
+  endif
+  if px
+    assign box_classes = box_classes | append: ' mionas-box--px-' | append: px
+  endif
+  if py
+    assign box_classes = box_classes | append: ' mionas-box--py-' | append: py
+  endif
+  if pt
+    assign box_classes = box_classes | append: ' mionas-box--pt-' | append: pt
+  endif
+  if pb
+    assign box_classes = box_classes | append: ' mionas-box--pb-' | append: pb
+  endif
+  if pl
+    assign box_classes = box_classes | append: ' mionas-box--pl-' | append: pl
+  endif
+  if pr
+    assign box_classes = box_classes | append: ' mionas-box--pr-' | append: pr
+  endif
+  if gap
+    assign box_classes = box_classes | append: ' mionas-box--gap-' | append: gap
+  endif
+  if gap_x
+    assign box_classes = box_classes | append: ' mionas-box--gapx-' | append: gap_x
+  endif
+  if gap_y
+    assign box_classes = box_classes | append: ' mionas-box--gapy-' | append: gap_y
+  endif
+  if radius
+    assign box_classes = box_classes | append: ' mionas-box--radius-' | append: radius
+  endif
+  if bg
+    assign box_classes = box_classes | append: ' mionas-box--bg-' | append: bg
+  endif
+  if box_tag == 'button'
+    assign box_classes = box_classes | append: ' mionas-box--pressable'
+  endif
+  if class
+    assign box_classes = box_classes | append: ' ' | append: class
+  endif
+
+  assign box_style = ''
+  if direction
+    assign box_style = box_style | append: 'flex-direction:' | append: direction | append: ';'
+  endif
+  if align
+    assign box_style = box_style | append: 'align-items:' | append: align | append: ';'
+  endif
+  if justify
+    assign box_style = box_style | append: 'justify-content:' | append: justify | append: ';'
+  endif
+  if wrap
+    assign box_style = box_style | append: 'flex-wrap:' | append: wrap | append: ';'
+  endif
+  if align_self
+    assign box_style = box_style | append: 'align-self:' | append: align_self | append: ';'
+  endif
+  if flex
+    assign box_style = box_style | append: 'flex:' | append: flex | append: ';'
+  endif
+%}
+{% if box_tag == 'button' %}
+  <button
+    type="button"
+    class="{{ box_classes }}"
+    {% if box_style != blank %}style="{{ box_style }}"{% endif %}
+    {{ attributes }}
+  >{{ content }}</button>
+{% else %}
+  <div
+    class="{{ box_classes }}"
+    {% if box_style != blank %}style="{{ box_style }}"{% endif %}
+    {{ attributes }}
+  >{{ content }}</div>
+{% endif %}
+
+{% style %}
+  .mionas-box {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .mionas-box--pressable {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .mionas-box--p-3xs { padding: var(--space-3xs); }
+  .mionas-box--p-2xs { padding: var(--space-2xs); }
+  .mionas-box--p-xs { padding: var(--space-xs); }
+  .mionas-box--p-sm { padding: var(--space-sm); }
+  .mionas-box--p-md { padding: var(--space-md); }
+  .mionas-box--p-lg { padding: var(--space-lg); }
+
+  .mionas-box--px-3xs { padding-inline: var(--space-3xs); }
+  .mionas-box--px-2xs { padding-inline: var(--space-2xs); }
+  .mionas-box--px-xs { padding-inline: var(--space-xs); }
+  .mionas-box--px-sm { padding-inline: var(--space-sm); }
+  .mionas-box--px-md { padding-inline: var(--space-md); }
+  .mionas-box--px-lg { padding-inline: var(--space-lg); }
+
+  .mionas-box--py-3xs { padding-block: var(--space-3xs); }
+  .mionas-box--py-2xs { padding-block: var(--space-2xs); }
+  .mionas-box--py-xs { padding-block: var(--space-xs); }
+  .mionas-box--py-sm { padding-block: var(--space-sm); }
+  .mionas-box--py-md { padding-block: var(--space-md); }
+  .mionas-box--py-lg { padding-block: var(--space-lg); }
+
+  .mionas-box--pt-3xs { padding-block-start: var(--space-3xs); }
+  .mionas-box--pt-2xs { padding-block-start: var(--space-2xs); }
+  .mionas-box--pt-xs { padding-block-start: var(--space-xs); }
+  .mionas-box--pt-sm { padding-block-start: var(--space-sm); }
+  .mionas-box--pt-md { padding-block-start: var(--space-md); }
+  .mionas-box--pt-lg { padding-block-start: var(--space-lg); }
+
+  .mionas-box--pb-3xs { padding-block-end: var(--space-3xs); }
+  .mionas-box--pb-2xs { padding-block-end: var(--space-2xs); }
+  .mionas-box--pb-xs { padding-block-end: var(--space-xs); }
+  .mionas-box--pb-sm { padding-block-end: var(--space-sm); }
+  .mionas-box--pb-md { padding-block-end: var(--space-md); }
+  .mionas-box--pb-lg { padding-block-end: var(--space-lg); }
+
+  .mionas-box--pl-3xs { padding-inline-start: var(--space-3xs); }
+  .mionas-box--pl-2xs { padding-inline-start: var(--space-2xs); }
+  .mionas-box--pl-xs { padding-inline-start: var(--space-xs); }
+  .mionas-box--pl-sm { padding-inline-start: var(--space-sm); }
+  .mionas-box--pl-md { padding-inline-start: var(--space-md); }
+  .mionas-box--pl-lg { padding-inline-start: var(--space-lg); }
+
+  .mionas-box--pr-3xs { padding-inline-end: var(--space-3xs); }
+  .mionas-box--pr-2xs { padding-inline-end: var(--space-2xs); }
+  .mionas-box--pr-xs { padding-inline-end: var(--space-xs); }
+  .mionas-box--pr-sm { padding-inline-end: var(--space-sm); }
+  .mionas-box--pr-md { padding-inline-end: var(--space-md); }
+  .mionas-box--pr-lg { padding-inline-end: var(--space-lg); }
+
+  .mionas-box--gap-3xs { gap: var(--space-3xs); }
+  .mionas-box--gap-2xs { gap: var(--space-2xs); }
+  .mionas-box--gap-xs { gap: var(--space-xs); }
+  .mionas-box--gap-sm { gap: var(--space-sm); }
+  .mionas-box--gap-md { gap: var(--space-md); }
+  .mionas-box--gap-lg { gap: var(--space-lg); }
+
+  .mionas-box--gapx-3xs { column-gap: var(--space-3xs); }
+  .mionas-box--gapx-2xs { column-gap: var(--space-2xs); }
+  .mionas-box--gapx-xs { column-gap: var(--space-xs); }
+  .mionas-box--gapx-sm { column-gap: var(--space-sm); }
+  .mionas-box--gapx-md { column-gap: var(--space-md); }
+  .mionas-box--gapx-lg { column-gap: var(--space-lg); }
+
+  .mionas-box--gapy-3xs { row-gap: var(--space-3xs); }
+  .mionas-box--gapy-2xs { row-gap: var(--space-2xs); }
+  .mionas-box--gapy-xs { row-gap: var(--space-xs); }
+  .mionas-box--gapy-sm { row-gap: var(--space-sm); }
+  .mionas-box--gapy-md { row-gap: var(--space-md); }
+  .mionas-box--gapy-lg { row-gap: var(--space-lg); }
+
+  .mionas-box--radius-sm { border-radius: var(--radius-sm); }
+  .mionas-box--radius-md { border-radius: var(--radius-md); }
+  .mionas-box--radius-lg { border-radius: var(--radius-lg); }
+  .mionas-box--radius-xl { border-radius: var(--radius-xl); }
+  .mionas-box--radius-full { border-radius: var(--radius-full); }
+
+  .mionas-box--bg-default { background: var(--surface-default); }
+  .mionas-box--bg-screen { background: var(--surface-screen); }
+  .mionas-box--bg-paper { background: var(--surface-paper); }
+  .mionas-box--bg-subtle { background: var(--surface-subtle); }
+{% endstyle %}
