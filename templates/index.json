@@ -13,7 +13,7 @@
       "type": "section",
       "blocks": {
         "split_hero_CUcG47": {
-          "type": "split-hero",
+          "type": "mionas-split-hero",
           "settings": {
             "eyebrow": "Especialidad en cookies",
             "heading": "Cookies recién horneadas, directas a tu casa",

@@ -13,7 +13,7 @@
       "type": "section",
       "blocks": {
         "split_hero": {
-          "type": "split-hero",
+          "type": "mionas-split-hero",
           "settings": {
             "eyebrow": "B2B · pressupost en 24h",
             "heading": "Mionas per a empreses",

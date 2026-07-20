@@ -76,7 +76,7 @@
               "blocks": {}
             },
             "text_role_iU3M77": {
-              "type": "text-role",
+              "type": "mionas-text-role",
               "name": "Text Role",
               "settings": {
                 "text": "Especialidad en cookies",
@@ -93,7 +93,7 @@
           ]
         },
         "text_role_a9LbRq": {
-          "type": "text-role",
+          "type": "mionas-text-role",
           "name": "Text Role",
           "settings": {
             "text": "",
