@@ -1,0 +1,179 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Button/Button.tsx: a link styled as a button, in one of seven
+  variants (primary, secondary, outline, ghost, danger, inverse-primary, inverse-ghost) and three
+  sizes (sm, md, lg).
+
+  Horizon's native blocks/button.liquid (t:names.button) only exposes four style_class options
+  (button / button-secondary / button-unstyled / button-custom) via snippets/button.liquid -- there
+  is no schema path to outline, ghost, danger, or either inverse variant, so this forks a new block
+  per mionas-component's rule rather than trying to stretch the native one. blocks/button.liquid and
+  snippets/button.liquid are untouched by this -- the native button still gets its current look from
+  snippets/design-system-bridge.liquid's global `.button` override, unrelated to this block.
+
+  Button.tsx is a discriminated union (`as="a"` has no `disabled`; `as="button"` does) -- this block
+  only covers the `as="a"` case, the same way it's always used as a block inside static theme
+  content, so there's no `:disabled` state to reproduce. `aria-disabled` stands in for it when no
+  link is set, same convention as snippets/button.liquid.
+
+  Every colour, radius, and size metric comes from --button-* tokens (assets/design-tokens.css).
+  Family is the one exception, per design-system-sync: --button-base-font-family is a literal font
+  stack, not the theme's loaded font, so this spends --font-body--family instead, same as
+  mionas-text.liquid and mionas-review-card.liquid do for their own text.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign variant = block_settings.variant | default: 'primary'
+  assign size = block_settings.size | default: 'md'
+%}
+
+<a
+  {%- if block_settings.link == blank -%}
+    role="link"
+    aria-disabled="true"
+  {%- else -%}
+    href="{{ block_settings.link }}"
+  {%- endif -%}
+  class="mionas-button mionas-button--{{ variant }}{% unless size == 'md' %} mionas-button--{{ size }}{% endunless %}"
+  {%- if block_settings.open_in_new_tab -%}
+    target="_blank"
+    rel="noopener noreferrer"
+  {%- endif -%}
+  {{ block.shopify_attributes }}
+>
+  {{- block_settings.label -}}
+</a>
+
+{% stylesheet %}
+  .mionas-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid transparent;
+    border-radius: var(--button-base-radius);
+    font-family: var(--font-body--family);
+    font-weight: var(--button-base-font-weight);
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    height: var(--button-size-md-height);
+    padding: 0 var(--button-size-md-padding);
+    font-size: var(--button-size-md-font-size);
+  }
+
+  .mionas-button--sm {
+    height: var(--button-size-sm-height);
+    padding: 0 var(--button-size-sm-padding);
+    font-size: var(--button-size-sm-font-size);
+  }
+
+  .mionas-button--lg {
+    height: var(--button-size-lg-height);
+    padding: 0 var(--button-size-lg-padding);
+    font-size: var(--button-size-lg-font-size);
+  }
+
+  .mionas-button--primary {
+    background: var(--button-primary-background);
+    color: var(--button-primary-foreground);
+  }
+
+  .mionas-button--secondary {
+    background: var(--button-secondary-background);
+    color: var(--button-secondary-foreground);
+  }
+
+  .mionas-button--outline {
+    background: transparent;
+    color: var(--button-outline-foreground);
+    border-color: var(--button-outline-border-color);
+  }
+
+  .mionas-button--ghost {
+    background: transparent;
+    color: var(--button-ghost-foreground);
+  }
+
+  .mionas-button--danger {
+    background: var(--button-danger-background);
+    color: var(--button-danger-foreground);
+  }
+
+  .mionas-button--inverse-primary {
+    background: var(--button-inverse-primary-background);
+    color: var(--button-inverse-primary-foreground);
+  }
+
+  .mionas-button--inverse-ghost {
+    background: transparent;
+    color: var(--button-inverse-ghost-foreground);
+  }
+
+  .mionas-button[aria-disabled="true"] {
+    opacity: var(--button-state-disabled-opacity);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-button:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Button"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "ghost", "label": "Ghost" },
+        { "value": "danger", "label": "Danger" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-ghost", "label": "Inverse ghost" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Button",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

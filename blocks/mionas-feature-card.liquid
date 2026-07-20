@@ -1,0 +1,154 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/FeatureCard/FeatureCard.tsx: a full-bleed photo tile with a
+  bottom gradient scrim, an uppercase heading, and a subtitle -- always a link, anatomy never
+  varies (no variant prop, no children slot), meant for a promo/category grid.
+
+  No native Horizon block/section covers this (grepped for "feature card"/"promo card"/"highlight
+  card" -- nothing), so this forks a new file per mionas-component's rule; there's no structure to
+  reskin.
+
+  FeatureCard.tsx composes Card (as="a") + CardMedia + Box + Text internally, but none of those are
+  rendered here as separate blocks -- like mionas-review-card.liquid, this reproduces their combined
+  CSS output directly rather than nesting mionas-card/mionas-text, since the anatomy is fixed and
+  Card's own padding-bottom/max-width don't apply here anyway (FeatureCard.module.css overrides both
+  to 0/none for its full-bleed tile).
+
+  Title uses the "heading" text role, subtitle the "body" role (both --text-role-* tokens, both
+  --text-color-inverse-primary), matching Text's role vocabulary the same way
+  blocks/mionas-text.liquid exposes it -- only what FeatureCard.module.css layers on top (uppercase +
+  its own font-weight override on the title, a dimming opacity on the subtitle) is added locally.
+  Family is the usual exception: --font-body--family, not a design-system --font-family-* token.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+%}
+
+{%- if block_settings.link != blank -%}
+  <a
+    href="{{ block_settings.link }}"
+    class="mionas-feature-card"
+    {%- if block_settings.open_in_new_tab -%} target="_blank" rel="noopener noreferrer"{%- endif -%}
+    {{ block.shopify_attributes }}
+  >
+    {%- if block_settings.image != blank -%}
+      {{
+        block_settings.image
+        | image_url: width: 800
+        | image_tag: class: 'mionas-feature-card__media', alt: block_settings.alt, loading: 'lazy'
+      }}
+    {%- endif -%}
+    <div class="mionas-feature-card__overlay">
+      {%- if block_settings.title != blank -%}
+        <p class="mionas-feature-card__title">{{ block_settings.title }}</p>
+      {%- endif -%}
+      {%- if block_settings.subtitle != blank -%}
+        <p class="mionas-feature-card__subtitle">{{ block_settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-feature-card {
+    position: relative;
+    display: block;
+    aspect-ratio: var(--feature-card-base-aspect-ratio);
+    border-radius: var(--card-base-radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mionas-feature-card:active {
+    opacity: var(--card-state-pressed-opacity);
+  }
+
+  .mionas-feature-card__media {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+  }
+
+  .mionas-feature-card__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--feature-card-overlay-padding);
+    background: var(--feature-card-base-background);
+  }
+
+  .mionas-feature-card__title {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-size: var(--text-role-heading-font-size);
+    line-height: var(--text-role-heading-line-height);
+    font-weight: var(--feature-card-title-font-weight);
+    letter-spacing: var(--text-role-heading-letter-spacing);
+    text-transform: uppercase;
+    color: var(--text-color-inverse-primary);
+  }
+
+  .mionas-feature-card__subtitle {
+    margin: 4px 0 0;
+    font-family: var(--font-body--family);
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    font-weight: var(--text-role-body-font-weight);
+    letter-spacing: var(--text-role-body-letter-spacing);
+    color: var(--text-color-inverse-primary);
+    opacity: var(--feature-card-subtitle-opacity);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Feature card",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "alt",
+      "label": "Alt text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Ocasions"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Feature card",
+      "category": "t:categories.storytelling"
+    }
+  ]
+}
+{% endschema %}

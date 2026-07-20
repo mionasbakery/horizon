@@ -1,0 +1,135 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Card/Card.tsx: a bordered/shadowed content shell that composes
+  freely with whatever's nested inside it (CardTitle, CardDescription, CardMedia in React; here,
+  any child theme block -- Mionas: Text, image, Mionas: Button, etc.).
+
+  This is a different thing from two other files that already exist:
+  - blocks/_card.liquid (native, "Card" in the picker) is a generic LAYOUT panel -- background
+    image/video, flexible flex-direction content slot -- styled with Horizon's own generic layout
+    tokens (--border-radius, --layer-flat, ...), never design-system --card-* tokens. Untouched here.
+  - blocks/mionas-review-card.liquid forks Card's look for one fixed, review-specific composition
+    (rating + quote + attribution). This block is the general-purpose shell Card.tsx actually is --
+    free children, no fixed content -- which review-card intentionally doesn't expose.
+
+  Card.tsx is a discriminated union (`as="div"|"a"|"button"`); this only covers div/a (no "as
+  button" -- same scope decision mionas-button.liquid and mionas-link.liquid made) via the `link`
+  setting: set it and the card becomes the whole clickable surface, same as Card's `interactive`
+  class swapping in `:active` dimming instead of a hover/border affordance.
+
+  Card.tsx's own .root always carries a bottom padding (even when the last/only child is a
+  full-bleed image) and no top/left/right padding -- children bleed to those edges by default,
+  matching CardMedia's own approach. This block reproduces that quirk faithfully rather than
+  "fixing" it, since it's how the real component behaves.
+
+  Every colour/radius/shadow/spacing here is a --card-* token (assets/design-tokens.css); family is
+  the usual exception -- --card-base-font-family is a literal stack, so this spends
+  --font-body--family instead.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign variant = block_settings.variant | default: 'default'
+
+  assign card_classes = 'mionas-card'
+  unless variant == 'default'
+    assign card_classes = card_classes | append: ' mionas-card--' | append: variant
+  endunless
+  if block_settings.link != blank
+    assign card_classes = card_classes | append: ' mionas-card--interactive'
+  endif
+%}
+
+{% capture children %}
+  {% content_for 'blocks' %}
+{% endcapture %}
+
+{%- if block_settings.link != blank -%}
+  <a href="{{ block_settings.link }}" class="{{ card_classes }}"
+    {%- if block_settings.open_in_new_tab -%} target="_blank" rel="noopener noreferrer"{%- endif -%}
+    {{ block.shopify_attributes }}
+  >
+    {{ children }}
+  </a>
+{%- else -%}
+  <div class="{{ card_classes }}" {{ block.shopify_attributes }}>
+    {{ children }}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-card {
+    display: block;
+    background: var(--card-base-background);
+    border-radius: var(--card-base-radius);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    box-shadow: var(--card-base-shadow);
+    font-family: var(--font-body--family);
+    padding-bottom: var(--card-base-padding);
+    max-width: 320px;
+    overflow: hidden;
+  }
+
+  .mionas-card--outline {
+    border-color: var(--card-outline-border-color);
+    box-shadow: none;
+  }
+
+  .mionas-card--plain {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .mionas-card--interactive {
+    text-align: inherit;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .mionas-card--interactive:active {
+    opacity: var(--card-state-pressed-opacity);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Card",
+  "tag": null,
+  "blocks": [
+    { "type": "@theme" },
+    { "type": "@app" }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "plain", "label": "Plain" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link",
+      "info": "Optional. Makes the whole card clickable."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Card",
+      "category": "t:categories.layout"
+    }
+  ]
+}
+{% endschema %}

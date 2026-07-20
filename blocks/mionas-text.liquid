@@ -6,9 +6,13 @@
   editorial rich-text block with its own custom-size typography system flowing through
   snippets/design-system-bridge.liquid. This block does not touch that one -- it exposes the
   design system's fixed role/variant vocabulary directly, the way mionas-split-hero.liquid exposes
-  the stamp role for its eyebrow. This block is named "Mionas: Text role" in the block picker to
+  the stamp role for its eyebrow. This block is named "Mionas: Text" in the block picker to
   distinguish it from "Text" (Role/Color/HTML tag settings here, vs. Type preset there). See
-  docs/superpowers/specs/2026-07-20-text-role-block-design.md.
+  docs/superpowers/specs/2026-07-20-text-role-block-design.md (written when this block was still
+  named "Mionas: Text role").
+
+  The CSS class prefix (`text-role`) and the --text-role-*/--text-color-* tokens keep their names --
+  they mirror the design system's own Text.tsx `role` vocabulary, not this block's editor label.
 
   `tag` and `role` are independent settings, same as Text.tsx's `as` and `role` props -- a
   label-styled span or an h2 with hero styling are both valid.
@@ -193,7 +197,7 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Text role",
+      "name": "Mionas: Text",
       "category": "t:categories.basic"
     }
   ]

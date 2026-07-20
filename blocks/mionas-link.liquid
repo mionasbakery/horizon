@@ -1,0 +1,130 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Link/Link.tsx: an inline text link with a variant/size
+  vocabulary distinct from Button's -- no background, underline only on hover, and "inverse"
+  variants that swap only the foreground colour (Link has nothing to invert a background of).
+
+  Horizon's native blocks/button.liquid has a "button-unstyled" style_class that also renders a
+  plain <a> (see snippets/button.liquid), but it's still a CTA element with width/custom_width
+  settings, not Link's inline-text vocabulary (no variant/size options, no hover-underline-only
+  behaviour) -- same reasoning blocks/mionas-button.liquid documents for the other style_class
+  options. Native button.liquid/snippets/button.liquid are untouched by this.
+
+  Link.tsx also supports `as="span"` -- decorative text riding along on a parent's own click (e.g.
+  inside a Card rendered as="a"). That mode doesn't translate to a standalone, independently
+  insertable Shopify block (there's no parent click to ride along on here), so this block only
+  covers the `as="a"` case, same scope decision mionas-button.liquid made for Button's `as="button"`.
+
+  Every colour/weight/size comes from --link-* tokens (assets/design-tokens.css). Family is the
+  usual exception: --link-base-font-family is a literal font stack, not the theme's loaded font, so
+  this spends --font-body--family instead, same as every other Mionas block.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign variant = block_settings.variant | default: 'primary'
+  assign size = block_settings.size | default: 'md'
+%}
+
+<a
+  {%- if block_settings.link == blank -%}
+    role="link"
+    aria-disabled="true"
+  {%- else -%}
+    href="{{ block_settings.link }}"
+  {%- endif -%}
+  class="mionas-link mionas-link--{{ variant }}{% unless size == 'md' %} mionas-link--{{ size }}{% endunless %}"
+  {%- if block_settings.open_in_new_tab -%}
+    target="_blank"
+    rel="noopener noreferrer"
+  {%- endif -%}
+  {{ block.shopify_attributes }}
+>
+  {{- block_settings.label -}}
+</a>
+
+{% stylesheet %}
+  .mionas-link {
+    font-family: var(--font-body--family);
+    font-weight: var(--link-base-font-weight);
+    font-size: var(--link-size-md-font-size);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .mionas-link:hover {
+    text-decoration: underline;
+  }
+
+  .mionas-link[aria-disabled="true"] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-link--sm {
+    font-size: var(--link-size-sm-font-size);
+  }
+
+  .mionas-link--primary {
+    color: var(--link-base-foreground);
+  }
+
+  .mionas-link--inverse-primary {
+    color: var(--link-inverse-primary-foreground);
+  }
+
+  .mionas-link--inverse-primary-muted {
+    color: var(--link-inverse-primary-muted-foreground);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Link",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Link"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" }
+      ],
+      "default": "md"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Link",
+      "category": "t:categories.links"
+    }
+  ]
+}
+{% endschema %}

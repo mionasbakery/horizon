@@ -1,5 +1,6 @@
-// Guards the traps in blocks/mionas-text-role.liquid that no visual check would catch.
-// See docs/superpowers/specs/2026-07-20-text-role-block-design.md, "Typography".
+// Guards the traps in blocks/mionas-text.liquid that no visual check would catch.
+// See docs/superpowers/specs/2026-07-20-text-role-block-design.md, "Typography"
+// (written when this block was still named "Mionas: Text role").
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -7,7 +8,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const blockPath = resolve(here, "..", "blocks", "mionas-text-role.liquid");
+const blockPath = resolve(here, "..", "blocks", "mionas-text.liquid");
 const tokensPath = resolve(here, "..", "assets", "design-tokens.css");
 
 const readBlock = () => readFileSync(blockPath, "utf8");
