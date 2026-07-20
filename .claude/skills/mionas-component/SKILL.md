@@ -1,5 +1,5 @@
 ---
-name: mionas-components
+name: mionas-component
 description: >
   Bring a Mionas design-system (../design-system) look into the Horizon theme, whether that means
   reskinning an existing native section/block to match it, importing a design-system component as a
