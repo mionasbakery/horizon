@@ -259,29 +259,14 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "product_list_text_bwxM9G": {
-              "type": "_product-list-text",
-              "name": "t:names.collection_title",
+            "mionas_text_k6TxHq": {
+              "type": "mionas-text",
+              "name": "Mionas: Text",
               "settings": {
-                "text": "<h2>{{ closest.collection.title }}</h2>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h4",
-                "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "{{ settings.color_palette.color1 }}",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "text": "LO MÁS VENDIDO",
+                "role": "title",
+                "variant": "primary",
+                "tag": "p"
               },
               "blocks": {}
             },
@@ -305,7 +290,7 @@
             }
           },
           "block_order": [
-            "product_list_text_bwxM9G",
+            "mionas_text_k6TxHq",
             "product_list_button_bcAVGE"
           ]
         },
