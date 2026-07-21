@@ -96,6 +96,17 @@
               },
               "blocks": {}
             },
+            "mionas_text_CjUGcp": {
+              "type": "mionas-text",
+              "name": "Mionas: Text",
+              "settings": {
+                "text": "Text",
+                "role": "body",
+                "variant": "default",
+                "tag": "p"
+              },
+              "blocks": {}
+            },
             "group_yJ9Uea": {
               "type": "group",
               "name": "t:names.group",
@@ -184,6 +195,7 @@
           "block_order": [
             "mionas_text_role_LWwaUd",
             "mionas_text_role_Lp9gCC",
+            "mionas_text_CjUGcp",
             "group_yJ9Uea"
           ]
         }
