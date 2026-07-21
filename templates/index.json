@@ -101,7 +101,7 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "Text",
-                "role": "body",
+                "role": "lead",
                 "variant": "default",
                 "tag": "p"
               },
