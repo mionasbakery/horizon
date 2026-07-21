@@ -14,13 +14,15 @@
 {% endcomment %}
 {% style %}
   :root {
-    /* h1 -> hero. Fixed, not clamped. It previously spent display-lg (48px), which sat exactly at
-       Horizon's 48px fluid cutoff and so kept a clamp() with a derived 2.75rem (44px) floor. The
-       design system has since collapsed the display family into `hero` at 38px, which is BELOW the
-       cutoff -- so h1 now follows the same rule as h2..h6 and takes the token directly.
-       Keeping the clamp would have been silently broken: clamp(44px, 4.8vw, 38px) has a minimum
-       above its maximum, and CSS resolves that to the minimum, pinning h1 at a fixed 44px --
-       larger than the token it is supposed to cap at, with no error anywhere. */
+    /* h1 -> hero. Fixed, not clamped, regardless of the token's value -- this overrides
+       --font-h1--size directly (base.css:704 reads it as a plain property), bypassing
+       theme-styles-variables.liquid's own settings-driven clamp() generation entirely. That
+       matters here because `hero` is back at 48px, which sits exactly at Horizon's 48px fluid
+       cutoff (the same value that previously drove display-lg through a clamp() with a derived
+       2.75rem/44px floor, before the design system collapsed the display family into `hero` at
+       38px). Were this bridged through Shopify's own type_size_h1 setting instead of a direct
+       token override, landing on the cutoff would reintroduce that clamp() -- so keep this a
+       direct var() reference, not a value Shopify's fluid-size logic ever sees. */
     --font-h1--size: var(--text-role-hero-font-size);
     --font-h1--line-height: var(--text-role-hero-line-height);
     --font-h1--letter-spacing: var(--text-role-hero-letter-spacing);
@@ -45,11 +47,11 @@
     --font-h5--line-height: var(--text-role-subheading-line-height);
     --font-h5--letter-spacing: var(--text-role-subheading-letter-spacing);
 
-    /* h6 -> subheading. Intentionally identical to h5: the target design has no sixth heading
-       level, and keeping h6 a true heading beats demoting it to a label. */
-    --font-h6--size: var(--text-role-subheading-font-size);
-    --font-h6--line-height: var(--text-role-subheading-line-height);
-    --font-h6--letter-spacing: var(--text-role-subheading-letter-spacing);
+    /* h6 -> caption. The design system's ladder now gives h6 its own step below subheading
+       (15px vs 18px) rather than sharing h5's size. */
+    --font-h6--size: var(--text-role-caption-font-size);
+    --font-h6--line-height: var(--text-role-caption-line-height);
+    --font-h6--letter-spacing: var(--text-role-caption-letter-spacing);
 
     /* paragraph -> body */
     --font-paragraph--size: var(--text-role-body-font-size);

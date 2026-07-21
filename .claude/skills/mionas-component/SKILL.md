@@ -66,11 +66,10 @@ scope decision with the user when a native structural difference (e.g. an asymme
 the settings schema can't express) is tempting to chase — that's a real tradeoff, not a default.
 
 **Fork a new file only when the native template's structure or schema genuinely can't express what's
-needed** — new settings, new markup, a layout the existing block can't produce.
-`mionas-split-hero.liquid` exists because no combination of settings on Horizon's native hero block
-could produce a full-bleed
-two-color panel with an inverse button; that's the bar to clear before creating a new file instead
-of reskinning.
+needed** — new settings, new markup, a layout the existing block can't produce. (Past example: the
+now-removed `mionas-split-hero.liquid` forked because no combination of settings on Horizon's
+native hero block could produce a full-bleed two-color panel with an inverse button.) That's the
+bar to clear before creating a new file instead of reskinning.
 
 ## Deciding section, block, or snippet
 
@@ -113,11 +112,11 @@ Snippets have no schema and thus no editor label — the `mionas-` file prefix i
 it's enough: anyone grepping `snippets/` or reading a `{% render 'mionas-...' %}` call knows
 immediately this isn't a native Shopify file.
 
-`blocks/mionas-split-hero.liquid` (editor label `"Mionas: Split hero"`) and
-`blocks/mionas-text-role.liquid` (editor label `"Mionas: Text role"`, deliberately distinct from
-Horizon's own `blocks/text.liquid`/`"Text"` block, told apart by both filename and label) are the
-two reference examples of this convention applied — both were renamed into it from earlier
-native-style names. Renaming an existing component's file and schema `"name"`/`presets` touches
+`blocks/mionas-text.liquid` (editor label `"Mionas: Text role"`, deliberately distinct from
+Horizon's own `blocks/text.liquid`/`"Text"` block, told apart by both filename and label) is a
+reference example of this convention applied — it was renamed into it from an earlier native-style
+name (`text-role.liquid` → `mionas-text-role.liquid` → `mionas-text.liquid`). Renaming an existing
+component's file and schema `"name"`/`presets` touches
 every `"type"` reference to it across templates and any block/section that whitelists it as a child
 block type (`grep -rn '"type": "<old-name>"'` across `templates/`, `sections/`, `blocks/`), plus any
 contract test resolving its file path — treat a rename with the same care as creating a new file,
@@ -165,7 +164,7 @@ schema is involved; the settings JSON changes are just data.
    once, clearly commented as a placeholder for a future token.
 5. If the component has non-obvious invariants a screenshot can't show (a font that could silently
    fall back, a literal that must stay single-sourced), add a `scripts/mionas-{name}-contract.test.mjs`
-   following the pattern in `scripts/mionas-split-hero-contract.test.mjs`.
+   following the pattern in `scripts/mionas-review-card-contract.test.mjs`.
 
 ## Verify before done
 

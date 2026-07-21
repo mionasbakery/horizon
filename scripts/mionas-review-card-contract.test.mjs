@@ -1,5 +1,5 @@
 // Guards the static traps in blocks/mionas-review-card.liquid that no visual check would catch.
-// See scripts/mionas-split-hero-contract.test.mjs for the pattern this follows.
+// Same pattern as this repo's other block contract tests: declared-token and hardcoded-value checks.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";

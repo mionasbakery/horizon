@@ -9,7 +9,7 @@
 // rendered 0.06em instead of 0.02em because the design system emitted var(--letter-spacing-sm)
 // and this theme declares that same name with its own value. Only a value check catches that.
 export const EXPECTED_TOKENS = {
-  "--text-role-hero-font-size": "38px",
+  "--text-role-hero-font-size": "48px",
   "--text-role-hero-line-height": "40px",
   "--text-role-hero-font-weight": "800",
   "--text-role-hero-letter-spacing": "0.02em",
@@ -22,14 +22,17 @@ export const EXPECTED_TOKENS = {
   "--text-role-subheading-font-size": "18px",
   "--text-role-subheading-line-height": "24px",
   "--text-role-subheading-letter-spacing": "0.02em",
+  "--text-role-caption-font-size": "15px",
+  "--text-role-caption-line-height": "20px",
+  "--text-role-caption-letter-spacing": "0.02em",
   "--text-role-body-font-size": "16px",
   "--text-role-body-line-height": "24px",
   "--text-role-body-letter-spacing": "0",
-  // The three below serve buttons, not type presets; everything above serves the five type roles
+  // The three below serve buttons, not type presets; everything above serves the six type roles
   // snippets/design-system-bridge.liquid actually consumes (hero, title, heading, subheading,
-  // body). The design system also defines label and stamp roles, but nothing in the theme bridges
-  // them, so they are deliberately left out of this contract -- add them back only once the bridge
-  // spends them.
+  // caption, body). The design system also defines subtitle, lead, label and stamp roles, but
+  // nothing in the theme bridges them, so they are deliberately left out of this contract -- add
+  // them back only once the bridge spends them.
   "--button-size-md-height": "48px",
   "--button-size-md-padding": "24px",
   "--font-weight-semibold": "600",

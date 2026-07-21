@@ -8,8 +8,8 @@
   testimonials grid.
 
   Every colour and the rating icon size come straight from --review-card-* tokens
-  (assets/design-tokens.css, synced from ../design-system/dist/tokens.flat.css) -- unlike
-  mionas-split-hero.liquid, this component has no untokenized brand colour to declare locally.
+  (assets/design-tokens.css, synced from ../design-system/dist/tokens.flat.css) -- this
+  component has no untokenized brand colour to declare locally.
   The outer card look (background/border/radius/shadow) spends --card-base-* the same way, but NOT
   --card-base-padding: ReviewCard.tsx explicitly overrides Card's own bottom padding to 0 and pads
   uniformly via an inner Box p="lg" instead (see ReviewCard.module.css's comment on cascade order),
