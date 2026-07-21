@@ -100,7 +100,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "Text",
+                "text": "Te enviamos las cookies recién horneadas cada <strong>martes y miércoles</strong>. Recíbelas en <strong>24-48</strong>h. ",
                 "role": "lead",
                 "variant": "default",
                 "tag": "p"
