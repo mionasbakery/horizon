@@ -404,7 +404,7 @@
       "blocks": {
         "mionas_text_MVJ8W6": {
           "type": "mionas-text",
-          "name": "Mionas: Text",
+          "name": "Title",
           "settings": {
             "text": "<p>Que dicen nuestros clientes</p>",
             "role": "title",
@@ -426,7 +426,7 @@
         },
         "static-summary": {
           "type": "_mionas-google-reviews-summary",
-          "name": "Mionas: Reviews summary",
+          "name": "Mionas: Review summary",
           "static": true,
           "settings": {
             "content_direction": "row",
