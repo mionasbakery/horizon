@@ -10,6 +10,26 @@
   the row and the summary line beneath it, which is also why no separate container section is needed
   to place the summary.
 
+  The heading and the summary are *static* blocks -- rendered with content_for 'block' plus an
+  explicit type and id -- the same mechanism sections/mionas-split-hero.liquid uses for its two
+  sides and sections/product-list.liquid for its header. A static slot cannot be removed, reordered
+  or duplicated, so the section always has exactly one heading area and exactly one summary line,
+  while everything *inside* them (copy, type role, colour, alignment, spacing, extra lines) is the
+  merchant's to configure per instance. That is why this file no longer carries `heading`,
+  `horizontal_alignment`, `profile_url`, `reviews_label` or `link_label` settings: each of those now
+  belongs to the block that renders it.
+
+  The heading slot is a native `group` (blocks/group.liquid), which renders its children dynamically
+  via content_for 'blocks', so a merchant can retitle it, restyle it, or add an eyebrow and a
+  subtitle beside it -- exactly as the split hero's copy column works. The summary slot is a private
+  block, blocks/_mionas-google-reviews-summary.liquid, because its score and count come from
+  metaobjects.google_review_summary and no native block can read that.
+
+  The cards are deliberately NOT blocks and cannot become them: content_for 'block' takes no
+  parameters, so a static slot cannot receive per-review data, and the carousel-slide problem above
+  rules out a repeating block. Card-level options would have to be section settings threaded into
+  the render call below.
+
   Layout is merchant-controlled the same way sections/product-list.liquid does it: every selected
   card is captured into one string separated by <!--@list/split-->, that string is split into an
   array, and both are handed to snippets/resource-list.liquid, which owns grid / carousel /
@@ -61,7 +81,6 @@
 
 {% liquid
   assign pool = metaobjects.google_review.values
-  assign summary = metaobjects.google_review_summary.default
 
   # A review with no enabled value predates the field and is treated as enabled, so entries
   # created before this field existed keep rendering.
@@ -157,14 +176,14 @@
       {% render 'gap-style', value: section.settings.gap %}
     "
   >
-    {%- if section.settings.heading != blank -%}
-      <div
-        class="section-resource-list__content"
-        style="--horizontal-alignment: {{ section.settings.horizontal_alignment }};"
-      >
-        <h2 class="mionas-google-reviews__heading">{{ section.settings.heading }}</h2>
-      </div>
-    {%- endif -%}
+    {%- comment -%}
+      The heading slot. base.css already hides .section-resource-list__header when the group inside
+      it is empty, so a merchant who deletes every line inside the group gets no stray gap -- no
+      `if heading != blank` guard is needed here the way the old text setting needed one.
+    {%- endcomment -%}
+    <div class="section-resource-list__header">
+      {%- content_for 'block', type: 'group', id: 'static-heading' -%}
+    </div>
 
     {%- comment -%}
       Capture the selected cards into one string, separated the way product-list separates its
@@ -229,30 +248,16 @@
       test_id: 'mionas-google-reviews-list'
     %}
 
-    {%- if summary != blank -%}
-      {%- liquid
-        assign score = summary.average_rating.value | round: 1 | append: '' | replace: '.', ','
-        assign profile_url = section.settings.profile_url | default: summary.profile_url.value
-      -%}
-      <div
-        class="section-resource-list__content"
-        style="--horizontal-alignment: {{ section.settings.horizontal_alignment }};"
-      >
-        <p class="mionas-google-reviews__summary">
-          <svg viewBox="0 0 20 20" aria-hidden="true" class="mionas-google-reviews__star">
-            <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
-          </svg>
-          <span class="mionas-google-reviews__score">{{ score }}</span>
-          <span class="mionas-google-reviews__separator" aria-hidden="true">·</span>
-          <span>{{ summary.total_count.value }} {{ section.settings.reviews_label }}</span>
-          {%- if profile_url != blank and section.settings.link_label != blank -%}
-            <a class="mionas-google-reviews__link" href="{{ profile_url }}" target="_blank" rel="noopener noreferrer">
-              {{- section.settings.link_label -}}
-            </a>
-          {%- endif -%}
-        </p>
-      </div>
-    {%- endif -%}
+    {%- comment -%}
+      The summary slot. No --horizontal-alignment is set on this wrapper on purpose -- alignment is
+      the block's own setting now; the block fills this wrapper and positions itself. The block
+      renders nothing at all when no summary metaobject exists, and
+      .section-resource-list__content:empty is already display: none, so an unsynced store gets no
+      empty row here.
+    {%- endcomment -%}
+    <div class="section-resource-list__content">
+      {%- content_for 'block', type: '_mionas-google-reviews-summary', id: 'static-summary' -%}
+    </div>
   </div>
 {%- endif -%}
 
@@ -268,55 +273,6 @@
   .mionas-google-reviews .resource-list__item > .review-card {
     width: 100%;
   }
-
-  .mionas-google-reviews__heading {
-    margin: 0;
-  }
-
-  .mionas-google-reviews__summary {
-    margin: 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-xs);
-    font-family: var(--font-body--family);
-    font-size: var(--text-role-caption-font-size);
-    line-height: var(--text-role-caption-line-height);
-    font-weight: var(--text-role-caption-font-weight);
-    letter-spacing: var(--text-role-caption-letter-spacing);
-    color: var(--review-card-attribution-foreground);
-  }
-
-  /* One star beside a number, not five: the average is fractional, and a five-star row would need
-     partial-fill clipping the card never had to solve. */
-  .mionas-google-reviews__star {
-    width: var(--review-card-rating-icon-size);
-    height: var(--review-card-rating-icon-size);
-    fill: var(--review-card-rating-filled-color);
-    flex-shrink: 0;
-  }
-
-  .mionas-google-reviews__score {
-    color: var(--review-card-quote-foreground);
-    font-weight: var(--font-weight-bold);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .mionas-google-reviews__separator {
-    color: var(--review-card-rating-empty-color);
-  }
-
-  .mionas-google-reviews__link {
-    color: var(--link-base-foreground);
-    font-weight: var(--link-base-font-weight);
-    font-size: var(--link-size-sm-font-size);
-    text-decoration: none;
-  }
-
-  .mionas-google-reviews__link:hover {
-    text-decoration: underline;
-  }
 {% endstylesheet %}
 
 {% schema %}
@@ -326,12 +282,6 @@
     "groups": ["header", "footer"]
   },
   "settings": [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "info": "Optional. Leave blank to show only the cards."
-    },
     {
       "type": "range",
       "id": "review_count",
@@ -492,30 +442,6 @@
     },
     {
       "type": "header",
-      "content": "Summary line"
-    },
-    {
-      "type": "url",
-      "id": "profile_url",
-      "label": "Google profile link",
-      "info": "Optional. Falls back to the link stored by the last sync."
-    },
-    {
-      "type": "text",
-      "id": "reviews_label",
-      "label": "Reviews label",
-      "default": "reseñas en Google",
-      "info": "Shown after the review count. Plain text on purpose — rebuilding Google's wordmark in another typeface breaks their brand guidelines."
-    },
-    {
-      "type": "text",
-      "id": "link_label",
-      "label": "Link label",
-      "default": "Verlas todas",
-      "info": "Optional. Leave blank to hide the link."
-    },
-    {
-      "type": "header",
       "content": "t:content.section_layout"
     },
     {
@@ -533,26 +459,6 @@
         }
       ],
       "default": "page-width"
-    },
-    {
-      "type": "select",
-      "id": "horizontal_alignment",
-      "label": "t:settings.alignment",
-      "options": [
-        {
-          "value": "flex-start",
-          "label": "t:options.left"
-        },
-        {
-          "value": "center",
-          "label": "t:options.center"
-        },
-        {
-          "value": "flex-end",
-          "label": "t:options.right"
-        }
-      ],
-      "default": "center"
     },
     {
       "type": "range",
@@ -610,10 +516,64 @@
         "icons_style": "arrow",
         "icons_shape": "circle",
         "section_width": "page-width",
-        "horizontal_alignment": "center",
         "gap": 24,
         "padding-block-start": 48,
         "padding-block-end": 48
+      },
+      "blocks": {
+        "static-heading": {
+          "type": "group",
+          "name": "Heading",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "title": {
+              "type": "mionas-text",
+              "name": "Title",
+              "settings": {
+                "text": "<p>Lo que dicen nuestros clientes</p>",
+                "role": "title",
+                "variant": "default",
+                "tag": "h2"
+              }
+            }
+          },
+          "block_order": ["title"]
+        },
+        "static-summary": {
+          "type": "_mionas-google-reviews-summary",
+          "name": "Summary line",
+          "static": true,
+          "settings": {
+            "reviews_label": "reseñas en Google",
+            "link_label": "Verlas todas",
+            "show_star": true,
+            "role": "caption",
+            "horizontal_alignment": "center"
+          }
+        }
       }
     }
   ]

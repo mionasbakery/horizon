@@ -1,0 +1,126 @@
+{%- comment -%}
+  A Google Maps embed for the Contacto page's location panel.
+
+  https://www.google.com/maps?q=<address>&output=embed needs no API key and no app, which is why
+  it is used instead of the Maps Embed API. The trade-off is no styling control over the map
+  itself -- only its frame.
+
+  Chosen over a one-off custom-liquid block so the merchant edits an address field rather than raw
+  iframe HTML.
+
+  PRIVACY: this is a third-party iframe that sets Google cookies on load. If the store takes on a
+  cookie-consent obligation, gating or replacing this embed is a follow-up -- see the spec.
+
+  Border and radius come from --card-base-* so the map and the info card beneath it read as one
+  stack.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+
+  # url_encode applies to the address alone, never the whole URL -- encoding the URL would escape
+  # its own ':' and '/'. Without it, an address containing a space or an '&' produces a broken URL
+  # and a blank map.
+  assign address_param = block_settings.address | url_encode
+  assign map_src = 'https://www.google.com/maps?q=' | append: address_param | append: '&amp;z=' | append: block_settings.zoom | append: '&amp;output=embed'
+%}
+
+<div
+  class="mionas-map"
+  style="--mionas-map-height: {{ block_settings.height }}px;"
+  {{ block.shopify_attributes }}
+>
+  {%- if block_settings.address == blank -%}
+    {%- comment -%} No address yet: render the frame so the editor shows the block's footprint. {%- endcomment -%}
+    <div class="mionas-map__empty">{{ block_settings.title }}</div>
+  {%- else -%}
+    <iframe
+      class="mionas-map__frame"
+      src="{{ map_src }}"
+      title="{{ block_settings.title | escape }}"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    ></iframe>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mionas-map {
+    width: 100%;
+    /* Height is a block setting, passed in as a custom property so the schema stays the single
+       source of it. The fallback matches the schema default. */
+    height: var(--mionas-map-height, 240px);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--card-base-radius);
+    overflow: hidden;
+  }
+
+  .mionas-map__frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .mionas-map__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: var(--space-md);
+    /* Secondary text, so this spends Card's description token -- not a --form-label-* one, which
+       would be borrowed from an unrelated component. */
+    color: var(--card-description-foreground);
+    font-family: var(--font-body--family);
+    font-size: var(--font-size-xs);
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Map",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address",
+      "default": "Carrer Major, XX, 08870 Sitges, Barcelona",
+      "info": "Searched on Google Maps. Replace the placeholder with the real street address."
+    },
+    {
+      "type": "range",
+      "id": "zoom",
+      "label": "Zoom",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Height",
+      "min": 160,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 240
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Accessible name",
+      "default": "Mapa de la ubicación de Mionas Bakery",
+      "info": "Announced by screen readers to describe the map. Not shown visually."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Map",
+      "category": "t:categories.custom"
+    }
+  ]
+}
+{% endschema %}

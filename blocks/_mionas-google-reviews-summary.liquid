@@ -1,0 +1,234 @@
+{%- comment -%}
+  The "4,9 · 128 reseñas en Google · Verlas todas" line under sections/mionas-google-reviews.liquid.
+
+  Why a private (`_`-prefixed) block rather than a native one: the score and the review count come
+  from `metaobjects.google_review_summary.default`, written by the sync-google-reviews skill. No
+  native block can read that, so the line cannot be assembled out of `text` blocks the way the
+  section's heading can. Making it a block anyway is what buys the merchant per-part control --
+  wording, link, type role and alignment are this block's settings instead of the section's.
+
+  It is private because it is meaningless anywhere else: outside a Google-reviews section it would
+  render a summary of nothing. That is the same reason blocks/_product-list-content.liquid is
+  private. The section renders it as a *static* slot, so it cannot be removed, duplicated or
+  reordered -- the section always has exactly one summary line.
+
+  The whole block renders nothing when no summary metaobject exists (a store that has never synced),
+  which is what the old inline `{% raw %}{% if summary != blank %}{% endraw %}` guard in the section did.
+
+  One star beside a number, not five: the average is fractional, and a five-star row would need
+  partial-fill clipping that snippets/mionas-google-review-card.liquid never had to solve.
+
+  Every colour comes from existing --review-card-* / --link-* tokens and the typography from
+  --text-role-*; this block introduces no new token and touches neither assets/design-tokens.css nor
+  ../design-system.
+{%- endcomment -%}
+
+{% liquid
+  assign summary = metaobjects.google_review_summary.default
+%}
+
+{%- if summary != blank -%}
+  {%- liquid
+    assign role = block.settings.role
+    assign score = summary.average_rating.value | round: 1 | append: '' | replace: '.', ','
+    assign profile_url = block.settings.profile_url | default: summary.profile_url.value
+  -%}
+  <p
+    class="mionas-google-reviews-summary mionas-google-reviews-summary--{{ role }}"
+    style="--mionas-google-reviews-summary-alignment: {{ block.settings.horizontal_alignment }};"
+    {{ block.shopify_attributes }}
+  >
+    {%- if block.settings.show_star -%}
+      <svg viewBox="0 0 20 20" aria-hidden="true" class="mionas-google-reviews-summary__star">
+        <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
+      </svg>
+    {%- endif -%}
+    <span class="mionas-google-reviews-summary__score">{{ score }}</span>
+    <span class="mionas-google-reviews-summary__separator" aria-hidden="true">·</span>
+    <span>{{ summary.total_count.value }} {{ block.settings.reviews_label }}</span>
+    {%- if profile_url != blank and block.settings.link_label != blank -%}
+      <a
+        class="mionas-google-reviews-summary__link"
+        href="{{ profile_url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{- block.settings.link_label -}}
+      </a>
+    {%- endif -%}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  /* The line aligns itself: alignment is a block setting on purpose, since the section no longer
+     owns it. width: 100% is what makes that authoritative -- the wrapper
+     (.section-resource-list__content) is a column flex container whose align-items reads
+     --horizontal-alignment, and custom properties inherit, so an ancestor that sets it (a section
+     group rendered through snippets/layout-panel-style.liquid, say) would otherwise shrink this <p>
+     to its content width and leave justify-content with nothing to distribute. Filling the wrapper
+     makes the setting work whatever that computes to. */
+  .mionas-google-reviews-summary {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: var(--mionas-google-reviews-summary-alignment, center);
+    gap: var(--space-xs);
+    font-family: var(--font-body--family);
+    color: var(--review-card-attribution-foreground);
+  }
+
+  /* Only the roles the Role setting offers. Same --text-role-* vocabulary blocks/mionas-text.liquid
+     spends, so a merchant switching Role here gets exactly the size they get there. */
+  .mionas-google-reviews-summary--caption {
+    font-size: var(--text-role-caption-font-size);
+    line-height: var(--text-role-caption-line-height);
+    font-weight: var(--text-role-caption-font-weight);
+    letter-spacing: var(--text-role-caption-letter-spacing);
+  }
+
+  .mionas-google-reviews-summary--label {
+    font-size: var(--text-role-label-font-size);
+    line-height: var(--text-role-label-line-height);
+    font-weight: var(--text-role-label-font-weight);
+    letter-spacing: var(--text-role-label-letter-spacing);
+  }
+
+  .mionas-google-reviews-summary--body {
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    font-weight: var(--text-role-body-font-weight);
+    letter-spacing: var(--text-role-body-letter-spacing);
+  }
+
+  .mionas-google-reviews-summary--lead {
+    font-size: var(--text-role-lead-font-size);
+    line-height: var(--text-role-lead-line-height);
+    font-weight: var(--text-role-lead-font-weight);
+    letter-spacing: var(--text-role-lead-letter-spacing);
+  }
+
+  .mionas-google-reviews-summary--subheading {
+    font-size: var(--text-role-subheading-font-size);
+    line-height: var(--text-role-subheading-line-height);
+    font-weight: var(--text-role-subheading-font-weight);
+    letter-spacing: var(--text-role-subheading-letter-spacing);
+  }
+
+  .mionas-google-reviews-summary__star {
+    width: var(--review-card-rating-icon-size);
+    height: var(--review-card-rating-icon-size);
+    fill: var(--review-card-rating-filled-color);
+    flex-shrink: 0;
+  }
+
+  .mionas-google-reviews-summary__score {
+    color: var(--review-card-quote-foreground);
+    font-weight: var(--font-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mionas-google-reviews-summary__separator {
+    color: var(--review-card-rating-empty-color);
+  }
+
+  .mionas-google-reviews-summary__link {
+    color: var(--link-base-foreground);
+    font-weight: var(--link-base-font-weight);
+    font-size: var(--link-size-sm-font-size);
+    text-decoration: none;
+  }
+
+  .mionas-google-reviews-summary__link:hover {
+    text-decoration: underline;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Reviews summary",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "reviews_label",
+      "label": "Reviews label",
+      "default": "reseñas en Google",
+      "info": "Shown after the review count. Plain text on purpose — rebuilding Google's wordmark in another typeface breaks their brand guidelines."
+    },
+    {
+      "type": "url",
+      "id": "profile_url",
+      "label": "Google profile link",
+      "info": "Optional. Falls back to the link stored by the last sync."
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Verlas todas",
+      "info": "Optional. Leave blank to hide the link."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_star",
+      "label": "Show star",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "role",
+      "label": "Role",
+      "options": [
+        {
+          "value": "caption",
+          "label": "Caption"
+        },
+        {
+          "value": "label",
+          "label": "Label"
+        },
+        {
+          "value": "body",
+          "label": "Body"
+        },
+        {
+          "value": "lead",
+          "label": "Lead"
+        },
+        {
+          "value": "subheading",
+          "label": "Subheading"
+        }
+      ],
+      "default": "caption"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "center"
+    }
+  ]
+}
+{% endschema %}

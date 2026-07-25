@@ -1,0 +1,191 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "visita": {
+      "type": "section",
+      "blocks": {
+        "heading": {
+          "type": "mionas-text",
+          "settings": {
+            "text": "<p>Ven a visitarnos</p>",
+            "role": "title",
+            "tag": "h1"
+          }
+        },
+        "columns": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "vertical_alignment": "flex-start",
+            "gap": 34,
+            "width": "fill"
+          },
+          "blocks": {
+            "left": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "gap": 16,
+                "width": "custom",
+                "custom_width": 55,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100
+              },
+              "blocks": {
+                "map": {
+                  "type": "mionas-map",
+                  "settings": {
+                    "address": "Carrer Major, XX, 08870 Sitges, Barcelona",
+                    "zoom": 15,
+                    "height": 240,
+                    "title": "Mapa de la ubicación de Mionas Bakery"
+                  }
+                },
+                "info": {
+                  "type": "mionas-card",
+                  "settings": {
+                    "variant": "default"
+                  },
+                  "blocks": {
+                    "info_name": {
+                      "type": "mionas-text",
+                      "settings": {
+                        "text": "<p>Mionas Bakery</p>",
+                        "role": "subheading",
+                        "tag": "p"
+                      }
+                    },
+                    "info_address": {
+                      "type": "mionas-text",
+                      "settings": {
+                        "text": "<p>[Carrer Major, XX] · 08870 Sitges, Barcelona</p>",
+                        "role": "body",
+                        "tag": "p"
+                      }
+                    },
+                    "info_hours": {
+                      "type": "mionas-text",
+                      "settings": {
+                        "text": "<p><strong>Horario:</strong> [L–D · 9:00–20:30]</p>",
+                        "role": "body",
+                        "tag": "p"
+                      }
+                    },
+                    "info_pickup": {
+                      "type": "mionas-text",
+                      "settings": {
+                        "text": "<p><strong>Recogida de pedidos:</strong> [franja horaria]</p>",
+                        "role": "body",
+                        "tag": "p"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "info_name",
+                    "info_address",
+                    "info_hours",
+                    "info_pickup"
+                  ]
+                },
+                "whatsapp": {
+                  "type": "mionas-button",
+                  "settings": {
+                    "label": "WhatsApp — respuesta más rápida",
+                    "link": "https://wa.me/34XXXXXXXXX",
+                    "open_in_new_tab": true,
+                    "variant": "primary",
+                    "size": "md"
+                  }
+                },
+                "links": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "row",
+                    "horizontal_alignment": "center",
+                    "gap": 10,
+                    "width": "fill"
+                  },
+                  "blocks": {
+                    "link_phone": {
+                      "type": "mionas-link",
+                      "settings": {
+                        "label": "[teléfono]",
+                        "link": "tel:+34XXXXXXXXX",
+                        "variant": "primary",
+                        "size": "sm"
+                      }
+                    },
+                    "link_email": {
+                      "type": "mionas-link",
+                      "settings": {
+                        "label": "hola@mionasbakery.com",
+                        "link": "mailto:hola@mionasbakery.com",
+                        "variant": "primary",
+                        "size": "sm"
+                      }
+                    },
+                    "link_instagram": {
+                      "type": "mionas-link",
+                      "settings": {
+                        "label": "@mionasbakery_sitges",
+                        "link": "https://www.instagram.com/mionasbakery_sitges",
+                        "open_in_new_tab": true,
+                        "variant": "primary",
+                        "size": "sm"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "link_phone",
+                    "link_email",
+                    "link_instagram"
+                  ]
+                }
+              },
+              "block_order": [
+                "map",
+                "info",
+                "whatsapp",
+                "links"
+              ]
+            },
+            "form": {
+              "type": "mionas-contact-form",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "left",
+            "form"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "columns"
+      ],
+      "name": "Visita",
+      "settings": {
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "gap": 18,
+        "section_width": "page-width",
+        "padding-block-start": 34,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "visita"
+  ]
+}

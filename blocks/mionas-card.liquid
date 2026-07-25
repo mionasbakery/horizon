@@ -33,6 +33,12 @@
   unless variant == 'default'
     assign card_classes = card_classes | append: ' mionas-card--' | append: variant
   endunless
+  if block_settings.width == 'full'
+    assign card_classes = card_classes | append: ' mionas-card--full'
+  endif
+  if block_settings.inset
+    assign card_classes = card_classes | append: ' mionas-card--inset'
+  endif
   if block_settings.link != blank
     assign card_classes = card_classes | append: ' mionas-card--interactive'
   endif
@@ -80,6 +86,29 @@
     box-shadow: none;
   }
 
+  /* Card.module.css caps the card at 320px. The Contacto info panel is a full-width column, so
+     this opts out. Default (no class) keeps the design-system cap. */
+  .mionas-card--full {
+    max-width: none;
+  }
+
+  /* Card carries bottom padding only -- children bleed to the top and side edges, matching
+     CardMedia. This opts into padding on all four sides.
+
+     The flex column + gap is a deliberate divergence from Card.module.css, not a port of it:
+     stacked children (four mionas-text blocks in the Contacto info panel) carry no margins of
+     their own and would otherwise butt together. It rides on this flag rather than applying
+     always, so a default mionas-card still behaves exactly like Card.tsx.
+
+     `padding` shorthand here intentionally resets the base rule's `padding-bottom` longhand --
+     same specificity, later in the sheet, so the shorthand wins. */
+  .mionas-card--inset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--card-base-padding);
+  }
+
   .mionas-card--interactive {
     text-align: inherit;
     text-decoration: none;
@@ -111,6 +140,23 @@
         { "value": "plain", "label": "Plain" }
       ],
       "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "options": [
+        { "value": "default", "label": "Default (max 320px)" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "inset",
+      "label": "Pad content on all sides",
+      "info": "Off matches the design system: children bleed to the top and side edges, with padding on the bottom only. On also spaces stacked children apart.",
+      "default": false
     },
     {
       "type": "url",
