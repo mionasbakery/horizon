@@ -420,7 +420,7 @@
           "settings": {
             "show_rating": true,
             "show_author": true,
-            "quote_max_characters": 0
+            "quote_max_characters": 200
           },
           "blocks": {}
         },
@@ -512,7 +512,7 @@
       ],
       "name": "Mionas: Google reviews",
       "settings": {
-        "review_count": 5,
+        "review_count": 6,
         "layout_type": "grid",
         "carousel_on_mobile": false,
         "columns": 3,
