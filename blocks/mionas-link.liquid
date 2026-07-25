@@ -14,9 +14,12 @@
   insertable Shopify block (there's no parent click to ride along on here), so this block only
   covers the `as="a"` case, same scope decision mionas-button.liquid made for Button's `as="button"`.
 
-  Every colour/weight/size comes from --link-* tokens (assets/design-tokens.css). Family is the
-  usual exception: --link-base-font-family is a literal font stack, not the theme's loaded font, so
-  this spends --font-body--family instead, same as every other Mionas block.
+  Every colour/weight/size/family comes from --link-* tokens (assets/design-tokens.css), the same
+  ones Link.module.css spends. --link-base-font-family resolves through --font-family-archivo,
+  which snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
+
+  --link-base-font-weight is 500, a weight none of the theme's font settings load; the same bridge
+  emits the Archivo 500 face that makes it render as medium rather than falling back to 400.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -43,7 +46,7 @@
 
 {% stylesheet %}
   .mionas-link {
-    font-family: var(--font-body--family);
+    font-family: var(--link-base-font-family);
     font-weight: var(--link-base-font-weight);
     font-size: var(--link-size-md-font-size);
     text-decoration: none;

@@ -3,3 +3,4 @@ dist/
 *.log
 .superpowers/
 docs/superpowers
+.env.local

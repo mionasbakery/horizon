@@ -1,0 +1,35 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/FormError/FormError.tsx -- the inline validation message that
+  sits under a field's underline.
+
+  FormError.tsx renders `<Text as="p" role="label">`, so this spends the --text-role-label-* scale,
+  not --text-role-body-*. Like the React component it renders nothing at all when there is no
+  message: FormField/Checkbox place it inside a flex column with a gap, so an empty <p> would still
+  consume a gap and push the underline down.
+
+  Accepts:
+    message  Required to render anything. Omitted or blank renders nothing.
+    id       Optional. Set it when a control points at this message with aria-describedby.
+
+  Fonts: --font-family-archivo, the design system's body primitive, repointed at the theme's
+  loaded body font by snippets/design-system-bridge.liquid. FormError.module.css sets no family of
+  its own, so this spends the primitive rather than inventing a component token.
+{%- endcomment -%}
+{%- if message != blank -%}
+  <p class="mionas-form-error"{% if id != blank %} id="{{ id }}"{% endif %}>{{ message }}</p>
+{%- endif -%}
+
+{% stylesheet %}
+  /* FormError.module.css .root -- padding-left keeps the message on the same optical start edge as
+     the label and the input, all three of which are inset from the underline's full width. */
+  .mionas-form-error {
+    margin: 0;
+    padding-left: var(--form-error-base-padding);
+    color: var(--form-error-base-foreground);
+    font-family: var(--font-family-archivo);
+    font-size: var(--text-role-label-font-size);
+    line-height: var(--text-role-label-line-height);
+    font-weight: var(--text-role-label-font-weight);
+    letter-spacing: var(--text-role-label-letter-spacing);
+  }
+{% endstylesheet %}

@@ -101,14 +101,13 @@ mirror:
   coincidence and fall back the moment the theme's font setting changes.
 - A design the system hasn't tokenized yet (a color with no token): declare the literal **once** as
   a block-local custom property, and swap it for the token when the design system emits one.
-- Guard the traps a screenshot can't show with a `scripts/<block>-contract.test.mjs` (see
-  `mionas-review-card-contract.test.mjs`): fonts that silently fall back, literals that must stay
-  single-sourced, no other hardcoded colors.
+- Watch for the traps a screenshot can't show: fonts that silently fall back, literals that must stay
+  single-sourced, hardcoded colors that should be tokens. Check them by reading the diff — this theme
+  has no test suite and none should be added.
 
 ## Verify before done
 
 ```sh
-npm test              # contract + block contract tests
 shopify theme check   # Liquid lint
 ```
 

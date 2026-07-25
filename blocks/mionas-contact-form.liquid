@@ -1,0 +1,292 @@
+{%- comment -%}
+  Composes the Mionas form snippets -- mionas-form / mionas-form-field / mionas-form-label /
+  mionas-text-field / mionas-form-error, mirroring ../design-system/src/react/ -- around a single
+  {% form 'contact' %}.
+
+  Why this forks rather than reskinning blocks/contact-form.liquid: the native block hard-codes
+  name+email onto one flex row, renders every label `visually-hidden` with text from
+  blocks.contact_form.* locale keys, and includes a phone field this design does not have. It
+  exposes no child field blocks, so a CSS bridge can restack and restyle it but cannot produce
+  visible per-field labels carrying the design's own wording. See
+  docs/superpowers/specs/2026-07-25-contacto-page-design.md.
+
+  This block owns only what the design system has no component for: the card surface, the heading,
+  the submit button, the note and the success banner. Every field is a snippet -- so are the
+  underline, the label colours and the error message -- which is what keeps this form and any future
+  Mionas form from drifting apart. Do not re-add field CSS here.
+
+  FIELD NAMING IS LOAD-BEARING. Shopify's contact form only special-cases name, email, phone and
+  body; any other key is printed literally as a label in the merchant's notification email. That
+  failure is invisible in the theme editor and in a screenshot, so keep the field names exactly
+  contact[name], contact[email] and contact[body] -- do not rename them.
+
+  Known platform limitation, same as blocks/corporate-quote-form.liquid: Shopify's `form` object
+  only echoes back name, email, phone and body, so nothing custom repopulates after a validation
+  error. Do not work around it.
+
+  This block draws its own card surface rather than nesting inside mionas-card -- the same choice
+  corporate-quote-form.liquid made, and it keeps the heading and the fields in one schema.
+
+  Only email is required, which is why the name and message labels carry the design system's
+  " (optional)" suffix. That is FormLabel.tsx's own behaviour for a non-required field, not a
+  styling accident.
+
+  The submit button is NOT wrapped in snippets/mionas-form-actions.liquid. FormActions is a row with
+  a start inset, meant for a button and a link side by side; this form has one full-width button,
+  and the inset would leave it flush right but indented left.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign form_id = block.id | prepend: 'MionasContactForm-'
+
+  # The field ids are derived here rather than inline at the render call: the render tag does not
+  # accept filters on its arguments. The prefilled VALUES cannot be derived here -- they read the
+  # `form` object, which only exists inside the form tag below.
+  assign name_field_id = form_id | append: '-name'
+  assign email_field_id = form_id | append: '-email'
+  assign body_field_id = form_id | append: '-body'
+%}
+
+<div class="mionas-contact-form" {{ block.shopify_attributes }}>
+  {%- if block_settings.heading != blank -%}
+    <p class="mionas-contact-form__heading">{{ block_settings.heading }}</p>
+  {%- endif -%}
+
+  {%- form 'contact', id: form_id -%}
+    <input name="contact[id]" type="hidden" value="{{ form_id }}">
+
+    {% liquid
+      assign form_matches = false
+      if form.id == form_id or form.id == blank
+        assign form_matches = true
+      endif
+
+      # Shopify only ever reports an error against email on the contact form. Routed into the
+      # field's own `error` param rather than a banner above the form, so the underline, the label
+      # colour and the message all come from FormField/FormLabel/FormError as the design system
+      # composes them.
+      # Kept on one line: inside a liquid tag every newline ends the statement, so a filter
+      # chain wrapped across lines is a syntax error, not a continuation.
+      assign email_error = ''
+      if form.errors and form_matches
+        assign email_error = form.errors.translated_fields.email | capitalize | append: ' ' | append: form.errors.messages.email
+      endif
+
+      # Prefills, assigned here rather than in the block's opening liquid tag: the `form` object is
+      # scoped to the form tag, so reading form.name/form.email outside it yields nothing and the
+      # field silently comes back empty after a failed submit -- exactly when the user least wants
+      # to retype it. Shopify only echoes name, email, phone and body back, which is why the message
+      # field below repopulates but nothing else custom could.
+      #
+      # Tag names are spelled out in prose in these comments on purpose: a literal percent-brace
+      # sequence inside a `#` comment line is still parsed as a tag, and naming a block tag that way
+      # opens one the parser then never sees closed.
+      assign name_value = form.name | default: customer.name
+      assign email_value = form.email | default: customer.email
+    %}
+
+    {%- if form.posted_successfully? and form_matches -%}
+      <div class="mionas-contact-form__success" tabindex="-1" autofocus>
+        {{- 'icon-checkmark.svg' | inline_asset_content -}}
+        {{ block_settings.success_text }}
+      </div>
+    {%- endif -%}
+
+    {%- capture contact_form_fields -%}
+      {%- render 'mionas-text-field',
+        label: block_settings.label_name,
+        name: 'contact[name]',
+        id: name_field_id,
+        value: name_value,
+        autocomplete: 'name',
+        required: false,
+        optional_text: block_settings.optional_text
+      -%}
+
+      {%- render 'mionas-text-field',
+        label: block_settings.label_email,
+        name: 'contact[email]',
+        id: email_field_id,
+        type: 'email',
+        value: email_value,
+        placeholder: block_settings.placeholder_email,
+        autocomplete: 'email',
+        spellcheck: 'false',
+        autocapitalize: 'off',
+        error: email_error
+      -%}
+
+      {%- render 'mionas-text-field',
+        label: block_settings.label_message,
+        name: 'contact[body]',
+        id: body_field_id,
+        value: form.body,
+        placeholder: block_settings.placeholder_message,
+        rows: 5,
+        required: false,
+        optional_text: block_settings.optional_text
+      -%}
+
+      <button type="submit" class="mionas-contact-form__submit">
+        {{- block_settings.submit_label -}}
+      </button>
+
+      {%- if block_settings.note != blank -%}
+        <p class="mionas-contact-form__note">{{ block_settings.note }}</p>
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- render 'mionas-form', content: contact_form_fields -%}
+  {%- endform -%}
+</div>
+
+{% stylesheet %}
+  /* The card surface, matching mionas-card's base rule. flex-basis: auto (via width: 100%) keeps
+     the form from collapsing vertically when the section stacks to a column on mobile; the desktop
+     override below zeroes it so the row splits by the group widths instead of by this 100%.
+     Same reasoning as corporate-quote-form.liquid, which hit the identical problem. */
+  .mionas-contact-form {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    background: var(--card-base-background);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--card-base-radius);
+    box-shadow: var(--card-base-shadow);
+    padding: var(--space-lg);
+    font-family: var(--font-family-archivo);
+  }
+
+  @media screen and (min-width: 750px) {
+    .mionas-contact-form {
+      flex-basis: 0;
+    }
+  }
+
+  .mionas-contact-form__heading {
+    margin: 0 0 var(--space-md);
+    font-size: var(--text-role-subheading-font-size);
+    line-height: var(--text-role-subheading-line-height);
+    letter-spacing: var(--text-role-subheading-letter-spacing);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+  }
+
+  /* The submit button reproduces mionas-button's primary/md/full-width look. It cannot render that
+     block -- a block can't nest another block inside its own <form> -- so it spends the same
+     --button-* tokens directly. Keep the two in agreement. */
+  .mionas-contact-form__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: var(--button-size-md-height);
+    padding: 0 var(--button-size-md-padding);
+    border: 1.5px solid transparent;
+    border-radius: var(--button-base-radius);
+    background: var(--button-primary-background);
+    color: var(--button-primary-foreground);
+    font-family: var(--font-family-archivo);
+    font-size: var(--button-size-md-font-size);
+    font-weight: var(--button-base-font-weight);
+    cursor: pointer;
+  }
+
+  .mionas-contact-form__submit:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+
+  /* Secondary body text, so this spends Card's description token rather than a form-label one. */
+  .mionas-contact-form__note {
+    margin: 0;
+    color: var(--card-description-foreground);
+    font-size: var(--font-size-xs);
+    text-align: center;
+  }
+
+  /* No error banner counterpart: field-level errors are FormError's job, rendered by the field
+     snippet. This is only the success confirmation, which the design system has no component for. */
+  .mionas-contact-form__success {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Contact form",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Escríbenos"
+    },
+    {
+      "type": "text",
+      "id": "label_name",
+      "label": "Name label",
+      "default": "Nombre"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Email label",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Email placeholder",
+      "default": "tu@email.com"
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "Message label",
+      "default": "Mensaje"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_message",
+      "label": "Message placeholder",
+      "default": "¿En qué te ayudamos?"
+    },
+    {
+      "type": "text",
+      "id": "optional_text",
+      "label": "Word shown after an optional field's label",
+      "info": "Only email is required, so the name and message labels are suffixed with this in parentheses.",
+      "default": "opcional"
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Submit label",
+      "default": "Enviar"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Note below the button",
+      "default": "Respuesta en 24–48h laborables"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Success message",
+      "default": "¡Mensaje enviado! Te respondemos en 24–48h laborables."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Contact form",
+      "category": "t:categories.forms"
+    }
+  ]
+}
+{% endschema %}

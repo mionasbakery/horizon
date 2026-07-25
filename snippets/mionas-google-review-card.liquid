@@ -1,0 +1,162 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/ReviewCard/ReviewCard.tsx: a star rating, a quote, and an
+  attribution line (name, optional location, optional avatar), inside a card.
+
+  This is a snippet, not a block, because two callers need the same card: blocks/mionas-review-card
+  .liquid renders it from theme-editor settings, and sections/mionas-google-reviews.liquid renders
+  it from metaobjects synced out of the Google Business Profile API. Defining the markup twice would
+  let the two drift, and the contract test could only ever guard one of them.
+
+  Accepts:
+    rating              1-5. Defaults to 5.
+    show_rating         Pass false to hide the star row entirely. Anything else (including nil)
+                        shows it, so existing callers that never pass it are unaffected. This is an
+                        explicit `== false` test rather than `| default: true`, because Liquid's
+                        default filter treats false as empty and would flip it straight back to true.
+    quote               Review text. Omitted renders no quote.
+    name                Attribution name. Omitted renders no attribution.
+    location            Optional. Shown after the name.
+    avatar              Optional image. Not used by the Google-sourced caller.
+    avatar_alt          Optional. Falls back to name.
+    shopify_attributes  Theme-editor attributes, passed by the block caller only.
+
+  Every part is optional on purpose: .review-card__content is a flex column with a gap, so an
+  element that renders empty still consumes a gap. Each part is therefore wrapped in its own guard
+  rather than emitted and hidden with CSS.
+
+  Every colour and the rating icon size come straight from --review-card-* tokens
+  (assets/design-tokens.css, synced from ../design-system/dist/tokens.flat.css) -- this
+  component has no untokenized brand colour to declare locally.
+  The outer card look (background/border/radius/shadow) spends --card-base-* the same way, but NOT
+  --card-base-padding: ReviewCard.tsx explicitly overrides Card's own bottom padding to 0 and pads
+  uniformly via an inner Box p="lg" instead (see ReviewCard.module.css's comment on cascade order),
+  so this snippet does the same with --space-lg on .review-card__content rather than the card token.
+
+  Card.module.css no longer caps width -- the design system pushed that cap down into the individual
+  components that want one (ProductCard, ProductPromoCard); ReviewCard.tsx deliberately has none. This
+  snippet mirrors that: it declares no width limit and fills whatever container it is placed in (a
+  grid column, a carousel slide, and so on).
+{%- endcomment -%}
+{% liquid
+  assign card_rating = rating | default: 5
+  assign card_avatar_alt = avatar_alt | default: name
+
+  assign render_rating = true
+  if show_rating == false
+    assign render_rating = false
+  endif
+%}
+
+<div class="review-card" {{ shopify_attributes }}>
+  <div class="review-card__content">
+    {%- if render_rating -%}
+      <div class="review-card__rating" role="img" aria-label="{{ card_rating }} out of 5 stars">
+        {%- for i in (1..5) -%}
+          <svg viewBox="0 0 20 20" aria-hidden="true" class="review-card__star {% if i <= card_rating %}review-card__star--filled{% else %}review-card__star--empty{% endif %}">
+            <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
+          </svg>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if quote != blank -%}
+      <p class="review-card__quote">&ldquo;{{ quote }}&rdquo;</p>
+    {%- endif -%}
+
+    {%- if name != blank or avatar != blank -%}
+      <div class="review-card__attribution">
+        {%- if avatar != blank -%}
+          {{
+            avatar
+            | image_url: width: 80
+            | image_tag: width: 40, height: 40, class: 'review-card__avatar', alt: card_avatar_alt
+          }}
+        {%- endif -%}
+
+        {%- if name != blank -%}
+          <p class="review-card__name">
+            {%- if location != blank -%}
+              {{- name -}}, {{ location }}
+            {%- else -%}
+              {{- name -}}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .review-card {
+    background: var(--card-base-background);
+    border-radius: var(--card-base-radius);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    box-shadow: var(--card-base-shadow);
+    overflow: hidden;
+  }
+
+  .review-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+  }
+
+  .review-card__rating {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-2xs);
+  }
+
+  .review-card__star {
+    width: var(--review-card-rating-icon-size);
+    height: var(--review-card-rating-icon-size);
+  }
+
+  .review-card__star--filled {
+    fill: var(--review-card-rating-filled-color);
+  }
+
+  .review-card__star--empty {
+    fill: var(--review-card-rating-empty-color);
+  }
+
+  /* Text's "body" role sets size/line-height/weight elsewhere in the theme; only what differs
+     (colour, italic) is set here, same convention blocks/mionas-text.liquid follows. */
+  .review-card__quote {
+    margin: 0;
+    font-family: var(--font-family-archivo);
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    font-weight: var(--text-role-body-font-weight);
+    font-style: italic;
+    color: var(--review-card-quote-foreground);
+  }
+
+  .review-card__attribution {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .review-card__avatar {
+    width: var(--review-card-avatar-size);
+    height: var(--review-card-avatar-size);
+    border-radius: var(--review-card-avatar-radius);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  /* Text's "label" role sets size/line-height/weight/tracking elsewhere; only colour differs. */
+  .review-card__name {
+    margin: 0;
+    font-family: var(--font-family-archivo);
+    font-size: var(--text-role-label-font-size);
+    line-height: var(--text-role-label-line-height);
+    font-weight: var(--text-role-label-font-weight);
+    letter-spacing: var(--text-role-label-letter-spacing);
+    color: var(--review-card-attribution-foreground);
+  }
+{% endstylesheet %}

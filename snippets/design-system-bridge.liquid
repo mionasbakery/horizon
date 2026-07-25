@@ -12,8 +12,60 @@
   Token names are mirrored in scripts/design-tokens-contract.mjs, which fails the sync if any
   of them stop existing.
 {% endcomment %}
+{%- comment -%}
+  Archivo 500 (medium). The theme's four font settings load Archivo at 400 (body), 600
+  (subheading) and 800 (heading), each plus its font_modify'd bold -- so the browser has
+  400/600/700/800 and no 500. The design system loads 400;500;600;700;800 (../design-system/
+  src/fonts.css), and several of its tokens are 500: --link-base-font-weight,
+  --button-base-font-weight, and the caption/label text roles.
+
+  CSS font matching for a requested 500 with no 500 face checks 500, then descends -- landing on
+  400. So every one of those tokens silently rendered at body weight, with no error anywhere:
+  the token exists, the contract passes, the var() resolves, and the text is just wrong. That is
+  what made links indistinguishable from body copy.
+
+  There is no fifth Shopify font setting to hang this on, so derive the face from the body font
+  and emit it here. Guarded because font_modify returns blank when a weight isn't in Shopify's
+  library for that family, and font_face on blank emits nothing -- exactly the silent fallback
+  this is fixing. If the guard ever goes false, 500 text drops back to 400 and this comment is
+  the place to start.
+
+  Preloaded as well as declared, mirroring what snippets/fonts.liquid does for the four settings
+  fonts. The @font-face alone is what makes the weight render -- a preload never was load-bearing
+  for correctness -- but without it this face is the only Archivo weight the browser discovers
+  late, so 500 text flashes the fallback under font-display: swap while every other weight is
+  already warm. It also means n5 shows up alongside n4/n6/n8 in the head, so "is the medium face
+  there?" stays answerable by reading the markup, which is where anyone will look first.
+
+  Lives here rather than in snippets/fonts.liquid because that file is stock Horizon and this
+  theme merges from Shopify/horizon -- keeping all the Archivo-500 handling in this one
+  Mionas-owned snippet keeps it out of the way of upstream merges.
+{%- endcomment -%}
+{%- assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500' -%}
+{%- if body_font_medium -%}
+  {{ body_font_medium | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
+  {% style %}
+    {{ body_font_medium | font_face: font_display: 'swap' }}
+  {% endstyle %}
+{%- endif -%}
 {% style %}
   :root {
+    /* Font families: the design system's two primitives, repointed at the faces this theme
+       actually loads. A --font-family-* token is an inert string -- a custom property loads no
+       font file -- so spending one renders Archivo only by coincidence, and falls back the
+       moment a font setting changes. Shopify hosts and preloads fonts through theme settings, so
+       --font-body--family / --font-accent--family are the only families that are really here.
+
+       This is the whole font-family story for the theme. Every component token
+       (--link-base-font-family, --card-base-font-family, ...) is a var() reference to one of
+       these two in dist/tokens.flat.css, so blocks spend their own component token, mirror their
+       .module.css verbatim, and resolve through here automatically. A new design-system component
+       needs no change in this file. Both names are pinned by value in
+       scripts/design-tokens-contract.mjs, so re-pointing one design-system side fails the sync
+       instead of silently keeping the mapping below. */
+    --font-family-archivo: var(--font-body--family);
+    --font-family-oswald: var(--font-accent--family);
+
     /* h1 -> hero. Fixed, not clamped, regardless of the token's value -- this overrides
        --font-h1--size directly (base.css:704 reads it as a plain property), bypassing
        theme-styles-variables.liquid's own settings-driven clamp() generation entirely. That
@@ -68,17 +120,50 @@
     --button-padding-inline: var(--button-size-md-padding);
   }
 
-  /* Horizon gives button labels the paragraph weight (400, base.css:1245); the design system's
-     buttons are semibold. No Shopify setting exposes button weight, so this needs a rule.
+  /* Font smoothing. The design system sets none anywhere, so its components rasterise with the
+     platform default -- subpixel antialiasing on macOS. Horizon sets
+     -webkit-font-smoothing: antialiased in five places, and the first is `body` (base.css:677).
+     The property inherits, so that one declaration reaches every element on the page, the Mionas
+     mirrors included.
+
+     Grayscale antialiasing renders visibly lighter than subpixel at an identical weight, which is
+     why the whole theme still read thinner than Storybook after the Archivo 500 face was loading
+     correctly. Two different causes, the same symptom; this is the second one.
+
+     The universal selector and the !important are both deliberate. Four of the five declarations
+     live in files this theme merges from Shopify/horizon (base.css, overflow-list.css,
+     header-actions.liquid, contact-form.liquid) and their selectors range from `body` to
+     `slot[name='more'] .button`. Restating that list here would mean re-copying upstream selectors
+     after every merge, and any declaration Shopify adds later would silently restore the thin
+     rendering. Normalising one inherited property once is the version that keeps working.
+     blocks/corporate-quote-form.liquid is the fifth; it is this theme's own file, so the
+     declaration was removed there outright rather than overridden here. */
+  *,
+  *::before,
+  *::after {
+    -webkit-font-smoothing: auto !important;
+  }
+
+  /* Horizon gives button labels the paragraph weight (400, base.css:1245). No Shopify setting
+     exposes button weight, so this needs a rule.
+
+     Spends the token rather than a hardcoded step, so native Horizon buttons and
+     blocks/mionas-button.liquid stay at one weight. This was --font-weight-semibold (600) until
+     ../design-system bd2ec5e retokenized Button.module.css onto --button-base-font-weight (500);
+     the commit message doesn't mention weight, so the drop was confirmed deliberate with the
+     design system's author rather than inferred from the diff. Note this is one of the weights
+     that only renders correctly because of the Archivo 500 face emitted above.
+
      Same selector list as base.css:1229-1232, and this snippet renders after base.css, so it
      wins on source order at equal specificity.
      .button-unstyled is excluded: it strips padding/background/border to read as plain text
-     (base.css:1361), and must not be bolded. base.css uses this same :not() idiom at line 1265. */
+     (base.css:1361), and must not be weighted up. base.css uses this same :not() idiom at
+     line 1265. */
   .button:not(.button-unstyled),
   .button-secondary,
   .button-custom,
   button.shopify-payment-button__button--unbranded {
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--button-base-font-weight);
   }
 
   /* Footer tagline — a merchant-added `text` block inside the footer group, set to

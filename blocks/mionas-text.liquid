@@ -74,7 +74,7 @@
 {% stylesheet %}
   .text-role {
     margin: 0;
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
   }
 
   .text-role--hero {
@@ -141,15 +141,16 @@
   }
 
   /* Family and transform, not just size/weight/spacing, because Text.module.css's .stamp is the one
-     role that departs from the shared .root font-family. Family comes from the theme's loaded
-     accent font setting, not the design system's --font-family-oswald string -- that token loads no
-     font file. See docs/superpowers/specs/2026-07-20-text-role-block-design.md, "Typography". */
+     role that departs from the shared .root font-family. --font-family-oswald is spent directly,
+     as Text.module.css does; snippets/design-system-bridge.liquid repoints it at the theme's
+     loaded accent font, which is what actually puts a font file behind it. See
+     docs/superpowers/specs/2026-07-20-text-role-block-design.md, "Typography". */
   .text-role--stamp {
     font-size: var(--text-role-stamp-font-size);
     line-height: var(--text-role-stamp-line-height);
     font-weight: var(--text-role-stamp-font-weight);
     letter-spacing: var(--text-role-stamp-letter-spacing);
-    font-family: var(--font-accent--family);
+    font-family: var(--font-family-oswald);
     text-transform: uppercase;
   }
 

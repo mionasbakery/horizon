@@ -98,12 +98,12 @@
     gap: var(--breadcrumbs-base-gap);
   }
 
-  /* Family routes through the theme's own loaded body font, never the design system's
-     --link-base-font-family directly -- that token is an inert string with no font file behind
-     it (mionas-design-sync's "fonts are the exception" rule), so it would only render correctly
-     by coincidence. Weight and size aren't font names, so they're safe to spend as-is. */
+  /* Family is --font-family-archivo, the design system's body primitive, repointed at the theme's
+     loaded body font by snippets/design-system-bridge.liquid. Breadcrumbs.module.css sets no
+     family of its own -- BreadcrumbLink inherits -- so this spends the primitive rather than
+     borrowing Link's component token for an element that isn't a Link. */
   .mionas-breadcrumbs__link {
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
     font-weight: var(--link-base-font-weight);
     font-size: var(--link-size-sm-font-size);
     text-decoration: none;

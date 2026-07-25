@@ -21,9 +21,9 @@
   matching CardMedia's own approach. This block reproduces that quirk faithfully rather than
   "fixing" it, since it's how the real component behaves.
 
-  Every colour/radius/shadow/spacing here is a --card-* token (assets/design-tokens.css); family is
-  the usual exception -- --card-base-font-family is a literal stack, so this spends
-  --font-body--family instead.
+  Every colour/radius/shadow/spacing/family here is a --card-* token (assets/design-tokens.css),
+  matching Card.module.css. --card-base-font-family resolves through --font-family-archivo, which
+  snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -33,6 +33,12 @@
   unless variant == 'default'
     assign card_classes = card_classes | append: ' mionas-card--' | append: variant
   endunless
+  if block_settings.width == 'full'
+    assign card_classes = card_classes | append: ' mionas-card--full'
+  endif
+  if block_settings.inset
+    assign card_classes = card_classes | append: ' mionas-card--inset'
+  endif
   if block_settings.link != blank
     assign card_classes = card_classes | append: ' mionas-card--interactive'
   endif
@@ -62,7 +68,7 @@
     border-radius: var(--card-base-radius);
     border: var(--card-base-border-width) solid var(--card-base-border-color);
     box-shadow: var(--card-base-shadow);
-    font-family: var(--font-body--family);
+    font-family: var(--card-base-font-family);
     padding-bottom: var(--card-base-padding);
     max-width: 320px;
     overflow: hidden;
@@ -78,6 +84,34 @@
     border: none;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  /* Card.module.css caps the card at 320px. The Contacto info panel is a full-width column, so
+     this opts out. Default (no class) keeps the design-system cap.
+
+     `width: 100%` (not `align-self: stretch`) so this behaves whether the parent group is a
+     column OR a row: stretch only makes sense on the cross axis of a column parent and would
+     misbehave (stretching along the main axis) if a full-width card ever ends up in a row. */
+  .mionas-card--full {
+    max-width: none;
+    width: 100%;
+  }
+
+  /* Card carries bottom padding only -- children bleed to the top and side edges, matching
+     CardMedia. This opts into padding on all four sides.
+
+     The flex column + gap is a deliberate divergence from Card.module.css, not a port of it:
+     stacked children (four mionas-text blocks in the Contacto info panel) carry no margins of
+     their own and would otherwise butt together. It rides on this flag rather than applying
+     always, so a default mionas-card still behaves exactly like Card.tsx.
+
+     `padding` shorthand here intentionally resets the base rule's `padding-bottom` longhand --
+     same specificity, later in the sheet, so the shorthand wins. */
+  .mionas-card--inset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--card-base-padding);
   }
 
   .mionas-card--interactive {
@@ -111,6 +145,23 @@
         { "value": "plain", "label": "Plain" }
       ],
       "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "options": [
+        { "value": "default", "label": "Default (max 320px)" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "inset",
+      "label": "Pad content on all sides",
+      "info": "Off matches the design system: children bleed to the top and side edges, with padding on the bottom only. On also spaces stacked children apart.",
+      "default": false
     },
     {
       "type": "url",

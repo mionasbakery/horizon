@@ -1,0 +1,136 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/TextField/TextField.tsx -- a labelled text input inside an
+  underline field.
+
+  The input draws NO border and NO background of its own. The line under it belongs to
+  snippets/mionas-form-field.liquid, which this snippet wraps itself in. Adding a border here would
+  produce a boxed input sitting on top of an underline.
+
+  Accepts:
+    label         Required. Label copy.
+    name          Required. The form field name, e.g. 'contact[email]'.
+    id            Required in practice -- it associates the label with the control. Callers derive
+                  it from the block id so two of the same form on one page don't collide.
+    type          Defaults to 'text', matching TextField.tsx's `type = "text"`.
+    value         Prefilled value.
+    placeholder   Optional.
+    rows          Renders a <textarea> with this many rows instead of an <input>. THIS IS A THEME
+                  EXTENSION: the design system has no Textarea component, so there is no .module.css
+                  to mirror for it. It reuses the input's styling verbatim and adds only
+                  `resize: vertical`. Worth proposing back to ../design-system if a second form needs
+                  it -- see the mionas-design-component skill on new patterns.
+    required      Defaults to true (TextField.tsx's `required = true`). Sets the `required` and
+                  `aria-required` attributes and drops the label's " (optional)" suffix. Explicit
+                  `== false` test, because Liquid's `default` filter treats false as empty.
+    disabled      Pass true to disable and dim the control.
+    error         Message string. Switches the field to error colours, renders the message, and sets
+                  aria-invalid + aria-describedby + autofocus on the control.
+
+                  The autofocus is load-bearing, not decoration. A Shopify form posts and the page
+                  re-renders, so without it a failed submit drops the user back at the top of a
+                  fresh document with focus on <body> and no announcement that anything went wrong.
+                  It sits on the errored CONTROL rather than on the message, so the user lands
+                  somewhere they can immediately type -- and aria-describedby means the message is
+                  read out on arrival anyway. Only one field can hold it: if a form ever reports two
+                  errors at once, pass `error` to the first one only, or the browser honours the
+                  first autofocus in document order and silently ignores the rest.
+    autocomplete, spellcheck, autocapitalize, inputmode
+                  Passed through when set.
+    optional_text Forwarded to the label; see snippets/mionas-form-label.liquid.
+    attributes    Raw string appended to the control tag, for anything not covered above.
+    class         Extra classes on the field wrapper.
+
+  Fonts: --text-field-base-font-family, exactly as TextField.module.css spends it. It resolves
+  through --font-family-archivo, which snippets/design-system-bridge.liquid repoints at the theme's
+  loaded body font -- so the family is the design system's decision, delivered by a face Shopify
+  actually hosts.
+{%- endcomment -%}
+{% liquid
+  assign field_type = type | default: 'text'
+  assign field_id = id
+  assign field_error_id = field_id | append: '-error'
+
+  assign field_is_required = true
+  if required == false
+    assign field_is_required = false
+  endif
+
+  assign field_has_error = false
+  if error != blank
+    assign field_has_error = true
+  endif
+%}
+{%- capture text_field_control -%}
+  {%- if rows -%}
+    <textarea
+      class="mionas-text-field__input mionas-text-field__input--textarea"
+      id="{{ field_id }}"
+      name="{{ name }}"
+      rows="{{ rows }}"
+      {% if placeholder != blank %}placeholder="{{ placeholder }}"{% endif %}
+      {% if field_is_required %}required aria-required="true"{% endif %}
+      {% if disabled %}disabled{% endif %}
+      {% if field_has_error %}aria-invalid="true" aria-describedby="{{ field_error_id }}" autofocus{% endif %}
+      {% if autocomplete != blank %}autocomplete="{{ autocomplete }}"{% endif %}
+      {% if spellcheck != blank %}spellcheck="{{ spellcheck }}"{% endif %}
+      {% if autocapitalize != blank %}autocapitalize="{{ autocapitalize }}"{% endif %}
+      {{ attributes }}
+    >{{- value -}}</textarea>
+  {%- else -%}
+    <input
+      class="mionas-text-field__input"
+      id="{{ field_id }}"
+      name="{{ name }}"
+      type="{{ field_type }}"
+      value="{{ value }}"
+      {% if placeholder != blank %}placeholder="{{ placeholder }}"{% endif %}
+      {% if field_is_required %}required aria-required="true"{% endif %}
+      {% if disabled %}disabled{% endif %}
+      {% if field_has_error %}aria-invalid="true" aria-describedby="{{ field_error_id }}" autofocus{% endif %}
+      {% if autocomplete != blank %}autocomplete="{{ autocomplete }}"{% endif %}
+      {% if spellcheck != blank %}spellcheck="{{ spellcheck }}"{% endif %}
+      {% if autocapitalize != blank %}autocapitalize="{{ autocapitalize }}"{% endif %}
+      {% if inputmode != blank %}inputmode="{{ inputmode }}"{% endif %}
+      {{ attributes }}
+    >
+  {%- endif -%}
+{%- endcapture -%}
+{%- render 'mionas-form-field',
+  control: text_field_control,
+  label: label,
+  for: field_id,
+  error: error,
+  error_id: field_error_id,
+  required: required,
+  optional_text: optional_text,
+  class: class
+-%}
+
+{% stylesheet %}
+  /* TextField.module.css .input. `padding: 0` then `padding-left` is not redundant: browsers give
+     inputs and textareas their own default padding, and the design's only inset is the start one,
+     which lines the text up with the label and the error message above and below it. */
+  .mionas-text-field__input {
+    appearance: none;
+    width: 100%;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+    padding-left: var(--text-field-base-padding);
+    color: var(--text-field-base-foreground);
+    font-family: var(--text-field-base-font-family);
+    font-size: var(--text-field-base-font-size);
+    line-height: var(--text-field-base-line-height);
+  }
+
+  .mionas-text-field__input:disabled {
+    opacity: var(--text-field-state-disabled-opacity);
+  }
+
+  /* Theme extension, no design-system counterpart -- see the textarea note in the header comment. */
+  .mionas-text-field__input--textarea {
+    resize: vertical;
+  }
+{% endstylesheet %}

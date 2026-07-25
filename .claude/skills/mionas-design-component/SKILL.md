@@ -163,13 +163,12 @@ schema is involved; the settings JSON changes are just data.
 4. For anything visual the design system hasn't tokenized yet, declare a block-local custom property
    once, clearly commented as a placeholder for a future token.
 5. If the component has non-obvious invariants a screenshot can't show (a font that could silently
-   fall back, a literal that must stay single-sourced), add a `scripts/mionas-{name}-contract.test.mjs`
-   following the pattern in `scripts/mionas-review-card-contract.test.mjs`.
+   fall back, a literal that must stay single-sourced), record them in a comment at the top of the
+   file. Do not add test files — this theme has no test suite.
 
 ## Verify before done
 
 ```sh
-npm test              # contract tests, if any were added
 shopify theme check   # Liquid lint
 ```
 

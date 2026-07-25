@@ -13,6 +13,13 @@ Use the [Shopify CLI](https://shopify.dev/docs/storefronts/themes/tools/cli) for
 
 See the [Developer tools](README.md#developer-tools) section of the README for more.
 
+## Tests
+
+This theme has no test suite, deliberately. Never write test files — not for Mionas components
+(`mionas-*.liquid`), not for the scripts under `scripts/`, not anywhere else. Verify changes with
+`shopify theme check` and a `shopify theme dev` preview instead. If something has a non-obvious
+invariant, record it as a comment in the file rather than as a test.
+
 ## Git
 
 `origin` is `mionasbakery/horizon`. `upstream` is `Shopify/horizon` — fetch and merge from it to pull in upstream theme changes.

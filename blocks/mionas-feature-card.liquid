@@ -17,7 +17,10 @@
   --text-color-inverse-primary), matching Text's role vocabulary the same way
   blocks/mionas-text.liquid exposes it -- only what FeatureCard.module.css layers on top (uppercase +
   its own font-weight override on the title, a dimming opacity on the subtitle) is added locally.
-  Family is the usual exception: --font-body--family, not a design-system --font-family-* token.
+  Family is --font-family-archivo, the design system's body primitive, which
+  snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
+  FeatureCard.module.css sets no family of its own -- in React it inherits -- so this spends the
+  primitive its Text children resolve to rather than inventing a component token for it.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -85,7 +88,7 @@
 
   .mionas-feature-card__title {
     margin: 0;
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
     font-size: var(--text-role-heading-font-size);
     line-height: var(--text-role-heading-line-height);
     font-weight: var(--feature-card-title-font-weight);
@@ -96,7 +99,7 @@
 
   .mionas-feature-card__subtitle {
     margin: 4px 0 0;
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
     font-size: var(--text-role-body-font-size);
     line-height: var(--text-role-body-line-height);
     font-weight: var(--text-role-body-font-weight);
