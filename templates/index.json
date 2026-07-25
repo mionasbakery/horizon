@@ -9,6 +9,212 @@
  */
 {
   "sections": {
+    "mionas_split_hero_WD8xYY": {
+      "type": "mionas-split-hero",
+      "blocks": {
+        "static-media": {
+          "type": "image",
+          "name": "Image",
+          "static": true,
+          "settings": {
+            "image": "shopify://shop_images/DSC0380.jpg",
+            "link": "",
+            "image_ratio": "landscape",
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fill",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "static-copy": {
+          "type": "group",
+          "name": "Copy",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "mionas_text_ARrD79": {
+              "type": "mionas-text",
+              "name": "Eyebrow",
+              "settings": {
+                "text": "<p>ESPECIALIDAD EN COOKIES · SITGES</p>",
+                "role": "stamp",
+                "variant": "accent",
+                "tag": "div"
+              },
+              "blocks": {}
+            },
+            "mionas_text_NJkqUW": {
+              "type": "mionas-text",
+              "name": "Heading",
+              "settings": {
+                "text": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
+                "role": "hero",
+                "variant": "default",
+                "tag": "h1"
+              },
+              "blocks": {}
+            },
+            "mionas_text_H8dqtJ": {
+              "type": "mionas-text",
+              "name": "Lead",
+              "settings": {
+                "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la península.</p>",
+                "role": "lead",
+                "variant": "default",
+                "tag": "p"
+              },
+              "blocks": {}
+            },
+            "group_QJdFQn": {
+              "type": "group",
+              "name": "Actions",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "button_FDB884": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Comprar cookies",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                },
+                "button_VxBr4J": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Nuestra historia",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "style_class": "button-secondary",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "button_FDB884",
+                "button_VxBr4J"
+              ]
+            }
+          },
+          "block_order": [
+            "mionas_text_ARrD79",
+            "mionas_text_NJkqUW",
+            "mionas_text_H8dqtJ",
+            "group_QJdFQn"
+          ]
+        }
+      },
+      "name": "Mionas: Split hero",
+      "settings": {
+        "variant": "sand",
+        "media_position": "left",
+        "section_width": "full-width",
+        "section_height": "medium",
+        "section_height_custom": 50,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "section_663QR9": {
       "type": "section",
       "blocks": {
@@ -579,6 +785,7 @@
     }
   },
   "order": [
+    "mionas_split_hero_WD8xYY",
     "section_663QR9",
     "product_list_NtrmPD",
     "carousel_XcmdNa"
