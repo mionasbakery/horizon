@@ -1,5 +1,5 @@
 ---
-name: mionas-component
+name: mionas-design-component
 description: >
   Bring a Mionas design-system (../design-system) look into the Horizon theme, whether that means
   reskinning an existing native section/block to match it, importing a design-system component as a
@@ -21,7 +21,7 @@ description: >
 This skill covers the *shape* of the work: deciding what kind of file to create, naming it, and
 keeping it separate from Shopify's native theme files. For the *substance* — which design tokens to
 spend, how to bridge typography, how fonts work, contract-test patterns — defer to the
-`design-system-sync` skill's "Mirroring a design-system component in the theme" section. Read it
+`mionas-design-sync` skill's "Mirroring a design-system component in the theme" section. Read it
 before building anything; don't duplicate that guidance here.
 
 ## Two entry points
@@ -35,7 +35,7 @@ a guess from the name.
 **Creating something new.** The user wants a component that doesn't exist in the design system yet,
 but should look and feel like it belongs — same spacing scale, same color roles, same type roles.
 Build it in the theme using existing tokens plus block-local custom properties for anything not yet
-tokenized (`design-system-sync` explains this pattern). Because the design system is the source of
+tokenized (`mionas-design-sync` explains this pattern). Because the design system is the source of
 truth, a genuinely new pattern shouldn't live in the theme alone forever: after building it, ask the
 user whether it's worth proposing back into `../design-system` as a real component. Only start
 editing files in `../design-system` after they say yes — that's a second repo with its own history
@@ -157,7 +157,7 @@ schema is involved; the settings JSON changes are just data.
    spec with the user before writing Liquid.
 2. Scaffold the file under the right directory with the `mionas-` name, schema `"name"`, and
    `presets` (if a block) per the naming convention above.
-3. Spend design tokens via `var(--...)`, following `design-system-sync`'s rules — never hardcode a
+3. Spend design tokens via `var(--...)`, following `mionas-design-sync`'s rules — never hardcode a
    value the design system already tokenizes, and never spend a design-system `--font-family-*`
    token directly (fonts route through the theme's loaded font settings).
 4. For anything visual the design system hasn't tokenized yet, declare a block-local custom property

@@ -3,7 +3,7 @@
   attribution line (name, optional location, optional avatar), inside a card.
 
   No native Horizon section/block covers a testimonial/review card, so this forks a new file per
-  mionas-component's rule -- there is no structure to reskin. Meant to be repeated as a block inside
+  mionas-design-component's rule -- there is no structure to reskin. Meant to be repeated as a block inside
   a section (e.g. a multi-column group), the same way ReviewCard.tsx is meant to be repeated in a
   testimonials grid.
 
@@ -16,7 +16,7 @@
   so this block does the same with --space-lg on .review-card__content rather than the card token.
 
   Card.module.css itself hardcodes a fixed max-width on .root -- not yet a token upstream. Declared
-  once below as a block-local custom property per design-system-sync's rule for untokenized values.
+  once below as a block-local custom property per mionas-design-sync's rule for untokenized values.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings

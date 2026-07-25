@@ -6,7 +6,7 @@
   Horizon's native blocks/button.liquid (t:names.button) only exposes four style_class options
   (button / button-secondary / button-unstyled / button-custom) via snippets/button.liquid -- there
   is no schema path to outline, ghost, danger, or either inverse variant, so this forks a new block
-  per mionas-component's rule rather than trying to stretch the native one. blocks/button.liquid and
+  per mionas-design-component's rule rather than trying to stretch the native one. blocks/button.liquid and
   snippets/button.liquid are untouched by this -- the native button still gets its current look from
   snippets/design-system-bridge.liquid's global `.button` override, unrelated to this block.
 
@@ -16,7 +16,7 @@
   link is set, same convention as snippets/button.liquid.
 
   Every colour, radius, and size metric comes from --button-* tokens (assets/design-tokens.css).
-  Family is the one exception, per design-system-sync: --button-base-font-family is a literal font
+  Family is the one exception, per mionas-design-sync: --button-base-font-family is a literal font
   stack, not the theme's loaded font, so this spends --font-body--family instead, same as
   mionas-text.liquid and mionas-review-card.liquid do for their own text.
 {%- endcomment -%}

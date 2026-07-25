@@ -1,5 +1,5 @@
 ---
-name: design-system-sync
+name: mionas-design-sync
 description: >
   Sync the Horizon Shopify theme with the Mionas design system in ../design-system, which is
   always the source of truth. Use this skill whenever the user wants to sync, pull, update, or

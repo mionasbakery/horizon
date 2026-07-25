@@ -8,7 +8,7 @@
   A section, not a block: the trail needs to sit above main content on whichever templates a
   merchant wants it on (product, collection, page, blog, article, search), each independently
   added/removed/reordered from that template's own entry in the theme editor's section list --
-  that's Section's job per mionas-component's "section, block, or snippet" guidance. It doesn't
+  that's Section's job per mionas-design-component's "section, block, or snippet" guidance. It doesn't
   compose into one specific parent the way a Button or SplitHero does, so it isn't a block.
 
   The trail itself needs no settings: it reads Shopify's own template context (template.name,
@@ -100,7 +100,7 @@
 
   /* Family routes through the theme's own loaded body font, never the design system's
      --link-base-font-family directly -- that token is an inert string with no font file behind
-     it (design-system-sync's "fonts are the exception" rule), so it would only render correctly
+     it (mionas-design-sync's "fonts are the exception" rule), so it would only render correctly
      by coincidence. Weight and size aren't font names, so they're safe to spend as-is. */
   .mionas-breadcrumbs__link {
     font-family: var(--font-body--family);
