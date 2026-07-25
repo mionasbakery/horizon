@@ -1,0 +1,84 @@
+{%- doc -%}
+  @param {number} rating - The review's star rating, 1-5.
+  @param {string} quote - The review text.
+  @param {string} name - The reviewer's display name.
+{%- enddoc -%}
+{%- comment -%}
+  One Google review card, as a configurable block.
+
+  sections/mionas-google-reviews.liquid renders this once per selected review, as a *static* block
+  with a fixed id inside its for-loop -- the same shape sections/product-list.liquid uses for
+  blocks/_product-card.liquid, and what Horizon's "Featured collection" sections do. A static block
+  may be rendered in a loop, and because every iteration shares one id, the theme editor shows a
+  single card block whose settings govern every card. That is the correct shape here: which reviews
+  appear rotates daily, so there is no stable per-card thing to configure.
+
+  Data arrives as arbitrary parameters on the content_for tag (rating/quote/name), not as
+  closest.metaobject.google_review. Both are supported, but the section already loops
+  metaobjects.google_review.values and owns the enabled/rotation logic, so it necessarily knows the
+  field names -- passing them keeps the metaobject schema in one file and leaves this block a pure
+  presentation layer. If merchants ever need to bind other review fields through the theme editor's
+  dynamic-sources picker, closest.metaobject.google_review is the route to switch to.
+
+  Private (`_`-prefixed) because it renders nothing on its own: without the parameters the section
+  passes, it is an empty card.
+
+  The markup comes from snippets/mionas-google-review-card.liquid, the same snippet
+  blocks/mionas-review-card.liquid renders from hand-entered settings, so a Google review and a
+  hand-entered testimonial stay one component with different data behind them. This file adds no
+  markup and no CSS of its own -- only the three merchant choices.
+{%- endcomment -%}
+
+{% liquid
+  assign card_quote = quote
+  if block.settings.quote_max_characters > 0
+    assign card_quote = card_quote | truncate: block.settings.quote_max_characters
+  endif
+
+  # A hidden author is passed as blank rather than suppressed inside the snippet: the snippet
+  # already treats a blank name as "no attribution", so no extra parameter is needed for it.
+  assign card_name = ''
+  if block.settings.show_author
+    assign card_name = name
+  endif
+%}
+
+{% render 'mionas-google-review-card',
+  rating: rating,
+  show_rating: block.settings.show_rating,
+  quote: card_quote,
+  name: card_name,
+  shopify_attributes: block.shopify_attributes
+%}
+
+{% schema %}
+{
+  "name": "Mionas: Google review",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show reviewer name",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "quote_max_characters",
+      "label": "Quote length",
+      "min": 0,
+      "max": 400,
+      "step": 20,
+      "default": 0,
+      "unit": "ch",
+      "info": "0 shows the full review. Any other value truncates longer reviews, which evens out card heights in a grid."
+    }
+  ]
+}
+{% endschema %}

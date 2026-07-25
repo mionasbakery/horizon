@@ -31,7 +31,7 @@
 >
   {%- if block_settings.address == blank -%}
     {%- comment -%} No address yet: render the frame so the editor shows the block's footprint. {%- endcomment -%}
-    <div class="mionas-map__empty">{{ block_settings.title }}</div>
+    <div class="mionas-map__empty">{{ block_settings.title | escape }}</div>
   {%- else -%}
     <iframe
       class="mionas-map__frame"

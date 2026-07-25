@@ -27,6 +27,16 @@
   --text-field-base-font-family is deliberately NOT spent: it is an inert font-list string, so it
   loads no font file. Text spends --font-body--family, the font the theme actually loads -- the same
   rule mionas-text.liquid and mionas-review-card.liquid follow.
+
+  Two deliberate divergences from FormField.module.css / FormLabel.module.css, same as
+  mionas-card.liquid and mionas-button.liquid each carry their own divergence note: (1)
+  FormField.module.css's .root is an UNDERLINE field -- border-bottom only on the wrapper, no
+  border at all on the input (background: transparent) -- while .mionas-contact-form__input here
+  draws a full boxed border with `border-radius: var(--radius-md)` directly on the input. (2)
+  FormLabel.module.css's .root is `text-transform: uppercase`; .mionas-contact-form__label here is
+  not. Both are intentional: the Contacto page's approved prototype design is the authority for how
+  this form looks, not FormField.module.css/FormLabel.module.css -- do not "fix" the CSS to match
+  them.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -235,6 +245,7 @@
   }
 
   .mionas-contact-form__submit:active {
+    transform: scale(var(--button-state-pressed-scale));
     opacity: var(--button-state-pressed-opacity);
   }
 

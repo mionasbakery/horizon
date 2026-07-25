@@ -87,9 +87,14 @@
   }
 
   /* Card.module.css caps the card at 320px. The Contacto info panel is a full-width column, so
-     this opts out. Default (no class) keeps the design-system cap. */
+     this opts out. Default (no class) keeps the design-system cap.
+
+     `width: 100%` (not `align-self: stretch`) so this behaves whether the parent group is a
+     column OR a row: stretch only makes sense on the cross axis of a column parent and would
+     misbehave (stretching along the main axis) if a full-width card ever ends up in a row. */
   .mionas-card--full {
     max-width: none;
+    width: 100%;
   }
 
   /* Card carries bottom padding only -- children bleed to the top and side edges, matching

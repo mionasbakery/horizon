@@ -5,39 +5,45 @@
   blocks/mionas-review-card.liquid renders -- so a Google review and a hand-entered testimonial are
   the same component with different data behind them.
 
-  Why a section and not a block: a block is one card, and the carousel treats each block as one
-  slide, so a block that looped would put every review inside a single slide. A section can own both
-  the row and the summary line beneath it, which is also why no separate container section is needed
-  to place the summary.
+  Why a section and not a block: a *merchant-added* block is one card, and the carousel treats each
+  such block as one slide, so a block that looped would put every review inside a single slide. A
+  section can own both the row and the summary line beneath it, which is also why no separate
+  container section is needed to place the summary. The card is still a block -- see below -- just a
+  static one the section renders itself, which is a different thing.
 
-  The heading and the summary are *static* blocks -- rendered with content_for 'block' plus an
-  explicit type and id -- the same mechanism sections/mionas-split-hero.liquid uses for its two
-  sides and sections/product-list.liquid for its header. A static slot cannot be removed, reordered
-  or duplicated, so the section always has exactly one heading area and exactly one summary line,
-  while everything *inside* them (copy, type role, colour, alignment, spacing, extra lines) is the
-  merchant's to configure per instance. That is why this file no longer carries `heading`,
-  `horizontal_alignment`, `profile_url`, `reviews_label` or `link_label` settings: each of those now
-  belongs to the block that renders it.
+  The card and the summary are *static* blocks -- rendered with content_for 'block' plus an explicit
+  type and id -- the same mechanism sections/mionas-split-hero.liquid uses for its two sides and
+  sections/product-list.liquid for its header and its cards. A static slot cannot be removed,
+  reordered or duplicated, so the section always has exactly one card design and exactly one summary
+  row, while everything inside them is the merchant's to configure. That is why this file carries no
+  `heading`, `horizontal_alignment`, `profile_url`, `reviews_label`, `link_label` or `card_*`
+  settings: each of those now belongs to the block that renders it.
 
-  The heading slot is a native `group` (blocks/group.liquid), which renders its children dynamically
-  via content_for 'blocks', so a merchant can retitle it, restyle it, or add an eyebrow and a
-  subtitle beside it -- exactly as the split hero's copy column works. The summary slot is a private
-  block, blocks/_mionas-google-reviews-summary.liquid, because its score and count come from
-  metaobjects.google_review_summary and no native block can read that.
+  The card slot sits inside the selection loop below, rendered once per chosen review with the
+  review's fields passed as parameters on the tag. content_for 'block' accepts arbitrary parameters
+  and static blocks may be rendered in a for-loop; because every iteration shares the id
+  'static-review-card', the theme editor shows a single card block whose settings govern every card
+  -- the same behaviour product-list gets from _product-card. See
+  blocks/_mionas-google-review-card.liquid for why parameters rather than
+  closest.metaobject.google_review.
 
-  The cards are deliberately NOT blocks and cannot become them: content_for 'block' takes no
-  parameters, so a static slot cannot receive per-review data, and the carousel-slide problem above
-  rules out a repeating block. Their options are therefore section settings (the `card_*` group)
-  threaded into the render call below -- one setting governs every card, which is the honest shape
-  for a data-driven row anyway: there is nothing stable to configure per card when which reviews
-  appear rotates daily.
+  The summary slot is a container (blocks/_mionas-google-reviews-summary.liquid) rendering through
+  snippets/group.liquid, so its four parts -- score, separator, count, link -- are separate child
+  blocks the merchant can restyle, reorder, remove or add to. It could not be a native `group`
+  because a native group whitelists `@theme`, which covers public theme blocks only, and the score
+  and count must be private: they read metaobjects.google_review_summary and would render a summary
+  of nothing anywhere else.
+
+  There is no heading here. A heading above a section is an ordinary block the merchant places in
+  the template, and baking one in only duplicated what mionas-text already does better.
 
   Layout is merchant-controlled the same way sections/product-list.liquid does it: every selected
   card is captured into one string separated by <!--@list/split-->, that string is split into an
   array, and both are handed to snippets/resource-list.liquid, which owns grid / carousel /
   editorial rendering and the mobile-carousel fallback. This section is data-driven (it loops
   metaobjects, not merchant-authored blocks) exactly like product-list is, so the same capture-and-
-  split indirection is what buys layout settings without turning each review into a theme block.
+  split indirection is what buys layout settings without turning each review into a merchant-added
+  block.
 
   Why day-of-year rotation and not random: Shopify full-page-caches storefront pages for anonymous
   visitors and Liquid has no random filter, so a per-request pick would be frozen into cached HTML
@@ -179,15 +185,6 @@
     "
   >
     {%- comment -%}
-      The heading slot. base.css already hides .section-resource-list__header when the group inside
-      it is empty, so a merchant who deletes every line inside the group gets no stray gap -- no
-      `if heading != blank` guard is needed here the way the old text setting needed one.
-    {%- endcomment -%}
-    <div class="section-resource-list__header">
-      {%- content_for 'block', type: 'group', id: 'static-heading' -%}
-    </div>
-
-    {%- comment -%}
       Capture the selected cards into one string, separated the way product-list separates its
       product cards. The separator is emitted BEFORE every card after the first rather than after
       every card but the last: forloop.last refers to the whole pool here, not to the subset that
@@ -214,34 +211,14 @@
           endfor
         -%}
         {%- if selected -%}
-          {%- comment -%}
-            Card options are section settings, not block settings, and cannot become blocks: see the
-            header comment. They are resolved per review here and handed to the shared snippet --
-            the card itself stays one definition, rendered identically by the hand-entered
-            blocks/mionas-review-card.liquid, which simply never passes them.
-
-            An author who is hidden is passed as blank rather than suppressed inside the snippet:
-            the snippet already treats a blank name as "no attribution", so no new parameter is
-            needed for it.
-          {%- endcomment -%}
-          {%- liquid
-            assign card_quote = review.comment.value
-            if section.settings.card_quote_max_characters > 0
-              assign card_quote = card_quote | truncate: section.settings.card_quote_max_characters
-            endif
-
-            assign card_name = ''
-            if section.settings.card_show_author
-              assign card_name = review.author.value
-            endif
-          -%}
           {%- if rendered_count > 0 -%}<!--@list/split-->{%- endif -%}
           <div class="resource-list__item">
-            {% render 'mionas-google-review-card',
+            {% content_for 'block',
+              type: '_mionas-google-review-card',
+              id: 'static-review-card',
               rating: review.rating.value,
-              show_rating: section.settings.card_show_rating,
-              quote: card_quote,
-              name: card_name
+              quote: review.comment.value,
+              name: review.author.value
             %}
           </div>
           {%- assign rendered_count = rendered_count | plus: 1 -%}
@@ -273,11 +250,9 @@
     %}
 
     {%- comment -%}
-      The summary slot. No --horizontal-alignment is set on this wrapper on purpose -- alignment is
-      the block's own setting now; the block fills this wrapper and positions itself. The block
-      renders nothing at all when no summary metaobject exists, and
-      .section-resource-list__content:empty is already display: none, so an unsynced store gets no
-      empty row here.
+      The summary slot: a container block whose children -- score, separator, count, link -- are
+      each separately editable. No --horizontal-alignment is set on this wrapper on purpose; the
+      container is a group and owns its own direction, alignment and gap.
     {%- endcomment -%}
     <div class="section-resource-list__content">
       {%- content_for 'block', type: '_mionas-google-reviews-summary', id: 'static-summary' -%}
@@ -315,33 +290,6 @@
       "step": 1,
       "default": 5,
       "info": "Which reviews appear rotates daily. Clamped to the number of enabled reviews, so asking for more than exist simply shows them all."
-    },
-    {
-      "type": "header",
-      "content": "Cards"
-    },
-    {
-      "type": "checkbox",
-      "id": "card_show_rating",
-      "label": "Show star rating",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "card_show_author",
-      "label": "Show reviewer name",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "card_quote_max_characters",
-      "label": "Quote length",
-      "min": 0,
-      "max": 400,
-      "step": 20,
-      "default": 0,
-      "unit": "ch",
-      "info": "0 shows the full review. Any other value truncates longer reviews, which evens out card heights in a grid."
     },
     {
       "type": "header",
@@ -561,9 +509,6 @@
       "name": "Mionas: Google reviews",
       "category": "t:categories.basic",
       "settings": {
-        "card_show_rating": true,
-        "card_show_author": true,
-        "card_quote_max_characters": 0,
         "layout_type": "grid",
         "carousel_on_mobile": false,
         "columns": 3,
@@ -579,17 +524,27 @@
         "padding-block-end": 48
       },
       "blocks": {
-        "static-heading": {
-          "type": "group",
-          "name": "Heading",
+        "static-review-card": {
+          "type": "_mionas-google-review-card",
+          "name": "Review card",
           "static": true,
           "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "center",
+            "show_rating": true,
+            "show_author": true,
+            "quote_max_characters": 0
+          }
+        },
+        "static-summary": {
+          "type": "_mionas-google-reviews-summary",
+          "name": "Summary line",
+          "static": true,
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "center",
+            "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
             "gap": 8,
             "width": "fill",
@@ -598,7 +553,6 @@
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
-            "background_media": "none",
             "border": "none",
             "border_radius": 0,
             "padding-block-start": 0,
@@ -607,30 +561,46 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "title": {
-              "type": "mionas-text",
-              "name": "Title",
+            "score": {
+              "type": "_mionas-google-reviews-score",
+              "name": "Score",
               "settings": {
-                "text": "<p>Lo que dicen nuestros clientes</p>",
-                "role": "hero",
+                "show_star": true,
+                "role": "caption",
+                "variant": "primary"
+              }
+            },
+            "separator": {
+              "type": "mionas-text",
+              "name": "Separator",
+              "settings": {
+                "text": "<p>·</p>",
+                "role": "caption",
+                "variant": "tint",
+                "tag": "span"
+              }
+            },
+            "count": {
+              "type": "_mionas-google-reviews-count",
+              "name": "Count",
+              "settings": {
+                "label": "reseñas en Google",
+                "role": "caption",
+                "variant": "default"
+              }
+            },
+            "link": {
+              "type": "mionas-link",
+              "name": "Link",
+              "settings": {
+                "label": "Verlas todas",
+                "open_in_new_tab": true,
                 "variant": "primary",
-                "tag": "h2"
+                "size": "sm"
               }
             }
           },
-          "block_order": ["title"]
-        },
-        "static-summary": {
-          "type": "_mionas-google-reviews-summary",
-          "name": "Summary line",
-          "static": true,
-          "settings": {
-            "reviews_label": "reseñas en Google",
-            "link_label": "Verlas todas",
-            "show_star": true,
-            "role": "caption",
-            "horizontal_alignment": "center"
-          }
+          "block_order": ["score", "separator", "count", "link"]
         }
       }
     }
