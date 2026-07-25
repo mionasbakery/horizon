@@ -1,22 +1,25 @@
 #!/usr/bin/env node
 // One-time bootstrap for the Google Business Profile credentials that
-// .claude/skills/sync-google-reviews/SKILL.md needs in .env.local.
+// .claude/skills/sync-google-reviews/SKILL.md needs in .env.
 //
-// Run it yourself:  node scripts/gbp-auth.mjs
+//   npm run gbp:auth
+//   npm run gbp:auth -- --account=123 --location=456   (skip the interactive picker)
 //
-// It cannot be run headlessly and is not meant to be: step 2 below opens Google's consent screen
-// in a browser and a human has to click through it. Everything either side of that click is
-// automated.
+// One human step is unavoidable: step 2 opens Google's consent screen and somebody has to click
+// through it. Everything either side of that click is automated, and the script is safe to launch
+// non-interactively — it prints the consent URL to stdout and never blocks on a prompt without a
+// TTY (see choose()). That is what lets the sync skill start it in the background, hand the user
+// the URL, and pick up when it exits.
 //
-//   1. reads GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET from .env.local
+//   1. reads GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET from .env
 //   2. runs the OAuth loopback flow and exchanges the code for a refresh token
 //   3. discovers GBP_ACCOUNT_ID / GBP_LOCATION_ID with that token
-//   4. writes all three results back into .env.local
+//   4. writes all three results back into .env
 //
 // On secrets: the sync skill's Absolute Rule 3 ("never print secrets") targets the *access* token,
 // which is ephemeral and must never reach disk. This script honours that — the access token it mints
 // in step 3 lives in a local variable and is never printed or written. The refresh token is a
-// different animal: it is a stored credential whose whole purpose is to live in .env.local, which is
+// different animal: it is a stored credential whose whole purpose is to live in .env, which is
 // gitignored. So it gets written to that file and never printed to stdout. Do not "simplify" this
 // script away on a Rule 3 reading; the rule and this script agree.
 //
@@ -32,7 +35,7 @@ import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 
-const ENV_PATH = new URL('../.env.local', import.meta.url).pathname;
+const ENV_PATH = new URL('../.env', import.meta.url).pathname;
 const SCOPE = 'https://www.googleapis.com/auth/business.manage';
 
 function die(message) {
@@ -40,7 +43,7 @@ function die(message) {
   process.exit(1);
 }
 
-// --- .env.local read/write -------------------------------------------------
+// --- .env read/write -------------------------------------------------
 // Update-or-append per key so unrelated values and comments in the file survive. Never echo the
 // file's contents back out.
 
@@ -198,6 +201,28 @@ async function choose(label, items) {
   }
   console.log(`\nMultiple ${label}s found:\n`);
   items.forEach((it, i) => console.log(`  [${i + 1}] ${it.title} (${it.id})`));
+
+  // --account=<id> / --location=<id> preselects, which is what makes this script safe to run
+  // non-interactively (see below).
+  const flag = process.argv.find((a) => a.startsWith(`--${label}=`))?.split('=')[1];
+  if (flag) {
+    if (!items.some((it) => it.id === flag)) die(`--${label}=${flag} is not one of the ids above.`);
+    console.log(`\n  --${label}=${flag} supplied, using it.`);
+    return flag;
+  }
+
+  // No TTY means nothing can ever answer the prompt below, and awaiting it would hang forever —
+  // with consent *already granted*, which is the worst moment to hang. Exit with the list instead:
+  // the caller re-runs with the flag. This is the path an agent-driven background run takes.
+  if (!stdin.isTTY) {
+    die(
+      `more than one ${label} and no terminal to ask on.\n\n` +
+        `      Re-run with the id you want, e.g.  npm run gbp:auth -- --${label}=${items[0].id}\n` +
+        '      The refresh token is already saved; the re-run only needs consent again to obtain a\n' +
+        '      short-lived access token for the lookup.'
+    );
+  }
+
   const rl = createInterface({ input: stdin, output: stdout });
   const answer = await rl.question(`\nWhich ${label}? [1-${items.length}] `);
   rl.close();
@@ -215,7 +240,7 @@ async function discoverIds(accessToken) {
     accessToken
   );
   const accounts = (accountsBody.accounts ?? []).map((a) => ({
-    // The API returns full resource paths ("accounts/123"); .env.local wants the bare numeric id.
+    // The API returns full resource paths ("accounts/123"); .env wants the bare numeric id.
     id: a.name.replace(/^accounts\//, ''),
     title: a.accountName ?? a.name,
   }));
@@ -242,7 +267,7 @@ const clientSecret = env.GOOGLE_CLIENT_SECRET;
 
 if (!clientId || !clientSecret) {
   die(
-    'GOOGLE_CLIENT_ID and/or GOOGLE_CLIENT_SECRET are missing from .env.local.\n\n' +
+    'GOOGLE_CLIENT_ID and/or GOOGLE_CLIENT_SECRET are missing from .env.\n\n' +
       '      These two cannot be automated — they come from a Desktop app OAuth client you create\n' +
       '      by hand in the Google Cloud Console:\n\n' +
       '        1. console.cloud.google.com — create or pick a project\n' +
@@ -251,7 +276,7 @@ if (!clientId || !clientSecret) {
       '        3. APIs & Services > OAuth consent screen — External, add yourself as a test user,\n' +
       `           add the scope ${SCOPE}\n` +
       '        4. Credentials > Create credentials > OAuth client ID > **Desktop app**\n\n' +
-      '      Then: cp .env.local.example .env.local, paste the two values in, and re-run this script.'
+      '      Then: cp .env.example .env, paste the two values in, and re-run this script.'
   );
 }
 
@@ -261,7 +286,13 @@ let refreshToken, accessToken, accountId, locationId;
 try {
   console.log('Starting the Google Business Profile consent flow.');
   ({ refreshToken, accessToken } = await getRefreshToken(clientId, clientSecret));
-  console.log('\nRefresh token obtained.');
+  // Save the refresh token *before* discovery, not after. Discovery is the step most likely to
+  // fail — a 403 while Business Profile API access is still pending, or a multi-location bail-out —
+  // and a token thrown away there costs the user another full consent round-trip to re-obtain
+  // something they already had. writeEnv is update-or-append per key, so this composes with the
+  // second write below.
+  await writeEnv({ GOOGLE_REFRESH_TOKEN: refreshToken });
+  console.log('\nRefresh token obtained and saved to .env.');
 
   console.log('\nDiscovering account and location…');
   ({ accountId, locationId } = await discoverIds(accessToken));
@@ -270,11 +301,10 @@ try {
 }
 
 await writeEnv({
-  GOOGLE_REFRESH_TOKEN: refreshToken,
   GBP_ACCOUNT_ID: accountId,
   GBP_LOCATION_ID: locationId,
 });
 
-console.log('\nWrote GOOGLE_REFRESH_TOKEN, GBP_ACCOUNT_ID and GBP_LOCATION_ID to .env.local.');
-console.log('The refresh token was not printed. .env.local is gitignored — keep it that way.');
+console.log('\nWrote GOOGLE_REFRESH_TOKEN, GBP_ACCOUNT_ID and GBP_LOCATION_ID to .env.');
+console.log('The refresh token was not printed. .env is gitignored — keep it that way.');
 console.log('\nYou can now run the sync-google-reviews skill.');

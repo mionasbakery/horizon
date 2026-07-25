@@ -24,7 +24,7 @@ aren't already stored, so `sections/mionas-google-reviews.liquid` has fresh revi
    sync's worst failure mode is a missing review that a later run picks up — never a lost one. The
    one and only thing this skill ever overwrites is the single derived `google_review_summary` entry
    at handle `default` (Step 6), which is aggregate data, not review content.
-3. **Never print secrets.** Read `.env.local` values into shell variables; never echo them. This
+3. **Never print secrets.** Read `.env` values into shell variables; never echo them. This
    includes the OAuth access token: never `echo` it, never write it to a file, never pass it through
    a step's printed output. See Step 3 for how it is carried between steps instead.
 4. **New entries get `enabled: true` at creation and that field is never written again afterward.**
@@ -38,7 +38,7 @@ aren't already stored, so `sections/mionas-google-reviews.liquid` has fresh revi
 
 ## Step 1 — Load credentials
 
-Read `.env.local` from the repo root. If it is missing, or any of `GOOGLE_CLIENT_ID`,
+Read `.env` from the repo root. If it is missing, or any of `GOOGLE_CLIENT_ID`,
 `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` is empty, stop
 and name exactly which are missing. Make no network call.
 
@@ -48,28 +48,54 @@ Then point at the right remedy for *which* group is missing — they have differ
   from a **Desktop app** OAuth client the user creates by hand in the Google Cloud Console, plus
   Business Profile API access approval, which is human review at Google and can take days. Give them
   the console steps (`scripts/gbp-auth.mjs` prints the same list when it hits this case) and tell
-  them to `cp .env.local.example .env.local` and paste the two values in.
+  them to `cp .env.example .env` and paste the two values in.
 - **Only `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID` or `GBP_LOCATION_ID` missing** — these *are*
-  automated. Tell the user to run `npm run gbp:auth` (or `node scripts/gbp-auth.mjs`) **in a real
-  terminal**. Typing `! npm run gbp:auth` inline in this session works only when the Google account
-  has exactly one business account and one location: with more than one the script prompts on stdin
-  to pick, and a runner with no TTY reads EOF and dies *after* consent was already granted, which is
-  the confusing failure. A terminal is always safe, so recommend that first.
+  automated. Run `npm run gbp:auth` yourself, as described immediately below, then continue the sync
+  in the same session. Do not make the user drive it.
 
-**You cannot run `gbp:auth` on the user's behalf, and must not try.** It opens Google's consent
-screen in a browser and blocks until a human clicks through it; started as a normal tool call it
-would simply hang until it timed out. It is a command the *user* runs. Stop and wait for them to say
-it is done, then re-read `.env.local` and continue.
+### Running `gbp:auth` from this skill
 
-The script writes `GOOGLE_REFRESH_TOKEN` into gitignored `.env.local` and never prints it. That does
+**Launch it in the background, never in the foreground.** The script waits for a human to click
+through Google's consent screen — up to its own 10-minute timeout, which is longer than the maximum
+foreground tool timeout. A foreground call would therefore time out and kill a flow the user was
+halfway through. Background it, and the harness re-invokes you when it exits.
+
+1. Start it with `run_in_background: true`:
+
+   ```bash
+   npm run gbp:auth
+   ```
+
+2. Read its output until the authorization URL appears (it is printed within a second or two, well
+   before anything blocks). **Relay that URL to the user and ask them to open it** and sign in as the
+   Google account that owns the business listing. The script also tries to open a browser itself, but
+   say the URL out loud regardless — on a headless or remote machine that is the only way through.
+
+3. Wait for the process to exit. Do not poll it in a tight loop and do not start a second one.
+
+4. On exit, read the final output and branch:
+   - **Success** — it reports writing the three values. Re-read `.env` and continue to Step 2.
+   - **More than one account or location** — the script refuses rather than hanging, and prints the
+     ids it found. Ask the user which they want, then re-run in the background with the flag it
+     names, e.g. `npm run gbp:auth -- --account=<id> --location=<id>`. Consent has to be granted
+     again; say so, because the user will be surprised by a second consent screen otherwise.
+   - **403 at the discovery stage** — Business Profile API access is not approved yet. This is not a
+     credentials problem and re-running will not fix it. Report it and stop.
+
+**Never echo the script's output verbatim once it has succeeded**, and never `cat .env`. The
+script itself does not print the refresh token, but the file it writes contains one, and Absolute
+Rule 3 governs everything downstream of it. Relaying the authorization URL is fine — that is a public
+consent link with no secret in it.
+
+The script writes `GOOGLE_REFRESH_TOKEN` into gitignored `.env` and never prints it. That does
 not conflict with Absolute Rule 3: the rule's subject is the *access* token, which is ephemeral and
-must never reach disk anywhere in this skill. A refresh token is a stored credential and `.env.local`
+must never reach disk anywhere in this skill. A refresh token is a stored credential and `.env`
 is where it is supposed to live — that is what Step 2 and Step 3 read it from.
 
 ## Step 2 — Get an access token
 
 ```bash
-set -a; . ./.env.local; set +a
+set -a; . ./.env; set +a
 ACCESS_TOKEN=$(curl -s -X POST https://oauth2.googleapis.com/token \
   -d client_id="$GOOGLE_CLIENT_ID" \
   -d client_secret="$GOOGLE_CLIENT_SECRET" \
@@ -103,7 +129,7 @@ never interact at all in any way.)
 **On the access token: Step 3 mints its own — do not try to reuse Step 2's, and do not "simplify"
 this back out.** Every step of this skill runs as a *separate* tool call, so shell variables set in
 one block do not exist in the next. `ACCESS_TOKEN=$(curl ...)` in Step 2 is gone by the time Step 3
-runs, and the token is not in `.env.local`. An earlier version of this file assumed otherwise: Step 3
+runs, and the token is not in `.env`. An earlier version of this file assumed otherwise: Step 3
 sent `Authorization: Bearer ` with an empty value, Google answered `401`, and Step 3's own guard
 aborted — the sync failed safe but could never succeed. The obvious workaround, echoing the token
 forward the way the workdir path is carried, is forbidden by Absolute Rule 3. Writing it to a file
@@ -132,7 +158,7 @@ or partial entries would still create wrong or duplicate-ish data. The stakes ar
 they used to be — a bad fetch now means a missing or malformed review to retry, never a lost one.
 
 ```bash
-set -a; . ./.env.local; set +a
+set -a; . ./.env; set +a
 BASE="https://mybusiness.googleapis.com/v4/accounts/$GBP_ACCOUNT_ID/locations/$GBP_LOCATION_ID/reviews"
 WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/gbp-sync.XXXXXX")
 echo "WORKDIR=$WORKDIR   <-- carry this exact path into every later step, literally"
