@@ -15,10 +15,11 @@
   content, so there's no `:disabled` state to reproduce. `aria-disabled` stands in for it when no
   link is set, same convention as snippets/button.liquid.
 
-  Every colour, radius, and size metric comes from --button-* tokens (assets/design-tokens.css).
-  Family is the one exception, per mionas-design-sync: --button-base-font-family is a literal font
-  stack, not the theme's loaded font, so this spends --font-body--family instead, same as
-  mionas-text.liquid and mionas-review-card.liquid do for their own text.
+  Every colour, radius, size metric and the family come from --button-* tokens
+  (assets/design-tokens.css), exactly as Button.module.css spends them. --button-base-font-family
+  resolves through --font-family-archivo, which snippets/design-system-bridge.liquid repoints at
+  the theme's loaded body font -- so the family is the design system's decision, delivered by a
+  face Shopify actually hosts.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -58,7 +59,7 @@
     justify-content: center;
     border: 1.5px solid transparent;
     border-radius: var(--button-base-radius);
-    font-family: var(--font-body--family);
+    font-family: var(--button-base-font-family);
     font-weight: var(--button-base-font-weight);
     cursor: pointer;
     white-space: nowrap;

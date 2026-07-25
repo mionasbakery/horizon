@@ -21,9 +21,9 @@
   matching CardMedia's own approach. This block reproduces that quirk faithfully rather than
   "fixing" it, since it's how the real component behaves.
 
-  Every colour/radius/shadow/spacing here is a --card-* token (assets/design-tokens.css); family is
-  the usual exception -- --card-base-font-family is a literal stack, so this spends
-  --font-body--family instead.
+  Every colour/radius/shadow/spacing/family here is a --card-* token (assets/design-tokens.css),
+  matching Card.module.css. --card-base-font-family resolves through --font-family-archivo, which
+  snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -68,7 +68,7 @@
     border-radius: var(--card-base-radius);
     border: var(--card-base-border-width) solid var(--card-base-border-color);
     box-shadow: var(--card-base-shadow);
-    font-family: var(--font-body--family);
+    font-family: var(--card-base-font-family);
     padding-bottom: var(--card-base-padding);
     max-width: 320px;
     overflow: hidden;

@@ -40,9 +40,10 @@
     attributes    Raw string appended to the control tag, for anything not covered above.
     class         Extra classes on the field wrapper.
 
-  Fonts: --font-body--family. --text-field-base-font-family is deliberately NOT spent -- it is an
-  inert font-list string that loads no font file, so it would render correctly only by coincidence
-  and fall back the moment the theme's font setting changed (mionas-design-sync's fonts rule).
+  Fonts: --text-field-base-font-family, exactly as TextField.module.css spends it. It resolves
+  through --font-family-archivo, which snippets/design-system-bridge.liquid repoints at the theme's
+  loaded body font -- so the family is the design system's decision, delivered by a face Shopify
+  actually hosts.
 {%- endcomment -%}
 {% liquid
   assign field_type = type | default: 'text'
@@ -119,7 +120,7 @@
     padding: 0;
     padding-left: var(--text-field-base-padding);
     color: var(--text-field-base-foreground);
-    font-family: var(--font-body--family);
+    font-family: var(--text-field-base-font-family);
     font-size: var(--text-field-base-font-size);
     line-height: var(--text-field-base-line-height);
   }

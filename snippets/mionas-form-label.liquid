@@ -28,7 +28,9 @@
   colour reach a label that PRECEDES the input in the DOM, where no sibling combinator can. This
   snippet keeps the design system's own custom-property name so the two stay greppable together.
 
-  Fonts: --font-body--family, never a design-system --font-family-* token (see mionas-design-sync).
+  Fonts: --font-family-archivo, the design system's body primitive, repointed at the theme's
+  loaded body font by snippets/design-system-bridge.liquid. FormLabel.module.css sets no family of
+  its own, so this spends the primitive rather than inventing a component token.
 {%- endcomment -%}
 {% liquid
   assign label_is_required = true
@@ -58,7 +60,7 @@
     padding-left: var(--form-label-base-padding);
     color: var(--form-label-focus-color, var(--form-label-base-foreground));
     text-transform: uppercase;
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
     font-size: var(--text-role-label-font-size);
     line-height: var(--text-role-label-line-height);
     font-weight: var(--text-role-label-font-weight);

@@ -50,6 +50,22 @@
 {%- endif -%}
 {% style %}
   :root {
+    /* Font families: the design system's two primitives, repointed at the faces this theme
+       actually loads. A --font-family-* token is an inert string -- a custom property loads no
+       font file -- so spending one renders Archivo only by coincidence, and falls back the
+       moment a font setting changes. Shopify hosts and preloads fonts through theme settings, so
+       --font-body--family / --font-accent--family are the only families that are really here.
+
+       This is the whole font-family story for the theme. Every component token
+       (--link-base-font-family, --card-base-font-family, ...) is a var() reference to one of
+       these two in dist/tokens.flat.css, so blocks spend their own component token, mirror their
+       .module.css verbatim, and resolve through here automatically. A new design-system component
+       needs no change in this file. Both names are pinned by value in
+       scripts/design-tokens-contract.mjs, so re-pointing one design-system side fails the sync
+       instead of silently keeping the mapping below. */
+    --font-family-archivo: var(--font-body--family);
+    --font-family-oswald: var(--font-accent--family);
+
     /* h1 -> hero. Fixed, not clamped, regardless of the token's value -- this overrides
        --font-h1--size directly (base.css:704 reads it as a plain property), bypassing
        theme-styles-variables.liquid's own settings-driven clamp() generation entirely. That

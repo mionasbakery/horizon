@@ -11,8 +11,9 @@
     message  Required to render anything. Omitted or blank renders nothing.
     id       Optional. Set it when a control points at this message with aria-describedby.
 
-  Fonts: --font-body--family, the family the theme actually loads. Never a design-system
-  --font-family-* token -- those are inert strings that load no font file (see mionas-design-sync).
+  Fonts: --font-family-archivo, the design system's body primitive, repointed at the theme's
+  loaded body font by snippets/design-system-bridge.liquid. FormError.module.css sets no family of
+  its own, so this spends the primitive rather than inventing a component token.
 {%- endcomment -%}
 {%- if message != blank -%}
   <p class="mionas-form-error"{% if id != blank %} id="{{ id }}"{% endif %}>{{ message }}</p>
@@ -25,7 +26,7 @@
     margin: 0;
     padding-left: var(--form-error-base-padding);
     color: var(--form-error-base-foreground);
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
     font-size: var(--text-role-label-font-size);
     line-height: var(--text-role-label-line-height);
     font-weight: var(--text-role-label-font-weight);

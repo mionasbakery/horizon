@@ -50,12 +50,12 @@
     flex-direction: row;
     align-items: center;
     gap: var(--space-2xs);
-    font-family: var(--font-body--family);
+    font-family: var(--font-family-archivo);
   }
 
   /* The same --text-role-* vocabulary blocks/mionas-text.liquid spends, restricted to the sizes a
-     summary line plausibly wants. A Role option with no rule here renders at the inherited size --
-     scripts/mionas-google-reviews-contract.test.mjs pins the two lists together. */
+     summary line plausibly wants. A Role option with no rule here renders at the inherited size, so
+     keep the schema's Role options and the rules below in sync by hand. */
   .mionas-google-reviews-summary__part--caption {
     font-size: var(--text-role-caption-font-size);
     line-height: var(--text-role-caption-line-height);
