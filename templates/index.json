@@ -104,7 +104,7 @@
               "type": "mionas-text",
               "name": "Lead",
               "settings": {
-                "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la península.</p>",
+                "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la Península.</p>",
                 "role": "lead",
                 "variant": "default",
                 "tag": "p"
