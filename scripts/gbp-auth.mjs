@@ -94,13 +94,28 @@ async function getRefreshToken(clientId, clientSecret) {
     );
     timer.unref();
 
+    // Captured once in listen() below and used for every later parse. Do NOT reach for
+    // server.address() inside the request handler: after server.close() it returns null, and the
+    // browser routinely sends a second request (favicon.ico) on the same keep-alive connection
+    // *after* the redirect closed the server. That threw "Cannot read properties of null (reading
+    // 'port')" from inside the handler, which is an uncaught exception on the server's 'request'
+    // event — it killed the whole process mid-token-exchange, after consent had already been
+    // granted. A plain variable cannot be nulled out from under us.
+    let port;
+    let settled = false;
+
     const server = createServer((req, res) => {
-      clearTimeout(timer);
-      const url = new URL(req.url, `http://127.0.0.1:${server.address().port}`);
-      if (url.pathname !== '/') {
+      const url = new URL(req.url, `http://127.0.0.1:${port}`);
+      // Stray requests (favicon, a refresh of the tab, a probe) must change nothing: no timer
+      // clear, no close, no settle. Clearing the timer here used to mean a favicon hit removed the
+      // only thing that could ever end the process, so a user who then abandoned consent left it
+      // waiting forever instead of timing out.
+      if (url.pathname !== '/' || settled) {
         res.writeHead(404).end();
         return;
       }
+      clearTimeout(timer);
+      settled = true;
       const err = url.searchParams.get('error');
       const gotCode = url.searchParams.get('code');
       const gotState = url.searchParams.get('state');
@@ -117,12 +132,12 @@ async function getRefreshToken(clientId, clientSecret) {
       if (err) reject(new Error(`Google returned error=${err}`));
       else if (!gotCode) reject(new Error('no authorization code in the redirect'));
       else if (gotState !== state) reject(new Error('state mismatch — possible interception'));
-      else resolve({ code: gotCode, redirectUri: `http://127.0.0.1:${url.port}` });
+      else resolve({ code: gotCode, redirectUri: `http://127.0.0.1:${port}` });
     });
 
     server.on('error', reject);
     server.listen(0, '127.0.0.1', () => {
-      const port = server.address().port;
+      port = server.address().port;
       const redirect = `http://127.0.0.1:${port}`;
       const auth = new URL('https://accounts.google.com/o/oauth2/v2/auth');
       auth.searchParams.set('client_id', clientId);

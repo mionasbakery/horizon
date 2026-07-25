@@ -38,20 +38,46 @@ aren't already stored, so `sections/mionas-google-reviews.liquid` has fresh revi
 
 ## Step 1 — Load credentials
 
-Read `.env` from the repo root. If it is missing, or any of `GOOGLE_CLIENT_ID`,
-`GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` is empty, stop
-and name exactly which are missing. Make no network call.
+Read `.env` from the repo root. The sync needs all five of `GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID` and `GBP_LOCATION_ID` — Step 2 and
+Step 3 read every one of them. If the file is missing or any value is empty, stop and make no network
+call.
 
-Then point at the right remedy for *which* group is missing — they have different fixes:
+**But "required to run" is not the same as "the user has to produce it", and conflating the two sends
+people to the Google Cloud Console for values a script would have written for them.** Only the first
+two are ever typed by a human. The other three are written by `npm run gbp:auth`, and `.env.example`
+ships them as empty placeholders marked *leave empty* precisely so nobody fills them in by hand:
 
-- **`GOOGLE_CLIENT_ID` or `GOOGLE_CLIENT_SECRET` missing** — these cannot be automated. They come
-  from a **Desktop app** OAuth client the user creates by hand in the Google Cloud Console, plus
+| Variable | Filled by |
+| --- | --- |
+| `GOOGLE_CLIENT_ID` | the user, by hand — no automation exists |
+| `GOOGLE_CLIENT_SECRET` | the user, by hand — no automation exists |
+| `GOOGLE_REFRESH_TOKEN` | `npm run gbp:auth` |
+| `GBP_ACCOUNT_ID` | `npm run gbp:auth` |
+| `GBP_LOCATION_ID` | `npm run gbp:auth` |
+
+So report the gap in those terms — never as a flat list of empty variable names. Branch on the two
+hand-typed values alone; the script-written three never change which branch you take:
+
+- **`GOOGLE_CLIENT_ID` or `GOOGLE_CLIENT_SECRET` empty (or `.env` absent entirely)** — this is the
+  human branch, and it is the only one. Do **not** run `gbp:auth`: it reads those two first and exits
+  with the same complaint, so launching it just adds a failed background process to the report. They
+  come from a **Desktop app** OAuth client the user creates in the Google Cloud Console, plus
   Business Profile API access approval, which is human review at Google and can take days. Give them
   the console steps (`scripts/gbp-auth.mjs` prints the same list when it hits this case) and tell
-  them to `cp .env.example .env` and paste the two values in.
-- **Only `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID` or `GBP_LOCATION_ID` missing** — these *are*
-  automated. Run `npm run gbp:auth` yourself, as described immediately below, then continue the sync
-  in the same session. Do not make the user drive it.
+  them to `cp .env.example .env`, paste the two values in, and **leave the other three blank**. Say
+  that last part explicitly — otherwise the empty `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID` and
+  `GBP_LOCATION_ID` lines read as five chores instead of two. Then stop and wait; when they say the
+  two values are in, re-read `.env` and take the branch below.
+- **Both client values present, and any of `GOOGLE_REFRESH_TOKEN`, `GBP_ACCOUNT_ID` or
+  `GBP_LOCATION_ID` empty** — fully automated. Run `npm run gbp:auth` yourself, as described
+  immediately below, then continue the sync in the same session. Do not make the user drive it, and
+  do not ask them to supply an account or location id they would have to go look up.
+
+**A missing `.env` is one missing file, not five missing credentials.** It is the ordinary
+first-run state — nothing is broken, and `.env` is gitignored, so a fresh clone never has one. Say
+"there is no `.env`; copy `.env.example` and paste the two client values in", not "all five
+credentials are missing", which reads as a much bigger job than it is.
 
 ### Running `gbp:auth` from this skill
 
