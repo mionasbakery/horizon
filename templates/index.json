@@ -750,7 +750,24 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
+              "blocks": {
+                "mionas_button_rTcNjp": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button",
+                  "settings": {
+                    "label": "Button",
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "variant": "primary",
+                    "size": "md",
+                    "full_width": false
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "mionas_button_rTcNjp"
+              ]
             }
           },
           "block_order": [
