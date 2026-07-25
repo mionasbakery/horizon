@@ -1,141 +1,20 @@
 {%- comment -%}
-  Mirrors ../design-system/src/react/ReviewCard/ReviewCard.tsx: a star rating, a quote, and an
-  attribution line (name, optional location, optional avatar), inside a card.
+  A hand-configured review card for the theme editor.
 
-  No native Horizon section/block covers a testimonial/review card, so this forks a new file per
-  mionas-design-component's rule -- there is no structure to reskin. Meant to be repeated as a block inside
-  a section (e.g. a multi-column group), the same way ReviewCard.tsx is meant to be repeated in a
-  testimonials grid.
-
-  Every colour and the rating icon size come straight from --review-card-* tokens
-  (assets/design-tokens.css, synced from ../design-system/dist/tokens.flat.css) -- this
-  component has no untokenized brand colour to declare locally.
-  The outer card look (background/border/radius/shadow) spends --card-base-* the same way, but NOT
-  --card-base-padding: ReviewCard.tsx explicitly overrides Card's own bottom padding to 0 and pads
-  uniformly via an inner Box p="lg" instead (see ReviewCard.module.css's comment on cascade order),
-  so this block does the same with --space-lg on .review-card__content rather than the card token.
-
-  Card.module.css itself hardcodes a fixed max-width on .root -- not yet a token upstream. Declared
-  once below as a block-local custom property per mionas-design-sync's rule for untokenized values.
+  The markup and CSS live in snippets/mionas-review-card.liquid because
+  sections/mionas-google-reviews.liquid renders the same card from Google Business Profile data.
+  This file's only job is to map theme-editor settings onto that snippet -- see the snippet's
+  comment for the design-system and token reasoning.
 {%- endcomment -%}
-{% liquid
-  assign block_settings = block.settings
-  assign rating = block_settings.rating | default: 5
-  assign avatar_alt = block_settings.avatar_alt | default: block_settings.name
+{% render 'mionas-review-card',
+  rating: block.settings.rating,
+  quote: block.settings.quote,
+  name: block.settings.name,
+  location: block.settings.location,
+  avatar: block.settings.avatar,
+  avatar_alt: block.settings.avatar_alt,
+  shopify_attributes: block.shopify_attributes
 %}
-
-<div class="review-card" {{ block.shopify_attributes }}>
-  <div class="review-card__content">
-    <div class="review-card__rating" role="img" aria-label="{{ rating }} out of 5 stars">
-      {%- for i in (1..5) -%}
-        <svg viewBox="0 0 20 20" aria-hidden="true" class="review-card__star {% if i <= rating %}review-card__star--filled{% else %}review-card__star--empty{% endif %}">
-          <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
-        </svg>
-      {%- endfor -%}
-    </div>
-
-    {%- if block_settings.quote != blank -%}
-      <p class="review-card__quote">&ldquo;{{ block_settings.quote }}&rdquo;</p>
-    {%- endif -%}
-
-    <div class="review-card__attribution">
-      {%- if block_settings.avatar != blank -%}
-        {{
-          block_settings.avatar
-          | image_url: width: 80
-          | image_tag: width: 40, height: 40, class: 'review-card__avatar', alt: avatar_alt
-        }}
-      {%- endif -%}
-
-      {%- if block_settings.name != blank -%}
-        <p class="review-card__name">
-          {%- if block_settings.location != blank -%}
-            {{- block_settings.name -}}, {{ block_settings.location }}
-          {%- else -%}
-            {{- block_settings.name -}}
-          {%- endif -%}
-        </p>
-      {%- endif -%}
-    </div>
-  </div>
-</div>
-
-{% stylesheet %}
-  .review-card {
-    --review-card-max-width: 320px;
-
-    background: var(--card-base-background);
-    border-radius: var(--card-base-radius);
-    border: var(--card-base-border-width) solid var(--card-base-border-color);
-    box-shadow: var(--card-base-shadow);
-    max-width: var(--review-card-max-width);
-    overflow: hidden;
-  }
-
-  .review-card__content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    padding: var(--space-lg);
-  }
-
-  .review-card__rating {
-    display: flex;
-    flex-direction: row;
-    gap: var(--space-2xs);
-  }
-
-  .review-card__star {
-    width: var(--review-card-rating-icon-size);
-    height: var(--review-card-rating-icon-size);
-  }
-
-  .review-card__star--filled {
-    fill: var(--review-card-rating-filled-color);
-  }
-
-  .review-card__star--empty {
-    fill: var(--review-card-rating-empty-color);
-  }
-
-  /* Text's "body" role sets size/line-height/weight elsewhere in the theme; only what differs
-     (colour, italic) is set here, same convention blocks/mionas-text.liquid follows. */
-  .review-card__quote {
-    margin: 0;
-    font-family: var(--font-body--family);
-    font-size: var(--text-role-body-font-size);
-    line-height: var(--text-role-body-line-height);
-    font-weight: var(--text-role-body-font-weight);
-    font-style: italic;
-    color: var(--review-card-quote-foreground);
-  }
-
-  .review-card__attribution {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  .review-card__avatar {
-    width: var(--review-card-avatar-size);
-    height: var(--review-card-avatar-size);
-    border-radius: var(--review-card-avatar-radius);
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  /* Text's "label" role sets size/line-height/weight/tracking elsewhere; only colour differs. */
-  .review-card__name {
-    margin: 0;
-    font-family: var(--font-body--family);
-    font-size: var(--text-role-label-font-size);
-    line-height: var(--text-role-label-line-height);
-    font-weight: var(--text-role-label-font-weight);
-    letter-spacing: var(--text-role-label-letter-spacing);
-    color: var(--review-card-attribution-foreground);
-  }
-{% endstylesheet %}
 
 {% schema %}
 {

@@ -1,0 +1,291 @@
+{%- comment -%}
+  Renders Google reviews synced into metaobjects by the sync-google-reviews Claude skill.
+
+  The cards come from snippets/mionas-review-card.liquid -- the same snippet the hand-configured
+  blocks/mionas-review-card.liquid renders -- so a Google review and a hand-entered testimonial are
+  the same component with different data behind them.
+
+  Why a section and not a block: a block is one card, and the carousel treats each block as one
+  slide, so a block that looped would put every review inside a single slide. A section can own both
+  the row and the summary line beneath it, which is also why no separate container section is needed
+  to place the summary.
+
+  Why day-of-year rotation and not random: Shopify full-page-caches storefront pages for anonymous
+  visitors and Liquid has no random filter, so a per-request pick would be frozen into cached HTML
+  and served identically to everyone anyway. Seeding from the day rotates the selection daily, stays
+  cache-friendly, needs no JavaScript, and leaves the reviews visible to search engines.
+
+  Why a stride instead of a contiguous window: picking offset, offset+1, offset+2, ... always shows
+  entries adjacent in creation order, so on any given day the cards look clustered from a similar
+  period rather than sampled from the whole pool. Picking every Nth entry instead (offset + i*stride)
+  spreads the selection across the full enabled pool. For every pick to land on a distinct entry,
+  stride must be coprime with enabled_count -- if it shares a common factor, the sequence of picks
+  cycles back on itself before reaching show_count distinct values and the same review renders twice.
+  enabled_count varies at runtime (reviews get added/disabled), so the stride is computed below rather
+  than hardcoded: start near enabled_count / show_count (spreads picks evenly across the pool) and
+  walk forward until a coprime value is found, via a bounded Euclidean-algorithm gcd check, falling
+  back to 1 (a plain contiguous window) if nothing else qualifies.
+
+  metaobjects.<type>.values loops a maximum of 50 entries, oldest-created-first -- this is Shopify
+  Liquid's platform ceiling and cannot be changed. The sync skill's transform.jq caps each RUN at 25
+  reviews, a separate and much smaller curation cap chosen to leave headroom below the 50-entry
+  ceiling; that per-run cap is not cumulative -- the skill is create-only and never trims, so stored
+  entries accumulate across runs and anything past slot 50 (the platform ceiling) is invisible here.
+  Keeping the total at 50 or fewer is an operator task done in the Shopify admin, not something this
+  section or the skill enforces. Switching a review's enabled field off does NOT free a slot: the
+  filter below runs after Liquid has already truncated to 50. See the "Housekeeping" section of
+  .claude/skills/sync-google-reviews/SKILL.md.
+
+  Display order is metaobject creation order, NOT newest-first. Entries carry created_at, but nothing
+  sorts on it -- deliberately. Liquid cannot sort out of the 50-entry truncation, which happens before
+  any sort or filter could run, so sorting here would reorder an already-wrong window. The rotation
+  below therefore walks entries in creation order.
+
+  No structured data is emitted here on purpose: Google's structured-data policy excludes
+  self-serving aggregate ratings gathered from another platform.
+
+  Every colour comes from existing --review-card-* and --link-* tokens; this section introduces no
+  new token and touches neither assets/design-tokens.css nor ../design-system.
+{%- endcomment -%}
+
+{% liquid
+  assign pool = metaobjects.google_review.values
+  assign summary = metaobjects.google_review_summary.default
+
+  # A review with no enabled value predates the field and is treated as enabled, so entries
+  # created before this field existed keep rendering.
+  assign enabled_count = 0
+  for review in pool
+    if review.enabled.value == false
+      continue
+    endif
+    assign enabled_count = enabled_count | plus: 1
+  endfor
+%}
+
+{%- if enabled_count > 0 -%}
+  <div class="mionas-google-reviews">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="mionas-google-reviews__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- liquid
+      assign day_of_year = 'now' | date: '%j' | plus: 0
+      assign offset = day_of_year | modulo: enabled_count
+      assign show_count = section.settings.review_count
+      if enabled_count < show_count
+        assign show_count = enabled_count
+      endif
+
+      # Approximate stride: spread show_count picks evenly across enabled_count entries. Force
+      # float division (divided_by truncates when both operands are integers) and round to the
+      # nearest whole stride -- truncating instead would bias small pools toward stride 1, which
+      # is just the old contiguous window in disguise.
+      assign stride = enabled_count | times: 1.0 | divided_by: show_count | round
+      if stride < 1
+        assign stride = 1
+      endif
+
+      # Walk forward from the approximate stride until gcd(candidate, enabled_count) == 1.
+      # The (0..enabled_count) range covers every residue mod enabled_count at least once, so a
+      # coprime candidate is always found when enabled_count > 1 (candidate == 1 is always coprime).
+      assign found_stride = 0
+      for i in (0..enabled_count)
+        assign candidate = stride | plus: i
+        assign candidate = candidate | modulo: enabled_count
+        # candidate 0 is never coprime with enabled_count (unless enabled_count is 1, handled by
+        # the fallback below), so skip it rather than let a false gcd of enabled_count through.
+        if candidate == 0
+          continue
+        endif
+
+        assign gcd_a = candidate
+        assign gcd_b = enabled_count
+        for j in (0..enabled_count)
+          if gcd_b == 0
+            break
+          endif
+          assign gcd_remainder = gcd_a | modulo: gcd_b
+          assign gcd_a = gcd_b
+          assign gcd_b = gcd_remainder
+        endfor
+
+        if gcd_a == 1
+          assign found_stride = candidate
+          break
+        endif
+      endfor
+
+      if found_stride == 0
+        assign found_stride = 1
+      endif
+      assign stride = found_stride
+
+      assign show_count_minus_1 = show_count | minus: 1
+    -%}
+
+    <div class="mionas-google-reviews__grid">
+      {%- assign enabled_index = -1 -%}
+      {%- for review in pool -%}
+        {%- if review.enabled.value == false -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- assign enabled_index = enabled_index | plus: 1 -%}
+        {%- liquid
+          assign selected = false
+          for i in (0..show_count_minus_1)
+            assign pick = i | times: stride
+            assign pick = pick | plus: offset
+            assign pick = pick | modulo: enabled_count
+            if pick == enabled_index
+              assign selected = true
+              break
+            endif
+          endfor
+        -%}
+        {%- if selected -%}
+          {% render 'mionas-review-card',
+            rating: review.rating.value,
+            quote: review.comment.value,
+            name: review.author.value
+          %}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if summary != blank -%}
+      {%- liquid
+        assign score = summary.average_rating.value | round: 1 | append: '' | replace: '.', ','
+        assign profile_url = section.settings.profile_url | default: summary.profile_url.value
+      -%}
+      <p class="mionas-google-reviews__summary">
+        <svg viewBox="0 0 20 20" aria-hidden="true" class="mionas-google-reviews__star">
+          <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
+        </svg>
+        <span class="mionas-google-reviews__score">{{ score }}</span>
+        <span class="mionas-google-reviews__separator" aria-hidden="true">·</span>
+        <span>{{ summary.total_count.value }} {{ section.settings.reviews_label }}</span>
+        {%- if profile_url != blank and section.settings.link_label != blank -%}
+          <a class="mionas-google-reviews__link" href="{{ profile_url }}" target="_blank" rel="noopener noreferrer">
+            {{- section.settings.link_label -}}
+          </a>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-google-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .mionas-google-reviews__grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    justify-content: center;
+  }
+
+  .mionas-google-reviews__summary {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    font-family: var(--font-body--family);
+    font-size: var(--text-role-caption-font-size);
+    line-height: var(--text-role-caption-line-height);
+    font-weight: var(--text-role-caption-font-weight);
+    letter-spacing: var(--text-role-caption-letter-spacing);
+    color: var(--review-card-attribution-foreground);
+  }
+
+  /* One star beside a number, not five: the average is fractional, and a five-star row would need
+     partial-fill clipping the card never had to solve. */
+  .mionas-google-reviews__star {
+    width: var(--review-card-rating-icon-size);
+    height: var(--review-card-rating-icon-size);
+    fill: var(--review-card-rating-filled-color);
+    flex-shrink: 0;
+  }
+
+  .mionas-google-reviews__score {
+    color: var(--review-card-quote-foreground);
+    font-weight: var(--font-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mionas-google-reviews__separator {
+    color: var(--review-card-rating-empty-color);
+  }
+
+  .mionas-google-reviews__link {
+    color: var(--link-base-foreground);
+    font-weight: var(--link-base-font-weight);
+    font-size: var(--link-size-sm-font-size);
+    text-decoration: none;
+  }
+
+  .mionas-google-reviews__link:hover {
+    text-decoration: underline;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Google reviews",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Optional. Leave blank to show only the cards."
+    },
+    {
+      "type": "range",
+      "id": "review_count",
+      "label": "Reviews shown",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 5,
+      "info": "Which reviews appear rotates daily."
+    },
+    {
+      "type": "url",
+      "id": "profile_url",
+      "label": "Google profile link",
+      "info": "Optional. Falls back to the link stored by the last sync."
+    },
+    {
+      "type": "text",
+      "id": "reviews_label",
+      "label": "Reviews label",
+      "default": "reseñas en Google",
+      "info": "Shown after the review count. Plain text on purpose — rebuilding Google's wordmark in another typeface breaks their brand guidelines."
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Verlas todas",
+      "info": "Optional. Leave blank to hide the link."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Google reviews",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}
