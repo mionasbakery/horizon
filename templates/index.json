@@ -399,74 +399,40 @@
         "padding-block-end": 48
       }
     },
-    "carousel_XcmdNa": {
-      "type": "carousel",
+    "mionas_google_reviews_Lk3E8h": {
+      "type": "mionas-google-reviews",
       "blocks": {
-        "static-header": {
-          "type": "group",
-          "name": "t:names.header",
+        "static-review-card": {
+          "type": "_mionas-google-review-card",
+          "name": "Mionas: Google review",
+          "static": true,
+          "settings": {
+            "show_rating": true,
+            "show_author": true,
+            "quote_max_characters": 0
+          },
+          "blocks": {}
+        },
+        "static-summary": {
+          "type": "_mionas-google-reviews-summary",
+          "name": "Mionas: Reviews summary",
           "static": true,
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "align_baseline": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
+            "gap": 8,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
-            "background_media": "none",
             "background_color": "",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_color": "",
-            "border_radius": 0,
-            "link": "",
-            "open_in_new_tab": false,
-            "placeholder": "",
-            "padding-block-start": 0,
-            "padding-block-end": 16,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "mionas_text_cdhxDG": {
-              "type": "mionas-text",
-              "name": "Mionas: Text",
-              "settings": {
-                "text": "<p>Que dicen nuestros clientes</p>",
-                "role": "title",
-                "variant": "primary",
-                "tag": "h1"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "mionas_text_cdhxDG"
-          ]
-        },
-        "static-carousel-content": {
-          "type": "_carousel-content",
-          "name": "t:names.carousel_content",
-          "static": true,
-          "settings": {
-            "background_color": "",
-            "height": "fit",
-            "position": "top",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
@@ -478,67 +444,73 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "card_PwMB8d": {
-              "type": "_card",
-              "name": "t:names.card",
+            "mionas_google_reviews_score_HwHnKq": {
+              "type": "_mionas-google-reviews-score",
+              "name": "Mionas: Reviews score",
               "settings": {
-                "content_direction": "column",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "center",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
-                "background_media": "none",
-                "background_color": "",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "aspect_ratio": "adapt",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
+                "show_star": true,
+                "role": "caption",
+                "variant": "primary"
+              },
+              "blocks": {}
+            },
+            "mionas_text_CFEwVp": {
+              "type": "mionas-text",
+              "name": "Mionas: Text",
+              "settings": {
+                "text": "<p>·</p>",
+                "role": "caption",
+                "variant": "tint",
+                "tag": "span"
+              },
+              "blocks": {}
+            },
+            "mionas_google_reviews_count_3xCAwg": {
+              "type": "_mionas-google-reviews-count",
+              "name": "Mionas: Reviews count",
+              "settings": {
+                "label": "reseñas en Google",
+                "role": "caption",
+                "variant": "default"
+              },
+              "blocks": {}
+            },
+            "mionas_link_nYEgFD": {
+              "type": "mionas-link",
+              "name": "Mionas: Link",
+              "settings": {
+                "label": "Verlas todas",
                 "link": "",
-                "open_in_new_tab": false,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "open_in_new_tab": true,
+                "variant": "primary",
+                "size": "sm"
               },
-              "blocks": {
-                "mionas_review_card_weKNVA": {
-                  "type": "mionas-review-card",
-                  "name": "Mionas: Review card",
-                  "settings": {
-                    "rating": 5,
-                    "quote": "Las mejores cookies que he probado fuera de EE.UU. Llegaron perfectas.",
-                    "name": "Marta G.",
-                    "location": "",
-                    "avatar_alt": ""
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "mionas_review_card_weKNVA"
-              ]
+              "blocks": {}
             }
           },
           "block_order": [
-            "card_PwMB8d"
+            "mionas_google_reviews_score_HwHnKq",
+            "mionas_text_CFEwVp",
+            "mionas_google_reviews_count_3xCAwg",
+            "mionas_link_nYEgFD"
           ]
         }
       },
-      "name": "t:names.carousel",
+      "name": "Mionas: Google reviews",
       "settings": {
+        "review_count": 5,
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
         "columns": 3,
         "mobile_columns": "1",
-        "section_width": "page-width",
-        "columns_gap": 12,
-        "background_color": "",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 16,
+        "rows_gap": 16,
         "icons_style": "arrow",
-        "icons_shape": "none",
+        "icons_shape": "circle",
+        "section_width": "page-width",
+        "gap": 24,
+        "background_color": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
@@ -547,6 +519,6 @@
   "order": [
     "mionas_split_hero_WD8xYY",
     "product_list_NtrmPD",
-    "carousel_XcmdNa"
+    "mionas_google_reviews_Lk3E8h"
   ]
 }
