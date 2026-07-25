@@ -402,6 +402,17 @@
     "mionas_google_reviews_Lk3E8h": {
       "type": "mionas-google-reviews",
       "blocks": {
+        "mionas_text_bWdhVK": {
+          "type": "mionas-text",
+          "name": "Mionas: Text",
+          "settings": {
+            "text": "<p>QUE DICEN NUESTROS CLIENTES</p>",
+            "role": "title",
+            "variant": "primary",
+            "tag": "h2"
+          },
+          "blocks": {}
+        },
         "static-review-card": {
           "type": "_mionas-google-review-card",
           "name": "Mionas: Google review",
@@ -496,6 +507,9 @@
           ]
         }
       },
+      "block_order": [
+        "mionas_text_bWdhVK"
+      ],
       "name": "Mionas: Google reviews",
       "settings": {
         "review_count": 5,
