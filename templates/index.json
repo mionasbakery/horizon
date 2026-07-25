@@ -206,7 +206,7 @@
       },
       "name": "Mionas: Split hero",
       "settings": {
-        "variant": "sand",
+        "variant": "vanilla",
         "media_position": "left",
         "section_width": "full-width",
         "section_height": "medium",
