@@ -34,8 +34,10 @@
   and count must be private: they read metaobjects.google_review_summary and would render a summary
   of nothing anywhere else.
 
-  There is no heading here. A heading above a section is an ordinary block the merchant places in
-  the template, and baking one in only duplicated what mionas-text already does better.
+  There is no built-in heading. Instead the section opens a free content_for 'blocks' region above
+  the cards, so a heading is whatever block the merchant chooses to put there -- a Mionas: Text, an
+  image, a button -- rather than a baked-in text setting that duplicates what mionas-text already
+  does better.
 
   Layout is merchant-controlled the same way sections/product-list.liquid does it: every selected
   card is captured into one string separated by <!--@list/split-->, that string is split into an
@@ -185,6 +187,19 @@
     "
   >
     {%- comment -%}
+      The free region: whatever the merchant wants above the cards -- a Mionas: Text heading, an
+      image, a button, an app block. A section may declare only ONE content_for 'blocks' area, so
+      its position is a real choice, and above is the more useful end here: the summary row already
+      sits below the cards and is itself a group that accepts @theme/@app children, so blocks can
+      still be added underneath by dropping them into it.
+
+      Whitespace control on the tag is load-bearing: base.css hides
+      .section-resource-list__content:empty, and a stray newline inside the div would be a text node
+      that defeats :empty, leaving a --gap-sized hole above the cards when no block is added.
+    {%- endcomment -%}
+    <div class="section-resource-list__content">{%- content_for 'blocks' -%}</div>
+
+    {%- comment -%}
       Capture the selected cards into one string, separated the way product-list separates its
       product cards. The separator is emitted BEFORE every card after the first rather than after
       every card but the last: forloop.last refers to the whole pool here, not to the subset that
@@ -280,6 +295,17 @@
   "disabled_on": {
     "groups": ["header", "footer"]
   },
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "_divider"
+    }
+  ],
   "settings": [
     {
       "type": "range",
@@ -526,7 +552,7 @@
       "blocks": {
         "static-review-card": {
           "type": "_mionas-google-review-card",
-          "name": "Review card",
+          "name": "Mionas: Google review",
           "static": true,
           "settings": {
             "show_rating": true,
@@ -536,7 +562,7 @@
         },
         "static-summary": {
           "type": "_mionas-google-reviews-summary",
-          "name": "Summary line",
+          "name": "Mionas: Reviews summary",
           "static": true,
           "settings": {
             "content_direction": "row",
@@ -563,7 +589,7 @@
           "blocks": {
             "score": {
               "type": "_mionas-google-reviews-score",
-              "name": "Score",
+              "name": "Mionas: Reviews score",
               "settings": {
                 "show_star": true,
                 "role": "caption",
@@ -572,7 +598,7 @@
             },
             "separator": {
               "type": "mionas-text",
-              "name": "Separator",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "<p>·</p>",
                 "role": "caption",
@@ -582,7 +608,7 @@
             },
             "count": {
               "type": "_mionas-google-reviews-count",
-              "name": "Count",
+              "name": "Mionas: Reviews count",
               "settings": {
                 "label": "reseñas en Google",
                 "role": "caption",
@@ -591,7 +617,7 @@
             },
             "link": {
               "type": "mionas-link",
-              "name": "Link",
+              "name": "Mionas: Link",
               "settings": {
                 "label": "Verlas todas",
                 "open_in_new_tab": true,
