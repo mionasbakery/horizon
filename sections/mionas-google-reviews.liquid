@@ -27,8 +27,10 @@
 
   The cards are deliberately NOT blocks and cannot become them: content_for 'block' takes no
   parameters, so a static slot cannot receive per-review data, and the carousel-slide problem above
-  rules out a repeating block. Card-level options would have to be section settings threaded into
-  the render call below.
+  rules out a repeating block. Their options are therefore section settings (the `card_*` group)
+  threaded into the render call below -- one setting governs every card, which is the honest shape
+  for a data-driven row anyway: there is nothing stable to configure per card when which reviews
+  appear rotates daily.
 
   Layout is merchant-controlled the same way sections/product-list.liquid does it: every selected
   card is captured into one string separated by <!--@list/split-->, that string is split into an
@@ -212,12 +214,34 @@
           endfor
         -%}
         {%- if selected -%}
+          {%- comment -%}
+            Card options are section settings, not block settings, and cannot become blocks: see the
+            header comment. They are resolved per review here and handed to the shared snippet --
+            the card itself stays one definition, rendered identically by the hand-entered
+            blocks/mionas-review-card.liquid, which simply never passes them.
+
+            An author who is hidden is passed as blank rather than suppressed inside the snippet:
+            the snippet already treats a blank name as "no attribution", so no new parameter is
+            needed for it.
+          {%- endcomment -%}
+          {%- liquid
+            assign card_quote = review.comment.value
+            if section.settings.card_quote_max_characters > 0
+              assign card_quote = card_quote | truncate: section.settings.card_quote_max_characters
+            endif
+
+            assign card_name = ''
+            if section.settings.card_show_author
+              assign card_name = review.author.value
+            endif
+          -%}
           {%- if rendered_count > 0 -%}<!--@list/split-->{%- endif -%}
           <div class="resource-list__item">
             {% render 'mionas-google-review-card',
               rating: review.rating.value,
-              quote: review.comment.value,
-              name: review.author.value
+              show_rating: section.settings.card_show_rating,
+              quote: card_quote,
+              name: card_name
             %}
           </div>
           {%- assign rendered_count = rendered_count | plus: 1 -%}
@@ -291,6 +315,37 @@
       "step": 1,
       "default": 5,
       "info": "Which reviews appear rotates daily. Clamped to the number of enabled reviews, so asking for more than exist simply shows them all."
+    },
+    {
+      "type": "header",
+      "content": "Cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_rating",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_author",
+      "label": "Show reviewer name",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "card_quote_max_characters",
+      "label": "Quote length",
+      "min": 0,
+      "max": 400,
+      "step": 20,
+      "default": 0,
+      "unit": "ch",
+      "info": "0 shows the full review. Any other value truncates longer reviews, which evens out card heights in a grid."
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
     },
     {
       "type": "select",
@@ -506,6 +561,9 @@
       "name": "Mionas: Google reviews",
       "category": "t:categories.basic",
       "settings": {
+        "card_show_rating": true,
+        "card_show_author": true,
+        "card_quote_max_characters": 0,
         "layout_type": "grid",
         "carousel_on_mobile": false,
         "columns": 3,
@@ -554,8 +612,8 @@
               "name": "Title",
               "settings": {
                 "text": "<p>Lo que dicen nuestros clientes</p>",
-                "role": "title",
-                "variant": "default",
+                "role": "hero",
+                "variant": "primary",
                 "tag": "h2"
               }
             }
