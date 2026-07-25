@@ -9,12 +9,20 @@
 
   Accepts:
     rating              1-5. Defaults to 5.
+    show_rating         Pass false to hide the star row entirely. Anything else (including nil)
+                        shows it, so existing callers that never pass it are unaffected. This is an
+                        explicit `== false` test rather than `| default: true`, because Liquid's
+                        default filter treats false as empty and would flip it straight back to true.
     quote               Review text. Omitted renders no quote.
     name                Attribution name. Omitted renders no attribution.
     location            Optional. Shown after the name.
     avatar              Optional image. Not used by the Google-sourced caller.
     avatar_alt          Optional. Falls back to name.
     shopify_attributes  Theme-editor attributes, passed by the block caller only.
+
+  Every part is optional on purpose: .review-card__content is a flex column with a gap, so an
+  element that renders empty still consumes a gap. Each part is therefore wrapped in its own guard
+  rather than emitted and hidden with CSS.
 
   Every colour and the rating icon size come straight from --review-card-* tokens
   (assets/design-tokens.css, synced from ../design-system/dist/tokens.flat.css) -- this
@@ -32,41 +40,50 @@
 {% liquid
   assign card_rating = rating | default: 5
   assign card_avatar_alt = avatar_alt | default: name
+
+  assign render_rating = true
+  if show_rating == false
+    assign render_rating = false
+  endif
 %}
 
 <div class="review-card" {{ shopify_attributes }}>
   <div class="review-card__content">
-    <div class="review-card__rating" role="img" aria-label="{{ card_rating }} out of 5 stars">
-      {%- for i in (1..5) -%}
-        <svg viewBox="0 0 20 20" aria-hidden="true" class="review-card__star {% if i <= card_rating %}review-card__star--filled{% else %}review-card__star--empty{% endif %}">
-          <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
-        </svg>
-      {%- endfor -%}
-    </div>
+    {%- if render_rating -%}
+      <div class="review-card__rating" role="img" aria-label="{{ card_rating }} out of 5 stars">
+        {%- for i in (1..5) -%}
+          <svg viewBox="0 0 20 20" aria-hidden="true" class="review-card__star {% if i <= card_rating %}review-card__star--filled{% else %}review-card__star--empty{% endif %}">
+            <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
+          </svg>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
 
     {%- if quote != blank -%}
       <p class="review-card__quote">&ldquo;{{ quote }}&rdquo;</p>
     {%- endif -%}
 
-    <div class="review-card__attribution">
-      {%- if avatar != blank -%}
-        {{
-          avatar
-          | image_url: width: 80
-          | image_tag: width: 40, height: 40, class: 'review-card__avatar', alt: card_avatar_alt
-        }}
-      {%- endif -%}
+    {%- if name != blank or avatar != blank -%}
+      <div class="review-card__attribution">
+        {%- if avatar != blank -%}
+          {{
+            avatar
+            | image_url: width: 80
+            | image_tag: width: 40, height: 40, class: 'review-card__avatar', alt: card_avatar_alt
+          }}
+        {%- endif -%}
 
-      {%- if name != blank -%}
-        <p class="review-card__name">
-          {%- if location != blank -%}
-            {{- name -}}, {{ location }}
-          {%- else -%}
-            {{- name -}}
-          {%- endif -%}
-        </p>
-      {%- endif -%}
-    </div>
+        {%- if name != blank -%}
+          <p class="review-card__name">
+            {%- if location != blank -%}
+              {{- name -}}, {{ location }}
+            {%- else -%}
+              {{- name -}}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
   </div>
 </div>
 

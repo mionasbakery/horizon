@@ -54,7 +54,9 @@
                 "info": {
                   "type": "mionas-card",
                   "settings": {
-                    "variant": "default"
+                    "variant": "default",
+                    "width": "full",
+                    "inset": true
                   },
                   "blocks": {
                     "info_name": {
@@ -90,12 +92,7 @@
                       }
                     }
                   },
-                  "block_order": [
-                    "info_name",
-                    "info_address",
-                    "info_hours",
-                    "info_pickup"
-                  ]
+                  "block_order": ["info_name", "info_address", "info_hours", "info_pickup"]
                 },
                 "whatsapp": {
                   "type": "mionas-button",
@@ -104,7 +101,8 @@
                     "link": "https://wa.me/34XXXXXXXXX",
                     "open_in_new_tab": true,
                     "variant": "primary",
-                    "size": "md"
+                    "size": "md",
+                    "full_width": true
                   }
                 },
                 "links": {
@@ -145,35 +143,20 @@
                       }
                     }
                   },
-                  "block_order": [
-                    "link_phone",
-                    "link_email",
-                    "link_instagram"
-                  ]
+                  "block_order": ["link_phone", "link_email", "link_instagram"]
                 }
               },
-              "block_order": [
-                "map",
-                "info",
-                "whatsapp",
-                "links"
-              ]
+              "block_order": ["map", "info", "whatsapp", "links"]
             },
             "form": {
               "type": "mionas-contact-form",
               "settings": {}
             }
           },
-          "block_order": [
-            "left",
-            "form"
-          ]
+          "block_order": ["left", "form"]
         }
       },
-      "block_order": [
-        "heading",
-        "columns"
-      ],
+      "block_order": ["heading", "columns"],
       "name": "Visita",
       "settings": {
         "content_direction": "column",
@@ -185,7 +168,5 @@
       }
     }
   },
-  "order": [
-    "visita"
-  ]
+  "order": ["visita"]
 }
