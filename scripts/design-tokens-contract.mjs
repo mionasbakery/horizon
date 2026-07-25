@@ -10,7 +10,7 @@
 // and this theme declares that same name with its own value. Only a value check catches that.
 export const EXPECTED_TOKENS = {
   "--text-role-hero-font-size": "48px",
-  "--text-role-hero-line-height": "40px",
+  "--text-role-hero-line-height": "58px",
   "--text-role-hero-font-weight": "800",
   "--text-role-hero-letter-spacing": "0.02em",
   "--text-role-title-font-size": "28px",
