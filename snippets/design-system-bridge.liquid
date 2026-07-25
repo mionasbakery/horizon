@@ -29,9 +29,21 @@
   library for that family, and font_face on blank emits nothing -- exactly the silent fallback
   this is fixing. If the guard ever goes false, 500 text drops back to 400 and this comment is
   the place to start.
+
+  Preloaded as well as declared, mirroring what snippets/fonts.liquid does for the four settings
+  fonts. The @font-face alone is what makes the weight render -- a preload never was load-bearing
+  for correctness -- but without it this face is the only Archivo weight the browser discovers
+  late, so 500 text flashes the fallback under font-display: swap while every other weight is
+  already warm. It also means n5 shows up alongside n4/n6/n8 in the head, so "is the medium face
+  there?" stays answerable by reading the markup, which is where anyone will look first.
+
+  Lives here rather than in snippets/fonts.liquid because that file is stock Horizon and this
+  theme merges from Shopify/horizon -- keeping all the Archivo-500 handling in this one
+  Mionas-owned snippet keeps it out of the way of upstream merges.
 {%- endcomment -%}
 {%- assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500' -%}
 {%- if body_font_medium -%}
+  {{ body_font_medium | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
   {% style %}
     {{ body_font_medium | font_face: font_display: 'swap' }}
   {% endstyle %}

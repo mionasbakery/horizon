@@ -1,0 +1,78 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx -- the uppercase label above a field.
+
+  Accepts:
+    text      Required. The label copy.
+    for       Optional but strongly preferred: the id of the control this labels.
+    required  Defaults to true, matching FormLabel.tsx's `required = true`. Pass false to append the
+              " (optional)" suffix. This is an explicit `== false` test rather than
+              `| default: true`, because Liquid's `default` filter treats false as empty and would
+              flip it straight back to true -- the same guard snippets/mionas-google-review-card
+              .liquid uses for show_rating.
+    error     Pass true for the error colour. snippets/mionas-form-field.liquid forwards this
+              automatically, mirroring FormField.tsx's `error={!!error}`. The error rule is declared
+              after the base rule at equal specificity, so it wins even while the field has focus --
+              matching FormLabel.tsx, where `error ? styles.error : focused ? styles.focused : ...`
+              checks error first.
+    optional_text
+              The word inside the parentheses of the " (optional)" suffix. Defaults to the literal
+              FormLabel.tsx uses. There is no locale key for this -- nothing under `general.form.*`
+              exists in locales/en.default.json -- and a `| t` on a missing key renders the string
+              "translation missing: ..." rather than falling through to a default, so this is a
+              plain parameter. Spanish callers pass optional_text: 'opcional'.
+    class     Extra classes to append.
+
+  FOCUS COLOUR IS NOT SET HERE. FormLabel.module.css's .root reads
+  `var(--form-label-focus-color, var(--form-label-base-foreground))`, and FormField.module.css's
+  `.root:focus-within` is what assigns --form-label-focus-color. That indirection is what lets the
+  colour reach a label that PRECEDES the input in the DOM, where no sibling combinator can. This
+  snippet keeps the design system's own custom-property name so the two stay greppable together.
+
+  Fonts: --font-body--family, never a design-system --font-family-* token (see mionas-design-sync).
+{%- endcomment -%}
+{% liquid
+  assign label_is_required = true
+  if required == false
+    assign label_is_required = false
+  endif
+
+  assign label_classes = 'mionas-form-label'
+  if error == true
+    assign label_classes = label_classes | append: ' mionas-form-label--error'
+  endif
+  if class
+    assign label_classes = label_classes | append: ' ' | append: class
+  endif
+%}
+<label class="{{ label_classes }}"{% if for != blank %} for="{{ for }}"{% endif %}>
+  {{- text -}}
+  {%- unless label_is_required -%}
+    <span class="mionas-form-label__optional"> ({{ optional_text | default: 'optional' }})</span>
+  {%- endunless -%}
+</label>
+
+{% stylesheet %}
+  /* FormLabel.module.css .root, plus Text's role="label" scale which FormLabel.tsx gets from
+     rendering <Text as="label" role="label">. */
+  .mionas-form-label {
+    padding-left: var(--form-label-base-padding);
+    color: var(--form-label-focus-color, var(--form-label-base-foreground));
+    text-transform: uppercase;
+    font-family: var(--font-body--family);
+    font-size: var(--text-role-label-font-size);
+    line-height: var(--text-role-label-line-height);
+    font-weight: var(--text-role-label-font-weight);
+    letter-spacing: var(--text-role-label-letter-spacing);
+  }
+
+  .mionas-form-label--error {
+    color: var(--form-label-state-error-foreground);
+  }
+
+  /* FormLabel.module.css .optional -- deliberately pinned back to the base colour so the suffix
+     does not inherit the focused/error colour the rest of the label takes on. */
+  .mionas-form-label__optional {
+    color: var(--form-label-base-foreground);
+    text-transform: none;
+  }
+{% endstylesheet %}

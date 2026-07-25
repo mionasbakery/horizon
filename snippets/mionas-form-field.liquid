@@ -1,0 +1,94 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/FormField/FormField.tsx -- label above a control, an underline
+  below it, and an optional error message under that.
+
+  This is an UNDERLINE field: the border lives on this wrapper (border-bottom only), never on the
+  control. snippets/mionas-text-field.liquid renders its input with a transparent background and no
+  border of its own for exactly that reason. Anything you pass as `control` must do the same.
+
+  Accepts:
+    control   Required. The control's markup, built with {% capture %} before rendering -- Liquid
+              snippets take no markup slot, so this is how a child is passed. Shopify Liquid does
+              not auto-escape output, so the captured markup renders as markup.
+    label     Required. Label copy, handed to snippets/mionas-form-label.liquid.
+    for       The control's id. Passed to the label so it associates natively.
+    error     Message string. Present and non-blank switches the field to its error colours and
+              renders snippets/mionas-form-error.liquid underneath.
+    error_id  Optional id for that message, for the control's aria-describedby.
+    required  Defaults to true (FormField.tsx's `required = true`), forwarded to the label's
+              " (optional)" suffix. Explicit `== false` test -- Liquid's `default` filter treats
+              false as empty and would flip it back to true.
+    optional_text  Forwarded to the label; see that snippet.
+    class     Extra classes on the wrapper.
+    attributes  Raw string appended to the wrapper tag, e.g. block.shopify_attributes.
+
+  ONE DELIBERATE DIVERGENCE from FormField.tsx: it renders <FormLabel> with no htmlFor, which is why
+  TextField.tsx has to add a second, visually-hidden <label htmlFor> to get the association back.
+  Here the visible label carries `for` directly, so there is no duplicate hidden label for a screen
+  reader to announce twice. Same association, one element -- do not "restore" the hidden label.
+{%- endcomment -%}
+{% liquid
+  assign field_has_error = false
+  if error != blank
+    assign field_has_error = true
+  endif
+
+  assign field_classes = 'mionas-form-field'
+  if field_has_error
+    assign field_classes = field_classes | append: ' mionas-form-field--error'
+  endif
+  if class
+    assign field_classes = field_classes | append: ' ' | append: class
+  endif
+%}
+<div class="{{ field_classes }}" {{ attributes }}>
+  {%- render 'mionas-form-label',
+    text: label,
+    for: for,
+    error: field_has_error,
+    required: required,
+    optional_text: optional_text
+  -%}
+  {{ control }}
+  {%- render 'mionas-form-error', message: error, id: error_id -%}
+</div>
+
+{% stylesheet %}
+  /* FormField.module.css .root. The gap is --form-field-base-padding and so is the padding-bottom,
+     so the label sits the same distance above the control as the control does above the underline. */
+  .mionas-form-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: var(--form-field-base-padding);
+    padding-bottom: var(--form-field-base-padding);
+    border-bottom-width: var(--form-field-base-border-width);
+    border-bottom-style: solid;
+    border-bottom-color: var(--form-field-base-border-color);
+  }
+
+  /* FormField.module.css .root:focus-within, copied including the box-shadow trick: the shadow
+     paints a second line flush under the real border, offset by exactly one border-width. Doubling
+     the border instead would add layout height and shove everything below the field down on focus;
+     box-shadow never participates in layout, so it can't.
+
+     Assigning --form-label-focus-color here is also how the focus colour reaches the label, which
+     precedes the control in the DOM where no sibling combinator can get to it. */
+  .mionas-form-field:focus-within {
+    border-bottom-color: var(--form-field-state-focused-border-color);
+    box-shadow: 0 var(--form-field-base-border-width) 0 0 var(--form-field-state-focused-border-color);
+    --form-label-focus-color: var(--form-field-state-focused-foreground);
+  }
+
+  /* The label's error colour is NOT set from here. It comes from the `error` prop this snippet
+     forwards to mionas-form-label, exactly as FormField.tsx passes `error={!!error}`. Routing it
+     through --form-label-focus-color instead would lose to the :focus-within rule above on
+     specificity, turning an errored field's label blue the moment it took focus. */
+  .mionas-form-field--error {
+    border-bottom-color: var(--form-field-state-error-border-color);
+  }
+
+  .mionas-form-field--error:focus-within {
+    box-shadow: 0 var(--form-field-base-border-width) 0 0 var(--form-field-state-error-border-color);
+  }
+{% endstylesheet %}

@@ -1,0 +1,164 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Checkbox/Checkbox.tsx -- a visually hidden native checkbox, a
+  drawn box that stands in for it, and an optional text label, with an optional error underneath.
+
+  The real <input> is never hidden with `display: none` or `visibility: hidden`: either would take
+  it out of the focus order and out of the accessibility tree, and the whole control would stop
+  working for keyboard and screen-reader users. It is clipped instead (Checkbox.module.css .input),
+  so it still receives focus, still submits, and still announces its own checked state.
+
+  Accepts:
+    label       Optional. Text beside the box. Omitted renders the box alone.
+    name        Required. The form field name.
+    id          Required in practice -- both labels point at it.
+    value       The submitted value when checked. Defaults to 'on', the browser default, so the
+                merchant sees something meaningful rather than an empty string.
+    checked     Pass true to render pre-checked.
+    disabled    Pass true to disable and dim.
+    error       Message string, rendered by snippets/mionas-form-error.liquid underneath.
+    required    Pass true to require it (a consent checkbox, say). Unlike the text field this
+                defaults to FALSE, matching Checkbox.tsx, which has no `required` prop at all.
+    class       Extra classes on the wrapper.
+    attributes  Raw string appended to the input tag.
+
+  ONE DELIBERATE DIVERGENCE from Checkbox.tsx: React re-renders on state change, so it renders the
+  checkmark <svg> only when `checked` and swaps the .checked class itself. Liquid renders once and
+  never sees the user tick the box, so both the checkmark and the checked colours are driven by
+  `:checked + .mionas-checkbox__box` in CSS and the svg is always in the DOM. Same result without
+  JavaScript. Do not "fix" this back to a Liquid conditional -- the box would then never respond to
+  being ticked.
+{%- endcomment -%}
+{% liquid
+  assign checkbox_value = value | default: 'on'
+  assign checkbox_error_id = id | append: '-error'
+
+  assign checkbox_classes = 'mionas-checkbox'
+  if class
+    assign checkbox_classes = checkbox_classes | append: ' ' | append: class
+  endif
+
+  assign checkbox_row_classes = 'mionas-checkbox__row'
+  if disabled
+    assign checkbox_row_classes = checkbox_row_classes | append: ' mionas-checkbox__row--disabled'
+  endif
+%}
+<div class="{{ checkbox_classes }}">
+  <div class="{{ checkbox_row_classes }}">
+    <input
+      class="mionas-checkbox__input"
+      type="checkbox"
+      id="{{ id }}"
+      name="{{ name }}"
+      value="{{ checkbox_value }}"
+      {% if checked %}checked{% endif %}
+      {% if disabled %}disabled{% endif %}
+      {% if required %}required aria-required="true"{% endif %}
+      {% if error != blank %}aria-invalid="true" aria-describedby="{{ checkbox_error_id }}"{% endif %}
+      {{ attributes }}
+    >
+    <label class="mionas-checkbox__box" for="{{ id }}" aria-hidden="true">
+      <svg class="mionas-checkbox__checkmark" viewBox="0 0 16 16" focusable="false">
+        <path
+          d="M3 8.5L6.5 12L13 4.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </label>
+    {%- if label != blank -%}
+      <label class="mionas-checkbox__label" for="{{ id }}">{{ label }}</label>
+    {%- endif -%}
+  </div>
+  {%- render 'mionas-form-error', message: error, id: checkbox_error_id -%}
+</div>
+
+{% stylesheet %}
+  /* Checkbox.module.css .root */
+  .mionas-checkbox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: var(--checkbox-base-padding);
+  }
+
+  /* .row -- the start padding lines the box up with the text of the fields above it, which are
+     themselves inset by --text-field-base-padding. */
+  .mionas-checkbox__row {
+    display: flex;
+    align-items: center;
+    gap: var(--checkbox-row-padding);
+    padding-left: var(--checkbox-start-padding);
+  }
+
+  .mionas-checkbox__row--disabled {
+    opacity: var(--checkbox-state-disabled-opacity);
+  }
+
+  /* .input -- clipped, not hidden. See the header comment. */
+  .mionas-checkbox__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* .box */
+  .mionas-checkbox__box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--checkbox-base-size);
+    height: var(--checkbox-base-size);
+    border-radius: var(--checkbox-base-radius);
+    border-width: var(--checkbox-base-border-width);
+    border-style: solid;
+    border-color: var(--checkbox-base-border-color);
+    background: var(--checkbox-base-background);
+    cursor: pointer;
+  }
+
+  /* .checked, reached from the input's own state rather than a class Liquid can't update. */
+  .mionas-checkbox__input:checked + .mionas-checkbox__box {
+    background: var(--checkbox-checked-background);
+    border-color: var(--checkbox-checked-border-color);
+    color: var(--checkbox-checked-foreground);
+  }
+
+  /* .checkmark. Always present so the tick can appear on :checked without JavaScript; hidden rather
+     than absent so no layout inside the box shifts when it appears. */
+  .mionas-checkbox__checkmark {
+    width: 70%;
+    height: 70%;
+    opacity: 0;
+  }
+
+  .mionas-checkbox__input:checked + .mionas-checkbox__box .mionas-checkbox__checkmark {
+    opacity: 1;
+  }
+
+  /* :focus-visible on the clipped input, projected onto the drawn box -- the only focus ring the
+     user can actually see, since the input itself is 1px and off-screen. */
+  .mionas-checkbox__input:focus-visible + .mionas-checkbox__box {
+    outline: 2px solid var(--checkbox-state-focused-border-color);
+    outline-offset: 2px;
+  }
+
+  /* .label -- Checkbox.tsx renders this as <Text role="body">, not role="label" like FormLabel. */
+  .mionas-checkbox__label {
+    cursor: pointer;
+    font-family: var(--font-body--family);
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    font-weight: var(--text-role-body-font-weight);
+    letter-spacing: var(--text-role-body-letter-spacing);
+  }
+{% endstylesheet %}

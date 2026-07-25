@@ -1,0 +1,39 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Form/Form.tsx -- the column that spaces a form's fields apart.
+
+  Form.tsx is `<form>` wrapping `<Box gap="lg">`. This snippet is only the Box half, and that is
+  deliberate: on a Shopify storefront the <form> element itself is emitted by Liquid's {% form %}
+  tag, which owns the action URL, the CSRF token and the form_type field. So callers render
+  {% form %} themselves and put this immediately inside it -- the resulting DOM is the same
+  form > div > fields that Form.tsx produces.
+
+  Accepts:
+    content     Required. The fields' markup, built with {% capture %} before rendering.
+    class       Extra classes.
+    attributes  Raw string appended to the wrapper tag.
+
+  Usage:
+    {% capture form_fields %}
+      {% render 'mionas-text-field', label: 'Email', name: 'contact[email]', id: 'x-email', type: 'email' %}
+    {% endcapture %}
+    {% form 'contact' %}
+      {% render 'mionas-form', content: form_fields %}
+    {% endform %}
+{%- endcomment -%}
+{% liquid
+  assign form_classes = 'mionas-form'
+  if class
+    assign form_classes = form_classes | append: ' ' | append: class
+  endif
+%}
+<div class="{{ form_classes }}" {{ attributes }}>{{ content }}</div>
+
+{% stylesheet %}
+  /* Form.tsx's <Box gap="lg">. --space-lg is what Box's gap="lg" resolves to. */
+  .mionas-form {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: var(--space-lg);
+  }
+{% endstylesheet %}
