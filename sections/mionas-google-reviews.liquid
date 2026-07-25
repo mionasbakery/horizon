@@ -10,6 +10,13 @@
   the row and the summary line beneath it, which is also why no separate container section is needed
   to place the summary.
 
+  Layout is merchant-controlled the same way sections/product-list.liquid does it: every selected
+  card is captured into one string separated by <!--@list/split-->, that string is split into an
+  array, and both are handed to snippets/resource-list.liquid, which owns grid / carousel /
+  editorial rendering and the mobile-carousel fallback. This section is data-driven (it loops
+  metaobjects, not merchant-authored blocks) exactly like product-list is, so the same capture-and-
+  split indirection is what buys layout settings without turning each review into a theme block.
+
   Why day-of-year rotation and not random: Shopify full-page-caches storefront pages for anonymous
   visitors and Liquid has no random filter, so a per-request pick would be frozen into cached HTML
   and served identically to everyone anyway. Seeding from the day rotates the selection daily, stays
@@ -25,6 +32,10 @@
   than hardcoded: start near enabled_count / show_count (spreads picks evenly across the pool) and
   walk forward until a coprime value is found, via a bounded Euclidean-algorithm gcd check, falling
   back to 1 (a plain contiguous window) if nothing else qualifies.
+
+  Never bracket-index the pool with a variable: pool[0] works in Liquid but pool[i] silently returns
+  nil, which once shipped here as cards with no quote, no name and five filled stars. Selection is
+  therefore always a {% raw %}{% for %}{% endraw %} walk with a membership test per entry.
 
   metaobjects.<type>.values loops a maximum of 50 entries, oldest-created-first -- this is Shopify
   Liquid's platform ceiling and cannot be changed. The sync skill's transform.jq caps each RUN at 25
@@ -63,69 +74,107 @@
   endfor
 %}
 
+{%- comment -%}
+  Everything the section emits lives inside this guard: with no enabled entries there is no grid, no
+  heading, no summary, no background element and no resource-list wrapper -- and the modulo below is
+  never reached with a zero divisor.
+{%- endcomment -%}
 {%- if enabled_count > 0 -%}
-  <div class="mionas-google-reviews">
-    {%- if section.settings.heading != blank -%}
-      <h2 class="mionas-google-reviews__heading">{{ section.settings.heading }}</h2>
-    {%- endif -%}
+  {%- liquid
+    if section.settings.background_color != blank
+      render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+    endif
 
-    {%- liquid
-      assign day_of_year = 'now' | date: '%j' | plus: 0
-      assign offset = day_of_year | modulo: enabled_count
-      assign show_count = section.settings.review_count
-      if enabled_count < show_count
-        assign show_count = enabled_count
+    assign day_of_year = 'now' | date: '%j' | plus: 0
+    assign offset = day_of_year | modulo: enabled_count
+    assign show_count = section.settings.review_count
+    if enabled_count < show_count
+      assign show_count = enabled_count
+    endif
+
+    # Approximate stride: spread show_count picks evenly across enabled_count entries. Force
+    # float division (divided_by truncates when both operands are integers) and round to the
+    # nearest whole stride -- truncating instead would bias small pools toward stride 1, which
+    # is just the old contiguous window in disguise.
+    assign stride = enabled_count | times: 1.0 | divided_by: show_count | round
+    if stride < 1
+      assign stride = 1
+    endif
+
+    # Walk forward from the approximate stride until gcd(candidate, enabled_count) == 1.
+    # The (0..enabled_count) range covers every residue mod enabled_count at least once, so a
+    # coprime candidate is always found when enabled_count > 1 (candidate == 1 is always coprime).
+    assign found_stride = 0
+    for i in (0..enabled_count)
+      assign candidate = stride | plus: i
+      assign candidate = candidate | modulo: enabled_count
+      # candidate 0 is never coprime with enabled_count (unless enabled_count is 1, handled by
+      # the fallback below), so skip it rather than let a false gcd of enabled_count through.
+      if candidate == 0
+        continue
       endif
 
-      # Approximate stride: spread show_count picks evenly across enabled_count entries. Force
-      # float division (divided_by truncates when both operands are integers) and round to the
-      # nearest whole stride -- truncating instead would bias small pools toward stride 1, which
-      # is just the old contiguous window in disguise.
-      assign stride = enabled_count | times: 1.0 | divided_by: show_count | round
-      if stride < 1
-        assign stride = 1
-      endif
-
-      # Walk forward from the approximate stride until gcd(candidate, enabled_count) == 1.
-      # The (0..enabled_count) range covers every residue mod enabled_count at least once, so a
-      # coprime candidate is always found when enabled_count > 1 (candidate == 1 is always coprime).
-      assign found_stride = 0
-      for i in (0..enabled_count)
-        assign candidate = stride | plus: i
-        assign candidate = candidate | modulo: enabled_count
-        # candidate 0 is never coprime with enabled_count (unless enabled_count is 1, handled by
-        # the fallback below), so skip it rather than let a false gcd of enabled_count through.
-        if candidate == 0
-          continue
-        endif
-
-        assign gcd_a = candidate
-        assign gcd_b = enabled_count
-        for j in (0..enabled_count)
-          if gcd_b == 0
-            break
-          endif
-          assign gcd_remainder = gcd_a | modulo: gcd_b
-          assign gcd_a = gcd_b
-          assign gcd_b = gcd_remainder
-        endfor
-
-        if gcd_a == 1
-          assign found_stride = candidate
+      assign gcd_a = candidate
+      assign gcd_b = enabled_count
+      for j in (0..enabled_count)
+        if gcd_b == 0
           break
         endif
+        assign gcd_remainder = gcd_a | modulo: gcd_b
+        assign gcd_a = gcd_b
+        assign gcd_b = gcd_remainder
       endfor
 
-      if found_stride == 0
-        assign found_stride = 1
+      if gcd_a == 1
+        assign found_stride = candidate
+        break
       endif
-      assign stride = found_stride
+    endfor
 
-      assign show_count_minus_1 = show_count | minus: 1
-    -%}
+    if found_stride == 0
+      assign found_stride = 1
+    endif
+    assign stride = found_stride
 
-    <div class="mionas-google-reviews__grid">
+    assign show_count_minus_1 = show_count | minus: 1
+  -%}
+
+  <div
+    class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  ></div>
+  <div
+    class="
+      mionas-google-reviews
+      section
+      section--{{ section.settings.section_width }}
+      {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
+      section-resource-list
+      spacing-style
+      gap-style
+    "
+    style="
+      {% render 'spacing-style', settings: section.settings %}
+      {% render 'gap-style', value: section.settings.gap %}
+    "
+  >
+    {%- if section.settings.heading != blank -%}
+      <div
+        class="section-resource-list__content"
+        style="--horizontal-alignment: {{ section.settings.horizontal_alignment }};"
+      >
+        <h2 class="mionas-google-reviews__heading">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+      Capture the selected cards into one string, separated the way product-list separates its
+      product cards. The separator is emitted BEFORE every card after the first rather than after
+      every card but the last: forloop.last refers to the whole pool here, not to the subset that
+      passes the selection test, so a rendered-counter is the only correct marker.
+    {%- endcomment -%}
+    {%- capture list_items -%}
       {%- assign enabled_index = -1 -%}
+      {%- assign rendered_count = 0 -%}
       {%- for review in pool -%}
         {%- if review.enabled.value == false -%}
           {%- continue -%}
@@ -144,50 +193,84 @@
           endfor
         -%}
         {%- if selected -%}
-          {% render 'mionas-review-card',
-            rating: review.rating.value,
-            quote: review.comment.value,
-            name: review.author.value
-          %}
+          {%- if rendered_count > 0 -%}<!--@list/split-->{%- endif -%}
+          <div class="resource-list__item">
+            {% render 'mionas-review-card',
+              rating: review.rating.value,
+              quote: review.comment.value,
+              name: review.author.value
+            %}
+          </div>
+          {%- assign rendered_count = rendered_count | plus: 1 -%}
         {%- endif -%}
       {%- endfor -%}
-    </div>
+    {%- endcapture -%}
+
+    {%- liquid
+      # Create an array from the list items to be used for different layout types
+      assign list_items_array = list_items | strip | split: '<!--@list/split-->'
+    -%}
+
+    {%- comment -%}
+      content_type is documented as 'products' | 'collections' | 'articles' and reviews are none of
+      those, but resource-list only reads it in the 'editorial' branch, to choose between three
+      position-only wrappers (editorial-product-grid / editorial-blog-grid /
+      editorial-collection-grid). All three are content-agnostic -- they place opaque HTML strings
+      into grid cells and never look at the item. 'products' is passed because its arrangement suits
+      a row of equal-weight cards best; nothing product-specific is emitted.
+    {%- endcomment -%}
+    {% render 'resource-list',
+      list_items: list_items,
+      list_items_array: list_items_array,
+      settings: section.settings,
+      carousel_ref: 'mionasGoogleReviewsCarousel',
+      slide_count: show_count,
+      content_type: 'products',
+      test_id: 'mionas-google-reviews-list'
+    %}
 
     {%- if summary != blank -%}
       {%- liquid
         assign score = summary.average_rating.value | round: 1 | append: '' | replace: '.', ','
         assign profile_url = section.settings.profile_url | default: summary.profile_url.value
       -%}
-      <p class="mionas-google-reviews__summary">
-        <svg viewBox="0 0 20 20" aria-hidden="true" class="mionas-google-reviews__star">
-          <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
-        </svg>
-        <span class="mionas-google-reviews__score">{{ score }}</span>
-        <span class="mionas-google-reviews__separator" aria-hidden="true">·</span>
-        <span>{{ summary.total_count.value }} {{ section.settings.reviews_label }}</span>
-        {%- if profile_url != blank and section.settings.link_label != blank -%}
-          <a class="mionas-google-reviews__link" href="{{ profile_url }}" target="_blank" rel="noopener noreferrer">
-            {{- section.settings.link_label -}}
-          </a>
-        {%- endif -%}
-      </p>
+      <div
+        class="section-resource-list__content"
+        style="--horizontal-alignment: {{ section.settings.horizontal_alignment }};"
+      >
+        <p class="mionas-google-reviews__summary">
+          <svg viewBox="0 0 20 20" aria-hidden="true" class="mionas-google-reviews__star">
+            <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
+          </svg>
+          <span class="mionas-google-reviews__score">{{ score }}</span>
+          <span class="mionas-google-reviews__separator" aria-hidden="true">·</span>
+          <span>{{ summary.total_count.value }} {{ section.settings.reviews_label }}</span>
+          {%- if profile_url != blank and section.settings.link_label != blank -%}
+            <a class="mionas-google-reviews__link" href="{{ profile_url }}" target="_blank" rel="noopener noreferrer">
+              {{- section.settings.link_label -}}
+            </a>
+          {%- endif -%}
+        </p>
+      </div>
     {%- endif -%}
   </div>
 {%- endif -%}
 
 {% stylesheet %}
-  .mionas-google-reviews {
+  /* Layout (display, gaps, padding, width) is owned by the section/section-resource-list/
+     spacing-style/gap-style classes, exactly as in product-list; this class is only a scoping
+     hook plus the styles unique to this section's own text. */
+  .mionas-google-reviews .resource-list__item {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
+    height: 100%;
   }
 
-  .mionas-google-reviews__grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--space-md);
-    justify-content: center;
+  .mionas-google-reviews .resource-list__item > .review-card {
+    width: 100%;
+  }
+
+  .mionas-google-reviews__heading {
+    margin: 0;
   }
 
   .mionas-google-reviews__summary {
@@ -196,7 +279,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
     gap: var(--space-xs);
     font-family: var(--font-body--family);
     font-size: var(--text-role-caption-font-size);
@@ -254,11 +336,163 @@
       "type": "range",
       "id": "review_count",
       "label": "Reviews shown",
-      "min": 3,
-      "max": 5,
+      "min": 1,
+      "max": 25,
       "step": 1,
       "default": 5,
-      "info": "Which reviews appear rotates daily."
+      "info": "Which reviews appear rotates daily. Clamped to the number of enabled reviews, so asking for more than exist simply shows them all."
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:settings.layout_type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.grid"
+        },
+        {
+          "value": "carousel",
+          "label": "t:options.carousel"
+        },
+        {
+          "value": "editorial",
+          "label": "t:options.editorial"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_on_mobile",
+      "label": "t:settings.carousel_on_mobile",
+      "default": false,
+      "visible_if": "{{ section.settings.layout_type != 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 3,
+      "visible_if": "{{ section.settings.layout_type != 'editorial' }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "t:settings.mobile_columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:options.one_number"
+        },
+        {
+          "value": "2",
+          "label": "t:options.two_number"
+        }
+      ],
+      "default": "1",
+      "visible_if": "{{ section.settings.layout_type == 'grid' and section.settings.carousel_on_mobile == false }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_card_size",
+      "label": "t:settings.mobile_columns",
+      "options": [
+        {
+          "value": "60cqw",
+          "label": "t:options.one_number"
+        },
+        {
+          "value": "44cqw",
+          "label": "t:options.two_number"
+        }
+      ],
+      "default": "60cqw",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ section.settings.layout_type == 'grid' or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "rows_gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ section.settings.layout_type == 'grid'}}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.carousel_navigation",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "select",
+      "id": "icons_style",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "arrow",
+          "label": "t:options.arrows"
+        },
+        {
+          "value": "chevron",
+          "label": "t:options.chevrons"
+        },
+        {
+          "value": "arrows_large",
+          "label": "t:options.arrows_large"
+        },
+        {
+          "value": "chevron_large",
+          "label": "t:options.chevron_large"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "arrow",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "select",
+      "id": "icons_shape",
+      "label": "t:settings.icon_background",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "circle",
+          "label": "t:options.circle"
+        },
+        {
+          "value": "square",
+          "label": "t:options.square"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ section.settings.icons_style != 'none' and section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Summary line"
     },
     {
       "type": "url",
@@ -279,12 +513,108 @@
       "label": "Link label",
       "default": "Verlas todas",
       "info": "Optional. Leave blank to hide the link."
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
     }
   ],
   "presets": [
     {
       "name": "Mionas: Google reviews",
-      "category": "t:categories.basic"
+      "category": "t:categories.basic",
+      "settings": {
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "columns": 3,
+        "mobile_columns": "1",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 16,
+        "rows_gap": 16,
+        "icons_style": "arrow",
+        "icons_shape": "circle",
+        "section_width": "page-width",
+        "horizontal_alignment": "center",
+        "gap": 24,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
     }
   ]
 }

@@ -24,8 +24,10 @@
   uniformly via an inner Box p="lg" instead (see ReviewCard.module.css's comment on cascade order),
   so this snippet does the same with --space-lg on .review-card__content rather than the card token.
 
-  Card.module.css itself hardcodes a fixed max-width on .root -- not yet a token upstream. Declared
-  once below as a local custom property per design-system-sync's rule for untokenized values.
+  Card.module.css no longer caps width -- the design system pushed that cap down into the individual
+  components that want one (ProductCard, ProductPromoCard); ReviewCard.tsx deliberately has none. This
+  snippet mirrors that: it declares no width limit and fills whatever container it is placed in (a
+  grid column, a carousel slide, and so on).
 {%- endcomment -%}
 {% liquid
   assign card_rating = rating | default: 5
@@ -70,13 +72,10 @@
 
 {% stylesheet %}
   .review-card {
-    --review-card-max-width: 320px;
-
     background: var(--card-base-background);
     border-radius: var(--card-base-radius);
     border: var(--card-base-border-width) solid var(--card-base-border-color);
     box-shadow: var(--card-base-shadow);
-    max-width: var(--review-card-max-width);
     overflow: hidden;
   }
 
