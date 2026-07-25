@@ -78,7 +78,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "ESPECIALIDAD EN COOKIES · SITGES",
+                "text": "<p>ESPECIALIDAD EN COOKIES · SITGES</p>",
                 "role": "stamp",
                 "variant": "accent",
                 "tag": "div"
@@ -89,7 +89,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "COOKIES RECIÉN HORNEADAS, DIRECTAS A TU CASA",
+                "text": "<p>COOKIES RECIÉN HORNEADAS, DIRECTAS A TU CASA</p>",
                 "role": "hero",
                 "variant": "default",
                 "tag": "p"
@@ -100,7 +100,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "Te enviamos las cookies recién horneadas cada <strong>martes y miércoles</strong>. Recíbelas en <strong>24-48</strong>h. ",
+                "text": "<p>Te enviamos las cookies recién horneadas cada <strong>martes y miércoles</strong>. Recíbelas en <strong>24-48</strong>h.</p>",
                 "role": "lead",
                 "variant": "default",
                 "tag": "p"
@@ -275,7 +275,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "LO MÁS VENDIDO",
+                "text": "<p>LO MÁS VENDIDO</p>",
                 "role": "title",
                 "variant": "primary",
                 "tag": "p"

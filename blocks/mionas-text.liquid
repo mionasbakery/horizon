@@ -16,32 +16,58 @@
 
   `tag` and `role` are independent settings, same as Text.tsx's `as` and `role` props -- a
   label-styled span or an h2 with hero styling are both valid.
+
+  The Text setting is `richtext` so copy can span several lines, but its block-level markup is
+  flattened to `<br>` before output: `tag` allows `span` and h1-h6, which may only contain inline
+  content, so a raw `<p>` (or `<li>`) from the richtext toolbar inside an `<h1>` would be invalid
+  HTML and get broken apart by the browser. One paragraph break becomes one `<br>` -- this block
+  stays a single text node, matching Text.tsx's `children` (a ReactNode that may hold `<br/>`).
+  Paragraph *spacing* is blocks/text.liquid's job (richtext rendered through `rte`), not this one's.
+
+  Trade-off of that flattening: the theme editor only live-previews a text setting when it's output
+  unfiltered and alone inside its element, so typing here re-renders the section instead of updating
+  instantly. Keeping bold/italic/link on existing copy is worth that -- the alternative (a plain
+  `textarea` output unfiltered, with `white-space: pre-line`) would drop inline formatting.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
   assign tag = block_settings.tag | default: 'p'
+
+  # Every block-level close becomes a line break, every block-level open disappears -- so a paragraph
+  # or list-item boundary anywhere (including `</p><ul>`) turns into exactly one <br>, and the
+  # trailing one from the last close is dropped.
+  assign content = block_settings.text | strip_newlines
+  assign content = content | replace: '</p>', '<br>' | replace: '</li>', '<br>'
+  assign content = content | replace: '<p>', '' | replace: '<li>', ''
+  assign content = content | replace: '<ul>', '' | replace: '</ul>', ''
+  assign content = content | replace: '<ol>', '' | replace: '</ol>', ''
+  assign content = content | strip | remove_last: '<br>' | strip
+
+  # An "empty" richtext value is `<p></p>` or `<p><br></p>` -- not blank -- so gate on the visible
+  # text, the same way snippets/text.liquid does, or the block emits an empty element.
+  assign visible_text = content | strip_html | strip
 %}
 
-{%- if block_settings.text != blank -%}
+{%- if visible_text != blank -%}
   {%- case tag -%}
     {%- when 'span' -%}
-      <span class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</span>
+      <span class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</span>
     {%- when 'div' -%}
-      <div class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</div>
+      <div class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</div>
     {%- when 'h1' -%}
-      <h1 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</h1>
+      <h1 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h1>
     {%- when 'h2' -%}
-      <h2 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</h2>
+      <h2 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h2>
     {%- when 'h3' -%}
-      <h3 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</h3>
+      <h3 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h3>
     {%- when 'h4' -%}
-      <h4 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</h4>
+      <h4 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h4>
     {%- when 'h5' -%}
-      <h5 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</h5>
+      <h5 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h5>
     {%- when 'h6' -%}
-      <h6 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</h6>
+      <h6 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h6>
     {%- else -%}
-      <p class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- block_settings.text -}}</p>
+      <p class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</p>
   {%- endcase -%}
 {%- endif -%}
 
@@ -162,10 +188,11 @@
   "tag": null,
   "settings": [
     {
-      "type": "inline_richtext",
+      "type": "richtext",
       "id": "text",
       "label": "Text",
-      "default": "Text"
+      "default": "<p>Text</p>",
+      "info": "Press Enter for a line break; it renders inside the same element, not as a new paragraph."
     },
     {
       "type": "select",

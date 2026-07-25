@@ -79,7 +79,7 @@
               "type": "mionas-text",
               "name": "Text Role",
               "settings": {
-                "text": "Especialidad en cookies",
+                "text": "<p>Especialidad en cookies</p>",
                 "role": "stamp",
                 "variant": "accent-inverse",
                 "tag": "p"
