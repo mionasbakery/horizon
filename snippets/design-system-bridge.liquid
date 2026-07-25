@@ -12,6 +12,30 @@
   Token names are mirrored in scripts/design-tokens-contract.mjs, which fails the sync if any
   of them stop existing.
 {% endcomment %}
+{%- comment -%}
+  Archivo 500 (medium). The theme's four font settings load Archivo at 400 (body), 600
+  (subheading) and 800 (heading), each plus its font_modify'd bold -- so the browser has
+  400/600/700/800 and no 500. The design system loads 400;500;600;700;800 (../design-system/
+  src/fonts.css), and several of its tokens are 500: --link-base-font-weight,
+  --button-base-font-weight, and the caption/label text roles.
+
+  CSS font matching for a requested 500 with no 500 face checks 500, then descends -- landing on
+  400. So every one of those tokens silently rendered at body weight, with no error anywhere:
+  the token exists, the contract passes, the var() resolves, and the text is just wrong. That is
+  what made links indistinguishable from body copy.
+
+  There is no fifth Shopify font setting to hang this on, so derive the face from the body font
+  and emit it here. Guarded because font_modify returns blank when a weight isn't in Shopify's
+  library for that family, and font_face on blank emits nothing -- exactly the silent fallback
+  this is fixing. If the guard ever goes false, 500 text drops back to 400 and this comment is
+  the place to start.
+{%- endcomment -%}
+{%- assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500' -%}
+{%- if body_font_medium -%}
+  {% style %}
+    {{ body_font_medium | font_face: font_display: 'swap' }}
+  {% endstyle %}
+{%- endif -%}
 {% style %}
   :root {
     /* h1 -> hero. Fixed, not clamped, regardless of the token's value -- this overrides
@@ -68,17 +92,26 @@
     --button-padding-inline: var(--button-size-md-padding);
   }
 
-  /* Horizon gives button labels the paragraph weight (400, base.css:1245); the design system's
-     buttons are semibold. No Shopify setting exposes button weight, so this needs a rule.
+  /* Horizon gives button labels the paragraph weight (400, base.css:1245). No Shopify setting
+     exposes button weight, so this needs a rule.
+
+     Spends the token rather than a hardcoded step, so native Horizon buttons and
+     blocks/mionas-button.liquid stay at one weight. This was --font-weight-semibold (600) until
+     ../design-system bd2ec5e retokenized Button.module.css onto --button-base-font-weight (500);
+     the commit message doesn't mention weight, so the drop was confirmed deliberate with the
+     design system's author rather than inferred from the diff. Note this is one of the weights
+     that only renders correctly because of the Archivo 500 face emitted above.
+
      Same selector list as base.css:1229-1232, and this snippet renders after base.css, so it
      wins on source order at equal specificity.
      .button-unstyled is excluded: it strips padding/background/border to read as plain text
-     (base.css:1361), and must not be bolded. base.css uses this same :not() idiom at line 1265. */
+     (base.css:1361), and must not be weighted up. base.css uses this same :not() idiom at
+     line 1265. */
   .button:not(.button-unstyled),
   .button-secondary,
   .button-custom,
   button.shopify-payment-button__button--unbranded {
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--button-base-font-weight);
   }
 
   /* Footer tagline — a merchant-added `text` block inside the footer group, set to
