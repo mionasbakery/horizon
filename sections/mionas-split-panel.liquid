@@ -1,0 +1,703 @@
+{%- comment -%}
+  A split panel: copy on one side, media on the other, on a colour panel. Four roles come out of
+  one shape -- the home page hero (flush, bleed), the campaign banner (card, bleed, primary panel),
+  the loyalty banner (card, inset) and the newsletter card (card, bleed, media left, with an
+  email-signup block in the copy). Only the first two ship as presets; the other two are a Campaign
+  with its settings and copy blocks swapped.
+
+  This file was `mionas-split-hero.liquid` until the section stopped being hero-specific. In Shopify
+  a section's `type` IS its filename, so that rename is a rename of published store data: every
+  `"type": "mionas-split-hero"` in templates/ had to move with it, and the Liquid and the templates
+  have to be pushed together. Pushing one without the other -- or running `shopify theme pull` in
+  between -- leaves a stored section pointing at a type that no longer exists, which renders as a
+  blank slot. Same rule applies to any future rename.
+
+  The home page uses this section rather than building the shape by hand -- templates/index.json's
+  "Split hero" instance is a `mionas-split-panel` section whose two sides are the static media and
+  copy `group` blocks described below, with the copy group holding three `mionas-text` blocks and a
+  nested `group` of two native `button` blocks. Reproducing that tree by hand elsewhere would mean
+  recreating it block by block, and two hand-built copies would drift apart. This section makes the
+  shape a unit instead.
+
+  The two sides are *static* blocks -- rendered with content_for 'block' plus an explicit type and
+  id -- of types that already exist. A static slot cannot be removed, reordered or duplicated by a
+  merchant, so the section always has exactly one media side and one copy side. That is the same
+  mechanism sections/carousel.liquid uses for its static header and sections/product-list.liquid
+  for its header and cards -- and it is why this file re-implements no typography, no buttons and
+  no image rendering. Contrast with the deleted blocks/mionas-split-hero.liquid (removed in
+  bce9ff0), which emitted its own markup and therefore needed its own design tokens, bridge entries
+  and a contract test to pin them. None of that is needed here.
+
+  The copy side is a `group` (blocks/group.liquid), which renders its children dynamically via
+  content_for 'blocks' --
+  so the eyebrow/heading/lead and the nested actions row are its ordinary children: the merchant
+  can retitle, reorder, add or remove them per instance. That is deliberate and mirrors the home
+  page hero's own outer group -- the lock is on the section's shape, not on the copy's contents,
+  exactly as the actions row already worked. If the copy ever needs to be locked line-by-line, the
+  route is a private `_`-prefixed block that renders each line as its own static slot (the
+  _carousel-content / _product-list-content pattern), not a native group.
+
+  Only the split grid and the panel colour live here. Everything else belongs to the blocks --
+  including the copy column's flow, gap and alignment, which are the group's settings.
+{%- endcomment -%}
+
+{% liquid
+  if section.settings.variant == 'primary'
+    assign panel_color = 'var(--color-blau-sitges)'
+  else
+    assign panel_color = 'var(--color-beige-vainilla)'
+  endif
+%}
+
+<div
+  class="section section--{{ section.settings.section_width }} spacing-style"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% if section.settings.section_height == 'custom' %}
+      --section-min-height: {{ section.settings.section_height_custom }}svh;
+    {% elsif section.settings.section_height == 'full-screen' %}
+      --section-min-height: 100svh;
+    {% elsif section.settings.section_height != blank %}
+      --section-min-height: var(--section-height-{{ section.settings.section_height }});
+    {% endif %}
+  "
+>
+  <div
+    class="mionas-split-panel mionas-split-panel--{{ section.settings.variant }} mionas-split-panel--media-{{ section.settings.media_position }} mionas-split-panel--edge-{{ section.settings.panel_edge }} mionas-split-panel--treatment-{{ section.settings.media_treatment }}"
+    style="--mionas-split-panel-panel: {{ panel_color }};"
+    {{ section.shopify_attributes }}
+  >
+    <div class="mionas-split-panel__media">
+      {% content_for 'block', type: 'group', id: 'static-media' %}
+    </div>
+
+    <div class="mionas-split-panel__copy">
+      {% content_for 'block', type: 'group', id: 'static-copy' %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mionas-split-panel {
+    display: grid;
+    /* minmax(0, 1fr) rather than a bare 1fr: grid items default to min-width: auto, so a wide
+       image, a long unbreakable word, or a button row that refuses to wrap can push its column
+       past half and quietly break the even split. Flooring the minimum at 0 keeps it exactly
+       50/50 regardless of content. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: calc(var(--space-md) * 2);
+    height: 100%;
+    background: var(--mionas-split-panel-panel, var(--color-background));
+  }
+
+  /* Only the grid cell and its padding. The copy's own layout -- column flow, gap, alignment --
+     belongs to the `group` block inside it (blocks/group.liquid), the same way the home page's
+     hero delegates to its outer group. Duplicating that here would fight the merchant's own
+     group settings. */
+  .mionas-split-panel__copy {
+    padding: calc(var(--space-lg) * 2) calc(var(--space-md) * 2);
+  }
+
+  /* The media group is set to height: fill (blocks/group.liquid offers fit/fill/custom), so the
+     media cell has to have a height of its own or the row collapses. */
+  .mionas-split-panel__media {
+    height: 100%;
+  }
+
+  .mionas-split-panel--media-right .mionas-split-panel__media {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .mionas-split-panel--media-right .mionas-split-panel__copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .mionas-split-panel--media-left .mionas-split-panel__media {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .mionas-split-panel--media-left .mionas-split-panel__copy {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  /* Single column below the theme's mobile breakpoint, image always leading
+     whichever side it takes on desktop. */
+  @media screen and (max-width: 749px) {
+    .mionas-split-panel {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .mionas-split-panel--media-left .mionas-split-panel__media,
+    .mionas-split-panel--media-right .mionas-split-panel__media {
+      grid-column: 1;
+      grid-row: 1;
+      min-height: 220px;
+    }
+
+    .mionas-split-panel--media-left .mionas-split-panel__copy,
+    .mionas-split-panel--media-right .mionas-split-panel__copy {
+      grid-column: 1;
+      grid-row: 2;
+      padding: calc(var(--space-md) * 2) calc(var(--space-md) + var(--space-2xs));
+    }
+  }
+
+  /* Card edge: radius + the design system's card shadow, and no border. The prototype's
+     .mi-card carries a 1px border, but all three banners override it with border: 0, so
+     the border is deliberately absent here.
+     --card-base-shadow (0 1px 2px) is subtler than the prototype's 0 4px 8px shadow. It is
+     the nearest existing token, and spending a token beats matching the mock exactly. */
+  .mionas-split-panel--edge-card {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--card-base-shadow);
+  }
+
+  /* Inset pads the panel itself, so the copy cell must drop its own padding -- otherwise the
+     two stack and the copy sits twice as far in as the media. Declared after the mobile block
+     on purpose: it ties on specificity with the mobile copy rule and needs source order to win. */
+  .mionas-split-panel--treatment-inset {
+    padding: calc(var(--space-lg) * 1.5) calc(var(--space-lg) + var(--space-md));
+    /* Redeclares the base gap on purpose: this and the mobile `.mionas-split-panel { gap: 0 }`
+       rule are both specificity (0,1,0), and this rule comes later in source, so it wins at
+       <=749px. That is what keeps a 32px gap between stacked media and copy for an inset panel
+       on mobile, while every other configuration collapses to 0. Do not delete as redundant. */
+    gap: calc(var(--space-md) * 2);
+  }
+
+  .mionas-split-panel--treatment-inset .mionas-split-panel__copy {
+    padding: 0;
+  }
+
+  /* Inset media sits at its own height inside the panel's padding rather than filling the row. */
+  .mionas-split-panel--treatment-inset .mionas-split-panel__media {
+    height: auto;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Split panel",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Panel color",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary — Blau Sitges"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary — Beige vainilla"
+        }
+      ],
+      "default": "secondary",
+      "info": "Primary is the dark brand panel; pair it with inverse text and button variants. Secondary is the light beige panel."
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "info": "The media always leads on mobile, whichever side it takes on desktop."
+    },
+    {
+      "type": "select",
+      "id": "panel_edge",
+      "label": "Panel edge",
+      "options": [
+        {
+          "value": "flush",
+          "label": "Flush"
+        },
+        {
+          "value": "card",
+          "label": "Card"
+        }
+      ],
+      "default": "flush",
+      "info": "Card rounds and clips the panel and adds the card shadow. Flush is square, for a full-bleed panel. Card is intended for page width — with full-width, the rounded corners land against the viewport edge with nothing behind them."
+    },
+    {
+      "type": "select",
+      "id": "media_treatment",
+      "label": "Media",
+      "options": [
+        {
+          "value": "bleed",
+          "label": "Bleed to edge"
+        },
+        {
+          "value": "inset",
+          "label": "Inset"
+        }
+      ],
+      "default": "bleed",
+      "info": "Bleed fills the media half edge to edge. Inset pads the panel and sits the media inside it — give the media a custom width."
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.auto"
+        },
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        },
+        {
+          "value": "full-screen",
+          "label": "t:options.full_screen"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "section_height_custom",
+      "label": "t:settings.custom_height",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "%",
+      "visible_if": "{{ section.settings.section_height == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Split hero",
+      "category": "t:categories.banners",
+      "settings": {
+        "variant": "secondary",
+        "media_position": "left",
+        "panel_edge": "flush",
+        "media_treatment": "bleed",
+        "section_width": "full-width",
+        "section_height": "medium",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      },
+      "blocks": {
+        "static-media": {
+          "type": "group",
+          "name": "Media",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fill",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "image": {
+              "type": "image",
+              "name": "Image",
+              "settings": {
+                "image_ratio": "landscape",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "border": "none",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": ["image"]
+        },
+        "static-copy": {
+          "type": "group",
+          "name": "Copy",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "eyebrow": {
+              "type": "mionas-text",
+              "name": "Eyebrow",
+              "settings": {
+                "text": "<p>ESPECIALIDAD EN COOKIES · SITGES</p>",
+                "role": "stamp",
+                "variant": "accent",
+                "tag": "div"
+              }
+            },
+            "heading": {
+              "type": "mionas-text",
+              "name": "Heading",
+              "settings": {
+                "text": "<p>COOKIES RECIÉN HORNEADAS, DIRECTAS A TU CASA</p>",
+                "role": "hero",
+                "variant": "default",
+                "tag": "h1"
+              }
+            },
+            "lead": {
+              "type": "mionas-text",
+              "name": "Lead",
+              "settings": {
+                "text": "<p>Te enviamos las cookies recién horneadas cada <strong>martes y miércoles</strong>. Recíbelas en <strong>24-48</strong>h.</p>",
+                "role": "lead",
+                "variant": "default",
+                "tag": "p"
+              }
+            },
+            "actions": {
+              "type": "group",
+              "name": "Actions",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "border": "none",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "cta": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Comprar ahora",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  }
+                },
+                "secondary": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Nuestra historia",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "style_class": "button-secondary",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  }
+                }
+              },
+              "block_order": [
+                "cta",
+                "secondary"
+              ]
+            }
+          },
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "lead",
+            "actions"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Mionas: Campaign",
+      "category": "t:categories.banners",
+      "settings": {
+        "variant": "primary",
+        "media_position": "right",
+        "panel_edge": "card",
+        "media_treatment": "bleed",
+        "section_width": "page-width",
+        "section_height": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      },
+      "blocks": {
+        "static-media": {
+          "type": "group",
+          "name": "Media",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fill",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "image": {
+              "type": "image",
+              "name": "Image",
+              "settings": {
+                "image_ratio": "landscape",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "border": "none",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": ["image"]
+        },
+        "static-copy": {
+          "type": "group",
+          "name": "Copy",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "eyebrow": {
+              "type": "mionas-text",
+              "name": "Eyebrow",
+              "settings": {
+                "text": "<p>CAMPANYA · SANT JORDI</p>",
+                "role": "stamp",
+                "variant": "accent-inverse",
+                "tag": "div"
+              }
+            },
+            "heading": {
+              "type": "mionas-text",
+              "name": "Heading",
+              "settings": {
+                "text": "<p>CAIXA SANT JORDI</p>",
+                "role": "title",
+                "variant": "inverse-primary",
+                "tag": "h2"
+              }
+            },
+            "lead": {
+              "type": "mionas-text",
+              "name": "Lead",
+              "settings": {
+                "text": "<p>Una edició limitada de galetes per celebrar la diada. Roses, dracs i molta xocolata.</p>",
+                "role": "lead",
+                "variant": "inverse-primary-muted",
+                "tag": "p"
+              }
+            },
+            "actions": {
+              "type": "group",
+              "name": "Actions",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "border": "none",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "cta": {
+                  "type": "mionas-button",
+                  "name": "Button",
+                  "settings": {
+                    "label": "Veure la caixa",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "variant": "inverse-primary",
+                    "size": "md",
+                    "full_width": false
+                  }
+                }
+              },
+              "block_order": ["cta"]
+            }
+          },
+          "block_order": ["eyebrow", "heading", "lead", "actions"]
+        }
+      }
+    }
+  ]
+}
+{% endschema %}
