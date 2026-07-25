@@ -196,27 +196,14 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "button_FDB884": {
+                "mionas_button_c3HrXt": {
                   "type": "mionas-button",
                   "name": "Mionas: Button",
                   "settings": {
                     "label": "Comprar cookies",
-                    "link": "shopify://collections/all",
+                    "link": "shopify://collections/comprar-cookies",
                     "open_in_new_tab": false,
-                    "variant": "primary",
-                    "size": "md",
-                    "full_width": false
-                  },
-                  "blocks": {}
-                },
-                "button_VxBr4J": {
-                  "type": "mionas-button",
-                  "name": "Mionas: Button",
-                  "settings": {
-                    "label": "Nuestra historia",
-                    "link": "shopify://collections/all",
-                    "open_in_new_tab": false,
-                    "variant": "secondary",
+                    "variant": "outline",
                     "size": "md",
                     "full_width": false
                   },
@@ -224,8 +211,7 @@
                 }
               },
               "block_order": [
-                "button_FDB884",
-                "button_VxBr4J"
+                "mionas_button_c3HrXt"
               ]
             }
           },
