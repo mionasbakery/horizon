@@ -1,7 +1,7 @@
 {%- comment -%}
   Renders Google reviews synced into metaobjects by the sync-google-reviews Claude skill.
 
-  The cards come from snippets/mionas-review-card.liquid -- the same snippet the hand-configured
+  The cards come from snippets/mionas-google-review-card.liquid -- the same snippet the hand-configured
   blocks/mionas-review-card.liquid renders -- so a Google review and a hand-entered testimonial are
   the same component with different data behind them.
 
@@ -195,7 +195,7 @@
         {%- if selected -%}
           {%- if rendered_count > 0 -%}<!--@list/split-->{%- endif -%}
           <div class="resource-list__item">
-            {% render 'mionas-review-card',
+            {% render 'mionas-google-review-card',
               rating: review.rating.value,
               quote: review.comment.value,
               name: review.author.value

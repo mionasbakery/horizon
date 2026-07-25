@@ -1,12 +1,12 @@
 {%- comment -%}
   A hand-configured review card for the theme editor.
 
-  The markup and CSS live in snippets/mionas-review-card.liquid because
+  The markup and CSS live in snippets/mionas-google-review-card.liquid because
   sections/mionas-google-reviews.liquid renders the same card from Google Business Profile data.
   This file's only job is to map theme-editor settings onto that snippet -- see the snippet's
   comment for the design-system and token reasoning.
 {%- endcomment -%}
-{% render 'mionas-review-card',
+{% render 'mionas-google-review-card',
   rating: block.settings.rating,
   quote: block.settings.quote,
   name: block.settings.name,
