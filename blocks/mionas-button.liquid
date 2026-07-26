@@ -35,18 +35,23 @@
   endif
 %}
 
+{% comment %}
+  Plain {% if %} tags, no whitespace stripping -- the same shape as snippets/button.liquid.
+  `{%-` here would strip the newline between `<a` and the first attribute and emit `<arole="link"`,
+  an unknown element rather than an anchor. Whitespace inside a tag is harmless; removing it is not.
+{% endcomment %}
 <a
-  {%- if block_settings.link == blank -%}
+  {% if block_settings.link == blank %}
     role="link"
     aria-disabled="true"
-  {%- else -%}
+  {% else %}
     href="{{ block_settings.link }}"
-  {%- endif -%}
+  {% endif %}
   class="{{ button_classes }}"
-  {%- if block_settings.open_in_new_tab -%}
+  {% if block_settings.open_in_new_tab %}
     target="_blank"
     rel="noopener noreferrer"
-  {%- endif -%}
+  {% endif %}
   {{ block.shopify_attributes }}
 >
   {{- block_settings.label -}}
