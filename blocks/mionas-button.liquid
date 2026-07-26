@@ -35,11 +35,13 @@
   endif
 %}
 
-{% comment %}
-  Plain {% if %} tags, no whitespace stripping -- the same shape as snippets/button.liquid.
-  `{%-` here would strip the newline between `<a` and the first attribute and emit `<arole="link"`,
-  an unknown element rather than an anchor. Whitespace inside a tag is harmless; removing it is not.
-{% endcomment %}
+{%- comment -%}
+  The if/else tags below deliberately carry no whitespace-stripping hyphens -- the same shape as
+  snippets/button.liquid. A stripping hyphen on the opening tag eats the newline between the anchor
+  and its first attribute, emitting arole="link" as a single glued token: an unknown element rather
+  than an anchor, with no link semantics and no styling. Whitespace inside a tag is harmless;
+  removing it is not.
+{%- endcomment -%}
 <a
   {% if block_settings.link == blank %}
     role="link"
