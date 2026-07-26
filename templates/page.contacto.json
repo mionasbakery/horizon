@@ -55,8 +55,12 @@
                   "type": "mionas-card",
                   "settings": {
                     "variant": "default",
-                    "width": "full",
-                    "inset": true
+                    "width": "fill",
+                    "gap": 8,
+                    "padding-block-start": 16,
+                    "padding-block-end": 16,
+                    "padding-inline-start": 16,
+                    "padding-inline-end": 16
                   },
                   "blocks": {
                     "info_name": {

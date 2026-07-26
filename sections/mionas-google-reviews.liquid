@@ -228,12 +228,18 @@
         {%- if selected -%}
           {%- if rendered_count > 0 -%}<!--@list/split-->{%- endif -%}
           <div class="resource-list__item">
+            {% comment %}
+              card_index is passed only so the block can build a unique accessible name for its
+              "Leer más" trigger when the reviewer's name is hidden. The block is static with one
+              fixed id, so it has no identity of its own to fall back on.
+            {% endcomment %}
             {% content_for 'block',
               type: '_mionas-google-review-card',
               id: 'static-review-card',
               rating: review.rating.value,
               quote: review.comment.value,
-              name: review.author.value
+              name: review.author.value,
+              card_index: rendered_count
             %}
           </div>
           {%- assign rendered_count = rendered_count | plus: 1 -%}
@@ -557,7 +563,7 @@
           "settings": {
             "show_rating": true,
             "show_author": true,
-            "quote_max_characters": 0
+            "quote_clamp_lines": 5
           }
         },
         "static-summary": {

@@ -11,15 +11,44 @@
     (rating + quote + attribution). This block is the general-purpose shell Card.tsx actually is --
     free children, no fixed content -- which review-card intentionally doesn't expose.
 
+  ## Why this renders through snippets/group.liquid
+
+  The card takes the native Group block's customization surface -- layout direction, alignment, gap,
+  size, block link, padding -- by copying those parts of group's schema and delegating rendering to
+  snippets/group.liquid, exactly as blocks/_mionas-google-reviews-summary.liquid and
+  blocks/_product-list-content.liquid do.
+
+  Deliberately NOT copied: group's Appearance and Borders sections. The card's surface -- background,
+  border, radius, shadow -- is what makes it a Card rather than a group, and it is owned entirely by
+  the `variant` setting below (Default / Outline / Plain). A merchant who wants an arbitrary
+  background colour or border on a free-form container should reach for a Group; a Mionas: Card is
+  the design-system surface, sized and laid out however they need. Card.module.css's 320px
+  `max-width` cap is dropped for the same reason: the Size settings are now the single answer to how
+  wide a card is, and a hidden cap silently contradicting a merchant's Width choice is worse than
+  losing that bit of Card.tsx fidelity.
+
+  Surface properties still can't be plain CSS on .mionas-card, though: snippets/group.liquid
+  hardcodes `border-style` into its class list and snippets/border-override.liquid emits
+  unconditionally, so `.border-style { border-width: var(--border-width); ... }` would fight
+  `.mionas-card { border: ... }` at equal specificity -- and block {% raw %}{% stylesheet %}{% endraw %} CSS is bundled
+  separately from assets/base.css, so source order isn't something this theme can guarantee.
+
+  The `style:` param is the deterministic way out: the snippet appends it LAST inside the style
+  attribute, after border-override, so the `card_style` capture below always wins. It feeds the
+  border/radius custom properties that `.border-style` reads, rather than declaring `border` itself.
+
+  Padding behaves exactly as the group's does, defaulting to 0 on every side. This is a conscious
+  divergence from Card.tsx, whose .root always carries a bottom padding -- a card here starts with
+  no padding at all and the merchant adds what the composition needs. Children therefore bleed to
+  all four edges by default, which is still what CardMedia expects on the top and sides.
+
   Card.tsx is a discriminated union (`as="div"|"a"|"button"`); this only covers div/a (no "as
   button" -- same scope decision mionas-button.liquid and mionas-link.liquid made) via the `link`
-  setting: set it and the card becomes the whole clickable surface, same as Card's `interactive`
-  class swapping in `:active` dimming instead of a hover/border affordance.
+  setting. Group renders that as an absolutely-positioned overlay anchor rather than by wrapping the
+  card in an <a>, which is the same clickable-whole-surface result and keeps nested links usable.
 
-  Card.tsx's own .root always carries a bottom padding (even when the last/only child is a
-  full-bleed image) and no top/left/right padding -- children bleed to those edges by default,
-  matching CardMedia's own approach. This block reproduces that quirk faithfully rather than
-  "fixing" it, since it's how the real component behaves.
+  snippets/group.liquid also renders background-media and contrast-override, but both are no-ops
+  when their settings are absent, so omitting the Appearance schema costs nothing at render time.
 
   Every colour/radius/shadow/spacing/family here is a --card-* token (assets/design-tokens.css),
   matching Card.module.css. --card-base-font-family resolves through --font-family-archivo, which
@@ -33,91 +62,59 @@
   unless variant == 'default'
     assign card_classes = card_classes | append: ' mionas-card--' | append: variant
   endunless
-  if block_settings.width == 'full'
-    assign card_classes = card_classes | append: ' mionas-card--full'
-  endif
-  if block_settings.inset
-    assign card_classes = card_classes | append: ' mionas-card--inset'
-  endif
   if block_settings.link != blank
     assign card_classes = card_classes | append: ' mionas-card--interactive'
   endif
 %}
 
-{% capture children %}
-  {% content_for 'blocks' %}
-{% endcapture %}
+{%- comment -%}
+  The whole card surface, driven by `variant` alone. Plain is a transparent, square, borderless
+  surface -- it contributes no background so whatever sits behind the card shows through.
+{%- endcomment -%}
+{%- capture card_style -%}
+  {%- case variant -%}
+    {%- when 'plain' -%}
+      --border-width: 0; --border-style: none; --border-radius: 0;
+    {%- when 'outline' -%}
+      background: var(--card-base-background);
+      --border-width: var(--card-base-border-width); --border-style: solid;
+      --border-color: var(--card-outline-border-color); --border-radius: var(--card-base-radius);
+    {%- else -%}
+      background: var(--card-base-background);
+      --border-width: var(--card-base-border-width); --border-style: solid;
+      --border-color: var(--card-base-border-color); --border-radius: var(--card-base-radius);
+  {%- endcase -%}
+{%- endcapture -%}
 
-{%- if block_settings.link != blank -%}
-  <a href="{{ block_settings.link }}" class="{{ card_classes }}"
-    {%- if block_settings.open_in_new_tab -%} target="_blank" rel="noopener noreferrer"{%- endif -%}
-    {{ block.shopify_attributes }}
-  >
-    {{ children }}
-  </a>
-{%- else -%}
-  <div class="{{ card_classes }}" {{ block.shopify_attributes }}>
-    {{ children }}
-  </div>
-{%- endif -%}
+{%- capture children -%}
+  {%- content_for 'blocks' -%}
+{%- endcapture -%}
+
+{%- render 'group',
+  children: children,
+  settings: block_settings,
+  shopify_attributes: block.shopify_attributes,
+  block_id: block.id,
+  class: card_classes,
+  style: card_style
+-%}
 
 {% stylesheet %}
+  /* Background, border and radius are NOT declared here -- they ride on the `style:` param above,
+     which is the only way to beat .border-style deterministically. See the file comment. Padding is
+     absent entirely: it comes from the Padding settings alone, which start at 0. */
   .mionas-card {
-    display: block;
-    background: var(--card-base-background);
-    border-radius: var(--card-base-radius);
-    border: var(--card-base-border-width) solid var(--card-base-border-color);
     box-shadow: var(--card-base-shadow);
     font-family: var(--card-base-font-family);
-    padding-bottom: var(--card-base-padding);
-    max-width: 320px;
     overflow: hidden;
   }
 
-  .mionas-card--outline {
-    border-color: var(--card-outline-border-color);
-    box-shadow: none;
-  }
-
+  .mionas-card--outline,
   .mionas-card--plain {
-    background: none;
-    border: none;
-    border-radius: 0;
     box-shadow: none;
-  }
-
-  /* Card.module.css caps the card at 320px. The Contacto info panel is a full-width column, so
-     this opts out. Default (no class) keeps the design-system cap.
-
-     `width: 100%` (not `align-self: stretch`) so this behaves whether the parent group is a
-     column OR a row: stretch only makes sense on the cross axis of a column parent and would
-     misbehave (stretching along the main axis) if a full-width card ever ends up in a row. */
-  .mionas-card--full {
-    max-width: none;
-    width: 100%;
-  }
-
-  /* Card carries bottom padding only -- children bleed to the top and side edges, matching
-     CardMedia. This opts into padding on all four sides.
-
-     The flex column + gap is a deliberate divergence from Card.module.css, not a port of it:
-     stacked children (four mionas-text blocks in the Contacto info panel) carry no margins of
-     their own and would otherwise butt together. It rides on this flag rather than applying
-     always, so a default mionas-card still behaves exactly like Card.tsx.
-
-     `padding` shorthand here intentionally resets the base rule's `padding-bottom` longhand --
-     same specificity, later in the sheet, so the shorthand wins. */
-  .mionas-card--inset {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--card-base-padding);
   }
 
   .mionas-card--interactive {
-    text-align: inherit;
-    text-decoration: none;
-    color: inherit;
     cursor: pointer;
   }
 
@@ -131,8 +128,15 @@
   "name": "Mionas: Card",
   "tag": null,
   "blocks": [
-    { "type": "@theme" },
-    { "type": "@app" }
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "_divider"
+    }
   ],
   "settings": [
     {
@@ -147,39 +151,307 @@
       "default": "default"
     },
     {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
       "type": "select",
-      "id": "width",
-      "label": "Width",
+      "id": "content_direction",
+      "label": "t:settings.direction",
       "options": [
-        { "value": "default", "label": "Default (max 320px)" },
-        { "value": "full", "label": "Full width" }
+        {
+          "value": "column",
+          "label": "t:options.vertical"
+        },
+        {
+          "value": "row",
+          "label": "t:options.horizontal"
+        }
       ],
-      "default": "default"
+      "default": "column"
     },
     {
       "type": "checkbox",
-      "id": "inset",
-      "label": "Pad content on all sides",
-      "info": "Off matches the design system: children bleed to the top and side edges, with padding on the bottom only. On also spaces stacked children apart.",
-      "default": false
+      "id": "vertical_on_mobile",
+      "label": "t:settings.vertical_on_mobile",
+      "default": true,
+      "visible_if": "{{ block.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        },
+        {
+          "value": "space-between",
+          "label": "t:options.space_between"
+        }
+      ],
+      "default": "flex-start",
+      "visible_if": "{{ block.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.top"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.bottom"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ block.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "align_baseline",
+      "label": "t:settings.align_baseline",
+      "default": false,
+      "visible_if": "{{ block.settings.vertical_alignment == 'flex-end' }}"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment_flex_direction_column",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "flex-start",
+      "visible_if": "{{ block.settings.content_direction != 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment_flex_direction_column",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.top"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.bottom"
+        },
+        {
+          "value": "space-between",
+          "label": "t:options.space_between"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ block.settings.content_direction == 'column' }}"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "0 matches the design system: children stack flush, the way CardMedia sits against the text under it."
+    },
+    {
+      "type": "header",
+      "content": "t:content.size"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "label": "t:settings.custom_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "width_mobile",
+      "label": "t:settings.width_mobile",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width_mobile",
+      "label": "t:settings.custom_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "fit",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fit"
+    },
+    {
+      "type": "range",
+      "id": "custom_height",
+      "label": "t:settings.custom_height",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.height == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.block_link"
     },
     {
       "type": "url",
       "id": "link",
-      "label": "Link",
-      "info": "Optional. Makes the whole card clickable."
+      "label": "t:settings.link"
     },
     {
       "type": "checkbox",
       "id": "open_in_new_tab",
-      "label": "Open in new tab",
+      "label": "t:settings.open_new_tab",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [
     {
       "name": "Mionas: Card",
-      "category": "t:categories.layout"
+      "category": "t:categories.layout",
+      "settings": {
+        "variant": "default",
+        "gap": 0
+      }
     }
   ]
 }

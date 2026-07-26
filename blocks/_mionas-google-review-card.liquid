@@ -2,6 +2,8 @@
   @param {number} rating - The review's star rating, 1-5.
   @param {string} quote - The review text.
   @param {string} name - The reviewer's display name.
+  @param {number} card_index - This card's 0-based position among the rendered cards. Used only to
+    build a unique accessible name when the reviewer's name is hidden.
 {%- enddoc -%}
 {%- comment -%}
   One Google review card, as a configurable block.
@@ -26,28 +28,49 @@
   The markup comes from snippets/mionas-google-review-card.liquid, the same snippet
   blocks/mionas-review-card.liquid renders from hand-entered settings, so a Google review and a
   hand-entered testimonial stay one component with different data behind them. This file adds no
-  markup and no CSS of its own -- only the three merchant choices.
+  markup and no CSS of its own -- only the three merchant choices, plus the
+  accessible name the snippet gives the "Leer más" trigger and its dialog.
+
+  quote_clamp_lines replaced an earlier quote_max_characters setting that truncated in Liquid.
+  Truncation is destructive -- the cut text never reached the DOM -- so it could not coexist with
+  a control that reveals the rest. Clamping by lines also evens out card heights, which a
+  character count cannot: wrapping and font metrics vary.
 {%- endcomment -%}
 
 {% liquid
-  assign card_quote = quote
-  if block.settings.quote_max_characters > 0
-    assign card_quote = card_quote | truncate: block.settings.quote_max_characters
-  endif
-
   # A hidden author is passed as blank rather than suppressed inside the snippet: the snippet
   # already treats a blank name as "no attribution", so no extra parameter is needed for it.
   assign card_name = ''
   if block.settings.show_author
     assign card_name = name
   endif
+
+  # A unique, human-meaningful accessible name per card -- six cards must not all announce a bare
+  # "Leer más". The name is the useful identifier when it is shown; the position is the only thing
+  # left when it is not.
+  if card_name != blank
+    assign card_dialog_label = 'Reseña de ' | append: card_name
+  else
+    assign card_position = card_index | plus: 1
+    assign card_dialog_label = 'Reseña ' | append: card_position
+  endif
 %}
+
+{%- comment -%}
+  Loaded here rather than in snippets/scripts.liquid so the cost lands only on pages that render
+  a Google review. The block renders once per card, so these tags repeat -- browsers dedupe
+  identical module URLs, and blocks/popup-link.liquid loads dialog.js the same way.
+{%- endcomment -%}
+<script src="{{ 'dialog.js' | asset_url }}" type="module"></script>
+<script src="{{ 'mionas-review-clamp.js' | asset_url }}" type="module"></script>
 
 {% render 'mionas-google-review-card',
   rating: rating,
   show_rating: block.settings.show_rating,
-  quote: card_quote,
+  quote: quote,
   name: card_name,
+  clamp_lines: block.settings.quote_clamp_lines,
+  dialog_label: card_dialog_label,
   shopify_attributes: block.shopify_attributes
 %}
 
@@ -70,14 +93,14 @@
     },
     {
       "type": "range",
-      "id": "quote_max_characters",
-      "label": "Quote length",
+      "id": "quote_clamp_lines",
+      "label": "Collapsed height",
       "min": 0,
-      "max": 400,
-      "step": 20,
-      "default": 0,
-      "unit": "ch",
-      "info": "0 shows the full review. Any other value truncates longer reviews, which evens out card heights in a grid."
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "unit": "ln",
+      "info": "0 shows the full review. Any other value collapses longer reviews to that many lines and adds a 'Leer más' link that opens the full text."
     }
   ]
 }

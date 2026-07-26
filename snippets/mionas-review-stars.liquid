@@ -1,0 +1,45 @@
+{%- doc -%}
+  @param {number} [rating] - The review's star rating, 1-5. Defaults to 5.
+{%- enddoc -%}
+{%- comment -%}
+  The five-star row from ../design-system/src/react/ReviewCard/ReviewCard.tsx.
+
+  Its own snippet because two places render it: the collapsed review card, and the "Leer más"
+  dialog that shows the same review unclamped. Both live in
+  snippets/mionas-google-review-card.liquid, and emitting the star loop twice there would let the
+  two copies drift.
+
+  Size and colours come straight from --review-card-rating-* (assets/design-tokens.css, synced
+  from ../design-system/dist/tokens.flat.css). Nothing here is untokenized.
+{%- endcomment -%}
+{%- liquid
+  assign stars_rating = rating | default: 5
+-%}
+<div class="review-card__rating" role="img" aria-label="{{ stars_rating }} out of 5 stars">
+  {%- for i in (1..5) -%}
+    <svg viewBox="0 0 20 20" aria-hidden="true" class="review-card__star {% if i <= stars_rating %}review-card__star--filled{% else %}review-card__star--empty{% endif %}">
+      <path d="M10 1.6l2.47 5.34 5.87.58-4.38 4.05 1.24 5.76L10 14.6l-5.2 2.73 1.24-5.76-4.38-4.05 5.87-.58L10 1.6z" />
+    </svg>
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .review-card__rating {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-2xs);
+  }
+
+  .review-card__star {
+    width: var(--review-card-rating-icon-size);
+    height: var(--review-card-rating-icon-size);
+  }
+
+  .review-card__star--filled {
+    fill: var(--review-card-rating-filled-color);
+  }
+
+  .review-card__star--empty {
+    fill: var(--review-card-rating-empty-color);
+  }
+{% endstylesheet %}

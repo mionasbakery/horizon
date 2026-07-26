@@ -1,0 +1,67 @@
+{%- comment -%}
+  The Mionas form submit button. There is no design-system Button component to mirror for a
+  <button>: ../design-system's Button renders an anchor, and so does blocks/mionas-button.liquid
+  (see its line 45). So this reproduces the primary/md/full-width Button look by spending the same
+  --button-* tokens directly.
+
+  It exists as a snippet rather than being inlined because it had two callers the moment
+  blocks/_mionas-form-submit.liquid was added, and the copy in blocks/mionas-contact-form.liquid
+  carried a "Keep the two in agreement" comment that had already started to be a liability. One
+  implementation, two callers.
+
+  NOT a caller: blocks/corporate-quote-form.liquid. That form uses Horizon's native `.button` class
+  with only `align-self: flex-start`. Repointing it here would restyle a live B2B page, so it was
+  deliberately left alone -- see the spec's "corporate-quote-form is not a copy" section.
+
+  Accepts:
+    label   Required. Button text.
+    note    Optional. Secondary line below the button, centered. Blank renders nothing.
+    class   Extra classes on the button.
+
+  Renders the button and the note as SIBLINGS with no wrapper, so the caller's own flex column
+  (snippets/mionas-form.liquid, or the block's card) provides the gap between them.
+{%- endcomment -%}
+{% liquid
+  assign submit_classes = 'mionas-submit-button'
+  if class
+    assign submit_classes = submit_classes | append: ' ' | append: class
+  endif
+%}
+<button type="submit" class="{{ submit_classes }}">{{- label -}}</button>
+{%- if note != blank -%}
+  <p class="mionas-submit-button__note">{{ note }}</p>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Reproduces mionas-button's primary/md/full-width look. Moved verbatim from
+     blocks/mionas-contact-form.liquid, which now renders this snippet instead. */
+  .mionas-submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: var(--button-size-md-height);
+    padding: 0 var(--button-size-md-padding);
+    border: 1.5px solid transparent;
+    border-radius: var(--button-base-radius);
+    background: var(--button-primary-background);
+    color: var(--button-primary-foreground);
+    font-family: var(--font-family-archivo);
+    font-size: var(--button-size-md-font-size);
+    font-weight: var(--button-base-font-weight);
+    cursor: pointer;
+  }
+
+  .mionas-submit-button:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+
+  /* Secondary body text, so this spends Card's description token rather than a form-label one. */
+  .mionas-submit-button__note {
+    margin: 0;
+    color: var(--card-description-foreground);
+    font-size: var(--font-size-xs);
+    text-align: center;
+  }
+{% endstylesheet %}
