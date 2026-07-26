@@ -203,7 +203,7 @@
                     "label": "Comprar cookies",
                     "link": "shopify://collections/comprar-cookies",
                     "open_in_new_tab": false,
-                    "variant": "outline",
+                    "variant": "primary",
                     "size": "md",
                     "full_width": false
                   },
@@ -737,7 +737,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "mionas_button_rTcNjp": {
+                "mionas_button_pXRijH": {
                   "type": "mionas-button",
                   "name": "Mionas: Button",
                   "settings": {
@@ -752,7 +752,7 @@
                 }
               },
               "block_order": [
-                "mionas_button_rTcNjp"
+                "mionas_button_pXRijH"
               ]
             }
           },
