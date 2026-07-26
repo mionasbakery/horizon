@@ -1,0 +1,90 @@
+{%- comment -%}
+  The breadcrumb trail as a theme block, so it can be dropped inside a Section next to a Heading
+  block and share that container's width, background and spacing instead of being a separate
+  full-width band above it. sections/mionas-breadcrumbs.liquid is the standalone placement; both
+  render snippets/mionas-breadcrumbs.liquid, which owns the crumb logic and the styles.
+
+  Public (no leading underscore) on purpose: sections/section.liquid -- and every other Horizon
+  section -- whitelists child blocks as "@theme", which resolves to exactly the public blocks in
+  blocks/. Naming the file this way is the whole integration; no native section schema is touched.
+
+  Padding is the only layout setting this block adds. Width, background and horizontal alignment
+  are deliberately left to the parent Section -- that is the entire reason to nest the trail rather
+  than use the standalone section. An alignment control here would also be inert: the parent's
+  `horizontal_alignment` makes its children shrink-to-fit, so this wrapper is only as wide as the
+  trail and a justify-content on the list would have no slack to move anything within.
+{%- endcomment -%}
+{% liquid
+  assign home_label = block.settings.home_label | default: 'Home'
+  assign landmark_label = block.settings.label | default: 'Breadcrumb'
+%}
+
+<div
+  class="mionas-breadcrumbs-block spacing-style"
+  style="{% render 'spacing-style', settings: block.settings %}"
+  {{ block.shopify_attributes }}
+>
+  {%- render 'mionas-breadcrumbs',
+    home_label: home_label,
+    landmark_label: landmark_label,
+    menu: block.settings.menu
+  -%}
+</div>
+
+{% schema %}
+{
+  "name": "Mionas: Breadcrumbs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "info": "The trail follows this menu's hierarchy. Leave empty to use the header menu (Navigation Menu). Pages the menu doesn't contain fall back to their collection or blog."
+    },
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Home label",
+      "default": "Home"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Accessible name",
+      "default": "Breadcrumb",
+      "info": "Announced by screen readers to describe the trail. Not shown visually."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Breadcrumbs",
+      "category": "t:categories.links"
+    }
+  ]
+}
+{% endschema %}

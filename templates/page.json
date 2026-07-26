@@ -9,6 +9,18 @@
  */
 {
   "sections": {
+    "mionas_breadcrumbs_PGE001": {
+      "type": "mionas-breadcrumbs",
+      "name": "Mionas: Breadcrumbs",
+      "settings": {
+        "home_label": "Home",
+        "label": "Breadcrumb",
+        "section_width": "page-width",
+        "background_color": "",
+        "padding-block-start": 12,
+        "padding-block-end": 12
+      }
+    },
     "main": {
       "type": "main-page",
       "blocks": {
@@ -56,6 +68,7 @@
     }
   },
   "order": [
+    "mionas_breadcrumbs_PGE001",
     "main"
   ]
 }

@@ -237,12 +237,48 @@
       }
     },
     "product_list_NtrmPD": {
-      "type": "product-list",
+      "type": "mionas-collection",
+      "name": "Mionas: Lo más vendido",
       "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "name": "t:names.header",
+        "static-product-card": {
+          "type": "_mionas-product-card",
+          "name": "Mionas: Product card",
           "static": true,
+          "settings": {
+            "gap": 16,
+            "padding-block-start": 0,
+            "padding-block-end": 16,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "media": {
+              "type": "mionas-product-media",
+              "name": "Mionas: Product media",
+              "settings": {
+                "image_loading": "eager"
+              }
+            },
+            "title": {
+              "type": "mionas-product-title",
+              "name": "Mionas: Product title",
+              "settings": {
+                "heading_level": "3"
+              }
+            },
+            "price": {
+              "type": "mionas-product-price",
+              "name": "Mionas: Product price",
+              "settings": {
+                "show_compare_at_price": false
+              }
+            }
+          },
+          "block_order": ["media", "title", "price"]
+        },
+        "header_group": {
+          "type": "group",
+          "name": "t:names.group",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -284,127 +320,34 @@
               },
               "blocks": {}
             },
-            "product_list_button_bcAVGE": {
-              "type": "_product-list-button",
-              "name": "t:names.product_list_button",
+            "mionas_button_verTodo": {
+              "type": "mionas-button",
+              "name": "Mionas: Button",
               "settings": {
                 "label": "Ver todo",
+                "link": "shopify://collections/lo-mas-vendido",
                 "open_in_new_tab": false,
-                "style_class": "button",
-                "custom_button_background": "{{ settings.color_palette.foreground }}",
-                "custom_button_text": "{{ settings.color_palette.background }}",
-                "custom_button_border": "{{ settings.color_palette.background }}",
-                "link_text_color": "",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
+                "variant": "primary",
+                "size": "md",
+                "full_width": false
               },
               "blocks": {}
             }
           },
           "block_order": [
             "mionas_text_k6TxHq",
-            "product_list_button_bcAVGE"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 4,
-            "background_color": "",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_color": "",
-            "border_radius": 16,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_card_gallery_Y4Wjjn": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_color": "",
-                "border_radius": 16,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_title_Wbkzxn": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "paragraph",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "price_UkYrL6": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "h6",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "text_color": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_Y4Wjjn",
-            "product_title_Wbkzxn",
-            "price_UkYrL6"
+            "mionas_button_verTodo"
           ]
         }
       },
-      "name": "Mionas: Lo más vendido",
+      "block_order": [
+        "header_group"
+      ],
       "settings": {
         "collection": "lo-mas-vendido",
+        "max_products": 6,
         "layout_type": "grid",
         "carousel_on_mobile": false,
-        "max_products": 6,
         "columns": 6,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",

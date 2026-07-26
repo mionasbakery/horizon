@@ -9,6 +9,18 @@
  */
 {
   "sections": {
+    "mionas_breadcrumbs_PRD003": {
+      "type": "mionas-breadcrumbs",
+      "name": "Mionas: Breadcrumbs",
+      "settings": {
+        "home_label": "Home",
+        "label": "Breadcrumb",
+        "section_width": "page-width",
+        "background_color": "",
+        "padding-block-start": 12,
+        "padding-block-end": 12
+      }
+    },
     "main": {
       "type": "product-information",
       "blocks": {
@@ -443,6 +455,7 @@
     }
   },
   "order": [
+    "mionas_breadcrumbs_PRD003",
     "main",
     "product_recommendations_qggXJq"
   ]

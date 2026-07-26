@@ -12,62 +12,45 @@
     "section": {
       "type": "section",
       "blocks": {
-        "text_tqQTNE": {
-          "type": "text",
-          "name": "t:names.title",
+        "mionas_breadcrumbs_epMpxN": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
           "settings": {
-            "text": "<h1>{{ closest.collection.title }}</h1>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
+            "menu": "",
+            "home_label": "Home",
+            "label": "Breadcrumb",
             "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-block-end": 0
           },
           "blocks": {}
         },
-        "text_twGGkJ": {
-          "type": "text",
-          "name": "t:names.description",
+        "mionas_text_D4mU8G": {
+          "type": "mionas-text",
+          "name": "Mionas: Title",
+          "settings": {
+            "text": "<p>{{ closest.collection.title }}</p>",
+            "role": "hero",
+            "variant": "default",
+            "tag": "h1"
+          },
+          "blocks": {}
+        },
+        "mionas_text_dc3cmy": {
+          "type": "mionas-text",
+          "name": "Mionas: Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "role": "lead",
+            "variant": "default",
+            "tag": "p"
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "text_tqQTNE",
-        "text_twGGkJ"
+        "mionas_breadcrumbs_epMpxN",
+        "mionas_text_D4mU8G",
+        "mionas_text_dc3cmy"
       ],
       "name": "t:names.heading",
       "settings": {
@@ -244,22 +227,9 @@
         "padding-block-start": 0,
         "padding-block-end": 32
       }
-    },
-    "mionas_breadcrumbs_8BPUKR": {
-      "type": "mionas-breadcrumbs",
-      "name": "Mionas: Breadcrumbs",
-      "settings": {
-        "home_label": "Home",
-        "label": "Breadcrumb",
-        "section_width": "page-width",
-        "background_color": "",
-        "padding-block-start": 12,
-        "padding-block-end": 12
-      }
     }
   },
   "order": [
-    "mionas_breadcrumbs_8BPUKR",
     "section",
     "main"
   ]

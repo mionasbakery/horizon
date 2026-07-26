@@ -1,8 +1,18 @@
 {%- comment -%}
   Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx -- the uppercase label above a field.
 
+  BLANK TEXT RENDERS NOTHING AT ALL, and that is a correctness rule rather than tidiness. An empty
+  <label for="..."> does not merely fail to name its control -- it actively SUPPRESSES the name,
+  because an associated label outranks the placeholder in the accessible-name algorithm. Chrome
+  computed `name: ""` for the email signup's input while the label element was present and empty,
+  which leaves a screen reader announcing an unlabelled text field and leaves password managers
+  (1Password among them) unable to identify the field well enough to offer a fill. Dropping the
+  element lets the placeholder become the name instead. Do not "restore" the empty element for
+  layout reasons: mionas-form-field is a flex column with a gap, so an empty label also consumes
+  vertical space it has no business consuming.
+
   Accepts:
-    text      Required. The label copy.
+    text      The label copy. Blank renders nothing -- see above.
     for       Optional but strongly preferred: the id of the control this labels.
     required  Defaults to true, matching FormLabel.tsx's `required = true`. Pass false to append the
               " (optional)" suffix. This is an explicit `== false` test rather than
@@ -46,12 +56,14 @@
     assign label_classes = label_classes | append: ' ' | append: class
   endif
 %}
-<label class="{{ label_classes }}"{% if for != blank %} for="{{ for }}"{% endif %}>
-  {{- text -}}
-  {%- unless label_is_required -%}
-    <span class="mionas-form-label__optional"> ({{ optional_text | default: 'optional' }})</span>
-  {%- endunless -%}
-</label>
+{%- if text != blank -%}
+  <label class="{{ label_classes }}"{% if for != blank %} for="{{ for }}"{% endif %}>
+    {{- text -}}
+    {%- unless label_is_required -%}
+      <span class="mionas-form-label__optional"> ({{ optional_text | default: 'optional' }})</span>
+    {%- endunless -%}
+  </label>
+{%- endif -%}
 
 {% stylesheet %}
   /* FormLabel.module.css .root, plus Text's role="label" scale which FormLabel.tsx gets from

@@ -1,0 +1,447 @@
+{%- comment -%}
+  A collection grid whose cards are composed, not baked in: the section loops the collection and
+  renders blocks/_mionas-product-card.liquid once per product, and that card's contents -- media,
+  title, price, and anything else -- are merchant-editable child blocks.
+
+  This is the same shape as sections/mionas-split-panel.liquid, which owns the frame and hands each
+  half to a static `group` slot the merchant fills. Here the frame is the grid and the slot is the
+  card. The preset at the bottom ships a ready composition (media + title + price) so the section is
+  useful the moment it is added, and every part of it can then be reordered, restyled or removed.
+
+  WHY THIS SECTION EXISTS AT ALL:
+  Horizon's native `product-list` section hardcodes its per-product renderer --
+  sections/product-list.liquid:37-42 loops the collection and emits
+  `content_for 'block', type: '_product-card', id: 'static-product-card'` with the block type as a
+  literal. No setting changes it, and a merchant-added block lands in the section's trailing
+  `content_for 'blocks'` region, which renders ONCE below the grid rather than per product. So the
+  Mionas card could not back that grid at any level of configuration or CSS -- the native schema
+  genuinely cannot express it, which is the bar the mionas-design-component skill sets for forking a
+  new file rather than reskinning in place. (An earlier attempt did reskin the native section via a
+  CSS bridge; that bridge is gone, replaced by this.)
+
+  WHY THE CARD IS A STATIC BLOCK:
+  every iteration renders the same block type with the same fixed id ('static-product-card'), which
+  is what sections/product-list.liquid and sections/mionas-google-reviews.liquid both do. The theme
+  editor therefore shows ONE card whose settings and children govern every product in the grid -- the
+  merchant composes the card once, not six times, and cannot end up with six cards that disagree.
+  A static slot also cannot be removed, reordered or duplicated, so the section always has exactly one
+  card design.
+
+  Layout is delegated to snippets/resource-list.liquid exactly as product-list and
+  mionas-google-reviews do it: every card is captured into one string separated by
+  <!--@list/split-->, that string is split into an array, and both are handed over. resource-list
+  owns grid / carousel / editorial rendering and the mobile-carousel fallback, so this file gets all
+  of those layout settings without reimplementing any of them.
+
+  There is no built-in heading or "see all" button setting. The section opens a free
+  content_for 'blocks' region above the cards, so both are whatever blocks the merchant puts there --
+  a Mionas: Text, a Mionas: Button -- rather than baked-in text settings duplicating what those
+  blocks already do better. This mirrors mionas-google-reviews.liquid's reasoning.
+{%- endcomment -%}
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign max_items = section.settings.max_products
+
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="
+    mionas-collection
+    section
+    section--{{ section.settings.section_width }}
+    {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
+    section-resource-list
+    spacing-style
+    gap-style
+  "
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% render 'gap-style', value: section.settings.gap %}
+  "
+>
+  {%- comment -%}
+    Whitespace control on the tag is load-bearing: base.css hides
+    .section-resource-list__content:empty, and a stray newline inside the div would be a text node
+    that defeats :empty, leaving a --gap-sized hole above the cards when no block is added.
+  {%- endcomment -%}
+  <div class="section-resource-list__content">{%- content_for 'blocks' -%}</div>
+
+  {%- capture list_items -%}
+    {%- for product in collection.products limit: max_items -%}
+      {%- unless forloop.first -%}<!--@list/split-->{%- endunless -%}
+      <div class="resource-list__item">
+        {%- comment -%}
+          One fixed id for every iteration -- see "WHY THE CARD IS A STATIC BLOCK" above. The product
+          travels as closest.product, which is how every child block (media, title, price, and any
+          native product block the merchant adds) resolves which product it is rendering, exactly as
+          sections/product-list.liquid:37-42 does it.
+        {%- endcomment -%}
+        {% content_for 'block',
+          type: '_mionas-product-card',
+          id: 'static-product-card',
+          closest.product: product
+        %}
+      </div>
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- liquid
+    # Create an array from the list items to be used for different layout types
+    assign list_items_array = list_items | strip | split: '<!--@list/split-->'
+  -%}
+
+  {% render 'resource-list',
+    list_items: list_items,
+    list_items_array: list_items_array,
+    settings: section.settings,
+    carousel_ref: 'mionasCollectionCarousel',
+    slide_count: max_items,
+    content_type: 'products',
+    test_id: 'mionas-collection'
+  %}
+</div>
+
+{% stylesheet %}
+  /* Layout (display, gaps, padding, width) is owned by the section/section-resource-list/
+     spacing-style/gap-style classes, exactly as in product-list; these two rules only make the card
+     fill its grid cell. Without them the card sizes to its content and a row of cards with different
+     title lengths ends up with different heights. */
+  .mionas-collection .resource-list__item {
+    display: flex;
+    height: 100%;
+  }
+
+  .mionas-collection .resource-list__item > .mionas-product-card {
+    width: 100%;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Collection",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "_divider"
+    }
+  ],
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:settings.collection"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "t:settings.product_count",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:settings.layout_type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.grid"
+        },
+        {
+          "value": "carousel",
+          "label": "t:options.carousel"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_on_mobile",
+      "label": "t:settings.carousel_on_mobile",
+      "default": false,
+      "visible_if": "{{ section.settings.layout_type != 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "t:settings.mobile_columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:options.one_number"
+        },
+        {
+          "value": "2",
+          "label": "t:options.two_number"
+        }
+      ],
+      "default": "2",
+      "visible_if": "{{ section.settings.layout_type == 'grid' and section.settings.carousel_on_mobile == false }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_card_size",
+      "label": "t:settings.mobile_columns",
+      "options": [
+        {
+          "value": "60cqw",
+          "label": "t:options.one_number"
+        },
+        {
+          "value": "44cqw",
+          "label": "t:options.two_number"
+        }
+      ],
+      "default": "60cqw",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "rows_gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.carousel_navigation",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "select",
+      "id": "icons_style",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "arrow",
+          "label": "t:options.arrows"
+        },
+        {
+          "value": "chevron",
+          "label": "t:options.chevrons"
+        },
+        {
+          "value": "arrows_large",
+          "label": "t:options.arrows_large"
+        },
+        {
+          "value": "chevron_large",
+          "label": "t:options.chevron_large"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "select",
+      "id": "icons_shape",
+      "label": "t:settings.icon_background",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "circle",
+          "label": "t:options.circle"
+        },
+        {
+          "value": "square",
+          "label": "t:options.square"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ section.settings.icons_style != 'none' and section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Collection",
+      "category": "t:categories.product",
+      "settings": {
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "max_products": 6,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 8,
+        "rows_gap": 24,
+        "icons_style": "none",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "horizontal_alignment": "center",
+        "gap": 28,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      },
+      "blocks": {
+        "static-product-card": {
+          "type": "_mionas-product-card",
+          "name": "Mionas: Product card",
+          "static": true,
+          "settings": {
+            "gap": 16,
+            "padding-block-start": 0,
+            "padding-block-end": 16,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "media": {
+              "type": "mionas-product-media",
+              "name": "Mionas: Product media",
+              "settings": {
+                "image_loading": "lazy"
+              }
+            },
+            "title": {
+              "type": "mionas-product-title",
+              "name": "Mionas: Product title",
+              "settings": {
+                "heading_level": "3"
+              }
+            },
+            "price": {
+              "type": "mionas-product-price",
+              "name": "Mionas: Product price",
+              "settings": {
+                "show_compare_at_price": false
+              }
+            }
+          },
+          "block_order": ["media", "title", "price"]
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

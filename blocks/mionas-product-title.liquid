@@ -1,0 +1,73 @@
+{%- comment -%}
+  Mirrors the title line of ../design-system/src/react/ProductCard/ProductCard.tsx: the product name
+  at the "body" text role, in --card-title-* weight and colour.
+
+  Reads closest.product, so it renders only inside a product context -- the card slot of
+  sections/mionas-collection.liquid, a native product card, or a product page.
+
+  WHY IT EMITS NO LINK, unlike Horizon's blocks/product-title.liquid:
+  inside blocks/_mionas-product-card.liquid the whole card is already an overlay link to the product,
+  so a second anchor around the same text would give a screen reader two links to the same place and
+  a keyboard user an extra stop. When this block is used outside that card the text is plain, which is
+  the correct default for a heading. Horizon's own product-title is still available if a real link is
+  wanted.
+
+  The heading semantics (role/aria-level rather than a real <h*>) match snippets/text.liquid's
+  product-title branch: a card title is a heading to assistive tech but its level depends on the page
+  it lands in, so it is not hardcoded to <h3>.
+{%- endcomment -%}
+
+{%- liquid
+  assign product = closest.product
+-%}
+
+{%- if product != blank -%}
+  <p
+    class="mionas-product-title"
+    role="heading"
+    aria-level="{{ block.settings.heading_level }}"
+    {{ block.shopify_attributes }}
+  >
+    {{- product.title -}}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-product-title {
+    margin: 0;
+    padding-inline: var(--product-card-base-padding-inline);
+    font-family: var(--card-base-font-family);
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    letter-spacing: var(--text-role-body-letter-spacing);
+    font-weight: var(--card-title-font-weight);
+    color: var(--card-title-foreground);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Product title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "Heading level",
+      "options": [
+        { "value": "2", "label": "H2" },
+        { "value": "3", "label": "H3" },
+        { "value": "4", "label": "H4" }
+      ],
+      "default": "3",
+      "info": "Announced to screen readers. Pick the level that sits under the section's own heading."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Product title",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

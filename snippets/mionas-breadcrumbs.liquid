@@ -1,0 +1,205 @@
+{%- comment -%}
+  The breadcrumb trail itself -- the single implementation shared by sections/mionas-breadcrumbs.liquid
+  (standalone, top of a template) and blocks/mionas-breadcrumbs.liquid (nested inside a Section, next
+  to a Heading). Both callers own their own wrapper element and its shopify_attributes; this snippet
+  emits only the <nav> landmark, so neither caller's editor affordances leak into the other.
+
+  Mirrors the design-system Breadcrumbs + BreadcrumbLink components
+  (../design-system/src/react/Breadcrumbs). No native Horizon file produces a breadcrumb trail at
+  all, so there is nothing to reskin; this is a fork by necessity, not by choice.
+
+  Accepts:
+    home_label     - copy for the first crumb (required; caller defaults it)
+    landmark_label - accessible name for the nav landmark (required; caller defaults it)
+    menu           - a linklist to derive the hierarchy from; falls back to navigation-menu
+
+  {% render %} is an isolated scope, so those three must be passed explicitly. Everything else the
+  trail reads (routes, request, template, collection, blog, article, product, page, linklists) is a
+  global and resolves in here unchanged.
+
+  Every crumb renders as a real <a>, including the current page -- matching BreadcrumbLink, which
+  is always a Link/anchor; Breadcrumbs.tsx marks the last one current via aria-current="page"
+  rather than swapping it for inert text, and BreadcrumbLink's own CSS keys its "current" look off
+  that attribute rather than a prop. See .cursor/rules/breadcrumb-accessibility.mdc for the
+  underlying WAI-ARIA pattern (nav landmark + ordered list + aria-current) this follows.
+
+  The one exception: a menu ancestor whose URL is the site root (this store's "Tienda" parent) is a
+  <span>, not an <a>, because the Home crumb already links there and two adjacent crumbs pointing
+  at the same page is worse than one non-interactive label. The rule is "no crumb duplicates Home's
+  target", not "some crumbs are text".
+{%- endcomment -%}
+{% liquid
+  # page_title is the SEO title, not the resource name: it's whatever the merchant typed into the
+  # search-listing editor (often truncated to fit a search result), and on a tag-filtered collection
+  # Shopify appends the tag ("Breads - sourdough"). The crumb wants the resource's own name, so take
+  # it from the resource whenever the template has one and keep page_title only as the last resort.
+  assign current_title = page_title
+  case template.name
+    when 'collection'
+      assign current_title = collection.title | default: page_title
+    when 'product'
+      assign current_title = product.title | default: page_title
+    when 'article'
+      assign current_title = article.title | default: page_title
+    when 'blog'
+      assign current_title = blog.title | default: page_title
+    when 'page'
+      assign current_title = page.title | default: page_title
+  endcase
+
+  # The trail follows the merchant's navigation menu, so the crumbs match the path a visitor
+  # actually clicked rather than a second, invented hierarchy. Shopify menus nest at most three
+  # levels, so a page has at most two ancestors -- no recursion needed, just two nested loops.
+  # link.current is the exact-URL match; child_active/child_current mark the branch containing it.
+  # The link_list setting type only accepts "main-menu" or "footer" as a schema default -- anything
+  # else is rejected as "default is invalid" at render time -- so the real default lives here:
+  # navigation-menu is the menu sections/header-group.json renders, and Shopify's main-menu starter
+  # list is unused on this store.
+  # `== blank` rather than `.links.size == 0`: an unset link_list setting is nil, and nil == 0 is
+  # false in Liquid, so a size check silently leaves the menu nil and no crumb ever matches.
+  if menu == blank
+    assign menu = linklists['navigation-menu']
+  endif
+  assign menu_matched = false
+  assign ancestor_1_title = blank
+  assign ancestor_1_url = blank
+  assign ancestor_2_title = blank
+  assign ancestor_2_url = blank
+
+  for link_1 in menu.links
+    if link_1.current
+      assign menu_matched = true
+      break
+    endif
+    if link_1.child_active or link_1.child_current
+      assign menu_matched = true
+      assign ancestor_1_title = link_1.title
+      assign ancestor_1_url = link_1.url
+      for link_2 in link_1.links
+        if link_2.current
+          break
+        endif
+        if link_2.child_active or link_2.child_current
+          assign ancestor_2_title = link_2.title
+          assign ancestor_2_url = link_2.url
+          break
+        endif
+      endfor
+      break
+    endif
+  endfor
+%}
+
+<nav class="mionas-breadcrumbs" aria-label="{{ landmark_label }}">
+  <ol class="mionas-breadcrumbs__list">
+    <li class="mionas-breadcrumbs__item">
+      <a href="{{ routes.root_url }}" class="mionas-breadcrumbs__link">{{ home_label }}</a>
+      <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+    </li>
+
+    {%- comment -%}
+      Menu ancestors first, then the resource crumb -- the two are additive, not alternatives. A
+      product opened from a collection (/collections/x/products/y) makes the menu's *collection*
+      branch active, so the menu supplies the grouping above the collection while the collection
+      itself still has to come from `collection`. Treating them as either/or drops that crumb.
+    {%- endcomment -%}
+    {%- if menu_matched -%}
+      {%- if ancestor_1_title != blank -%}
+        <li class="mionas-breadcrumbs__item">
+          {%- if ancestor_1_url == routes.root_url -%}
+            <span class="mionas-breadcrumbs__text">{{ ancestor_1_title }}</span>
+          {%- else -%}
+            <a href="{{ ancestor_1_url }}" class="mionas-breadcrumbs__link">{{ ancestor_1_title }}</a>
+          {%- endif -%}
+          <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+        </li>
+      {%- endif -%}
+      {%- if ancestor_2_title != blank -%}
+        <li class="mionas-breadcrumbs__item">
+          {%- if ancestor_2_url == routes.root_url -%}
+            <span class="mionas-breadcrumbs__text">{{ ancestor_2_title }}</span>
+          {%- else -%}
+            <a href="{{ ancestor_2_url }}" class="mionas-breadcrumbs__link">{{ ancestor_2_title }}</a>
+          {%- endif -%}
+          <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+        </li>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%}
+      The resource crumb: the collection a product was reached through, or an article's blog.
+      Skipped when a menu ancestor already links there, so the same page never appears twice.
+    {%- endcomment -%}
+    {%- case template.name -%}
+      {%- when 'product' -%}
+        {%- if collection != blank and collection.url != ancestor_1_url and collection.url != ancestor_2_url -%}
+          <li class="mionas-breadcrumbs__item">
+            <a href="{{ collection.url }}" class="mionas-breadcrumbs__link">{{ collection.title }}</a>
+            <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+          </li>
+        {%- endif -%}
+      {%- when 'article' -%}
+        {%- if blog != blank and blog.url != ancestor_1_url and blog.url != ancestor_2_url -%}
+          <li class="mionas-breadcrumbs__item">
+            <a href="{{ blog.url }}" class="mionas-breadcrumbs__link">{{ blog.title }}</a>
+            <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+          </li>
+        {%- endif -%}
+    {%- endcase -%}
+
+    <li class="mionas-breadcrumbs__item">
+      <a
+        href="{{ request.path }}"
+        class="mionas-breadcrumbs__link"
+        aria-current="page"
+      >{{ current_title }}</a>
+    </li>
+  </ol>
+</nav>
+
+{% stylesheet %}
+  .mionas-breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--breadcrumbs-base-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mionas-breadcrumbs__item {
+    display: flex;
+    align-items: center;
+    gap: var(--breadcrumbs-base-gap);
+  }
+
+  /* Family is --font-family-archivo, the design system's body primitive, repointed at the theme's
+     loaded body font by snippets/design-system-bridge.liquid. Breadcrumbs.module.css sets no
+     family of its own -- BreadcrumbLink inherits -- so this spends the primitive rather than
+     borrowing Link's component token for an element that isn't a Link. */
+  .mionas-breadcrumbs__link,
+  .mionas-breadcrumbs__text {
+    font-family: var(--font-family-archivo);
+    font-weight: var(--link-base-font-weight);
+    font-size: var(--link-size-sm-font-size);
+    text-decoration: none;
+    color: var(--breadcrumb-link-base-foreground);
+  }
+
+  .mionas-breadcrumbs__link:hover {
+    text-decoration: underline;
+    color: var(--breadcrumb-link-state-hover-foreground);
+  }
+
+  .mionas-breadcrumbs__link[aria-current='page'] {
+    color: var(--breadcrumb-link-state-active-foreground);
+    font-weight: var(--breadcrumb-link-state-active-font-weight);
+  }
+
+  /* Mirrors Breadcrumbs.tsx rendering the separator as <Text variant="secondary">: only a colour
+     token, no font-size of its own -- the glyph inherits whatever size surrounds it. */
+  .mionas-breadcrumbs__separator {
+    color: var(--text-color-secondary);
+  }
+{% endstylesheet %}

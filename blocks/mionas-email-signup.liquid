@@ -43,6 +43,20 @@
   layout select and four block-level padding sliders, and a fifth padding control on an inner
   element earns its place only if someone asks for it.
 
+  CLIENT-SIDE ERRORS ARE JS-DRIVEN ON PURPOSE. `validate: true` on the mionas-form render below
+  loads assets/mionas-form-validation.js, which sets `novalidate` on the form FROM JAVASCRIPT and
+  writes the same field/label classes and message paragraph the server-side `error` param produces,
+  so the two error states are indistinguishable. Because novalidate is set from JS rather than in
+  the form tag, a visitor without JavaScript keeps the browser's native validation. Do not move it
+  into Liquid.
+
+  type="email" on its own parses far too loosely -- it accepts "marc@gmail" and "a@b", which then
+  submit, get rejected by Shopify and come back as a full page load, looking for all the world like
+  the button ignoring the error. snippets/mionas-text-field.liquid therefore adds a stricter default
+  `pattern` to every email field; that is where the regex and its reasoning live. Shopify's own
+  check remains the authority for everything the pattern cannot know, and it renders through the
+  very same markup, so a value that still slips past fails visibly rather than differently.
+
   NO MERCHANT-SETTABLE ERROR COPY. Shopify's own translated message is more accurate than anything a
   merchant would type, and it is what mionas-contact-form already shows.
 
@@ -163,7 +177,7 @@
       {%- render 'mionas-submit-button', label: button_label -%}
     {%- endcapture -%}
 
-    {%- render 'mionas-form', content: email_signup_fields -%}
+    {%- render 'mionas-form', content: email_signup_fields, validate: true -%}
   {%- endform -%}
 </div>
 

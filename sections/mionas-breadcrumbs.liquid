@@ -1,32 +1,32 @@
 {%- comment -%}
-  Mirrors the design-system Breadcrumbs + BreadcrumbLink components
-  (../design-system/src/react/Breadcrumbs) as a standalone section. No native Horizon file
-  produces a breadcrumb trail at all -- grepped for "breadcrumb" across sections/, snippets/ and
-  settings_schema.json and found nothing -- so there is nothing to reskin; this is a fork by
-  necessity, not by choice.
+  The standalone placement of the breadcrumb trail: a section a merchant adds at the top of a
+  template's section list (product, collection, page, blog, article), independently added, removed
+  and reordered there. blocks/mionas-breadcrumbs.liquid is the same trail as a theme block, for
+  nesting inside a Section alongside a Heading; both render snippets/mionas-breadcrumbs.liquid, so
+  the crumb logic and styles live in exactly one place and cannot drift between the two placements.
 
-  A section, not a block: the trail needs to sit above main content on whichever templates a
-  merchant wants it on (product, collection, page, blog, article, search), each independently
-  added/removed/reordered from that template's own entry in the theme editor's section list --
-  that's Section's job per mionas-design-component's "section, block, or snippet" guidance. It doesn't
-  compose into one specific parent the way a Button or SplitHero does, so it isn't a block.
+  Section *and* block, not one or the other: the trail is a page-level element that usually wants to
+  sit above main content on its own (Section's job), but merchants also want it tucked into the same
+  container as the page heading so the two share that container's width, background and spacing --
+  which only a block can do. Neither placement subsumes the other.
 
-  The trail itself needs no settings: it reads Shopify's own template context (template.name,
-  collection, blog, page_title, request.path) to build the crumbs, the same way any breadcrumb
-  implementation would. Only the two pieces of copy a merchant would actually want to localize are
-  settings: the Home label and the landmark's accessible name (the design system's own doc says
-  "Set label to localize the landmark's accessible name").
+  The trail comes from the merchant's navigation menu first (the `menu` setting, defaulting to
+  navigation-menu -- the one sections/header-group.json actually renders, not Shopify's unused
+  main-menu starter list), so the crumbs match a path a visitor could actually have clicked instead
+  of a parallel hierarchy invented here. Templates the menu has no entry for -- products, articles
+  -- fall back to Shopify's template context. See the snippet for the full derivation rules.
 
-  Every crumb renders as a real <a>, including the current page -- matching BreadcrumbLink, which
-  is always a Link/anchor; Breadcrumbs.tsx marks the last one current via aria-current="page"
-  rather than swapping it for inert text, and BreadcrumbLink's own CSS keys its "current" look off
-  that attribute rather than a prop. See .cursor/rules/breadcrumb-accessibility.mdc for the
-  underlying WAI-ARIA pattern (nav landmark + ordered list + aria-current) this follows.
+  Besides the menu, the settings are the two pieces of copy a merchant would want to localize: the
+  Home label and the landmark's accessible name (the design system's own doc says "Set label to
+  localize the landmark's accessible name").
 
   section_width / background_color / padding controls are the same boilerplate every other Horizon
   section carries (see sections/collection-links.liquid) -- merchants get sizing controls to
   match, and contrast-override.liquid gives correct text/link contrast on a custom background for
   free rather than a new bridge rule.
+
+  The setting ids below are referenced by every templates/*.json entry that places this section --
+  renaming or removing one silently drops that setting from all of those placements.
 {%- endcomment -%}
 {% liquid
   assign home_label = section.settings.home_label | default: 'Home'
@@ -43,94 +43,25 @@
 <div
   class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} spacing-style"
   style="{% render 'spacing-style', settings: section.settings %}"
+  {{ section.shopify_attributes }}
 >
-  <nav
-    class="mionas-breadcrumbs"
-    aria-label="{{ landmark_label }}"
-    {{ section.shopify_attributes }}
-  >
-    <ol class="mionas-breadcrumbs__list">
-      <li class="mionas-breadcrumbs__item">
-        <a href="{{ routes.root_url }}" class="mionas-breadcrumbs__link">{{ home_label }}</a>
-        <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
-      </li>
-
-      {%- case template.name -%}
-        {%- when 'product' -%}
-          {%- if collection -%}
-            <li class="mionas-breadcrumbs__item">
-              <a href="{{ collection.url }}" class="mionas-breadcrumbs__link">{{ collection.title }}</a>
-              <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
-            </li>
-          {%- endif -%}
-        {%- when 'article' -%}
-          <li class="mionas-breadcrumbs__item">
-            <a href="{{ blog.url }}" class="mionas-breadcrumbs__link">{{ blog.title }}</a>
-            <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
-          </li>
-      {%- endcase -%}
-
-      <li class="mionas-breadcrumbs__item">
-        <a
-          href="{{ request.path }}"
-          class="mionas-breadcrumbs__link"
-          aria-current="page"
-        >{{ page_title }}</a>
-      </li>
-    </ol>
-  </nav>
+  {%- render 'mionas-breadcrumbs',
+    home_label: home_label,
+    landmark_label: landmark_label,
+    menu: section.settings.menu
+  -%}
 </div>
-
-{% stylesheet %}
-  .mionas-breadcrumbs__list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--breadcrumbs-base-gap);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .mionas-breadcrumbs__item {
-    display: flex;
-    align-items: center;
-    gap: var(--breadcrumbs-base-gap);
-  }
-
-  /* Family is --font-family-archivo, the design system's body primitive, repointed at the theme's
-     loaded body font by snippets/design-system-bridge.liquid. Breadcrumbs.module.css sets no
-     family of its own -- BreadcrumbLink inherits -- so this spends the primitive rather than
-     borrowing Link's component token for an element that isn't a Link. */
-  .mionas-breadcrumbs__link {
-    font-family: var(--font-family-archivo);
-    font-weight: var(--link-base-font-weight);
-    font-size: var(--link-size-sm-font-size);
-    text-decoration: none;
-    color: var(--breadcrumb-link-base-foreground);
-  }
-
-  .mionas-breadcrumbs__link:hover {
-    text-decoration: underline;
-    color: var(--breadcrumb-link-state-hover-foreground);
-  }
-
-  .mionas-breadcrumbs__link[aria-current='page'] {
-    color: var(--breadcrumb-link-state-active-foreground);
-    font-weight: var(--breadcrumb-link-state-active-font-weight);
-  }
-
-  /* Mirrors Breadcrumbs.tsx rendering the separator as <Text variant="secondary">: only a colour
-     token, no font-size of its own -- the glyph inherits whatever size surrounds it. */
-  .mionas-breadcrumbs__separator {
-    color: var(--text-color-secondary);
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
   "name": "Mionas: Breadcrumbs",
   "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "info": "The trail follows this menu's hierarchy. Leave empty to use the header menu (Navigation Menu). Pages the menu doesn't contain fall back to their collection or blog."
+    },
     {
       "type": "text",
       "id": "home_label",

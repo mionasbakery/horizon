@@ -36,6 +36,8 @@
                   first autofocus in document order and silently ignores the rest.
     autocomplete, spellcheck, autocapitalize, inputmode
                   Passed through when set.
+    pattern       Passed through when set. An email field that does not set one gets a stricter
+                  default -- see the liquid tag below for why type="email" on its own is not enough.
     optional_text Forwarded to the label; see snippets/mionas-form-label.liquid.
     attributes    Raw string appended to the control tag, for anything not covered above.
     class         Extra classes on the field wrapper.
@@ -58,6 +60,25 @@
   assign field_has_error = false
   if error != blank
     assign field_has_error = true
+  endif
+
+  # type="email" alone is far too permissive: the HTML spec's own definition accepts "marc@gmail"
+  # and even "a@b", because a dotless domain is legal in the abstract. Those addresses sail past the
+  # browser, past assets/mionas-form-validation.js, and only fail once Shopify has already taken the
+  # round trip -- which reads to the visitor as the button submitting despite an obviously
+  # incomplete address.
+  #
+  # So every Mionas email field gets a stricter pattern by default: something before the @, a
+  # domain, a dot, and a TLD of at least two characters. Applied here rather than in each block so
+  # the rule is single-sourced, and skipped when a caller passes its own `pattern`.
+  #
+  # It is a floor, not a full RFC 5322 parser -- that is not a thing a regex should attempt, and
+  # Shopify's own server-side check is still the authority. It just stops the obvious cases from
+  # costing a page load. patternMismatch lands on the same "invalid" message as typeMismatch in
+  # mionas-form-validation.js, and it also tightens the no-JS fallback.
+  assign field_pattern = pattern
+  if field_pattern == blank and field_type == 'email'
+    assign field_pattern = '[^@\s]+@[^@\s]+\.[^@\s]{2,}'
   endif
 %}
 {%- capture text_field_control -%}
@@ -91,6 +112,7 @@
       {% if spellcheck != blank %}spellcheck="{{ spellcheck }}"{% endif %}
       {% if autocapitalize != blank %}autocapitalize="{{ autocapitalize }}"{% endif %}
       {% if inputmode != blank %}inputmode="{{ inputmode }}"{% endif %}
+      {% if field_pattern != blank %}pattern="{{ field_pattern }}"{% endif %}
       {{ attributes }}
     >
   {%- endif -%}

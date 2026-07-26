@@ -9,6 +9,19 @@
  */
 {
   "sections": {
+    "mionas_breadcrumbs_PRD001": {
+      "type": "mionas-breadcrumbs",
+      "name": "Mionas: Breadcrumbs",
+      "settings": {
+        "menu": "",
+        "home_label": "Home",
+        "label": "Breadcrumb",
+        "section_width": "page-width",
+        "background_color": "",
+        "padding-block-start": 12,
+        "padding-block-end": 12
+      }
+    },
     "main": {
       "type": "product-information",
       "blocks": {
@@ -180,6 +193,32 @@
                 "price_tVjtKg"
               ]
             },
+            "text_aEtTtq": {
+              "type": "text",
+              "name": "t:names.product_description",
+              "settings": {
+                "text": "{{ closest.product.description }}",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "divider_VJhene": {
               "type": "_divider",
               "name": "t:names.divider",
@@ -275,31 +314,6 @@
               },
               "block_order": []
             },
-            "text_aEtTtq": {
-              "type": "text",
-              "name": "t:names.product_description",
-              "settings": {
-                "text": "{{ closest.product.description }}",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "delivery_date": {
               "type": "delivery-date",
               "settings": {},
@@ -327,7 +341,7 @@
         "gap": 48,
         "enable_sticky_add_to_cart": true,
         "background_color": "",
-        "padding-block-start": 36,
+        "padding-block-start": 0,
         "padding-block-end": 0
       }
     },
@@ -475,6 +489,7 @@
     }
   },
   "order": [
+    "mionas_breadcrumbs_PRD001",
     "main",
     "product_recommendations_qggXJq"
   ]

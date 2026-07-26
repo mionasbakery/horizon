@@ -1,0 +1,171 @@
+{%- comment -%}
+  The per-product card slot of sections/mionas-product-list.liquid: a Mionas card shell whose
+  contents are merchant-composed child blocks, not baked-in markup.
+
+  Mirrors ../design-system/src/react/ProductCard/ProductCard.tsx's `as="a"` mode -- the whole card is
+  the link to the product -- while still accepting arbitrary children, which is the combination the
+  earlier all-in-one version could not offer.
+
+  WHY THIS IS PRIVATE (leading underscore):
+  it reads closest.product and would render nothing outside a product context, so it must not appear
+  in the merchant's block picker. It is reached only through the section's
+  content_for 'block', type: '_mionas-product-card', id: 'static-product-card' -- the same mechanism
+  sections/mionas-split-panel.liquid uses for its two `group` sides and
+  sections/mionas-google-reviews.liquid for its card and summary. One fixed id shared by every
+  iteration means the theme editor shows a single card whose composition governs every product.
+
+  WHY IT DOES NOT RENDER THROUGH snippets/group.liquid, unlike blocks/mionas-card.liquid:
+  group.liquid takes the link from `settings.link`, a static URL setting (group.liquid:44-51), and
+  there is no parameter to override it. In a loop every card would point at the same product. group
+  is a native snippet, so it cannot be given one. The shell below is therefore the card's own, with
+  the href bound to closest.product -- but the overlay-link technique is copied verbatim from
+  group.liquid:82-97, including the pointer-events handling, so a child block that contains its own
+  link or button (a title, a swatch, a badge) stays clickable instead of being swallowed by the
+  overlay. That is what makes the card wholly clickable AND composable at the same time; an <a>
+  wrapping the children would forbid any link inside it.
+
+  The card chrome (background, border, radius, shadow) comes from the same --card-base-* tokens as
+  blocks/mionas-card.liquid, so a composed product card and a hand-composed Mionas: Card are the same
+  object visually.
+{%- endcomment -%}
+
+{%- liquid
+  assign product = closest.product
+-%}
+
+{%- if product != blank -%}
+  <div
+    class="mionas-product-card spacing-style"
+    style="
+      {% render 'spacing-style', settings: block.settings %}
+      --mionas-product-card-gap: {{ block.settings.gap }}px;
+    "
+    {{ block.shopify_attributes }}
+  >
+    {%- comment -%}
+      Empty overlay link, exactly as group.liquid and snippets/product-card.liquid do it. It carries
+      the accessible name so a screen reader announces the product rather than an unnamed link, and
+      the child title is then free to be plain text.
+    {%- endcomment -%}
+    <a class="mionas-product-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}"></a>
+
+    <div class="mionas-product-card__content">{%- content_for 'blocks' -%}</div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--mionas-product-card-gap, var(--product-card-base-gap));
+    background: var(--card-base-background);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--card-base-radius);
+    box-shadow: var(--card-base-shadow);
+    font-family: var(--card-base-font-family);
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mionas-product-card:active {
+    opacity: var(--card-state-pressed-opacity);
+  }
+
+  .mionas-product-card__link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .mionas-product-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--mionas-product-card-gap, var(--product-card-base-gap));
+  }
+
+  /* Copied from snippets/group.liquid:88-93. Clicks pass through the composed children to the
+     overlay link, except on genuinely interactive elements, which keep their own behaviour. */
+  .mionas-product-card__link ~ .mionas-product-card__content {
+    pointer-events: none;
+
+    :is(a, button, input, textarea, select) {
+      pointer-events: auto;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Product card",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "_divider"
+    }
+  ],
+  "settings": [
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

@@ -27,6 +27,16 @@
   This block draws its own card surface rather than nesting inside mionas-card -- the same choice
   corporate-quote-form.liquid made, and it keeps the heading and the fields in one schema.
 
+  CLIENT-SIDE ERRORS ARE JS-DRIVEN ON PURPOSE. `validate: true` on the mionas-form render below
+  loads assets/mionas-form-validation.js, which sets `novalidate` on the form FROM JAVASCRIPT and
+  writes the same field/label classes and message paragraph the server-side `error` param produces,
+  so the two error states are indistinguishable. Because novalidate is set from JS rather than in
+  the form tag, a visitor without JavaScript keeps the browser's native validation. Do not move it
+  into Liquid. type="email" on its own lets "marc@gmail" and "a@b" through, so
+  snippets/mionas-text-field.liquid adds a stricter default `pattern` to every email field -- the
+  regex and its reasoning live there. Shopify's own check is still the backstop and renders through
+  the same markup.
+
   Only email is required, which is why the name and message labels carry the design system's
   " (optional)" suffix. That is FormLabel.tsx's own behaviour for a non-required field, not a
   styling accident.
@@ -136,7 +146,7 @@
       {%- endif -%}
     {%- endcapture -%}
 
-    {%- render 'mionas-form', content: contact_form_fields -%}
+    {%- render 'mionas-form', content: contact_form_fields, validate: true -%}
   {%- endform -%}
 </div>
 
