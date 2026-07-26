@@ -127,7 +127,7 @@
               "type": "mionas-text",
               "name": "Eyebrow",
               "settings": {
-                "text": "<p>ESPECIALIDAD EN COOKIES · SITGES</p>",
+                "text": "<p>ESPECIALIDAD EN COOKIES</p>",
                 "role": "stamp",
                 "variant": "accent",
                 "tag": "div"
@@ -399,7 +399,7 @@
           ]
         }
       },
-      "name": "t:names.products_carousel",
+      "name": "Mionas: Lo más vendido",
       "settings": {
         "collection": "lo-mas-vendido",
         "layout_type": "grid",
@@ -420,146 +420,106 @@
         "padding-block-end": 48
       }
     },
-    "mionas_google_reviews_WeR8cp": {
-      "type": "mionas-google-reviews",
+    "section_DGRKT8": {
+      "type": "section",
       "blocks": {
-        "mionas_text_DeFJf6": {
-          "type": "mionas-text",
-          "name": "Mionas: Text",
+        "group_8n3QFH": {
+          "type": "group",
+          "name": "Header",
           "settings": {
-            "text": "<p>Que dicen nuestros clientes</p>",
-            "role": "title",
-            "variant": "primary",
-            "tag": "h2"
-          },
-          "blocks": {}
-        },
-        "static-review-card": {
-          "type": "_mionas-google-review-card",
-          "name": "Mionas: Google review",
-          "static": true,
-          "settings": {
-            "show_rating": true,
-            "show_author": true,
-            "quote_clamp_lines": 3
-          },
-          "blocks": {}
-        },
-        "static-summary": {
-          "type": "_mionas-google-reviews-summary",
-          "name": "Mionas: Reviews summary",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 8,
+            "gap": 12,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
+            "background_media": "none",
             "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
             "border_color": "",
             "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_google_reviews_score_re3DXB": {
-              "type": "_mionas-google-reviews-score",
-              "name": "Mionas: Reviews score",
-              "settings": {
-                "show_star": true,
-                "role": "caption",
-                "variant": "primary"
-              },
-              "blocks": {}
-            },
-            "mionas_text_Q4d8w6": {
+            "mionas_text_yDUYGK": {
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "<p>·</p>",
-                "role": "caption",
-                "variant": "tint",
-                "tag": "span"
-              },
-              "blocks": {}
-            },
-            "mionas_google_reviews_count_qYqhDC": {
-              "type": "_mionas-google-reviews-count",
-              "name": "Mionas: Reviews count",
-              "settings": {
-                "label": "reseñas en Google",
-                "role": "caption",
-                "variant": "default"
-              },
-              "blocks": {}
-            },
-            "mionas_link_PcBKkn": {
-              "type": "mionas-link",
-              "name": "Mionas: Link",
-              "settings": {
-                "label": "Verlas todas",
-                "link": "",
-                "open_in_new_tab": true,
+                "text": "<p>Que dicen nuestros clientes</p>",
+                "role": "title",
                 "variant": "primary",
-                "size": "sm"
+                "tag": "h2"
               },
               "blocks": {}
             }
           },
           "block_order": [
-            "mionas_google_reviews_score_re3DXB",
-            "mionas_text_Q4d8w6",
-            "mionas_google_reviews_count_qYqhDC",
-            "mionas_link_PcBKkn"
+            "mionas_text_yDUYGK"
           ]
+        },
+        "custom_liquid_DwXFJd": {
+          "type": "custom-liquid",
+          "name": "t:names.custom_liquid",
+          "settings": {
+            "custom_liquid": "<script defer async src='https://cdn.trustindex.io/loader.js?e10e64877f0b7480fd46da287ff'></script>"
+          },
+          "blocks": {}
         }
       },
       "block_order": [
-        "mionas_text_DeFJf6"
+        "group_8n3QFH",
+        "custom_liquid_DwXFJd"
       ],
-      "disabled": true,
       "name": "Mionas: Google reviews",
       "settings": {
-        "review_count": 6,
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "columns": 3,
-        "mobile_columns": "1",
-        "mobile_card_size": "60cqw",
-        "columns_gap": 16,
-        "rows_gap": 16,
-        "icons_style": "arrows_large",
-        "icons_shape": "circle",
-        "section_width": "page-width",
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 24,
+        "section_width": "page-width",
+        "section_height": "small",
+        "section_height_custom": 50,
+        "background_media": "none",
         "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 48,
         "padding-block-end": 48
-      }
-    },
-    "custom_liquid_JMQHYi": {
-      "type": "custom-liquid",
-      "name": "t:names.custom_liquid",
-      "settings": {
-        "custom_liquid": "<script defer async src='https://cdn.trustindex.io/loader.js?012c4d9774ea7440e486e44cb69'></script>",
-        "background_color": "",
-        "section_width": "page-width",
-        "padding-block-start": 0,
-        "padding-block-end": 0
       }
     },
     "mionas_split_panel_YLXpMA": {
@@ -680,7 +640,7 @@
               "type": "mionas-text",
               "name": "Eyebrow",
               "settings": {
-                "text": "<p>NEWSLETTER</p>",
+                "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
                 "role": "stamp",
                 "variant": "accent",
                 "tag": "div"
@@ -709,57 +669,21 @@
               },
               "blocks": {}
             },
-            "forms_inline_m4m7ht": {
-              "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
+            "mionas_email_signup_AdjRU4": {
+              "type": "mionas-email-signup",
+              "name": "Mionas: email signup",
               "settings": {
-                "form_id": "1086656",
-                "text_color": "#202020",
-                "button_background_color": "#202020",
-                "button_label_color": "#ffffff",
-                "links_color": "#1878b9",
-                "errors_color": "#e02229",
-                "text_alignment": "left",
-                "form_alignment": "flex-start",
-                "padding_top": 0,
-                "padding_bottom": 24,
-                "padding_right": 0,
-                "padding_left": 0
-              }
-            },
-            "group_6FrJDf": {
-              "type": "group",
-              "name": "Actions",
-              "settings": {
-                "content_direction": "row",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "center",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
+                "email_label": "",
+                "email_placeholder": "Tu dirección de correo electrónico",
+                "button_label": "Suscribirme",
+                "button_width": "fit",
+                "success_text": "¡Gracias! Ya estás suscrito.",
+                "customer_tag": "",
+                "layout": "stacked",
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
                 "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "background_media": "none",
-                "background_color": "",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_color": "",
-                "border_radius": 0,
-                "link": "",
-                "open_in_new_tab": false,
-                "placeholder": "",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -772,8 +696,7 @@
             "mionas_text_TxwLqj",
             "mionas_text_E74aRt",
             "mionas_text_PHRkcU",
-            "forms_inline_m4m7ht",
-            "group_6FrJDf"
+            "mionas_email_signup_AdjRU4"
           ]
         }
       },
@@ -794,8 +717,7 @@
   "order": [
     "mionas_split_hero_WD8xYY",
     "product_list_NtrmPD",
-    "mionas_google_reviews_WeR8cp",
-    "custom_liquid_JMQHYi",
+    "section_DGRKT8",
     "mionas_split_panel_YLXpMA"
   ]
 }
