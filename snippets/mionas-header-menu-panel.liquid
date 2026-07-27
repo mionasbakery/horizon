@@ -1,0 +1,143 @@
+{%- doc -%}
+  Renders the Mionas mega menu card panel for one parent menu link.
+
+  Shared by the desktop mega menu (blocks/mionas-header-menu.liquid) and the mobile drawer
+  (snippets/mionas-header-drawer.liquid). `variant: 'drawer'` switches the cards from the
+  desktop's stacked layout to horizontal thumbnail rows with a forward caret. Everything
+  else - the data, the tagline lookup, the card's anatomy - is common to both.
+
+  DO NOT RE-DERIVE THE TWO CONTEXTS FROM VIEWPORT WIDTH. The drawer is not width-gated:
+  assets/utilities.js sets data-menu-style to 'drawer' when isTouchDevice() is true OR the
+  horizontal nav has overflowed. Viewport width is not part of that test, so on a touch
+  device the drawer is the live menu at ANY width - 1024px included. An earlier version of
+  this doc claimed "the drawer only exists below 750px and the desktop panel only above it,
+  so the queries cannot collide". That was false. It is why the drawer variant pins its own
+  grid-template-columns in blocks/mionas-header-menu.liquid rather than trusting the width
+  media queries there.
+
+  The tagline has no equivalent in a Shopify link list, which is why it is read from the
+  linked collection rather than from the menu. A link that is not a collection, or a
+  collection without the metafield, renders a label-only card on purpose - alignment is held
+  by the fixed media height (desktop) or the fixed 56px thumbnail (drawer), never by text
+  length.
+
+  Column counts apply to the DESKTOP variant only: 1 below 750px, 3 from 750px, and
+  grid_columns_count from 990px. The drawer variant is always a single column.
+
+  @param {object} parent_link - The menu link whose children become cards
+  @param {object} [settings] - The rendering block's settings, for the panel_* appearance
+    controls. Pass `block.settings`. Omitted values fall back to the CSS defaults in
+    blocks/mionas-header-menu.liquid, so the snippet still renders standalone.
+  @param {number} [grid_columns_count] - Columns at >=990px, desktop variant only.
+    Overrides settings.panel_columns.
+  @param {string} [id] - Optional id for the grid element
+  @param {string} [variant] - 'drawer' for the mobile row layout. Omit for desktop.
+  @param {string} [labelled_by] - Id of the element naming this group; becomes
+    aria-labelledby on the grid. The drawer passes its section heading's id, because that
+    heading is not a link and the group would otherwise be unnamed to a screen reader.
+
+  @example
+  {% render 'mionas-header-menu-panel', parent_link: link, grid_columns_count: 6 %}
+  {% render 'mionas-header-menu-panel', parent_link: link, variant: 'drawer', labelled_by: 'HeaderDrawer-tienda' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign is_drawer = false
+  if variant == 'drawer'
+    assign is_drawer = true
+  endif
+
+  # The drawer's thumbnail is a fixed 56px square. Asking for a 45vw candidate there makes
+  # the browser download several times the pixels it can display.
+  assign image_sizes = '(min-width: 990px) 200px, 45vw'
+  if is_drawer
+    assign image_sizes = '56px'
+  endif
+
+  assign columns = grid_columns_count | default: settings.panel_columns | default: 6
+
+  # Each property is emitted ONLY when its setting has a value, so an unset setting falls
+  # through to the CSS default rather than writing an empty declaration. Clearing the
+  # background colour in the theme editor is therefore how you remove the white surface
+  # entirely - the CSS default is `transparent`, not white.
+  capture panel_style
+    echo '--mionas-header-menu-columns: ' | append: columns | append: ';'
+    if settings.panel_background != blank
+      echo '--mionas-header-menu-panel-background: ' | append: settings.panel_background | append: ';'
+    endif
+    if settings.panel_shadow
+      echo '--mionas-header-menu-panel-shadow: var(--shadow-lg);'
+    endif
+    if settings.panel_max_width != blank
+      echo '--mionas-header-menu-max-width: ' | append: settings.panel_max_width | append: 'px;'
+    endif
+    if settings.panel_padding_block != blank
+      echo '--mionas-header-menu-padding-block: ' | append: settings.panel_padding_block | append: 'px;'
+    endif
+    if settings.panel_padding_inline != blank
+      echo '--mionas-header-menu-padding-inline: ' | append: settings.panel_padding_inline | append: 'px;'
+    endif
+    if settings.panel_gap != blank
+      echo '--mionas-header-menu-gap: ' | append: settings.panel_gap | append: 'px;'
+    endif
+  endcapture
+-%}
+
+{%- comment -%}
+  TWO ELEMENTS, DELIBERATELY. This describes the DESKTOP variant: the outer
+  .mionas-header-menu-panel is the full-bleed white surface and carries the drop shadow; the
+  inner __inner is what centres and caps the content at 1240px. Putting the background, the
+  shadow and the max-width on ONE element renders as a 1240px white card floating inside the
+  transparent dropdown, which is not the design - the design's panel is edge-to-edge white with
+  only its grid constrained. In the drawer variant the background, shadow and breakout are all
+  neutralised (blocks/mionas-header-menu.liquid's --drawer rules) - the two elements still
+  exist and still divide max-width from background, but neither paints a visible surface.
+{%- endcomment -%}
+<div class="mionas-header-menu-panel{% if is_drawer %} mionas-header-menu-panel--drawer{% endif %}" style="{{ panel_style }}">
+ <div class="mionas-header-menu-panel__inner">
+  <ul
+    class="mionas-header-menu-panel__grid list-unstyled"
+    role="list"
+    {% if id != blank %}id="{{ id }}"{% endif %}
+    {% if labelled_by != blank %}aria-labelledby="{{ labelled_by }}"{% endif %}
+  >
+    {%- for link in parent_link.links -%}
+      {%- liquid
+        assign tagline = ''
+        if link.type == 'collection_link'
+          assign tagline = link.object.metafields.mionas.menu_tagline.value
+        endif
+      -%}
+      <li class="mionas-header-menu-panel__item">
+        <a class="mionas-header-menu-panel__card" href="{{ link.url }}">
+          <span class="mionas-header-menu-panel__media">
+            {%- render 'link-featured-image',
+              link: link,
+              class: 'mionas-header-menu-panel__image',
+              sizes: image_sizes
+            -%}
+          </span>
+          {%- comment -%}
+            The __text wrapper exists for the drawer's three-column row grid (thumb | text |
+            caret): without it, label and tagline are separate grid items and cannot share a
+            column. Desktop spacing is preserved by pinning the wrapper's gap to the card's
+            old --space-xs in blocks/mionas-header-menu.liquid - do not change that value
+            without re-checking the desktop mega menu.
+          {%- endcomment -%}
+          <span class="mionas-header-menu-panel__text">
+            <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>
+            {%- if tagline != blank -%}
+              <span class="mionas-header-menu-panel__tagline">{{ tagline | escape }}</span>
+            {%- endif -%}
+          </span>
+          {%- if is_drawer -%}
+            <span class="svg-wrapper icon-caret icon-caret--forward mionas-header-menu-panel__caret" aria-hidden="true">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          {%- endif -%}
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+ </div>
+</div>

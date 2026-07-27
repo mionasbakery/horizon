@@ -1,0 +1,107 @@
+{%- doc -%}
+  Reskins Horizon's native product card (snippets/product-card.liquid, rendered on collection,
+  search, cart, 404 and product-recommendation surfaces) to match blocks/_mionas-product-card.liquid,
+  so the card language does not change between the home page and the rest of the store.
+
+  Component-scoped bridge in the shape of snippets/header-bridge.liquid: only the properties Horizon
+  exposes NO setting for live here. Everything settable -- background, border, radius, gap, padding,
+  text colour -- is configured per card block in templates/*.json instead, so the theme editor stays
+  the single source of truth for it and CSS never shadows a merchant control.
+
+  Rendered from the end of snippets/design-system-bridge.liquid (Mionas-owned, itself rendered from
+  layout/theme.liquid), which puts it after theme-styles-variables and after base.css. Hooking in
+  there rather than in theme.liquid keeps every native .liquid file byte-identical to upstream
+  Shopify/horizon, so merges stay clean.
+
+  NOT COVERED: blocks/product-card.liquid, the public standalone "Product card" block. It has no
+  instances in any template today. The rules below would apply to it, but its chrome comes from its
+  own block settings -- a future merchant placement needs the templates/*.json values applied by hand
+  or it renders shadow-and-600-weight on a borderless, radius-0 box.
+
+  Deliberately left alone: quick-add button, badges, swatches, carousel arrows, predictive search.
+
+  @example
+  {% render 'product-card-bridge' %}
+{%- enddoc -%}
+
+{% style %}
+  /* Mionas cards carry a shadow; Horizon's card declares none (base.css:101-118 only *transitions*
+     box-shadow, for the lift/scale hover effects). No native rule to outrank, so a plain declaration
+     is enough. It has to sit on __content rather than on <product-card>, because __content is the
+     element that border-override paints the border and radius onto. */
+  .product-card .product-card__content {
+    box-shadow: var(--card-base-shadow);
+  }
+
+  /* Mirrors _mionas-product-card.liquid:72-74. Same reason as above for targeting __content: the
+     opacity has to fade the bordered surface, not a wrapper that has no paint of its own. */
+  .product-card:active .product-card__content {
+    opacity: var(--card-state-pressed-opacity);
+  }
+
+  /* _mionas-product-card.liquid:66. The design-system bridge already points
+     --font-family-archivo at the theme's loaded body face, so this inherits a real font rather than
+     the DS primitive. */
+  .product-card {
+    font-family: var(--card-base-font-family);
+  }
+
+  /* NO MEDIA-HEIGHT RULE HERE, ON PURPOSE.
+     The Mionas card frames its media at a fixed --product-card-base-media-height (200px). Horizon
+     frames it by aspect ratio instead, and forcing a height on it does not survive contact with the
+     real markup: .product-media-container is not a child of .card-gallery (an <a class="contents">
+     sits between them, and with more than one image a whole slideshow-component does too,
+     card-gallery.liquid:112-200), and --gallery-aspect-ratio is written *inline* on .card-gallery
+     (card-gallery.liquid:72), so a stylesheet cannot outrank it on that element.
+
+     The image_ratio setting is the supported lever, so templates/*.json use "square" instead. At the
+     Mionas card's own layout -- 6 columns at page width, ~227px wide against 200px of media -- square
+     is within a few percent of the real thing, and it keeps the merchant control meaningful.
+     Revisit only if the design system tokenizes a ratio.
+
+     --product-media-fit already defaults to cover inline (card-gallery.liquid:114), so no rule is
+     needed for that either. */
+
+  /* Hover zoom, copied from blocks/mionas-product-media.liquid. Scales the <img>, NOT .card-gallery:
+     the gallery is the overflow-hidden frame, so scaling it would grow the card instead of zooming
+     inside it. The global card_hover_effect setting stays "none" for the same reason -- its
+     subtle-zoom variant scales the whole gallery box.
+
+     Gated exactly as base.css:124-150 gates Horizon's own hover effects.
+
+     The scale and duration are block-local custom properties, not design tokens -- the design system
+     has not tokenized them. Same names and values as blocks/mionas-product-media.liquid so the two
+     cards stay in step; promote both to real tokens if the design system ever grows them. */
+  .product-card .card-gallery {
+    --product-card-media-hover-scale: 1.05;
+    --product-card-media-hover-duration: 0.5s;
+  }
+
+  @media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .product-card .card-gallery img {
+      transition: transform var(--product-card-media-hover-duration) ease;
+    }
+
+    .product-card:hover .card-gallery img {
+      transform: scale(var(--product-card-media-hover-scale));
+    }
+  }
+
+  /* Title and price weight. Both render through snippets/text.liquid as
+     `.text-block.<type_preset>` -- title "paragraph", price "h6" per templates/*.json. Horizon has
+     no weight setting for them (weight is derived from whichever font picker the block points at),
+     but base.css:673 and base.css:814 declare it as font-weight: var(--font-paragraph--weight) /
+     var(--font-h6--weight). So this is a variable re-point and wins regardless of stylesheet order,
+     which matters because per-block stylesheet tags bundle later in the body.
+
+     INVARIANT: the preset names here must track templates/*.json. If a card's title or price is
+     ever switched to another type_preset, add the matching --font-<preset>--weight or the text
+     silently falls back to the theme's font weight.
+
+     Both tokens are 600, so one rule covers title and price. Colour is a real Horizon setting
+     (text_color) and lives in templates/*.json, not here. */
+  .product-card .text-block {
+    --font-paragraph--weight: var(--card-title-font-weight);
+    --font-h6--weight: var(--product-card-price-font-weight);
+  }
+{% endstyle %}

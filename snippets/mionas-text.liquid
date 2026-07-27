@@ -1,0 +1,62 @@
+{%- doc -%}
+  Renders a single text node at one of ../design-system/src/react/Text/Text.tsx's roles and colour
+  variants. Extracted from blocks/mionas-text.liquid so that block is not the only way to spend the
+  role vocabulary: blocks/mionas-product-title.liquid and blocks/mionas-price.liquid render their
+  dynamic product copy through here instead of restating --text-role-* by hand, which is how they
+  drifted out of step with the roles in the first place.
+
+  THE .text-role CSS DELIBERATELY DOES NOT LIVE HERE. Snippets cannot declare a stylesheet tag,
+  and it stays in blocks/mionas-text.liquid, which is where it already was. Every block
+  stylesheet tag is compiled into one file that ships on every page -- verified byte-identical
+  across the home page, /cart and a collection page -- so a caller does not need mionas-text to be
+  present on the page for these classes to resolve.
+
+  CALLERS MUST SANITISE `content` THEMSELVES. This snippet outputs it unfiltered, because
+  mionas-text passes richtext that has already been flattened to inline HTML and the product blocks
+  pass values from `| money` and product.title. Nothing here escapes; nothing here strips tags.
+
+  @param {string} content - The text to render. Emitted unfiltered; see above.
+  @param {string} [role] - A Text.tsx role: hero, title, subtitle, heading, subheading, caption, lead, body, label, stamp. Defaults to body.
+  @param {string} [variant] - A colour variant: default, primary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
+  @param {string} [tag] - p, span, div or h1-h6. Anything else falls back to p.
+  @param {string} [class] - Extra classes for the caller's own box (padding, weight overrides).
+  @param {string} [heading_level] - When set, emits role="heading" aria-level="<n>" instead of a real <h*>, matching snippets/text.liquid's product-title branch.
+  @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
+
+  @example
+  {% render 'mionas-text', content: product.title, role: 'body', tag: 'p', class: 'mionas-product-title' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign resolved_role = role | default: 'body'
+  assign resolved_variant = variant | default: 'default'
+
+  comment
+    tag comes from a select in every caller today, but a snippet is reachable from anywhere, so an
+    unknown value falls back to p rather than emitting an invalid element.
+  endcomment
+  assign allowed_tags = 'p|span|div|h1|h2|h3|h4|h5|h6' | split: '|'
+  assign resolved_tag = tag | default: 'p'
+  unless allowed_tags contains resolved_tag
+    assign resolved_tag = 'p'
+  endunless
+
+  assign classes = 'text-role text-role--' | append: resolved_role | append: ' text-role--' | append: resolved_variant
+  if class != blank
+    assign classes = classes | append: ' ' | append: class
+  endif
+-%}
+
+{%- comment -%}
+  The tag is interpolated rather than switched through a {% case %}. blocks/mionas-text.liquid
+  carried a ten-branch case for this, one per allowed tag, differing only in the element name; with
+  the value whitelisted above there is nothing left for the branches to guard.
+{%- endcomment -%}
+<{{ resolved_tag }}
+  class="{{ classes }}"
+  {%- if heading_level != blank %}
+    role="heading"
+    aria-level="{{ heading_level }}"
+  {%- endif %}
+  {{ shopify_attributes }}
+>{{- content -}}</{{ resolved_tag }}>

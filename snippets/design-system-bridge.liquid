@@ -177,3 +177,12 @@
     color: var(--footer-tagline-foreground);
   }
 {% endstyle %}
+
+{%- comment -%}
+  Reskin of Horizon's native product card. It opens its own style block, and rendering it from here
+  rather than from layout/theme.liquid means adding it touched no native Horizon file at all, so
+  merges from upstream Shopify/horizon stay clean. This snippet already renders after
+  theme-styles-variables and after base.css, which is the cascade position the bridge needs -- the
+  same one header-bridge.liquid gets from its own render in theme.liquid.
+{%- endcomment -%}
+{% render 'product-card-bridge' %}

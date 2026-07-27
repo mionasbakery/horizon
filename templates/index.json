@@ -267,14 +267,27 @@
               }
             },
             "price": {
-              "type": "mionas-product-price",
-              "name": "Mionas: Product price",
+              "type": "mionas-price",
+              "name": "Mionas: Price",
               "settings": {
+                "role": "body",
+                "variant": "default",
                 "show_compare_at_price": false
+              }
+            },
+            "add_to_cart": {
+              "type": "mionas-add-to-cart",
+              "name": "Mionas: Add to cart",
+              "settings": {
+                "variant": "primary",
+                "size": "md",
+                "full_width": true,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
               }
             }
           },
-          "block_order": ["media", "title", "price"]
+          "block_order": ["media", "title", "price", "add_to_cart"]
         },
         "header_group": {
           "type": "group",

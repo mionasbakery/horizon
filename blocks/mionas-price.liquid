@@ -1,0 +1,166 @@
+{%- comment -%}
+  The product price as a Mionas text role. Replaces blocks/mionas-product-price.liquid, which did the
+  same job but restated --text-role-body-* by hand instead of spending the role vocabulary, and so
+  could not follow it when a role changed.
+
+  Renders through snippets/mionas-text.liquid, the same snippet blocks/mionas-text.liquid and
+  blocks/mionas-product-title.liquid render, so size, line-height, letter-spacing, family and colour
+  are the role's. Only the weight is the price's own -- see the stylesheet.
+
+  WHY A DEDICATED BLOCK RATHER THAN JUST USING blocks/mionas-text.liquid:
+  mionas-text takes literal copy from a richtext setting. A price is not literal copy -- it needs
+  `| money` in the shop's currency and format, the compare-at comparison, and the accessible label on
+  the struck-through original. And blocks/_mionas-product-card.liquid renders ONE composition that
+  every product in the grid reuses (a single fixed block id), so a literal string would print the same
+  figure on every card. That is the whole reason this exists as its own block.
+
+  NOT IN THE DESIGN SYSTEM AS A STANDALONE COMPONENT. ../design-system/src/react/ has Text and
+  ProductCard/ProductCardPrice, but no Price -- so the tokens below are ProductCardPrice's while the
+  role plumbing is Text's. Worth proposing back to ../design-system as a real component; that is a
+  decision for its own repo, not something to assume from here.
+
+  Reads closest.product, so it renders only inside a product context -- the card slot of
+  sections/mionas-collection.liquid, a native product card, or a product page.
+
+  The compare-at price is opt-in and off by default, carried over from mionas-product-price:
+  ProductCardPrice.tsx shows a single price, but a bakery running a promotion has nowhere else to show
+  the original on a card. It renders only when the product is genuinely discounted.
+{%- endcomment -%}
+
+{%- liquid
+  assign product = closest.product
+  assign block_settings = block.settings
+
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+
+{%- if product != blank -%}
+  {%- liquid
+    comment
+      Built as a string and handed to the snippet as `content`, which the snippet outputs unfiltered.
+      Everything concatenated here is either `| money` output or a translated string, so there is no
+      merchant-authored HTML in it.
+    endcomment
+    capture price_content
+      echo '<span class="mionas-price__current">'
+      echo product.price | money
+      echo '</span>'
+
+      if block_settings.show_compare_at_price and on_sale
+        echo '<s class="mionas-price__compare">'
+        echo '<span class="visually-hidden">'
+        echo 'content.price_regular' | t
+        echo '&nbsp;</span>'
+        echo product.compare_at_price | money
+        echo '</s>'
+      endif
+    endcapture
+  -%}
+
+  {%- render 'mionas-text',
+    content: price_content,
+    role: block_settings.role,
+    variant: block_settings.variant,
+    tag: 'p',
+    class: 'mionas-price',
+    shopify_attributes: block.shopify_attributes
+  -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* The role owns size, line-height, letter-spacing, family and colour. Three things are left.
+
+     display/align-items/gap, because the price is a row of two figures when a compare-at is shown,
+     and the role vocabulary styles a single text node.
+
+     The edge inset, since ProductCard carries no padding of its own and each subcomponent sets its
+     own (ProductCard.module.css).
+
+     And the weight: --product-card-price-font-weight, not the role's. Same reasoning as
+     mionas-product-title -- the design system gives ProductCardPrice a weight token of its own
+     because the price is 600 whatever size it is set at.
+
+     COLOUR IS DELIBERATELY NOT OVERRIDDEN, unlike the block this replaces.
+     --product-card-price-foreground references {text-color.default} in the design system's own token
+     manifest, which is exactly what .text-role--default applies -- so spending it here would be a
+     second name for the same value AND would make the Color setting below do nothing.
+
+     THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE: every .text-role--<role> declares font-weight from a
+     single-class selector in this same compiled stylesheet, so equal specificity would leave the
+     winner to bundle order. .text-role.mionas-price is (0,2,0). Do not flatten it. */
+  .text-role.mionas-price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+    padding-inline: var(--product-card-base-padding-inline);
+    font-weight: var(--product-card-price-font-weight);
+  }
+
+  /* Carried over from mionas-product-price: the struck-through original is deliberately the price
+     colour at reduced opacity rather than a colour of its own, because the design system has no
+     compare-at token. That keeps it on-palette whatever the Color setting resolves to -- which is now
+     a merchant choice, so a hardcoded grey would have been wrong in more cases than before. */
+  .mionas-price__compare {
+    opacity: 0.6;
+    font-weight: var(--text-role-body-font-weight, 400);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Price",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "role",
+      "label": "Role",
+      "options": [
+        { "value": "hero", "label": "Hero" },
+        { "value": "title", "label": "Title" },
+        { "value": "subtitle", "label": "Subtitle" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "caption", "label": "Caption" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" },
+        { "value": "stamp", "label": "Stamp" }
+      ],
+      "default": "body",
+      "info": "The same text roles as Mionas: Text. The price keeps its own weight."
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_at_price",
+      "label": "Show compare-at price",
+      "default": false,
+      "info": "Shows the original price struck through, only on products that are actually discounted."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Price",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

@@ -48,27 +48,23 @@
   assign visible_text = content | strip_html | strip
 %}
 
+{%- comment -%}
+  The element itself, and the text-role classes on it, come from snippets/mionas-text.liquid. This
+  block is now the settings-and-richtext half of the pair: it owns the flattening above, the
+  visible-text gate, the schema, and the .text-role CSS below, which stays here rather than moving to
+  the snippet because snippets cannot declare a stylesheet tag.
+
+  blocks/mionas-product-title.liquid and blocks/mionas-price.liquid render the same snippet with
+  their own dynamic content, so the role vocabulary now has one implementation instead of three.
+{%- endcomment -%}
 {%- if visible_text != blank -%}
-  {%- case tag -%}
-    {%- when 'span' -%}
-      <span class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</span>
-    {%- when 'div' -%}
-      <div class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</div>
-    {%- when 'h1' -%}
-      <h1 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h1>
-    {%- when 'h2' -%}
-      <h2 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h2>
-    {%- when 'h3' -%}
-      <h3 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h3>
-    {%- when 'h4' -%}
-      <h4 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h4>
-    {%- when 'h5' -%}
-      <h5 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h5>
-    {%- when 'h6' -%}
-      <h6 class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</h6>
-    {%- else -%}
-      <p class="text-role text-role--{{ block_settings.role }} text-role--{{ block_settings.variant }}" {{ block.shopify_attributes }}>{{- content -}}</p>
-  {%- endcase -%}
+  {%- render 'mionas-text',
+    content: content,
+    role: block_settings.role,
+    variant: block_settings.variant,
+    tag: tag,
+    shopify_attributes: block.shopify_attributes
+  -%}
 {%- endif -%}
 
 {% stylesheet %}

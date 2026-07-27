@@ -76,6 +76,9 @@ export const EXPECTED_TOKENS = {
   "--card-base-border-color": "#ece8e2",
   "--card-base-radius": "16px",
   "--card-base-shadow": "0 1px 2px rgba(0, 0, 0, 0.08)",
+  // The Mionas mega menu panel's drop shadow. Pinned by value because the panel's separation
+  // from the page depends on the blur radius, not just on some shadow existing.
+  "--shadow-lg": "0 18px 36px rgba(17, 24, 28, 0.14)",
   "--card-base-padding": "16px",
   "--card-title-font-weight": "600",
   "--card-title-foreground": "#101413",

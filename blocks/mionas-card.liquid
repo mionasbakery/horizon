@@ -30,7 +30,7 @@
   Surface properties still can't be plain CSS on .mionas-card, though: snippets/group.liquid
   hardcodes `border-style` into its class list and snippets/border-override.liquid emits
   unconditionally, so `.border-style { border-width: var(--border-width); ... }` would fight
-  `.mionas-card { border: ... }` at equal specificity -- and block {% raw %}{% stylesheet %}{% endraw %} CSS is bundled
+  `.mionas-card { border: ... }` at equal specificity -- and block stylesheet CSS is bundled
   separately from assets/base.css, so source order isn't something this theme can guarantee.
 
   The `style:` param is the deterministic way out: the snippet appends it LAST inside the style

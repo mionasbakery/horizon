@@ -82,16 +82,28 @@
     content_for 'block', type: '_header-logo', id: 'header-logo'
   endcapture
 
+  # MIONAS EDIT (the only change in this native file - 3 lines, all below).
+  # type: was '_header-menu' on all three; it now points at blocks/mionas-header-menu.liquid,
+  # a fork of blocks/_header-menu.liquid that renders the Mionas card-grid mega menu.
+  #
+  # This file is deliberately edited in place rather than forked to sections/mionas-header.liquid.
+  # A modified native CONFLICTS when upstream changes it, and that conflict is the only automatic
+  # warning that the header path moved. A 1752-line fork would never conflict - it would just
+  # silently run stale code. Three noisy lines beat a quiet copy.
+  #
+  # If an upstream merge conflicts here: keep upstream's version of this file, then re-apply
+  # exactly these three type: values. Do NOT change id: 'header-menu' - it binds the block to
+  # its saved settings in sections/header-group.json (whose "type" must match 'mionas-header-menu').
   capture menu
-    content_for 'block', type: '_header-menu', id: 'header-menu'
+    content_for 'block', type: 'mionas-header-menu', id: 'header-menu'
   endcapture
 
   capture drawer_menu
-    content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'mobile'
+    content_for 'block', type: 'mionas-header-menu', id: 'header-menu', variant: 'mobile'
   endcapture
 
   capture navigation_bar
-    content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
+    content_for 'block', type: 'mionas-header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
   endcapture
 
   capture actions

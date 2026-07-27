@@ -17,7 +17,7 @@
 
   This block owns the typography the data children spend
   (.mionas-google-reviews-summary__part--*), declared once here rather than duplicated in each
-  child. That is safe under Shopify's stylesheet subsetting -- which drops the {% raw %}{% stylesheet %}{% endraw %} CSS of
+  child. That is safe under Shopify's stylesheet subsetting -- which drops the stylesheet CSS of
   any file not in the page's render tree -- because the children only ever render inside this
   container, so this file is in the render tree whenever they are.
 

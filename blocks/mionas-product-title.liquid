@@ -22,26 +22,40 @@
 -%}
 
 {%- if product != blank -%}
-  <p
-    class="mionas-product-title"
-    role="heading"
-    aria-level="{{ block.settings.heading_level }}"
-    {{ block.shopify_attributes }}
-  >
-    {{- product.title -}}
-  </p>
+  {%- render 'mionas-text',
+    content: product.title,
+    role: block.settings.role,
+    variant: block.settings.variant,
+    tag: 'p',
+    class: 'mionas-product-title',
+    heading_level: block.settings.heading_level,
+    shopify_attributes: block.shopify_attributes
+  -%}
 {%- endif -%}
 
 {% stylesheet %}
-  .mionas-product-title {
-    margin: 0;
+  /* Size, line-height, letter-spacing and family now come from whichever .text-role--<role> the
+     merchant picks, via snippets/mionas-text.liquid. Two things are left here.
+
+     The edge inset, because ProductCard carries no padding of its own -- each subcomponent sets it,
+     the convention CardTitle and ProductCardPrice already follow in ProductCard.module.css.
+
+     And the weight, which stays --card-title-font-weight rather than the role's. That is not an
+     oversight: the design system gives CardTitle a weight token of its own precisely because the card
+     title is 600 whatever size it is set at, so the token outranks the role here.
+
+     COLOUR IS DELIBERATELY NOT OVERRIDDEN. It used to be --card-title-foreground, but that resolves
+     to the same #101413 as --text-color-default, which .text-role--default already applies. Keeping
+     the override would have made the new Color setting do nothing, so it is gone: identical
+     rendering at the default, and the setting now works.
+
+     THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE. Every .text-role--<role> also declares font-weight,
+     and those are single-class selectors in the same compiled stylesheet as this rule, so matching
+     their specificity would leave the winner to bundle order. .text-role.mionas-product-title is
+     (0,2,0) and settles it. Do not flatten this selector. */
+  .text-role.mionas-product-title {
     padding-inline: var(--product-card-base-padding-inline);
-    font-family: var(--card-base-font-family);
-    font-size: var(--text-role-body-font-size);
-    line-height: var(--text-role-body-line-height);
-    letter-spacing: var(--text-role-body-letter-spacing);
     font-weight: var(--card-title-font-weight);
-    color: var(--card-title-foreground);
   }
 {% endstylesheet %}
 
@@ -50,6 +64,40 @@
   "name": "Mionas: Product title",
   "tag": null,
   "settings": [
+    {
+      "type": "select",
+      "id": "role",
+      "label": "Role",
+      "options": [
+        { "value": "hero", "label": "Hero" },
+        { "value": "title", "label": "Title" },
+        { "value": "subtitle", "label": "Subtitle" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "caption", "label": "Caption" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" },
+        { "value": "stamp", "label": "Stamp" }
+      ],
+      "default": "body",
+      "info": "The same text roles as Mionas: Text. Weight and colour stay the card title's."
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "default"
+    },
     {
       "type": "select",
       "id": "heading_level",

@@ -34,7 +34,23 @@
 -%}
 
 {%- if product != blank -%}
-  <div
+  {%- comment -%}
+    WHY THE WRAPPER IS <product-card> AND NOT A PLAIN <div>:
+    blocks/mionas-add-to-cart.liquid's choose-options branch delegates to Horizon's
+    QuickAddComponent, whose only route to the product URL is
+    `this.closest('product-card')` followed by that element's productPageUrl getter
+    (assets/quick-add.js:16-19). That getter reads refs.productCardLink's href
+    (assets/product-card.js:110-124), which is why the overlay link below is tagged
+    ref="productCardLink" -- ProductCard.requiredRefs is ['productCardLink'], so the element does not
+    initialise without it. With a <div> and an untagged link, the quick-add dialog opens empty.
+
+    This costs nothing visually. Horizon's product-card styling is keyed on the .product-card CLASS
+    (product-card-styles.liquid:29, base.css:125-146, base.css:2153), which this card does not use;
+    the only rule on the bare element is product-card[data-product-transition] (product-card.liquid:17),
+    an attribute deliberately not set here. ProductCard's own behaviours -- swatch resolution, gallery
+    transitions, variant syncing -- all key off refs this card does not render, so they stay inert.
+  {%- endcomment -%}
+  <product-card
     class="mionas-product-card spacing-style"
     style="
       {% render 'spacing-style', settings: block.settings %}
@@ -47,10 +63,15 @@
       the accessible name so a screen reader announces the product rather than an unnamed link, and
       the child title is then free to be plain text.
     {%- endcomment -%}
-    <a class="mionas-product-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}"></a>
+    <a
+      class="mionas-product-card__link"
+      href="{{ product.url }}"
+      aria-label="{{ product.title | escape }}"
+      ref="productCardLink"
+    ></a>
 
     <div class="mionas-product-card__content">{%- content_for 'blocks' -%}</div>
-  </div>
+  </product-card>
 {%- endif -%}
 
 {% stylesheet %}
@@ -73,13 +94,26 @@
     opacity: var(--card-state-pressed-opacity);
   }
 
+  /* THE ABSENCE OF z-index HERE, AND THE position: relative BELOW, ARE BOTH LOAD-BEARING.
+     They mirror assets/base.css:111-118, where Horizon's own whole-card link does exactly this.
+     Link and content are then both positioned at z-index: auto, so paint order falls back to DOM
+     order and the content -- which comes second -- paints ABOVE the link. That is what makes the
+     pointer-events rule below work in both directions: clicks fall through the non-interactive
+     content to the link beneath it, while an interactive descendant sits above the link and wins the
+     hit test.
+
+     This card previously gave the link z-index: 1 and left the content static, which reversed the
+     stack. pointer-events: auto still marked a button as eligible for hit testing, but eligible is
+     not the same as on top, so every click landed on the overlay link instead: pressing Add to cart
+     navigated to the product page. Nothing caught it until blocks/mionas-add-to-cart.liquid, because
+     media, title and price are not interactive. Do not reintroduce a z-index on the link. */
   .mionas-product-card__link {
     position: absolute;
     inset: 0;
-    z-index: 1;
   }
 
   .mionas-product-card__content {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--mionas-product-card-gap, var(--product-card-base-gap));
