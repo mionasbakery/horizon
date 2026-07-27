@@ -30,7 +30,8 @@
     5. Added panel styles at the end of the {% stylesheet %} block: the 100vw full-bleed
        breakout, plus :has()-scoped overrides that stop the native ancestors insetting the
        panel's content.
-    6. Schema name is "Mionas: header menu".
+    6. Schema name is "Mionas: Header menu" (capitalised to match the other 19 "Mionas: X" block
+       and section labels; it read "Mionas: header menu" until the mega menu design sync).
     7. Added a "Mionas panel" settings group (panel_background, panel_shadow, panel_max_width,
        panel_padding_block, panel_padding_inline, panel_gap, panel_columns) at the END of the
        settings array, and passed block_settings to the panel snippet. Appended rather than
@@ -749,11 +750,17 @@
      overlay-less scrollbar the panel can be a few px wider than the viewport. If that shows as
      a horizontal scrollbar, the fix is `overflow-x: clip` on the header component, not
      narrowing this. Flagged rather than pre-solved because it depends on the OS/browser. */
+  /* The design system's MegaMenu closes its panel with a hairline as well as a shadow. That
+     border is emitted by snippets/mionas-header-menu-panel.liquid on the same condition as the
+     background rather than declared unconditionally here, because the panel snippet documents
+     "clearing the background colour in the theme editor is how you remove the white surface
+     entirely" - a hairline that outlived the surface it belongs to would break that promise. */
   .mionas-header-menu-panel {
     width: 100vw;
     margin-inline: calc(50% - 50vw);
     background: var(--mionas-header-menu-panel-background, transparent);
     box-shadow: var(--mionas-header-menu-panel-shadow, none);
+    border-bottom: var(--mionas-header-menu-panel-border, none);
   }
 
   /* Native rules that would otherwise inset the panel's CONTENT. Scoped with :has() so only
@@ -792,11 +799,27 @@
 
   /* Centres and caps the content only. Never a background or a shadow - those belong to the
      full-bleed parent, and putting them here is precisely what renders as a floating card. */
+  /* The FALLBACKS moved to design-system tokens, not the settings: the literal typed here is now
+     the design system's value, while a merchant who sets panel_padding_* still wins (the snippet
+     emits it inline).
+
+     BE CLEAR ABOUT WHAT THIS DOES AND DOES NOT CHANGE ON THE LIVE PANEL: nothing, today. Both
+     padding settings are `range` inputs with a schema default of 24, so settings.panel_padding_*
+     is never blank, the snippet always emits the inline property, and this fallback never fires.
+     MegaMenu asks for space.md (16px), so adopting the design system's padding for real means
+     changing those two schema defaults from 24 to 16 - a merchant-facing default, left alone here
+     deliberately. The fallback is still worth single-sourcing: it is what renders if the settings
+     are ever cleared or the snippet is used standalone, and it should not disagree with the
+     design system when it does.
+
+     max-width stays a literal on purpose. The design system does not tokenise layout geometry -
+     MegaMenu.module.css hard-codes the same max-width: 1240px, with a comment saying so - and
+     inventing a token here would be the theme leading the design system rather than following. */
   .mionas-header-menu-panel__inner {
-    max-width: var(--mionas-header-menu-max-width, 1240px);
+    max-width: var(--mionas-header-menu-panel-max-width, 1240px);
     margin-inline: auto;
-    padding-block: var(--mionas-header-menu-padding-block, 24px);
-    padding-inline: var(--mionas-header-menu-padding-inline, 24px);
+    padding-block: var(--mionas-header-menu-panel-padding-block, var(--mega-menu-base-padding));
+    padding-inline: var(--mionas-header-menu-panel-padding-inline, var(--mega-menu-base-padding));
   }
 
   /* One column below 750px (the same card as desktop, stacked vertically), then 3, then the
@@ -805,7 +828,7 @@
   .mionas-header-menu-panel__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--mionas-header-menu-gap, 16px);
+    gap: var(--mionas-header-menu-panel-gap, var(--mega-menu-base-gap));
     margin: 0;
     padding: 0;
   }
@@ -818,35 +841,51 @@
 
   @media screen and (min-width: 990px) {
     .mionas-header-menu-panel__grid {
-      grid-template-columns: repeat(var(--mionas-header-menu-columns, 6), minmax(0, 1fr));
+      grid-template-columns: repeat(var(--mionas-header-menu-panel-columns, 6), minmax(0, 1fr));
     }
   }
 
+  /* These four spent the raw spacing/radius primitives (--space-xs, --radius-lg) because when
+     this card was built the design system had no MegaMenuItem to borrow from. It does now, so
+     they spend MegaMenuItem's own tokens instead. Radius and padding are the same 12px/8px they
+     resolved to before; the GAP is not - MegaMenuItem asks for space.sm (12px) between media and
+     text where this card had space.xs (8px). That is the design system's call, not a rename.
+
+     :active mirrors MegaMenuItem's own pressed state, which this card never had. */
   .mionas-header-menu-panel__card {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-xs);
-    border-radius: var(--radius-lg);
+    gap: var(--mega-menu-item-base-gap);
+    padding: var(--mega-menu-item-base-padding);
+    border-radius: var(--mega-menu-item-base-radius);
     text-decoration: none;
+  }
+
+  .mionas-header-menu-panel__card:active {
+    opacity: var(--mega-menu-item-state-pressed-opacity);
   }
 
   /* HOVER IS DELIBERATELY NOT DRAWER-SCOPED. The desktop mega menu's cards change here
      too: the warm background is gone, replaced by a blue label and an image zoom.
-     --nav-link-state-hover-foreground is the theme's existing nav-link hover colour, so
-     this adopts established behaviour rather than inventing one.
+
+     This used to spend --nav-link-state-hover-foreground, which the design system DELETED in
+     b6bc96d when it replaced Nav/NavLink with Navbar + MegaMenu. That reference resolved to
+     nothing after the token sync (the label silently kept its resting colour on hover), which
+     is exactly the silent-fallback failure the contract cannot catch on its own. The
+     replacement is not a guess at an equivalent: --mega-menu-item-state-hover-foreground is
+     MegaMenuItem's own label-hover token, the same #0b078c, and this element is that label.
 
      Note the drawer is usually running on a touch device (see the doc block in
      snippets/mionas-header-menu-panel.liquid), where :hover never fires at all. This is
      polish for pointer and keyboard users - the caret is what signals a row is tappable. */
   .mionas-header-menu-panel__card:hover .mionas-header-menu-panel__label,
   .mionas-header-menu-panel__card:focus-visible .mionas-header-menu-panel__label {
-    color: var(--nav-link-state-hover-foreground);
+    color: var(--mega-menu-item-state-hover-foreground);
   }
 
   .mionas-header-menu-panel__card:hover .mionas-header-menu-panel__image,
   .mionas-header-menu-panel__card:focus-visible .mionas-header-menu-panel__image {
-    transform: scale(1.04);
+    transform: scale(var(--mega-menu-item-state-hover-scale));
   }
 
   /* Colour always transitions; the zoom is motion, so it only runs when motion is welcome. */
@@ -867,11 +906,16 @@
     }
   }
 
-  /* Fixed media height is what keeps rows aligned when some cards have no tagline. */
+  /* Fixed media height is what keeps rows aligned when some cards have no tagline. The 110px
+     was a literal here and is 110px in the design system too - now single-sourced from it.
+
+     The radius is a real change: this borrowed --radius-lg (12px, the card's own radius) where
+     MegaMenuItem splits the two deliberately - radius.lg for the card, radius.md (8px) for the
+     media it crops. Adopting the split is the point of the sync. */
   .mionas-header-menu-panel__media {
     display: block;
-    height: 110px;
-    border-radius: var(--radius-lg);
+    height: var(--mega-menu-item-base-media-height);
+    border-radius: var(--mega-menu-item-base-media-radius);
     overflow: hidden;
   }
 
@@ -881,12 +925,23 @@
     object-fit: cover;
   }
 
+  /* Size, line-height and letter-spacing still come from the caption type role - MegaMenuItem
+     renders its label through <Text> and only overrides weight and colour on top, so those two
+     are the ones that move here. Both were borrowed from Card (--card-title-foreground,
+     --card-description-foreground) for want of a mega-menu equivalent; MegaMenuItem now has its
+     own, at the identical #101413 / #687076.
+
+     The WEIGHT is a genuine change: the caption role is 500, MegaMenuItem's label asks for 700.
+     Checked, not assumed - 700 is one of the four Archivo weights the browser already has
+     (400/600/700/800, per the inventory in snippets/design-system-bridge.liquid: 700 arrives as
+     the font_modify'd bold of the 600 subheading setting). So this renders on a real face, not a
+     synthesised faux-bold, and needs no new @font-face the way the design system's 500 tokens did. */
   .mionas-header-menu-panel__label {
     font-size: var(--text-role-caption-font-size);
     line-height: var(--text-role-caption-line-height);
-    font-weight: var(--text-role-caption-font-weight);
+    font-weight: var(--mega-menu-item-label-font-weight);
     letter-spacing: var(--text-role-caption-letter-spacing);
-    color: var(--card-title-foreground);
+    color: var(--mega-menu-item-label-foreground);
   }
 
   .mionas-header-menu-panel__tagline {
@@ -894,12 +949,19 @@
     line-height: var(--text-role-label-line-height);
     font-weight: var(--text-role-label-font-weight);
     letter-spacing: var(--text-role-label-letter-spacing);
-    color: var(--card-description-foreground);
+    color: var(--mega-menu-item-description-foreground);
   }
 
-  /* The card's label and tagline moved into this wrapper for the drawer's row grid. The
-     8px gap is not a new decision - it is the card's old `gap: var(--space-xs)`, moved
-     down one level so the desktop mega menu renders pixel-identically to before. */
+  /* The card's label and tagline moved into this wrapper for the drawer's row grid. The 8px gap
+     started life as the card's own `gap: var(--space-xs)`, moved down one level so the desktop
+     mega menu kept rendering pixel-identically.
+
+     IT IS NO LONGER THE SAME NUMBER AS THE CARD'S GAP. The card now spends
+     --mega-menu-item-base-gap (12px) between media and text; this stays at 8px between label and
+     tagline. Left on the raw primitive deliberately: MegaMenuItem's own .text declares no gap at
+     all, so there is no design-system token to adopt here, and inheriting the card's 12px would
+     loosen the label/tagline pair the design system keeps tight. Revisit if the design system
+     ever tokenises that inner spacing. */
   .mionas-header-menu-panel__text {
     display: flex;
     flex-direction: column;
@@ -949,6 +1011,11 @@
        asking merchants to clear the setting, which would also blank the desktop panel. */
     background: none;
     box-shadow: none;
+
+    /* Same reasoning as the two above, for the hairline that came in with the design system's
+       MegaMenu: it belongs to the desktop dropdown's surface, and the drawer has no surface.
+       The drawer's own group separator is what divides card rows from plain links there. */
+    border-bottom: none;
   }
 
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__inner {
@@ -959,7 +1026,7 @@
   }
 
   /* The panel's grid rules above are width-based (3 columns from 750px, then
-     --mionas-header-menu-columns from 990px). The drawer is NOT width-gated - see the doc
+     --mionas-header-menu-panel-columns from 990px). The drawer is NOT width-gated - see the doc
      block in snippets/mionas-header-menu-panel.liquid - so on a touch device those rules
      would fire inside the drawer and lay the rows three- or six-across at tablet width.
      Pinning one column here fixes that: at specificity (0,2,0) against the media queries'
@@ -974,7 +1041,11 @@
     display: grid;
     grid-template-columns: 56px minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--space-sm);
+
+    /* Same token as the desktop card now spends, and the same value it resolved to as
+       --space-sm. MegaMenuItem uses one gap for both its column and its row layout, so keeping
+       these two in one name is what makes the drawer row track the design system too. */
+    gap: var(--mega-menu-item-base-gap);
 
     /* Zeroed so the thumbnail's left edge lines up with the section heading and the
        childless top-level rows, which are .menu-drawer__menu-item and carry no inline
@@ -991,12 +1062,23 @@
   /* A fixed square, not the desktop card's full-width 110px band. The warm background
      shows through for links that produce no image at all - page and blog links, and
      collections with neither a featured image nor any product - so rows stay aligned
-     instead of collapsing. */
+     instead of collapsing.
+
+     The 56px SQUARE STAYS 56px, and is deliberately not swapped for MegaMenuItem's
+     --mega-menu-item-base-media-size (40px). That token sizes the design system's own
+     max-width: 900px row, which is a VIEWPORT breakpoint; this drawer is selected by touch or
+     nav overflow at any width, so the two are not the same state (see the doc block in
+     snippets/mionas-header-menu-panel.liquid). 56px is also load-bearing beyond the CSS - the
+     snippet requests `sizes: 56px` for these thumbnails, and it is a 44px-plus touch target.
+     Adopting 40px would need both changed together and is a design decision, not a sync.
+
+     The background fill IS swapped: it was --color-warm-100 (#f7f2e3) picked by eye, and
+     MegaMenuItem names warm-200 (#ece8e2) for exactly this "link produced no image" fill. */
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__media {
     width: 56px;
     height: 56px;
-    border-radius: var(--radius-md);
-    background: var(--color-warm-100);
+    border-radius: var(--mega-menu-item-base-media-radius);
+    background: var(--mega-menu-item-base-media-background);
   }
 
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__label {
@@ -1071,7 +1153,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: header menu",
+  "name": "Mionas: Header menu",
   "tag": null,
   "settings": [
     {

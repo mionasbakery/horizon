@@ -6,6 +6,21 @@
   desktop's stacked layout to horizontal thumbnail rows with a forward caret. Everything
   else - the data, the tagline lookup, the card's anatomy - is common to both.
 
+  NAME MAP TO ../design-system. The theme names these by their slot in the header, the design
+  system names them as components, so the two vocabularies do not line up and the token prefixes
+  will not match the class you are editing:
+
+    this snippet's .mionas-header-menu-panel  <-  MegaMenu       (--mega-menu-base-*)
+    its __card                                <-  MegaMenuItem   (--mega-menu-item-*)
+    the top-level bar in the header block     <-  Navbar/NavbarItem (NOT spent - see below)
+
+  Note __item is the <li> and __card is the <a> inside it; MegaMenuItem maps to __card, not to
+  __item. The theme deliberately spends no --navbar-item-* or --mega-menu-link-* tokens: the
+  top-level bar and the drawer's plain link rows run on Horizon's own --menu-* settings so
+  Shopify keeps hosting and preloading the nav faces. Renaming these classes to match the design
+  system is not worth it - the block type is referenced by section JSON - so keep this map current
+  instead.
+
   DO NOT RE-DERIVE THE TWO CONTEXTS FROM VIEWPORT WIDTH. The drawer is not width-gated:
   assets/utilities.js sets data-menu-style to 'drawer' when isTouchDevice() is true OR the
   horizontal nav has overflowed. Viewport width is not part of that test, so on a touch
@@ -60,25 +75,42 @@
   # through to the CSS default rather than writing an empty declaration. Clearing the
   # background colour in the theme editor is therefore how you remove the white surface
   # entirely - the CSS default is `transparent`, not white.
+  #
+  # NAMING: every property here is `--mionas-header-menu-panel-<setting id minus its panel_
+  # prefix>`, so panel_gap is --mionas-header-menu-panel-gap and the mapping is mechanical in
+  # both directions. Five of these used to drop the `panel` segment (--mionas-header-menu-gap,
+  # -columns, -max-width, -padding-block, -padding-inline) while background and shadow kept it;
+  # they were normalised because the split tracked nothing and made the settings-to-property
+  # lookup a guess. Keep new panel properties on this pattern. They are block-local: nothing
+  # outside this snippet and blocks/mionas-header-menu.liquid declares or reads them, which is
+  # what made the rename safe and what keeps it safe to rename again.
   capture panel_style
-    echo '--mionas-header-menu-columns: ' | append: columns | append: ';'
+    echo '--mionas-header-menu-panel-columns: ' | append: columns | append: ';'
     if settings.panel_background != blank
       echo '--mionas-header-menu-panel-background: ' | append: settings.panel_background | append: ';'
+      # The design system's MegaMenu closes its panel with a hairline as well as a shadow. It
+      # rides with the background rather than being declared in the block's stylesheet so that
+      # clearing the background colour still removes the whole surface - see the note above.
+      echo '--mionas-header-menu-panel-border: var(--mega-menu-base-border-width) solid var(--mega-menu-base-border-color);'
     endif
     if settings.panel_shadow
-      echo '--mionas-header-menu-panel-shadow: var(--shadow-lg);'
+      # Was var(--shadow-lg) - the raw foundation, chosen before the design system had a MegaMenu
+      # to ask. MegaMenu's own token resolves to shadow.md, so the panel's drop shadow tightens
+      # from 0 18px 36px to 0 4px 8px. That is the design system's call; do not re-point this at
+      # --shadow-lg to get the old depth back, change it in ../design-system if it reads wrong.
+      echo '--mionas-header-menu-panel-shadow: var(--mega-menu-base-shadow);'
     endif
     if settings.panel_max_width != blank
-      echo '--mionas-header-menu-max-width: ' | append: settings.panel_max_width | append: 'px;'
+      echo '--mionas-header-menu-panel-max-width: ' | append: settings.panel_max_width | append: 'px;'
     endif
     if settings.panel_padding_block != blank
-      echo '--mionas-header-menu-padding-block: ' | append: settings.panel_padding_block | append: 'px;'
+      echo '--mionas-header-menu-panel-padding-block: ' | append: settings.panel_padding_block | append: 'px;'
     endif
     if settings.panel_padding_inline != blank
-      echo '--mionas-header-menu-padding-inline: ' | append: settings.panel_padding_inline | append: 'px;'
+      echo '--mionas-header-menu-panel-padding-inline: ' | append: settings.panel_padding_inline | append: 'px;'
     endif
     if settings.panel_gap != blank
-      echo '--mionas-header-menu-gap: ' | append: settings.panel_gap | append: 'px;'
+      echo '--mionas-header-menu-panel-gap: ' | append: settings.panel_gap | append: 'px;'
     endif
   endcapture
 -%}
@@ -120,9 +152,10 @@
           {%- comment -%}
             The __text wrapper exists for the drawer's three-column row grid (thumb | text |
             caret): without it, label and tagline are separate grid items and cannot share a
-            column. Desktop spacing is preserved by pinning the wrapper's gap to the card's
-            old --space-xs in blocks/mionas-header-menu.liquid - do not change that value
-            without re-checking the desktop mega menu.
+            column. Its 8px gap is pinned in blocks/mionas-header-menu.liquid and is no longer
+            the same number as the card's own gap - the card moved to the design system's
+            --mega-menu-item-base-gap (12px) while this stayed at 8px. See the comment on
+            .mionas-header-menu-panel__text there before changing either.
           {%- endcomment -%}
           <span class="mionas-header-menu-panel__text">
             <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>

@@ -76,9 +76,6 @@ export const EXPECTED_TOKENS = {
   "--card-base-border-color": "#ece8e2",
   "--card-base-radius": "16px",
   "--card-base-shadow": "0 1px 2px rgba(0, 0, 0, 0.08)",
-  // The Mionas mega menu panel's drop shadow. Pinned by value because the panel's separation
-  // from the page depends on the blur radius, not just on some shadow existing.
-  "--shadow-lg": "0 18px 36px rgba(17, 24, 28, 0.14)",
   "--card-base-padding": "16px",
   "--card-title-font-weight": "600",
   "--card-title-foreground": "#101413",
@@ -155,6 +152,62 @@ export const EXPECTED_TOKENS = {
   "--text-role-label-line-height": "18px",
   "--text-role-label-letter-spacing": "0.02em",
   "--text-role-body-font-weight": "400",
+  // The stamp role, spent by blocks/mionas-text.liquid and blocks/mionas-header-menu.liquid. It
+  // was an unguarded spend until now, which is the same silent-fallback exposure that let
+  // --nav-link-state-hover-foreground rot in the header menu unnoticed: a removed role would
+  // simply stop applying. Pinned in full because unlike the other roles, nothing else in this
+  // contract already covers any of its axes.
+  "--text-role-stamp-font-size": "16px",
+  "--text-role-stamp-line-height": "18px",
+  "--text-role-stamp-font-weight": "600",
+  "--text-role-stamp-letter-spacing": "0.05em",
+  // The mega menu, spent by blocks/mionas-header-menu.liquid (the desktop dropdown and the
+  // drawer's card rows) via snippets/mionas-header-menu-panel.liquid.
+  //
+  // This whole group replaces the --nav-*/--nav-link-* tokens the design system deleted in
+  // b6bc96d when it split Nav into Navbar + MegaMenu. Only ONE of those was ever spent here
+  // (--nav-link-state-hover-foreground, in the card's label-hover rule) and it was not in this
+  // contract, so the sync that removed it passed clean and the hover colour silently stopped
+  // applying. That is the argument for pinning the replacements: the contract can only fail
+  // loudly on tokens it knows about.
+  //
+  // --mega-menu-base-shadow is pinned by value for the reason the pruned --shadow-lg entry gave
+  // before it -- the panel's separation from the page depends on the blur radius, not on some
+  // shadow existing. It is a DIFFERENT radius now (shadow.md, not shadow.lg); adopting that was
+  // the deliberate outcome of this sync, not a mechanical rename.
+  //
+  // Absent on purpose: --mega-menu-base-background (the panel's surface is a merchant colour
+  // setting, not a token), --mega-menu-item-base-media-size (the drawer keeps its own 56px
+  // thumbnail -- see the comment on that rule), and every --mega-menu-link-*/--navbar-*, which
+  // the theme does not spend: the mobile overflow list and the top-level bar run on Horizon's
+  // own --menu-* settings so Shopify keeps hosting and preloading the nav faces.
+  "--mega-menu-base-shadow": "0 4px 8px rgba(17, 24, 28, 0.11)",
+  "--mega-menu-base-border-width": "1px",
+  "--mega-menu-base-border-color": "#ece8e2",
+  "--mega-menu-base-padding": "16px",
+  "--mega-menu-base-gap": "16px",
+  // Pinned by value because both are load-bearing past their own rule: the item gap is what the
+  // desktop card's media-to-text rhythm now depends on (it was 8px before this sync, and the
+  // __text wrapper still carries its own 8px between label and tagline, so the two are no longer
+  // the same number and a revalue here changes only one of them), and the media radius is
+  // deliberately radius.md against the card's radius.lg -- collapsing them back to one value is
+  // the mistake this entry exists to catch.
+  "--mega-menu-item-base-gap": "12px",
+  "--mega-menu-item-base-padding": "8px",
+  "--mega-menu-item-base-radius": "12px",
+  "--mega-menu-item-base-media-height": "110px",
+  "--mega-menu-item-base-media-radius": "8px",
+  "--mega-menu-item-base-media-background": "#ece8e2",
+  // 700, where the caption role this label otherwise follows is 500. Pinned for the font-face
+  // reason the "every 500 above is load-bearing" note gives: it asks the theme's Archivo for a
+  // weight none of the four font settings is guaranteed to load, so a change here is a question
+  // about which faces the bridge emits, not just a number to retype.
+  "--mega-menu-item-label-font-weight": "700",
+  "--mega-menu-item-label-foreground": "#101413",
+  "--mega-menu-item-description-foreground": "#687076",
+  "--mega-menu-item-state-hover-foreground": "#0b078c",
+  "--mega-menu-item-state-hover-scale": "1.05",
+  "--mega-menu-item-state-pressed-opacity": "0.92",
 };
 
 export const REQUIRED_TOKENS = Object.keys(EXPECTED_TOKENS);
