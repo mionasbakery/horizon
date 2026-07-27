@@ -171,20 +171,32 @@ export const EXPECTED_TOKENS = {
   // applying. That is the argument for pinning the replacements: the contract can only fail
   // loudly on tokens it knows about.
   //
-  // --mega-menu-base-shadow is pinned by value for the reason the pruned --shadow-lg entry gave
-  // before it -- the panel's separation from the page depends on the blur radius, not on some
-  // shadow existing. It is a DIFFERENT radius now (shadow.md, not shadow.lg); adopting that was
-  // the deliberate outcome of this sync, not a mechanical rename.
+  // ONLY THE GAP IS LEFT OF --mega-menu-base-*. This group briefly held -shadow, -border-width,
+  // -border-color and -padding as well. They were pruned when the panel stopped painting a surface
+  // of its own: it has no background, no drop shadow and no hairline, and it takes its padding from
+  // the native .menu-list__submenu-inner. Nothing in the theme spends those four any more, and the
+  // rule for this file is that an entry exists only while the theme actually spends the token --
+  // keeping them would make the sync fail over a token no block reads. --mega-menu-base-background
+  // was never here for a related reason.
   //
-  // Absent on purpose: --mega-menu-base-background (the panel's surface is a merchant colour
-  // setting, not a token), --mega-menu-item-base-media-size (the drawer keeps its own 56px
-  // thumbnail -- see the comment on that rule), and every --mega-menu-link-*/--navbar-*, which
-  // the theme does not spend: the mobile overflow list and the top-level bar run on Horizon's
-  // own --menu-* settings so Shopify keeps hosting and preloading the nav faces.
-  "--mega-menu-base-shadow": "0 4px 8px rgba(17, 24, 28, 0.11)",
-  "--mega-menu-base-border-width": "1px",
-  "--mega-menu-base-border-color": "#ece8e2",
-  "--mega-menu-base-padding": "16px",
+  // Also absent: --mega-menu-item-base-media-size (the drawer keeps its own 56px thumbnail -- see
+  // the comment on that rule) and every --mega-menu-link-*, which the theme does not spend because
+  // the mobile overflow list runs on Horizon's own --menu-* settings.
+  //
+  // NO --navbar-* ENTRY, though the theme now does take the top-level bar's SIZE and WEIGHT from
+  // the design system -- via Link's tokens below, not Navbar's. That is not a workaround: since the
+  // design system split the disclosure out of NavbarItem, navbar-item.json carries only colours and
+  // NavbarItem gets its type by composing Link, so --link-size-md-font-size and
+  // --link-base-font-weight ARE the design system's answer for a navbar item. NavbarItem's own
+  // foregrounds stay unspent so the nav's colours remain the merchant's, and its family stays on
+  // Shopify's font settings so Shopify keeps hosting and preloading the face.
+  //
+  // Nor is there a label-to-chevron gap entry any more. --navbar-item-base-gap fed one until the
+  // split removed that token, then --space-2xs did; both read as too much space on the rendered nav,
+  // because .svg-wrapper's box is already wider than the caret it draws. The chevron rule in
+  // blocks/mionas-header-menu.liquid now sets no gap at all. If the separated disclosure component
+  // ever ships its own gap token, check it against the real nav before adopting it -- this is a case
+  // where the design system's value and this theme's icon asset disagree about who owns the spacing.
   "--mega-menu-base-gap": "16px",
   // Pinned by value because both are load-bearing past their own rule: the item gap is what the
   // desktop card's media-to-text rhythm now depends on (it was 8px before this sync, and the

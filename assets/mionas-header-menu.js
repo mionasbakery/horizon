@@ -17,8 +17,14 @@
 //   1. customElements.define('mionas-header-menu', ...) instead of 'header-menu'.
 //   2. Hover activation removed: HOVER_COMMIT_DELAY_MS, the #hoverDispatchTimer, and the
 //      #onPointerMove pointer tracking. The design opens on click.
-//   3. New public toggle() method, bound from the Liquid via on:click="/toggle".
+//   3. New public toggle() method, bound from the Liquid via on:click="/toggle". It bails out on
+//      presses originating inside [ref="submenu[]"], without which the panel's own links cannot
+//      navigate - the panel is a descendant of the <li> carrying the binding. It reads the pressed
+//      node from composedPath(), because component.js hands delegated handlers a proxied event
+//      whose target is the <li>, not the real one.
 //   4. Outside pointerdown and Escape close the panel.
+//   4b. #resizeListener also calls #deactivate(). Click activation means an open panel outlives a
+//      resize that hides the list it belongs to; hover activation could not.
 //   5. activate() normalises event.target to the closest <li> before calling findMenuItem():
 //      pointerenter always fired with the <li> as target, but click's target is the deepest
 //      element hit (e.g. the link's inner <span>).
@@ -80,6 +86,20 @@ class HeaderMenu extends Component {
    * Debounced resize event listener to recalculate menu style
    */
   #resizeListener = debounce(() => {
+    // FORK DELTA: close before recalculating.
+    //
+    // setHeaderMenuStyle() flips headerComponent.dataset.menuStyle between 'menu' and 'drawer',
+    // which swaps which menu is visible -- but it does not touch --submenu-height or
+    // --submenu-opacity. Upstream never needed it to: hover activation meant a resize was always
+    // preceded by the pointer leaving the item, which closed the panel. This fork opens on click,
+    // so the panel survived the flip and rendered as an open, full-height, EMPTY surface once the
+    // desktop list it belonged to was hidden.
+    //
+    // Unconditional rather than "only when the style actually changed": setHeaderMenuStyle defers
+    // its write to requestAnimationFrame, so the new value is not readable here, and closing an
+    // open panel on resize is the unsurprising behaviour anyway. #deactivate() no-ops when nothing
+    // is open, so this costs nothing on the common case.
+    this.#deactivate();
     setHeaderMenuStyle();
   }, 100);
 
@@ -186,10 +206,16 @@ class HeaderMenu extends Component {
   activate = (event) => {
     if (!(event.target instanceof Element) || !this.headerComponent) return;
 
-    // FORK DELTA: a click's event.target is the deepest element hit (usually the link's inner
-    // <span>), whereas the native pointerenter binding always fired with the <li> as target.
-    // Normalise to the <li> so findMenuItem() and the .slot reads below behave exactly as they
-    // did on hover.
+    // FORK DELTA: normalise to the <li> so findMenuItem() and the .slot reads below behave exactly
+    // as they did on hover.
+    //
+    // This is belt-and-braces, not the load-bearing step an earlier comment here claimed. That
+    // comment said "a click's event.target is the deepest element hit (usually the link's inner
+    // <span>)" - which is NOT true of the event this receives. assets/component.js proxies the
+    // event and rewrites `target` to the element carrying on:click (component.js:250), i.e. the
+    // <li> already, so this closest() is normally a no-op. Keeping it costs nothing and still
+    // holds if activate() is ever called with an unproxied event. Do not infer from this line
+    // that event.target is the real hit target - see the note in toggle() for why that matters.
     const listItem = event.target.closest('.menu-list__list-item, [slot="more"]') ?? event.target;
 
     const isMoreTrigger = listItem.slot === 'more';
@@ -304,6 +330,32 @@ class HeaderMenu extends Component {
    */
   toggle = (event) => {
     if (!(event.target instanceof Element)) return;
+
+    // FORK DELTA: clicks from INSIDE the panel are not this trigger's business.
+    //
+    // The panel is rendered inside the trigger's own <li> (the .menu-list__submenu div in
+    // blocks/mionas-header-menu.liquid), so a click on a mega menu card bubbles up to the
+    // on:click="/toggle" binding on that <li>. Without this guard the closest() below resolves to
+    // that same <li>, findMenuItem() returns the PARENT link's <a ref="menuitem">, findSubmenu()
+    // finds the panel, so the "plain links must still navigate" check passes -- and then
+    // preventDefault() cancels the card's own navigation while #deactivate() closes the panel.
+    // One cause, two symptoms: cards did nothing, and the menu shut on every attempt.
+    //
+    // READ THE PATH, NOT event.target. assets/component.js's delegated on:* dispatcher does not
+    // hand handlers the raw event: when the pressed node is not itself the element carrying the
+    // attribute, it wraps the event in a Proxy whose `target` is REWRITTEN to that element
+    // (component.js:250). Here that is always the <li>, never the node actually pressed - so
+    // `event.target.closest(...)` walks UP from the <li> and can never see the panel, which is
+    // BELOW it. The first version of this guard did exactly that and silently did nothing.
+    //
+    // The proxy forwards method calls bound to the original event, so composedPath() still reports
+    // the real hit path and [0] is the true deepest target. That is how component.js's own
+    // getElement() recovers it, so the two agree by construction.
+    //
+    // Guarding on [ref="submenu[]"] rather than on the panel's own class keeps this true for any
+    // submenu content, native mega menu markup included.
+    const pressed = event.composedPath?.()[0] ?? event.target;
+    if (pressed instanceof Element && pressed.closest('[ref="submenu[]"]')) return;
 
     const listItem = event.target.closest('.menu-list__list-item, [slot="more"]');
     if (!listItem) return;

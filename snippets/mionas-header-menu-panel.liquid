@@ -40,9 +40,10 @@
   grid_columns_count from 990px. The drawer variant is always a single column.
 
   @param {object} parent_link - The menu link whose children become cards
-  @param {object} [settings] - The rendering block's settings, for the panel_* appearance
-    controls. Pass `block.settings`. Omitted values fall back to the CSS defaults in
-    blocks/mionas-header-menu.liquid, so the snippet still renders standalone.
+  @param {object} [settings] - The rendering block's settings, for the panel_* layout controls
+    (panel_max_width, panel_gap, panel_columns). Pass `block.settings`. Omitted values fall back
+    to the CSS defaults in blocks/mionas-header-menu.liquid, so the snippet still renders
+    standalone.
   @param {number} [grid_columns_count] - Columns at >=990px, desktop variant only.
     Overrides settings.panel_columns.
   @param {string} [id] - Optional id for the grid element
@@ -72,42 +73,25 @@
   assign columns = grid_columns_count | default: settings.panel_columns | default: 6
 
   # Each property is emitted ONLY when its setting has a value, so an unset setting falls
-  # through to the CSS default rather than writing an empty declaration. Clearing the
-  # background colour in the theme editor is therefore how you remove the white surface
-  # entirely - the CSS default is `transparent`, not white.
+  # through to the CSS default rather than writing an empty declaration.
+  #
+  # TWO PROPERTIES, DOWN FROM SEVEN. The panel paints nothing now - no background, no shadow, no
+  # hairline - and takes its padding from the native .menu-list__submenu-inner, so
+  # panel_background, panel_shadow, panel_padding_block and panel_padding_inline were removed from
+  # the block's schema rather than left as theme-editor controls with nothing to control. See the
+  # note in blocks/mionas-header-menu.liquid where the panel's own rule used to be.
   #
   # NAMING: every property here is `--mionas-header-menu-panel-<setting id minus its panel_
   # prefix>`, so panel_gap is --mionas-header-menu-panel-gap and the mapping is mechanical in
-  # both directions. Five of these used to drop the `panel` segment (--mionas-header-menu-gap,
-  # -columns, -max-width, -padding-block, -padding-inline) while background and shadow kept it;
-  # they were normalised because the split tracked nothing and made the settings-to-property
-  # lookup a guess. Keep new panel properties on this pattern. They are block-local: nothing
-  # outside this snippet and blocks/mionas-header-menu.liquid declares or reads them, which is
-  # what made the rename safe and what keeps it safe to rename again.
+  # both directions. Some of these used to drop the `panel` segment while background and shadow
+  # kept it; they were normalised because the split tracked nothing and made the
+  # settings-to-property lookup a guess. Keep new panel properties on this pattern. They are
+  # block-local: nothing outside this snippet and blocks/mionas-header-menu.liquid declares or
+  # reads them, which is what made the rename safe and what keeps it safe to rename again.
   capture panel_style
     echo '--mionas-header-menu-panel-columns: ' | append: columns | append: ';'
-    if settings.panel_background != blank
-      echo '--mionas-header-menu-panel-background: ' | append: settings.panel_background | append: ';'
-      # The design system's MegaMenu closes its panel with a hairline as well as a shadow. It
-      # rides with the background rather than being declared in the block's stylesheet so that
-      # clearing the background colour still removes the whole surface - see the note above.
-      echo '--mionas-header-menu-panel-border: var(--mega-menu-base-border-width) solid var(--mega-menu-base-border-color);'
-    endif
-    if settings.panel_shadow
-      # Was var(--shadow-lg) - the raw foundation, chosen before the design system had a MegaMenu
-      # to ask. MegaMenu's own token resolves to shadow.md, so the panel's drop shadow tightens
-      # from 0 18px 36px to 0 4px 8px. That is the design system's call; do not re-point this at
-      # --shadow-lg to get the old depth back, change it in ../design-system if it reads wrong.
-      echo '--mionas-header-menu-panel-shadow: var(--mega-menu-base-shadow);'
-    endif
     if settings.panel_max_width != blank
       echo '--mionas-header-menu-panel-max-width: ' | append: settings.panel_max_width | append: 'px;'
-    endif
-    if settings.panel_padding_block != blank
-      echo '--mionas-header-menu-panel-padding-block: ' | append: settings.panel_padding_block | append: 'px;'
-    endif
-    if settings.panel_padding_inline != blank
-      echo '--mionas-header-menu-panel-padding-inline: ' | append: settings.panel_padding_inline | append: 'px;'
     endif
     if settings.panel_gap != blank
       echo '--mionas-header-menu-panel-gap: ' | append: settings.panel_gap | append: 'px;'
@@ -116,14 +100,14 @@
 -%}
 
 {%- comment -%}
-  TWO ELEMENTS, DELIBERATELY. This describes the DESKTOP variant: the outer
-  .mionas-header-menu-panel is the full-bleed white surface and carries the drop shadow; the
-  inner __inner is what centres and caps the content at 1240px. Putting the background, the
-  shadow and the max-width on ONE element renders as a 1240px white card floating inside the
-  transparent dropdown, which is not the design - the design's panel is edge-to-edge white with
-  only its grid constrained. In the drawer variant the background, shadow and breakout are all
-  neutralised (blocks/mionas-header-menu.liquid's --drawer rules) - the two elements still
-  exist and still divide max-width from background, but neither paints a visible surface.
+  TWO ELEMENTS, AND THE REASON IS NO LONGER WHAT IT WAS. The outer .mionas-header-menu-panel used
+  to be a full-bleed white surface carrying a drop shadow, with __inner centring and capping the
+  content so the surface could reach the viewport edges while the grid stayed at 1240px. The panel
+  paints NOTHING now - no background, no shadow, no hairline - so the outer element has no rule of
+  its own on desktop at all, and the two-element split survives for the drawer's sake only: the
+  drawer needs a width on the outer div and needs __inner's 1240px cap and centring switched off.
+  Both live in blocks/mionas-header-menu.liquid's --drawer rules. If you are tempted to flatten
+  these into one div, read that rule first.
 {%- endcomment -%}
 <div class="mionas-header-menu-panel{% if is_drawer %} mionas-header-menu-panel--drawer{% endif %}" style="{{ panel_style }}">
  <div class="mionas-header-menu-panel__inner">
@@ -152,10 +136,10 @@
           {%- comment -%}
             The __text wrapper exists for the drawer's three-column row grid (thumb | text |
             caret): without it, label and tagline are separate grid items and cannot share a
-            column. Its 8px gap is pinned in blocks/mionas-header-menu.liquid and is no longer
-            the same number as the card's own gap - the card moved to the design system's
-            --mega-menu-item-base-gap (12px) while this stayed at 8px. See the comment on
-            .mionas-header-menu-panel__text there before changing either.
+            column. On desktop it has NO gap - label and tagline sit flush, which is what
+            MegaMenuItem draws - while the drawer variant re-adds a small one. Both live on
+            .mionas-header-menu-panel__text in blocks/mionas-header-menu.liquid; read the comment
+            there before changing either.
           {%- endcomment -%}
           <span class="mionas-header-menu-panel__text">
             <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>

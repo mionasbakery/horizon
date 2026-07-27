@@ -27,15 +27,24 @@
     3. <header-menu> -> <mionas-header-menu>, loading mionas-header-menu.js.
     4. Submenu activation is click-driven: on:click="/toggle" replaces the pointerenter /
        pointerleave / focus / blur bindings.
-    5. Added panel styles at the end of the {% stylesheet %} block: the 100vw full-bleed
-       breakout, plus :has()-scoped overrides that stop the native ancestors insetting the
-       panel's content.
+    5. Added panel styles at the end of the {% stylesheet %} block, laying out the card panel.
+       These used to include a 100vw full-bleed breakout and :has()-scoped overrides cancelling
+       the native ancestors' padding and overflow, all so the panel could paint an edge-to-edge
+       surface. The panel paints nothing now, so all of that is gone and the native submenu keeps
+       its own padding and scrolling - see the long note where the panel's own rule used to be.
+    5b. Parent links render a disclosure chevron inside .menu-list__link-title, with its rules at
+       the top of the added styles. Mirrors ../design-system's NavbarItem; the native file has no
+       chevron because upstream's menu opens on hover.
+    5c. The top-level bar's font-size and font-weight are pinned to the design system's Link tokens
+       (16px / 500) instead of the merchant's type_font_primary_* settings, which rendered 18px/800.
+       Family is deliberately left on the Shopify setting. See the rule for the full reasoning.
     6. Schema name is "Mionas: Header menu" (capitalised to match the other 19 "Mionas: X" block
        and section labels; it read "Mionas: header menu" until the mega menu design sync).
-    7. Added a "Mionas panel" settings group (panel_background, panel_shadow, panel_max_width,
-       panel_padding_block, panel_padding_inline, panel_gap, panel_columns) at the END of the
-       settings array, and passed block_settings to the panel snippet. Appended rather than
-       interleaved so an upstream change to the native settings stays an easy replay.
+    7. Added a "Mionas panel" settings group (panel_max_width, panel_gap, panel_columns) at the END
+       of the settings array, and passed block_settings to the panel snippet. Appended rather than
+       interleaved so an upstream change to the native settings stays an easy replay. The group also
+       carried panel_background, panel_shadow, panel_padding_block and panel_padding_inline until
+       the panel stopped painting a surface of its own; they were removed rather than left inert.
 
   WHY THE PANEL CSS LIVES HERE AND NOT IN THE SNIPPET: Liquid's {% stylesheet %} tag is only
   valid in sections and blocks, never in snippets. Both the desktop panel and the drawer are
@@ -149,7 +158,22 @@
             {% endif %}
             ref="menuitem"
           >
-            <span class="menu-list__link-title">{{- link.title -}}</span>
+            <span class="menu-list__link-title">
+              {{- link.title -}}
+              {%- comment -%}
+                The disclosure chevron, mirroring ../design-system's NavbarItem. Rendered INSIDE
+                .menu-list__link-title on purpose: that span carries the padding-inline that
+                creates the top-level nav's horizontal rhythm, so a sibling of it would sit half a
+                --gap-xl away from the word and moving that padding would change item spacing (and
+                the overflow-list height measurement that reads these links). Gated on
+                link.links so only items that actually open a panel get one.
+              {%- endcomment -%}
+              {%- if link.links != blank -%}
+                <span class="svg-wrapper icon-caret mionas-header-menu__chevron" aria-hidden="true">
+                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                </span>
+              {%- endif -%}
+            </span>
           </a>
           {%- if link.links != blank -%}
             <div class="menu-list__submenu{{ background_color_classes }}" ref="submenu[]">
@@ -734,83 +758,152 @@
 
   /** mionas header menu panel **/
 
-  /* THE FULL-BLEED BREAKOUT.
-     Earlier attempts cancelled the native insets one rule at a time - the submenu's
-     padding-inline, the section's --page-margin, then `.section--page-width > *`'s
-     grid-column: 2 - and each time another ancestor was still constraining the surface. This
-     no longer plays that game: the panel measures itself against the VIEWPORT, so it does not
-     matter how many ancestors are page-width or what padding they carry.
+  /* THE DISCLOSURE CHEVRON, mirroring ../design-system's NavbarItem.
+     Scoped with :has() so only parent links are affected - childless top-level links and the
+     native "More" overflow trigger keep their plain inline title.
 
-     `margin-inline: calc(50% - 50vw)` pulls each edge out to the viewport edge from wherever
-     the element currently sits, and `width: 100vw` fills it. The :has() rules below are still
-     needed - without them the ancestors' padding would push the CONTENT inward even though the
-     background reaches the edges - but the background no longer depends on them being complete.
+     NO BASE ROTATION, deliberately. assets/icon-caret.svg already points DOWN, which is
+     NavbarItem's closed state, so only the open state needs a transform. The design system rotates
+     a '›' glyph 90deg/-90deg to reach the same two positions; using the SVG instead is a theme
+     choice - it is what the drawer rows and the native mega menu already render, and unlike a text
+     glyph its shape does not change with the merchant's font setting.
 
-     KNOWN CAVEAT: 100vw includes the scrollbar's width, so on a desktop browser with a classic
-     overlay-less scrollbar the panel can be a few px wider than the viewport. If that shows as
-     a horizontal scrollbar, the fix is `overflow-x: clip` on the header component, not
-     narrowing this. Flagged rather than pre-solved because it depends on the OS/browser. */
-  /* The design system's MegaMenu closes its panel with a hairline as well as a shadow. That
-     border is emitted by snippets/mionas-header-menu-panel.liquid on the same condition as the
-     background rather than declared unconditionally here, because the panel snippet documents
-     "clearing the background colour in the theme editor is how you remove the white surface
-     entirely" - a hairline that outlived the surface it belongs to would break that promise. */
-  .mionas-header-menu-panel {
-    width: 100vw;
-    margin-inline: calc(50% - 50vw);
-    background: var(--mionas-header-menu-panel-background, transparent);
-    box-shadow: var(--mionas-header-menu-panel-shadow, none);
-    border-bottom: var(--mionas-header-menu-panel-border, none);
+     Rotating the inner svg, not the wrapper, and declaring no transition of our own: assets/base
+     .css:1178 already gives `.icon-caret svg` the theme's transform transition, and its
+     --forward/--backward modifiers rotate the svg at the same depth. Following that convention
+     means this inherits the theme's animation speed and easing for free, and reduced-motion is
+     handled wherever the theme handles it for every other caret.
+
+     The chevron colour is the svg's own `stroke="currentColor"`, so it tracks the link's hover and
+     active colours without this file restating either.
+
+     NO LABEL-TO-CHEVRON GAP TOKEN IS SPENT, and none is wanted. This rule briefly carried
+     NavbarItem's --navbar-item-base-gap, then --space-2xs when the design system removed that
+     token; both read as too much space on screen, because the icon box is already wider than the
+     glyph it draws. The reasoning is on the title rule below. So if a future design-system release
+     ships a label-to-chevron gap token for the separated disclosure component, do not adopt it
+     reflexively - check it against the rendered nav first. */
+  /* TOP-LEVEL NAV TYPE, PINNED TO THE DESIGN SYSTEM.
+     The bar was rendering at 18px/800 - the merchant's type_font_primary_size (1.125rem) and the
+     `heading` font role, whose weight is 800 (archivo_n8). The design system's NavbarItem is 16px/
+     500, and it gets there by composing Link: navbar-item.json carries only colours now, so
+     NavbarItem.module.css overrides nothing but foreground and text-transform and lets Link supply
+     the type. So Link's tokens are the correct source here, not a --navbar-item-* one.
+
+     Both are already pinned in scripts/design-tokens-contract.mjs, and the 500 is the exact reason
+     snippets/design-system-bridge.liquid emits an extra Archivo 500 face -- the theme's four font
+     settings load 400/600/700/800 and no 500, so no Shopify font setting can express this weight.
+     That is why the weight has to be pinned in CSS rather than dialled in the theme editor.
+
+     FAMILY IS DELIBERATELY NOT TOUCHED. It stays on --menu-top-level-font-family so Shopify keeps
+     hosting and preloading the face; only size and weight move here, which is the same split
+     snippets/design-system-bridge.liquid makes for the six text roles.
+
+     CONSEQUENCE: type_font_primary_size and type_font_primary_link no longer affect the desktop
+     bar's size or weight (they still drive its family). That is the intended trade -- the nav
+     tracks the design system instead of drifting with a merchant setting.
+
+     Specificity (0,2,0) via the parent <li>, not a bare .menu-list__link (0,1,0). The base rule
+     near the top of this stylesheet sets font-size inside a nested min-width:750px media query;
+     media queries add no specificity, so a bare class here would tie it and win only on source
+     order. Compounding removes the tie. */
+  .menu-list__list-item > .menu-list__link {
+    font-size: var(--link-size-md-font-size);
+    font-weight: var(--link-base-font-weight);
   }
 
-  /* Native rules that would otherwise inset the panel's CONTENT. Scoped with :has() so only
-     our panel is affected; the native mega menu markup keeps its normal insets. :has() is
-     already used idiomatically elsewhere in this stylesheet. */
-  .mega-menu__grid:has(.mionas-header-menu-panel) {
-    grid-column: 1 / -1;
-    display: block;
-    padding-inline: 0;
+  /* CENTRE, AND NO GAP. Both settled by looking at the rendered nav, not by derivation - an
+     earlier pass reasoned its way to `align-items: baseline` plus a 4px gap and both were wrong on
+     screen. Recorded here so neither gets re-litigated from theory:
+
+     align-items: center. Baseline alignment was tried because the maths for centring looked
+     borderline (the nav line-height computes to ~1.67 via theme-styles-variables.liquid's
+     calc(1.1 + 0.5 * min(16 / 14))), and because uppercase text has no descenders so its visual
+     band runs from the baseline up. Centre is what actually reads correctly. The residual optical
+     offset is handled where it belongs - on the chevron itself, as a correction for the ASSET's own
+     geometry, which is documented on that rule.
+
+     No gap. --space-2xs (4px) sat here and pushed the caret visibly far from the word. The spacing
+     is already built into the icon: .svg-wrapper is a --icon-size-xs box (13.6px) but the caret
+     path only occupies ~8px of its width, so the wrapper carries roughly 2.8px of empty space on
+     each side before any gap is added. A gap property stacks on top of that. If the caret ever
+     needs to sit closer or further from the label, change the box size or the asset - do not
+     reintroduce a gap here. */
+  .menu-list__link-title:has(.mionas-header-menu__chevron) {
+    display: inline-flex;
+    align-items: center;
   }
 
-  /* THE RULE THAT WAS DEFEATING EVERYTHING ELSE.
-     .menu-list__submenu-inner (shared with .overflow-menu::part(overflow-list) above) sets
-     `overflow-x: hidden` next to `overflow-y: auto` and a max-height. overflow-x: hidden on the
-     panel's direct ancestor CLIPS the 100vw breakout back to the submenu's own width, so the
-     surface renders as an inset card no matter what the panel itself declares. Three earlier
-     attempts at this - zeroing padding, then escaping grid-column - all died here.
+  /* SIZED DOWN, AND BOTH HALVES OF IT. assets/base.css gives `.svg-wrapper` AND
+     `.svg-wrapper > svg` the same --icon-size-sm (1.25rem = 20px). That is taller than this
+     label's own line box, so the chevron read as oversized AND knocked the text off centre: the
+     title is a flex row, so a 20px child sets the row height and the text then centres against
+     the chevron instead of the chevron centring against the text.
 
-     Note you cannot mix `overflow-x: visible` with `overflow-y: auto`; CSS computes the visible
-     one to auto. So the max-height has to go too, which costs the native "scrollable when the
-     submenu exceeds the viewport" behaviour. Acceptable here because the card panel is a single
-     short row - but if a very tall menu is ever configured, this is the rule to revisit. */
-  .menu-list__submenu-inner:has(.mionas-header-menu-panel) {
-    padding-inline: 0;
+     The theme's own .svg-wrapper--small modifier is not sufficient - it resizes the wrapper only
+     and leaves `> svg` at --icon-size-sm, so the glyph would overflow a smaller box. Hence both
+     selectors here.
 
-    /* Also zero the BLOCK axis. .menu-list__submenu sets
-       --submenu-padding-block-start/end: var(--padding-3xl) and this element consumes them a
-       few rules up, which showed as a gap above and below the panel. Zeroing here makes the
-       block's own panel_padding_block setting the single source of the panel's vertical space,
-       rather than it stacking on top of an inherited --padding-3xl. */
-    padding-block: 0;
+     Both are compounded with .svg-wrapper to reach (0,2,0)/(0,2,1) and beat base.css's (0,1,0)/
+     (0,1,1) on specificity rather than on source order - this block's stylesheet output does win
+     over base.css today, but a tie decided by load order is not something to leave load-bearing.
 
-    overflow: visible;
-    max-height: none;
+     (Do not write a Liquid tag name in braces anywhere in this stylesheet, not even inside a CSS
+     comment: theme check's StaticStylesheetAndJavascriptTags rule parses the CSS block for Liquid
+     and errors on it. The fork header above can say it because it sits inside a comment tag.)
+
+     flex: none so the title's flex layout cannot stretch or shrink it.
+
+     The translate corrects the ASSET, not the layout, and the number is measured rather than
+     tuned: icon-caret.svg's path is `M11 5.5L7 9.5L3 5.5` in a 14-unit viewBox, so with the round
+     caps its visible band runs y 4.75 -> 10.25 and is centred at y=7.5 - half a unit BELOW the
+     box centre at y=7. The glyph therefore always draws 0.5/14 of the box height low, at every
+     size. Expressing it as that ratio keeps the correction correct if the size token changes;
+     a hardcoded px nudge would not. It goes on the wrapper because the rotation below owns
+     `transform` on the svg. */
+  .svg-wrapper.mionas-header-menu__chevron,
+  .svg-wrapper.mionas-header-menu__chevron > svg {
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
+    flex: none;
   }
 
-  /* Centres and caps the content only. Never a background or a shadow - those belong to the
-     full-bleed parent, and putting them here is precisely what renders as a floating card. */
-  /* The FALLBACKS moved to design-system tokens, not the settings: the literal typed here is now
-     the design system's value, while a merchant who sets panel_padding_* still wins (the snippet
-     emits it inline).
+  .svg-wrapper.mionas-header-menu__chevron {
+    transform: translateY(calc(-0.5 / 14 * var(--icon-size-xs)));
+  }
 
-     BE CLEAR ABOUT WHAT THIS DOES AND DOES NOT CHANGE ON THE LIVE PANEL: nothing, today. Both
-     padding settings are `range` inputs with a schema default of 24, so settings.panel_padding_*
-     is never blank, the snippet always emits the inline property, and this fallback never fires.
-     MegaMenu asks for space.md (16px), so adopting the design system's padding for real means
-     changing those two schema defaults from 24 to 16 - a merchant-facing default, left alone here
-     deliberately. The fallback is still worth single-sourcing: it is what renders if the settings
-     are ever cleared or the snippet is used standalone, and it should not disagree with the
-     design system when it does.
+  .menu-list__link[aria-expanded='true'] .mionas-header-menu__chevron svg {
+    transform: rotate(180deg);
+  }
+
+  /* THE PANEL PAINTS NOTHING, AND SO IT NEEDS NO SURFACE MACHINERY.
+     There is deliberately no `.mionas-header-menu-panel` rule here at all any more. Everything
+     that used to be on it existed to draw one edge-to-edge surface:
+
+       - background / box-shadow / border-bottom -- removed. The dropdown already sits on the
+         header's own surface, so painting a second one behind it was a doubled surface, not a
+         design. --mionas-header-menu-panel-background/-shadow/-border are no longer emitted by
+         snippets/mionas-header-menu-panel.liquid, and the panel_background / panel_shadow settings
+         that fed them are gone from the schema rather than left as controls that do nothing.
+       - width: 100vw + margin-inline: calc(50% - 50vw) -- removed. That breakout existed only so
+         the background could reach the viewport edges. With no background there is nothing to
+         stretch, and it took a known caveat with it (100vw counts the scrollbar, so the panel
+         could overhang by a few px).
+       - the three :has() ancestor overrides on .mega-menu__grid and .menu-list__submenu-inner --
+         removed. They cancelled native padding and, critically, `overflow-x: hidden` + max-height
+         on .menu-list__submenu-inner, which clipped the breakout. Nothing is breaking out now, so
+         the native submenu keeps its own padding and its own scroll behaviour. That last part is a
+         GAIN: those overrides had to drop max-height (you cannot mix overflow-x: visible with
+         overflow-y: auto), which cost the native "scrollable when the submenu exceeds the
+         viewport" behaviour. It is back.
+
+     If a full-bleed painted panel is ever wanted again, restore it as one rule on this element
+     plus those three overrides together -- they only ever worked as a set, and three separate
+     attempts at partial versions are recorded in this file's history as having failed. */
+
+  /* Centres and caps the content. No background, no shadow, no padding: the native
+     .menu-list__submenu-inner supplies the panel's padding now that its overrides are gone, so
+     declaring padding here too would double it.
 
      max-width stays a literal on purpose. The design system does not tokenise layout geometry -
      MegaMenu.module.css hard-codes the same max-width: 1240px, with a comment saying so - and
@@ -818,8 +911,6 @@
   .mionas-header-menu-panel__inner {
     max-width: var(--mionas-header-menu-panel-max-width, 1240px);
     margin-inline: auto;
-    padding-block: var(--mionas-header-menu-panel-padding-block, var(--mega-menu-base-padding));
-    padding-inline: var(--mionas-header-menu-panel-padding-inline, var(--mega-menu-base-padding));
   }
 
   /* One column below 750px (the same card as desktop, stacked vertically), then 3, then the
@@ -952,77 +1043,50 @@
     color: var(--mega-menu-item-description-foreground);
   }
 
-  /* The card's label and tagline moved into this wrapper for the drawer's row grid. The 8px gap
-     started life as the card's own `gap: var(--space-xs)`, moved down one level so the desktop
-     mega menu kept rendering pixel-identically.
+  /* The card's label and tagline live in this wrapper for the drawer's row grid (thumb | text |
+     caret): without it they are separate grid items and cannot share a column.
 
-     IT IS NO LONGER THE SAME NUMBER AS THE CARD'S GAP. The card now spends
-     --mega-menu-item-base-gap (12px) between media and text; this stays at 8px between label and
-     tagline. Left on the raw primitive deliberately: MegaMenuItem's own .text declares no gap at
-     all, so there is no design-system token to adopt here, and inheriting the card's 12px would
-     loosen the label/tagline pair the design system keeps tight. Revisit if the design system
-     ever tokenises that inner spacing. */
+     NO GAP ON DESKTOP. It carried `gap: var(--space-xs)` (8px), inherited from the card's own gap
+     before the two were split. That is not what the design system draws: MegaMenuItem's .text
+     declares no gap at all and Text sets `margin: 0`, so the label and description sit flush and
+     the pair reads as one block. The 8px was surviving inertia, and the mega menu design sync
+     should have removed it - it was kept on the argument that "there is no token to adopt here",
+     which confused "no token" with "no opinion". Zero IS the design system's value.
+
+     The drawer variant re-adds a small --space-3xs below; that one is a real decision, because the
+     drawer's rows are taller and touch-targeted rather than a dense desktop grid. */
   .mionas-header-menu-panel__text {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
     min-width: 0;
   }
 
   /* ── Drawer variant ──────────────────────────────────────────────────────────────────
 
-     FIRST, undo the desktop chrome. The panel root breaks out to `width: 100vw` with
-     `margin-inline: calc(50% - 50vw)` so the DESKTOP dropdown reaches the viewport edges,
-     and __inner re-inset the content by 24px and caps it at 1240px. Both are wrong in the
-     drawer, and both come from the same "the drawer only exists below 750px" assumption
-     this work is correcting:
-
-       - On a wide touch device the breakout is severe. A ~400px drawer in a 1024px
-         viewport gets `margin-inline: -312px` and `width: 1024px`, so the panel spills far
-         past both drawer edges.
-       - On a phone, __inner's 24px inline padding insets the cards from the VIEWPORT while
-         the top-level rows sit at the drawer's own padding, so thumbnails do not line up
-         with "Cursos" and "Blog" above and below them.
-
-     The drawer's list already supplies the correct inline padding:
-     `.menu-drawer__menu { padding-inline: var(--drawer-padding); }`
-     (snippets/mionas-header-drawer.liquid:791). Zeroing here makes the cards inherit it and
-     align with everything else in the drawer. Vertical rhythm then comes entirely from the
-     heading and separator rules in Task 4 - which is why padding-block goes to 0 too,
-     rather than stacking 24px on top of them. */
+     MOST OF THIS USED TO BE "UNDO THE DESKTOP CHROME" AND NO LONGER NEEDS TO BE. The desktop
+     panel once broke out to 100vw and painted a background, a shadow and a hairline, all of which
+     had to be neutralised here or the drawer showed a white card spilling past its own edges.
+     None of that is declared any more (see the note where the panel rule used to be), so the
+     neutralisations went with it. What remains is the one thing that was never about undoing:
+     the width. */
   .mionas-header-menu-panel.mionas-header-menu-panel--drawer {
-    /* 100%, NOT auto. The flat branch's <li> is `display: flex; flex-direction: column;
-       align-items: flex-start` (snippets/mionas-header-drawer.liquid:850-855), so the cross
-       axis is horizontal and flex-start cancels the default stretch - a child with width:auto
-       is then sized fit-content, and the card group renders narrower than the top-level rows
-       with its carets out of line. The heading <span> escapes this only because
-       .menu-drawer__menu-item is in the width:100% list at :888-892; this div is not. The
-       desktop rule's 100vw was a definite width that hid the problem; neutralising it here
-       exposed it. */
+    /* 100%, NOT auto, and this rule must stay even though the desktop breakout is gone - it is
+       now the ONLY thing giving the panel a width in the drawer. The flat branch's <li> is
+       `display: flex; flex-direction: column; align-items: flex-start`
+       (snippets/mionas-header-drawer.liquid:850-855), so the cross axis is horizontal and
+       flex-start cancels the default stretch - a child with width:auto is sized fit-content, and
+       the card group renders narrower than the top-level rows with its carets out of line. The
+       heading <span> escapes this only because .menu-drawer__menu-item is in the width:100% list
+       at :888-892; this div is not. */
     width: 100%;
-    margin-inline: 0;
-
-    /* The panel snippet emits panel_background and panel_shadow as inline custom properties
-       for EVERY variant, and the block's schema defaults them to #ffffff and true. On desktop
-       that is the design - a full-bleed white surface under the dropdown. In the drawer it
-       renders as a white card with a drop shadow floating behind the rows, which the design
-       does not have: drawer rows sit directly on the drawer surface, separated from the plain
-       links only by the hairline in the group-separator rule. Neutralise here rather than
-       asking merchants to clear the setting, which would also blank the desktop panel. */
-    background: none;
-    box-shadow: none;
-
-    /* Same reasoning as the two above, for the hairline that came in with the design system's
-       MegaMenu: it belongs to the desktop dropdown's surface, and the drawer has no surface.
-       The drawer's own group separator is what divides card rows from plain links there. */
-    border-bottom: none;
   }
 
+  /* Still needed: __inner caps the desktop content at 1240px and centres it, and neither is
+     wanted inside a ~400px drawer. Its padding overrides are gone because __inner no longer has
+     any padding to override. */
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__inner {
     max-width: none;
     margin-inline: 0;
-    padding-inline: 0;
-    padding-block: 0;
   }
 
   /* The panel's grid rules above are width-based (3 columns from 750px, then
@@ -1404,19 +1468,7 @@
     },
     {
       "type": "paragraph",
-      "content": "Appearance of the card panel shown under a menu item with children. Clear the background colour to remove the white surface entirely."
-    },
-    {
-      "type": "color",
-      "id": "panel_background",
-      "label": "Panel background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "checkbox",
-      "id": "panel_shadow",
-      "label": "Panel drop shadow",
-      "default": true
+      "content": "Layout of the card panel shown under a menu item with children. The panel has no surface of its own — it sits on the header's background and takes its padding from the dropdown."
     },
     {
       "type": "range",
@@ -1427,26 +1479,6 @@
       "step": 20,
       "unit": "px",
       "default": 1240
-    },
-    {
-      "type": "range",
-      "id": "panel_padding_block",
-      "label": "Panel padding (top and bottom)",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "panel_padding_inline",
-      "label": "Panel padding (left and right)",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 24
     },
     {
       "type": "range",
