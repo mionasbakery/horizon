@@ -4,15 +4,16 @@
   could not follow it when a role changed.
 
   Renders through snippets/mionas-text.liquid, the same snippet blocks/mionas-text.liquid and
-  blocks/mionas-product-title.liquid render, so size, line-height, letter-spacing, family and colour
-  are the role's. Only the weight is the price's own -- see the stylesheet.
+  blocks/mionas-product-description.liquid render, so size, line-height, letter-spacing, family and
+  colour are the role's. Only the weight is the price's own -- see the stylesheet.
 
   WHY A DEDICATED BLOCK RATHER THAN JUST USING blocks/mionas-text.liquid:
   mionas-text takes literal copy from a richtext setting. A price is not literal copy -- it needs
   `| money` in the shop's currency and format, the compare-at comparison, and the accessible label on
-  the struck-through original. And blocks/_mionas-product-card.liquid renders ONE composition that
-  every product in the grid reuses (a single fixed block id), so a literal string would print the same
-  figure on every card. That is the whole reason this exists as its own block.
+  the struck-through original. And the product card renders ONE composition that every product in
+  the grid reuses (a single fixed block id -- see sections/mionas-collection.liquid and Horizon's
+  sections/main-collection.liquid), so a literal string would print the same figure on every card.
+  That is the whole reason this exists as its own block.
 
   NOT IN THE DESIGN SYSTEM AS A STANDALONE COMPONENT. ../design-system/src/react/ has Text and
   ProductCard/ProductCardPrice, but no Price -- so the tokens below are ProductCardPrice's while the
@@ -79,9 +80,10 @@
      The edge inset, since ProductCard carries no padding of its own and each subcomponent sets its
      own (ProductCard.module.css).
 
-     And the weight: --product-card-price-font-weight, not the role's. Same reasoning as
-     mionas-product-title -- the design system gives ProductCardPrice a weight token of its own
-     because the price is 600 whatever size it is set at.
+     And the weight: --product-card-price-font-weight, not the role's. The design system gives
+     ProductCardPrice a weight token of its own because the price is 600 whatever size it is set at.
+     blocks/mionas-product-description.liquid makes the same move with its own CardDescription
+     tokens.
 
      COLOUR IS DELIBERATELY NOT OVERRIDDEN, unlike the block this replaces.
      --product-card-price-foreground references {text-color.default} in the design system's own token

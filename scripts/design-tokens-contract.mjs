@@ -85,10 +85,15 @@ export const EXPECTED_TOKENS = {
   "--product-card-base-padding-inline": "16px",
   "--product-card-price-font-weight": "600",
   "--product-card-price-foreground": "#101413",
-  // Spent by blocks/mionas-product-card.liquid, which is a standalone card the merchant places
-  // rather than a restyle of Horizon's grid card -- so unlike the deleted product-card-bridge it
-  // does own its media height and its pressed state, and both need guarding.
-  "--product-card-base-media-height": "200px",
+  // --product-card-base-media-height was pinned here for a Mionas card block that owned its own
+  // media height. That block has been deleted and no file spends the token any more, so the pin is
+  // gone with it. The two media tokens above (--product-card-base-media-inset and
+  // --product-card-base-media-radius) are a different case: they are still pinned but deliberately
+  // unspent -- the theme frames card media flush and square-cornered rather than inset, a knowing
+  // divergence documented at the top of snippets/product-card-bridge.liquid's media comment. They
+  // stay pinned so that divergence is measured against a known value rather than a moving one.
+  //
+  // --card-state-pressed-opacity IS spent, by product-card-bridge.liquid's :active rule.
   "--card-state-pressed-opacity": "0.92",
   // Secondary body text, spent by blocks/mionas-contact-form.liquid's note and
   // blocks/mionas-map.liquid's empty state. Card's own token rather than a borrowed --form-label-*

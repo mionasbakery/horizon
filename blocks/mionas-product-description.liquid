@@ -1,0 +1,107 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Card/Card.module.css's .description (:66-71): the product's own
+  description, one step quieter than the title and price above it.
+
+  This block exists because Horizon has no product-bound description block. blocks/text.liquid takes
+  static merchant copy and never binds to the surrounding product, and blocks/custom-liquid.liquid
+  would render unstyled, spending none of the design system's text-role vocabulary.
+
+  Reads closest.product, so it renders only inside a product context -- a native product card, the
+  card slot of sections/mionas-collection.liquid, or a product page. Anywhere else, nothing.
+
+  WHY IT RENDERS NOTHING FOR A PRODUCT WITH NO DESCRIPTION:
+  an empty element would still contribute the card's flex `gap`, opening a hole between the price and
+  the button on exactly the products that have least to say. The blank check below is on the STRIPPED
+  text, not on product.description, because a description containing only markup (an empty <p>, say)
+  is non-blank before strip_html and blank after.
+
+  WHY THE TEXT IS TRUNCATED AS WELL AS CLAMPED:
+  the clamp in the stylesheet is visual only -- the full string still ships in the HTML. A collection
+  page renders 24 of these, so without truncatewords the page carries 24 complete product
+  descriptions to display two lines of each. 30 words also puts a real ellipsis on the fallback path,
+  where -webkit-line-clamp is unsupported and the clamp silently does nothing.
+{%- endcomment -%}
+
+{%- liquid
+  assign product = closest.product
+  assign description = product.description | strip_html | truncatewords: 30
+-%}
+
+{%- if product != blank and description != blank -%}
+  {%- render 'mionas-text',
+    content: description,
+    role: block.settings.role,
+    variant: 'default',
+    tag: 'p',
+    class: 'mionas-product-description',
+    shopify_attributes: block.shopify_attributes
+  -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* The role owns size, line-height, letter-spacing and family via snippets/mionas-text.liquid.
+     Four things are left here.
+
+     The edge inset, because ProductCard carries no padding of its own -- each subcomponent sets its
+     own, the convention blocks/mionas-price.liquid already follows.
+
+     The weight and THE COLOUR, both from the design system's CardDescription tokens
+     (Card.module.css:66-71, weight at :69, colour at :70). Note the colour override is the opposite
+     call from the one mionas-price makes. It deliberately does NOT override colour,
+     because --product-card-price-foreground resolves to the same
+     #101413 that .text-role--default already applies, so overriding would only have made its
+     Color setting dead. --card-description-foreground is #687076 (design-tokens.css:238) -- a
+     genuinely different value -- so it has to be spent here. THAT IS WHY THIS BLOCK SHIPS NO Color
+     SETTING: one that this rule then overrode would be a control that does nothing.
+
+     And the clamp. -webkit-line-clamp needs all three of display, box-orient and overflow to take
+     effect; where it is unsupported the text simply runs to its truncatewords limit, which is why
+     the Liquid truncates as well.
+
+     THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE: every .text-role--<role> declares font-weight from
+     a single-class selector in this same compiled stylesheet, so equal specificity would leave the
+     winner to bundle order. .text-role.mionas-product-description is (0,2,0). Do not flatten it. */
+  .text-role.mionas-product-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    padding-inline: var(--product-card-base-padding-inline);
+    font-weight: var(--card-description-font-weight);
+    color: var(--card-description-foreground);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Description",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "role",
+      "label": "Role",
+      "options": [
+        { "value": "hero", "label": "Hero" },
+        { "value": "title", "label": "Title" },
+        { "value": "subtitle", "label": "Subtitle" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "caption", "label": "Caption" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" },
+        { "value": "stamp", "label": "Stamp" }
+      ],
+      "default": "caption",
+      "info": "The same text roles as Mionas: Text. Weight and colour stay the card description's."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Description",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

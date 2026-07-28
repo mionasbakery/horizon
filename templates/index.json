@@ -241,39 +241,81 @@
       "name": "Mionas: Lo más vendido",
       "blocks": {
         "static-product-card": {
-          "type": "_mionas-product-card",
-          "name": "Mionas: Product card",
+          "type": "_product-card",
+          "name": "t:names.product_card",
           "static": true,
           "settings": {
-            "gap": 16,
+            "product_card_gap": 16,
+            "background_color": "#FFFFFF",
+            "border": "solid",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "#ECE8E2",
+            "border_radius": 16,
             "padding-block-start": 0,
             "padding-block-end": 16,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
           "blocks": {
-            "media": {
-              "type": "mionas-product-media",
-              "name": "Mionas: Product media",
+            "card-gallery": {
+              "type": "_product-card-gallery",
               "settings": {
-                "image_loading": "eager"
-              }
+                "image_ratio": "square",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             },
             "title": {
-              "type": "mionas-product-title",
-              "name": "Mionas: Product title",
+              "type": "product-title",
+              "name": "t:names.product_title",
               "settings": {
-                "heading_level": "3"
-              }
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#101413",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
+              },
+              "blocks": {}
             },
             "price": {
               "type": "mionas-price",
               "name": "Mionas: Price",
               "settings": {
-                "role": "body",
+                "role": "stamp",
                 "variant": "default",
                 "show_compare_at_price": false
-              }
+              },
+              "blocks": {}
+            },
+            "description": {
+              "type": "mionas-product-description",
+              "name": "Mionas: Description",
+              "settings": {
+                "role": "caption"
+              },
+              "blocks": {}
             },
             "add_to_cart": {
               "type": "mionas-add-to-cart",
@@ -282,12 +324,17 @@
                 "variant": "primary",
                 "size": "md",
                 "full_width": true,
+                "icon_only": false,
+                "label_add": "Añadir al carrito",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
                 "padding-inline-start": 16,
                 "padding-inline-end": 16
-              }
+              },
+              "blocks": {}
             }
           },
-          "block_order": ["media", "title", "price", "add_to_cart"]
+          "block_order": ["card-gallery", "title", "price", "description", "add_to_cart"]
         },
         "header_group": {
           "type": "group",
@@ -358,10 +405,10 @@
       ],
       "settings": {
         "collection": "lo-mas-vendido",
-        "max_products": 6,
+        "max_products": 4,
         "layout_type": "grid",
         "carousel_on_mobile": false,
-        "columns": 6,
+        "columns": 4,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
         "columns_gap": 8,

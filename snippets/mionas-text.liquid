@@ -1,9 +1,9 @@
 {%- doc -%}
   Renders a single text node at one of ../design-system/src/react/Text/Text.tsx's roles and colour
   variants. Extracted from blocks/mionas-text.liquid so that block is not the only way to spend the
-  role vocabulary: blocks/mionas-product-title.liquid and blocks/mionas-price.liquid render their
-  dynamic product copy through here instead of restating --text-role-* by hand, which is how they
-  drifted out of step with the roles in the first place.
+  role vocabulary: blocks/mionas-price.liquid and blocks/mionas-product-description.liquid render
+  their dynamic product copy through here instead of restating --text-role-* by hand, which is how
+  they drifted out of step with the roles in the first place.
 
   THE .text-role CSS DELIBERATELY DOES NOT LIVE HERE. Snippets cannot declare a stylesheet tag,
   and it stays in blocks/mionas-text.liquid, which is where it already was. Every block
@@ -24,7 +24,7 @@
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
   @example
-  {% render 'mionas-text', content: product.title, role: 'body', tag: 'p', class: 'mionas-product-title' %}
+  {% render 'mionas-text', content: product.title, role: 'body', tag: 'p', class: 'mionas-price' %}
 {%- enddoc -%}
 
 {%- liquid

@@ -54,8 +54,9 @@
   visible-text gate, the schema, and the .text-role CSS below, which stays here rather than moving to
   the snippet because snippets cannot declare a stylesheet tag.
 
-  blocks/mionas-product-title.liquid and blocks/mionas-price.liquid render the same snippet with
-  their own dynamic content, so the role vocabulary now has one implementation instead of three.
+  blocks/mionas-price.liquid and blocks/mionas-product-description.liquid render the same snippet
+  with their own dynamic content, so the role vocabulary has one implementation rather than one per
+  block.
 {%- endcomment -%}
 {%- if visible_text != blank -%}
   {%- render 'mionas-text',

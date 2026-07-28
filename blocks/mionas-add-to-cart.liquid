@@ -8,10 +8,11 @@
   block imposes no inset and the composition decides. Only margin-block-start: auto is kept, which is
   what puts the row at the foot of the card.
 
-  Intended as a child of blocks/_mionas-product-card.liquid, alongside mionas-product-media,
-  mionas-product-title and mionas-price. It reads closest.product and renders nothing
-  without one, but unlike _mionas-product-card it is NOT private: a merchant adds and orders it in
-  the theme editor, so it needs to appear in the block picker.
+  It is a direct child block of Horizon's native blocks/_product-card.liquid, a sibling of
+  mionas-price rather than nested in a _product-card-group row. It reads closest.product and renders
+  nothing without one, and unlike a
+  private block it is NOT hidden from the picker: a merchant adds and orders it in the theme
+  editor, so it needs to appear there.
 
   WHY THIS IS A BLOCK AND NOT A RESKIN of blocks/add-to-cart.liquid:
   that block's own doc header says can_add_to_cart and add_to_cart_text are parameters "intended for
@@ -60,11 +61,12 @@
   WHY THE CHOOSE-OPTIONS BRANCH CAN FALL BACK TO A LINK:
   the quick-add dialog is a single global element, rendered in layout/theme.liquid:185-187 only when
   settings.quick_add or settings.mobile_quick_add is on. settings.quick_add defaults to true
-  (config/settings_schema.json:1852-1854) and config/settings_data.json does not override it, so the
-  dialog is present today -- but a merchant can switch it off, and then the choose button would open
-  nothing. Rendering a second dialog per card is not an option: they would collide on the
-  #quick-add-dialog id that quick-add.js:134 looks up. So the fallback is a plain link to the
-  product page, styled identically.
+  (config/settings_schema.json:1852-1854), but config/settings_data.json now sets it explicitly to
+  false, so the dialog is currently absent and every multi-variant product takes this fallback
+  branch, not the quick-add one below -- a merchant can switch it back on, and then the choose
+  button would open nothing if this branch were the only one. Rendering a second dialog per card is
+  not an option: they would collide on the #quick-add-dialog id that quick-add.js:134 looks up. So
+  the fallback is a plain link to the product page, styled identically.
 
   WHY THE VARIANT SETTING OFFERS FOUR OF mionas-button.liquid's SEVEN:
   the class vocabulary is shared, but the schema deliberately is not. danger and the two inverse
@@ -73,8 +75,9 @@
   if a dark card variant ever lands -- the CSS for them already exists.
 
   ONE KNOWN COSMETIC OVERLAP: pressing this button also dims the whole card, because
-  _mionas-product-card.liquid's `.mionas-product-card:active { opacity: ... }` matches on ancestors of
-  the pressed element. Left as-is rather than scoping the card's pressed state around this block.
+  snippets/product-card-bridge.liquid:43's `.product-card:active .product-card__content { opacity: ... }`
+  matches on ancestors of the pressed element. Left as-is rather than scoping the card's pressed
+  state around this block.
 {%- endcomment -%}
 
 {%- liquid
@@ -166,14 +169,21 @@
       CSS wins: the icon is decorative and already aria-hidden, so display: none removes it from the
       accessibility tree too and nothing is announced that is not shown.
 
-      The modifier sits on the wrapper, not the button, because the choose and fallback branches build
-      their own markup and never emit an icon at all -- keeping the toggle off the shared
-      button_classes stops it implying an icon exists in branches that have none.
+      The modifier sits on the wrapper, not the button, so that one class governs both the cart icon
+      in the add branch and the plus icon the choose and fallback branches emit under icon_only --
+      the shared button_classes would otherwise have to carry a toggle that means something different
+      per branch.
+
+      show_icon and icon_only are mutually exclusive above rather than additive: show_icon is
+      visible_if'd off in the editor when icon_only is on, but a stored false survives that, and both
+      modifiers together would render a button with neither icon nor label.
     endcomment
     assign wrapper_classes = 'mionas-add-to-cart'
-    unless block_settings.show_icon
+    if block_settings.icon_only
+      assign wrapper_classes = wrapper_classes | append: ' mionas-add-to-cart--icon-only'
+    elsif block_settings.show_icon == false
       assign wrapper_classes = wrapper_classes | append: ' mionas-add-to-cart--no-icon'
-    endunless
+    endif
   -%}
 
   {% render 'add-to-cart-button-styles' %}
@@ -217,20 +227,56 @@
             name="quantity"
             value="{% if selected_variant.quantity_rule.min %}{{ selected_variant.quantity_rule.min }}{% else %}1{% endif %}"
           >
-          {% render 'add-to-cart-button',
-            add_to_cart_text: add_to_cart_text,
-            class: button_classes,
-            can_add_to_cart: can_add_to_cart,
-            product: product
-          %}
+          {%- if block_settings.icon_only and can_add_to_cart == false -%}
+            {%- comment -%}
+              snippets/add-to-cart-button.liquid:41-47 only emits its icon span when can_add_to_cart,
+              so a sold-out product gets no icon from that snippet -- and the icon-only stylesheet
+              rule's font-size: 0 then collapses the "Agotado" label too, leaving a blank disabled
+              square. Verified on the dev server: 2 of 24 cards on /collections/comprar-cookies.
+
+              Bypassing the snippet here is safe specifically because this branch is disabled: the
+              <add-to-cart-component> wrapper, the ref="addToCartButton" binding and the
+              checkmark-burst markup all exist to drive the added-to-cart animation, and a disabled
+              button can never fire it. Nothing that snippet provides is given up.
+
+              Only reached under icon_only -- in text mode the sold-out label is visible on its own
+              and there is nothing to fix.
+            {%- endcomment -%}
+            {%- comment -%}
+              The literal "button" class below is what base.css:1078-1081's .button:disabled
+              { opacity: 0.5; cursor: not-allowed; } hooks onto. snippets/add-to-cart-button.liquid:33
+              supplies it for free on the other path (class="button {{ class }}"), but this branch
+              bypasses that snippet, so it has to be added by hand or a sold-out card would render
+              indistinguishable from a buyable one apart from the glyph.
+            {%- endcomment -%}
+            <button
+              class="button {{ button_classes }}"
+              type="submit"
+              name="add"
+              disabled
+            >
+              <span class="svg-wrapper" aria-hidden="true">
+                {{- 'icon-unavailable.svg' | inline_asset_content -}}
+              </span>
+              {{- add_to_cart_text -}}
+            </button>
+          {%- else -%}
+            {% render 'add-to-cart-button',
+              add_to_cart_text: add_to_cart_text,
+              class: button_classes,
+              can_add_to_cart: can_add_to_cart,
+              product: product
+            %}
+          {%- endif -%}
         {%- endform -%}
       </product-form-component>
     {%- elsif quick_add_modal_available -%}
       {%- comment -%}
         QuickAddComponent finds the product URL through this.closest('product-card') and that
-        element's refs.productCardLink (quick-add.js:16-19, product-card.js:110-124), which is why
-        _mionas-product-card.liquid renders a <product-card> wrapper with ref="productCardLink" on
-        its overlay link. Without both, this button opens an empty dialog.
+        element's refs.productCardLink (quick-add.js:16-19, product-card.js:110-124). Horizon's own
+        snippets/product-card.liquid:62,88 supplies both -- a <product-card> element whose overlay
+        link carries ref="productCardLink" -- so this button works wherever that card renders it.
+        Without both, it would open an empty dialog.
 
         data-quick-add-button is fixed at 'choose' and data-renders-both-buttons is omitted, so
         QuickAddComponent's productSelect handler returns early (quick-add.js:66) instead of
@@ -247,17 +293,35 @@
           type="button" is explicit: submit is the default, and QuickAddComponent opens a dialog
           rather than submitting anything. Same reasoning as quick-add.liquid:127.
         {%- endcomment -%}
+        {%- comment -%}
+          The add branch gets its icon free from snippets/add-to-cart-button.liquid:41-47. These two
+          branches build their own markup and have never had one, so icon_only has to supply it or
+          the font-size: 0 rule below would leave an empty box. Only rendered under icon_only, so
+          text mode looks exactly as it did.
+        {%- endcomment -%}
         <button
           class="{{ button_classes }}"
           type="button"
           name="add"
           on:click="quick-add-component/handleClick"
         >
+          {%- if block_settings.icon_only -%}
+            <span class="svg-wrapper" aria-hidden="true">
+              {{- 'icon-plus.svg' | inline_asset_content -}}
+            </span>
+          {%- endif -%}
           {{- choose_options_text -}}
         </button>
       </quick-add-component>
     {%- else -%}
-      <a class="{{ button_classes }}" href="{{ product.url }}">{{- choose_options_text -}}</a>
+      <a class="{{ button_classes }}" href="{{ product.url }}">
+        {%- if block_settings.icon_only -%}
+          <span class="svg-wrapper" aria-hidden="true">
+            {{- 'icon-plus.svg' | inline_asset_content -}}
+          </span>
+        {%- endif -%}
+        {{- choose_options_text -}}
+      </a>
     {%- endif -%}
   </div>
 {%- endif -%}
@@ -268,13 +332,18 @@
      padding-inline: var(--product-card-base-padding-inline), mirroring .actions in
      ProductCard.module.css:34-38. Both are gone: padding is now four range settings rendered through
      snippets/spacing-style.liquid, defaulting to 0, so the block imposes no inset of its own and the
-     composition decides. That is the same mechanism, and the same four setting ids, that
-     blocks/_mionas-product-card.liquid already uses for the card itself.
+     composition decides. That is the same mechanism, and the same four setting ids, that Horizon's
+     own blocks/_product-card.liquid exposes for the card itself.
 
-     Note the block still sits in the card's flex `gap`, so removing padding-block-start does not
-     collapse the space above the button -- the card's --mionas-product-card-gap still separates it
-     from the price. What does change is the horizontal inset: at the default of 0 the button now runs
-     to the card's edges. Set padding-inline in the theme editor to inset it.
+     Note the block still sits in a flex `gap`, so removing padding-block-start does not collapse the
+     space above the button -- the button is a direct child of blocks/_product-card.liquid, a sibling
+     of mionas-price, product-title and mionas-product-description (no _product-card-group wraps it),
+     so the separation above it comes from the card's own product_card_gap setting
+     (_product-card.liquid), not a group-level token. The horizontal inset is set on this block
+     itself: both templates that place it, templates/index.json and templates/collection.json,
+     configure padding-inline-start/end to 16 here, not 0, so the button does not run to the card's
+     edges. That value lives in the theme editor per instance, same as any other padding this block
+     leaves unset above.
 
      margin-block-start: auto is NOT padding and stays. It pins the action row to the card's foot so
      buttons line up across a grid row however the titles wrap. */
@@ -288,6 +357,26 @@
      and label is mionas-button.liquid's `gap`, which collapses on its own with one child left. */
   .mionas-add-to-cart--no-icon .add-to-cart-icon {
     display: none;
+  }
+
+  /* Icon-only mode. font-size: 0 is what collapses the label: add-to-cart-button.liquid:48 emits it
+     as a bare text node with no element to select, so there is nothing to put display: none on. The
+     node stays in the accessibility tree, which is the point -- it remains the button's accessible
+     name and no aria-label is needed.
+
+     The icon survives a zero font-size because .svg-wrapper is sized from --icon-size-sm, which is
+     1.25rem (theme-styles-variables.liquid:549) -- rem, not em. .mionas-button declares no gap
+     either, so nothing else collapses.
+
+     (0,2,0) on purpose: .mionas-button, .mionas-button--sm and .mionas-button--lg each declare
+     padding and font-size at one class, and this has to outrank whichever size is selected.
+     aspect-ratio squares the button against the height those same rules set, so it tracks the size
+     token instead of naming a width. Note --full still wins on width if a merchant sets both; that
+     combination is a misconfiguration, not a supported mode. */
+  .mionas-add-to-cart--icon-only .mionas-button {
+    font-size: 0;
+    padding-inline: 0;
+    aspect-ratio: 1;
   }
 
   .mionas-add-to-cart__quick-add {
@@ -371,10 +460,18 @@
     },
     {
       "type": "checkbox",
+      "id": "icon_only",
+      "label": "Icon only",
+      "info": "Hides the label and shows only the icon. The label stays as the button's accessible name, so screen readers still announce it.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
       "id": "show_icon",
       "label": "Show cart icon",
       "default": true,
-      "info": "Only the add-to-cart button has an icon; the choose-options button never does."
+      "info": "Only the add-to-cart button has an icon; the choose-options button never does.",
+      "visible_if": "{{ block.settings.icon_only == false }}"
     },
     {
       "type": "header",

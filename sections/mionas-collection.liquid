@@ -1,7 +1,13 @@
 {%- comment -%}
   A collection grid whose cards are composed, not baked in: the section loops the collection and
-  renders blocks/_mionas-product-card.liquid once per product, and that card's contents -- media,
-  title, price, and anything else -- are merchant-editable child blocks.
+  renders Horizon's native _product-card once per product, and that card's contents -- media, title,
+  price, and anything else -- are merchant-editable child blocks, native and Mionas mixed.
+
+  It rendered a Mionas-owned card block until the store unified on one card. The native card
+  accepts @theme children (_product-card.liquid:26-31) and passes closest.product down to them
+  (:9-11), so the Mionas price, description and add-to-cart button compose into it unchanged, and
+  snippets/product-card-bridge.liquid is what gives it the Mionas look. That Mionas card block has
+  since been deleted; git history holds it if the bridge's derivation is ever in question.
 
   This is the same shape as sections/mionas-split-panel.liquid, which owns the frame and hands each
   half to a static `group` slot the merchant fills. Here the frame is the grid and the slot is the
@@ -9,15 +15,11 @@
   useful the moment it is added, and every part of it can then be reordered, restyled or removed.
 
   WHY THIS SECTION EXISTS AT ALL:
-  Horizon's native `product-list` section hardcodes its per-product renderer --
-  sections/product-list.liquid:37-42 loops the collection and emits
-  `content_for 'block', type: '_product-card', id: 'static-product-card'` with the block type as a
-  literal. No setting changes it, and a merchant-added block lands in the section's trailing
-  `content_for 'blocks'` region, which renders ONCE below the grid rather than per product. So the
-  Mionas card could not back that grid at any level of configuration or CSS -- the native schema
-  genuinely cannot express it, which is the bar the mionas-design-component skill sets for forking a
-  new file rather than reskinning in place. (An earlier attempt did reskin the native section via a
-  CSS bridge; that bridge is gone, replaced by this.)
+  That reasoning is now about the section's header region rather than its cards. product-list puts a
+  merchant-added block in a trailing content_for 'blocks' that renders once BELOW the grid; this
+  section opens the same region ABOVE it, which is what carries the "LO MÁS VENDIDO" heading and the
+  "Ver todo" button. No product-list setting moves that region, so this section still has to exist --
+  it just no longer has to exist for the card's sake.
 
   WHY THE CARD IS A STATIC BLOCK:
   every iteration renders the same block type with the same fixed id ('static-product-card'), which
@@ -73,6 +75,19 @@
   {%- endcomment -%}
   <div class="section-resource-list__content">{%- content_for 'blocks' -%}</div>
 
+  {%- comment -%}
+    PLACEMENT IS LOAD-BEARING: these go outside the capture below, mirroring where
+    snippets/product-grid.liquid:110-111 sits relative to its own children capture. Inside the loop
+    they would be emitted once per product AND swept into the <!--@list/split--> payload that the
+    split on the next line cuts on, corrupting the array resource-list receives.
+
+    Needed at all because snippets/resource-list.liquid renders neither, unlike product-grid. Every
+    other style the native card needs -- quick-add, swatches, variant picker, badges, buy buttons --
+    blocks/_product-card.liquid:14-21 already renders itself.
+  {%- endcomment -%}
+  {% render 'product-card-styles' %}
+  {% render 'product-card-gallery-zoom-details-styles' %}
+
   {%- capture list_items -%}
     {%- for product in collection.products limit: max_items -%}
       {%- unless forloop.first -%}<!--@list/split-->{%- endunless -%}
@@ -81,10 +96,10 @@
           One fixed id for every iteration -- see "WHY THE CARD IS A STATIC BLOCK" above. The product
           travels as closest.product, which is how every child block (media, title, price, and any
           native product block the merchant adds) resolves which product it is rendering, exactly as
-          sections/product-list.liquid:37-42 does it.
+          sections/product-list.liquid:37-42 renders the same block type this section now does.
         {%- endcomment -%}
         {% content_for 'block',
-          type: '_mionas-product-card',
+          type: '_product-card',
           id: 'static-product-card',
           closest.product: product
         %}
@@ -118,7 +133,7 @@
     height: 100%;
   }
 
-  .mionas-collection .resource-list__item > .mionas-product-card {
+  .mionas-collection .resource-list__item > .product-card {
     width: 100%;
   }
 {% endstylesheet %}
@@ -405,38 +420,76 @@
       },
       "blocks": {
         "static-product-card": {
-          "type": "_mionas-product-card",
-          "name": "Mionas: Product card",
+          "type": "_product-card",
+          "name": "t:names.product_card",
           "static": true,
           "settings": {
-            "gap": 16,
+            "product_card_gap": 16,
+            "background_color": "#FFFFFF",
+            "border": "solid",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "#ECE8E2",
+            "border_radius": 16,
             "padding-block-start": 0,
             "padding-block-end": 16,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
           "blocks": {
-            "media": {
-              "type": "mionas-product-media",
-              "name": "Mionas: Product media",
+            "card-gallery": {
+              "type": "_product-card-gallery",
               "settings": {
-                "image_loading": "lazy"
+                "image_ratio": "square",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               }
             },
             "title": {
-              "type": "mionas-product-title",
-              "name": "Mionas: Product title",
+              "type": "product-title",
+              "name": "t:names.product_title",
               "settings": {
-                "heading_level": "3"
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#101413",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
               }
             },
             "price": {
               "type": "mionas-price",
               "name": "Mionas: Price",
               "settings": {
-                "role": "body",
+                "role": "stamp",
                 "variant": "default",
                 "show_compare_at_price": false
+              }
+            },
+            "description": {
+              "type": "mionas-product-description",
+              "name": "Mionas: Description",
+              "settings": {
+                "role": "caption"
               }
             },
             "add_to_cart": {
@@ -446,12 +499,16 @@
                 "variant": "primary",
                 "size": "md",
                 "full_width": true,
+                "icon_only": false,
+                "label_add": "Añadir al carrito",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
                 "padding-inline-start": 16,
                 "padding-inline-end": 16
               }
             }
           },
-          "block_order": ["media", "title", "price", "add_to_cart"]
+          "block_order": ["card-gallery", "title", "price", "description", "add_to_cart"]
         }
       }
     }
