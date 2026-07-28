@@ -75,7 +75,7 @@
   if a dark card variant ever lands -- the CSS for them already exists.
 
   ONE KNOWN COSMETIC OVERLAP: pressing this button also dims the whole card, because
-  snippets/product-card-bridge.liquid:43's `.product-card:active .product-card__content { opacity: ... }`
+  snippets/product-card-bridge.liquid:50's `.product-card:active .product-card__content { opacity: ... }`
   matches on ancestors of the pressed element. Left as-is rather than scoping the card's pressed
   state around this block.
 {%- endcomment -%}

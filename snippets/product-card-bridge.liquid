@@ -129,10 +129,12 @@
 
      INVARIANT, now split across the two halves. --font-paragraph--weight still governs the native
      product-title block, which every surface renders, so that half tracks all of templates/*.json.
-     --font-h6--weight governs the native price block, which only search.json, cart.json and 404.json
-     still render -- index.json and collection.json use blocks/mionas-price.liquid, which sets its own
-     weight from --product-card-price-font-weight (mionas-price.liquid:94-99) and emits no .text-block
-     for this rule to reach. Both halves stay: if a card's title or price is ever switched to another
+     --font-h6--weight governs the native price block, which SEVEN templates still render:
+     search.json, cart.json, 404.json, product.json and the three product.* variants (the last four
+     through their product-recommendations card). Only index.json and collection.json use
+     blocks/mionas-price.liquid instead, which sets its own weight from
+     --product-card-price-font-weight (mionas-price.liquid:96-102, the declaration at :101) and emits
+     no .text-block for this rule to reach. Both halves stay: if a card's title or price is ever switched to another
      type_preset, add the matching --font-<preset>--weight or the text silently falls back to the
      theme's font weight.
 
