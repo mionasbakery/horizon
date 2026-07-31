@@ -1,6 +1,6 @@
 {%- comment -%}
   The product price as a Mionas text role. Replaces blocks/mionas-product-price.liquid, which did the
-  same job but restated --text-role-body-* by hand instead of spending the role vocabulary, and so
+  same job but restated --text-role-body-md-* by hand instead of spending the role vocabulary, and so
   could not follow it when a role changed.
 
   Renders through snippets/mionas-text.liquid, the same snippet blocks/mionas-text.liquid and
@@ -61,24 +61,31 @@
     endcapture
   -%}
 
+  {%- comment -%}
+    `spacing-style` is Horizon's own class (base.css:1352-1381): it turns the four --padding-*
+    custom properties the snippet writes into real padding, with 0px fallbacks, and scales anything
+    above 20px responsively. Same mechanism blocks/mionas-add-to-cart.liquid uses in this card.
+  {%- endcomment -%}
+  {%- capture price_style -%}
+    {%- render 'spacing-style', settings: block_settings -%}
+  {%- endcapture -%}
+
   {%- render 'mionas-text',
     content: price_content,
     role: block_settings.role,
     variant: block_settings.variant,
     tag: 'p',
-    class: 'mionas-price',
+    class: 'mionas-price spacing-style',
+    style: price_style,
     shopify_attributes: block.shopify_attributes
   -%}
 {%- endif -%}
 
 {% stylesheet %}
-  /* The role owns size, line-height, letter-spacing, family and colour. Three things are left.
+  /* The role owns size, line-height, letter-spacing, family and colour. Two things are left.
 
      display/align-items/gap, because the price is a row of two figures when a compare-at is shown,
      and the role vocabulary styles a single text node.
-
-     The edge inset, since ProductCard carries no padding of its own and each subcomponent sets its
-     own (ProductCard.module.css).
 
      And the weight: --product-card-price-font-weight, not the role's. The design system gives
      ProductCardPrice a weight token of its own because the price is 600 whatever size it is set at.
@@ -90,14 +97,32 @@
      manifest, which is exactly what .text-role--default applies -- so spending it here would be a
      second name for the same value AND would make the Color setting below do nothing.
 
+     NO PADDING IS DECLARED HERE ON PURPOSE. This used to carry
+     padding-inline: var(--product-card-base-padding-inline), mirroring ProductCard.module.css, where
+     the card has no padding of its own and each subcomponent insets itself. It is gone: padding is
+     now four range settings rendered through snippets/spacing-style.liquid, defaulting to 0, so the
+     block imposes no inset of its own and the composition decides. Same mechanism, same four setting
+     ids, as blocks/mionas-add-to-cart.liquid and Horizon's own blocks/_product-card.liquid.
+
+     The horizontal inset the card still needs is therefore set per instance in the theme editor:
+     templates/index.json, templates/collection.json and the preset in sections/mionas-collection.liquid
+     all configure padding-inline-start/end to 16 here, matching the product-title block beside it, so
+     the price does not run to the card's edges. Nothing needs re-adding in CSS to keep that look.
+
+     Note --product-card-base-padding-inline is consequently unspent by this block now.
+     blocks/mionas-product-description.liquid still spends it, so the token is not dead theme-wide.
+
      THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE: every .text-role--<role> declares font-weight from a
      single-class selector in this same compiled stylesheet, so equal specificity would leave the
-     winner to bundle order. .text-role.mionas-price is (0,2,0). Do not flatten it. */
+     winner to bundle order. .text-role.mionas-price is (0,2,0). Do not flatten it.
+
+     It does NOT need to be two deep for the padding, and deliberately does not restate it: no
+     .text-role rule declares padding at all, so `spacing-style`'s (0,1,0) padding in base.css has
+     nothing in this bundle to lose source order to. */
   .text-role.mionas-price {
     display: flex;
     align-items: baseline;
     gap: var(--space-xs);
-    padding-inline: var(--product-card-base-padding-inline);
     font-weight: var(--product-card-price-font-weight);
   }
 
@@ -107,7 +132,7 @@
      a merchant choice, so a hardcoded grey would have been wrong in more cases than before. */
   .mionas-price__compare {
     opacity: 0.6;
-    font-weight: var(--text-role-body-font-weight, 400);
+    font-weight: var(--text-role-body-md-font-weight, 400);
   }
 {% endstylesheet %}
 
@@ -121,18 +146,24 @@
       "id": "role",
       "label": "Role",
       "options": [
-        { "value": "hero", "label": "Hero" },
-        { "value": "title", "label": "Title" },
-        { "value": "subtitle", "label": "Subtitle" },
-        { "value": "heading", "label": "Heading" },
-        { "value": "subheading", "label": "Subheading" },
-        { "value": "caption", "label": "Caption" },
-        { "value": "lead", "label": "Lead" },
-        { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" },
+        { "value": "display-lg", "label": "Display large" },
+        { "value": "display-md", "label": "Display medium" },
+        { "value": "display-sm", "label": "Display small" },
+        { "value": "headline-lg", "label": "Headline large" },
+        { "value": "headline-md", "label": "Headline medium" },
+        { "value": "headline-sm", "label": "Headline small" },
+        { "value": "title-lg", "label": "Title large" },
+        { "value": "title-md", "label": "Title medium" },
+        { "value": "title-sm", "label": "Title small" },
+        { "value": "body-lg", "label": "Body large" },
+        { "value": "body-md", "label": "Body medium" },
+        { "value": "body-sm", "label": "Body small" },
+        { "value": "label-lg", "label": "Label large" },
+        { "value": "label-md", "label": "Label medium" },
+        { "value": "label-sm", "label": "Label small" },
         { "value": "stamp", "label": "Stamp" }
       ],
-      "default": "body",
+      "default": "body-md",
       "info": "The same text roles as Mionas: Text. The price keeps its own weight."
     },
     {
@@ -156,6 +187,50 @@
       "label": "Show compare-at price",
       "default": false,
       "info": "Shows the original price struck through, only on products that are actually discounted."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

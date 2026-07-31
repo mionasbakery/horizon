@@ -29,7 +29,7 @@
           "name": "Mionas: Title",
           "settings": {
             "text": "<p>{{ closest.collection.title }}</p>",
-            "role": "hero",
+            "role": "display-lg",
             "variant": "default",
             "tag": "h1"
           },
@@ -40,7 +40,7 @@
           "name": "Mionas: Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
-            "role": "lead",
+            "role": "body-lg",
             "variant": "default",
             "tag": "p"
           },
@@ -172,7 +172,11 @@
               "settings": {
                 "role": "stamp",
                 "variant": "default",
-                "show_compare_at_price": false
+                "show_compare_at_price": false,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
               },
               "blocks": {}
             },
@@ -180,7 +184,7 @@
               "type": "mionas-product-description",
               "name": "Mionas: Description",
               "settings": {
-                "role": "caption"
+                "role": "label-lg"
               },
               "blocks": {}
             },

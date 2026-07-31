@@ -17,7 +17,7 @@
   (subheading) and 800 (heading), each plus its font_modify'd bold -- so the browser has
   400/600/700/800 and no 500. The design system loads 400;500;600;700;800 (../design-system/
   src/fonts.css), and several of its tokens are 500: --link-base-font-weight,
-  --button-base-font-weight, and the caption/label text roles.
+  --button-base-font-weight, and every size of the label band (--text-role-label-lg/md/sm-font-weight).
 
   CSS font matching for a requested 500 with no 500 face checks 500, then descends -- landing on
   400. So every one of those tokens silently rendered at body weight, with no error anywhere:
@@ -66,56 +66,67 @@
     --font-family-archivo: var(--font-body--family);
     --font-family-oswald: var(--font-accent--family);
 
-    /* h1 -> hero. Fixed, not clamped, regardless of the token's value -- this overrides
+    /* THE HEADING LADDER IS THIS FILE'S OWN CONSTRUCTION, not a mapping the design system hands
+       over. Its text roles are a band x size grid where band and outline level are independent --
+       any band may render at any heading level -- so nothing upstream says which six steps h1-h6
+       should be. These six are the heading bands read top-down (display-lg, headline md/sm, title
+       lg/md/sm): 48/28/24/22/20/18, no repeat.
+
+       label-* is excluded even though it holds the two smallest steps: the design system defines
+       that band as "form labels and UI chrome, not page content", and a merchant's <h6> is page
+       content. That exclusion is why h5 is 20px and h6 18px rather than the 18/15 an unbroken
+       size ordering would give. */
+
+    /* h1 -> display-lg. Fixed, not clamped, regardless of the token's value -- this overrides
        --font-h1--size directly (base.css:704 reads it as a plain property), bypassing
        theme-styles-variables.liquid's own settings-driven clamp() generation entirely. That
-       matters here because `hero` is back at 48px, which sits exactly at Horizon's 48px fluid
-       cutoff (the same value that previously drove display-lg through a clamp() with a derived
-       2.75rem/44px floor, before the design system collapsed the display family into `hero` at
-       38px). Were this bridged through Shopify's own type_size_h1 setting instead of a direct
-       token override, landing on the cutoff would reintroduce that clamp() -- so keep this a
-       direct var() reference, not a value Shopify's fluid-size logic ever sees. */
-    --font-h1--size: var(--text-role-hero-font-size);
-    --font-h1--line-height: var(--text-role-hero-line-height);
-    --font-h1--letter-spacing: var(--text-role-hero-letter-spacing);
+       matters here because display-lg is 48px, which sits exactly at Horizon's 48px fluid
+       cutoff. Were this bridged through Shopify's own type_size_h1 setting instead of a direct
+       token override, landing on the cutoff would reintroduce a clamp() with a derived
+       2.75rem/44px floor -- so keep this a direct var() reference, not a value Shopify's
+       fluid-size logic ever sees. */
+    --font-h1--size: var(--text-role-display-lg-font-size);
+    --font-h1--line-height: var(--text-role-display-lg-line-height);
+    --font-h1--letter-spacing: var(--text-role-display-lg-letter-spacing);
 
-    /* h2 -> title. Below the fluid cutoff, so fixed. */
-    --font-h2--size: var(--text-role-title-font-size);
-    --font-h2--line-height: var(--text-role-title-line-height);
-    --font-h2--letter-spacing: var(--text-role-title-letter-spacing);
+    /* h2 -> headline-md. Below the fluid cutoff, so fixed. */
+    --font-h2--size: var(--text-role-headline-md-font-size);
+    --font-h2--line-height: var(--text-role-headline-md-line-height);
+    --font-h2--letter-spacing: var(--text-role-headline-md-letter-spacing);
 
-    /* h3 -> title. Same role as h2: the collapsed scale has one 28px step. */
-    --font-h3--size: var(--text-role-title-font-size);
-    --font-h3--line-height: var(--text-role-title-line-height);
-    --font-h3--letter-spacing: var(--text-role-title-letter-spacing);
+    /* h3 -> headline-sm. A real step of its own (24px): h2 and h3 shared one 28px role under the
+       old collapsed scale, and the three-size grid is what ended that. */
+    --font-h3--size: var(--text-role-headline-sm-font-size);
+    --font-h3--line-height: var(--text-role-headline-sm-line-height);
+    --font-h3--letter-spacing: var(--text-role-headline-sm-letter-spacing);
 
-    /* h4 -> heading */
-    --font-h4--size: var(--text-role-heading-font-size);
-    --font-h4--line-height: var(--text-role-heading-line-height);
-    --font-h4--letter-spacing: var(--text-role-heading-letter-spacing);
+    /* h4 -> title-lg */
+    --font-h4--size: var(--text-role-title-lg-font-size);
+    --font-h4--line-height: var(--text-role-title-lg-line-height);
+    --font-h4--letter-spacing: var(--text-role-title-lg-letter-spacing);
 
-    /* h5 -> subheading */
-    --font-h5--size: var(--text-role-subheading-font-size);
-    --font-h5--line-height: var(--text-role-subheading-line-height);
-    --font-h5--letter-spacing: var(--text-role-subheading-letter-spacing);
+    /* h5 -> title-md */
+    --font-h5--size: var(--text-role-title-md-font-size);
+    --font-h5--line-height: var(--text-role-title-md-line-height);
+    --font-h5--letter-spacing: var(--text-role-title-md-letter-spacing);
 
-    /* h6 -> caption. The design system's ladder now gives h6 its own step below subheading
-       (15px vs 18px) rather than sharing h5's size. */
-    --font-h6--size: var(--text-role-caption-font-size);
-    --font-h6--line-height: var(--text-role-caption-line-height);
-    --font-h6--letter-spacing: var(--text-role-caption-letter-spacing);
+    /* h6 -> title-sm */
+    --font-h6--size: var(--text-role-title-sm-font-size);
+    --font-h6--line-height: var(--text-role-title-sm-line-height);
+    --font-h6--letter-spacing: var(--text-role-title-sm-letter-spacing);
 
-    /* paragraph -> body */
-    --font-paragraph--size: var(--text-role-body-font-size);
-    --font-paragraph--line-height: var(--text-role-body-line-height);
-    --font-paragraph--letter-spacing: var(--text-role-body-letter-spacing);
+    /* paragraph -> body-md, the band's own stated default for everything that isn't the intro
+       line under a display. */
+    --font-paragraph--size: var(--text-role-body-md-font-size);
+    --font-paragraph--line-height: var(--text-role-body-md-line-height);
+    --font-paragraph--letter-spacing: var(--text-role-body-md-letter-spacing);
 
     /* Buttons — Horizon states no height: it derives one from padding-block plus the paragraph
        line-height (base.css:1255). The design system states height directly (48px) with 24px
        inline padding. Derive the padding-block that yields the design system's height at the
        line-height this bridge already set: (48px - 24px) / 2 = 12px. */
     --button-padding-block: calc(
-      (var(--button-size-md-height) - var(--text-role-body-line-height)) / 2
+      (var(--button-size-md-height) - var(--text-role-body-md-line-height)) / 2
     );
     --button-padding-inline: var(--button-size-md-padding);
   }

@@ -139,7 +139,7 @@
               "name": "Heading",
               "settings": {
                 "text": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
-                "role": "hero",
+                "role": "display-lg",
                 "variant": "default",
                 "tag": "h1"
               },
@@ -150,7 +150,7 @@
               "name": "Lead",
               "settings": {
                 "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la Península.</p>",
-                "role": "lead",
+                "role": "body-lg",
                 "variant": "default",
                 "tag": "p"
               },
@@ -305,7 +305,11 @@
               "settings": {
                 "role": "stamp",
                 "variant": "default",
-                "show_compare_at_price": false
+                "show_compare_at_price": false,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
               },
               "blocks": {}
             },
@@ -313,7 +317,7 @@
               "type": "mionas-product-description",
               "name": "Mionas: Description",
               "settings": {
-                "role": "caption"
+                "role": "label-lg"
               },
               "blocks": {}
             },
@@ -374,7 +378,7 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>LO MÁS VENDIDO</p>",
-                "role": "title",
+                "role": "headline-md",
                 "variant": "primary",
                 "tag": "h2"
               },
@@ -471,7 +475,7 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>Que dicen nuestros clientes</p>",
-                "role": "title",
+                "role": "headline-md",
                 "variant": "primary",
                 "tag": "h2"
               },
@@ -655,7 +659,7 @@
               "name": "Heading",
               "settings": {
                 "text": "<p>10% de descuento en tu primera compra</p>",
-                "role": "title",
+                "role": "headline-md",
                 "variant": "primary",
                 "tag": "h2"
               },
@@ -666,7 +670,7 @@
               "name": "Lead",
               "settings": {
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
-                "role": "lead",
+                "role": "body-lg",
                 "variant": "default",
                 "tag": "p"
               },

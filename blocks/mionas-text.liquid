@@ -74,81 +74,134 @@
     font-family: var(--font-family-archivo);
   }
 
-  .text-role--hero {
-    font-size: var(--text-role-hero-font-size);
-    line-height: var(--text-role-hero-line-height);
-    font-weight: var(--text-role-hero-font-weight);
-    letter-spacing: var(--text-role-hero-letter-spacing);
+  /* One class per text-role token, 1:1 with Text.tsx's band x size grid: five bands at three
+     sizes each. All fifteen are exposed even though the theme only uses nine, because this block
+     is the theme's mirror of Text -- a mirror offering a subset would quietly be a different
+     component. Keep the `role` select's options and snippets/mionas-text.liquid's whitelist in
+     step with this list.
+
+     These names replaced a flat ten-role vocabulary; the old-to-new table is in
+     docs/superpowers/specs/2026-07-20-text-role-block-design.md, which is also what stored
+     settings were migrated by. */
+  .text-role--display-lg {
+    font-size: var(--text-role-display-lg-font-size);
+    line-height: var(--text-role-display-lg-line-height);
+    font-weight: var(--text-role-display-lg-font-weight);
+    letter-spacing: var(--text-role-display-lg-letter-spacing);
   }
 
-  .text-role--title {
-    font-size: var(--text-role-title-font-size);
-    line-height: var(--text-role-title-line-height);
-    font-weight: var(--text-role-title-font-weight);
-    letter-spacing: var(--text-role-title-letter-spacing);
+  .text-role--display-md {
+    font-size: var(--text-role-display-md-font-size);
+    line-height: var(--text-role-display-md-line-height);
+    font-weight: var(--text-role-display-md-font-weight);
+    letter-spacing: var(--text-role-display-md-letter-spacing);
   }
 
-  .text-role--subtitle {
-    font-size: var(--text-role-subtitle-font-size);
-    line-height: var(--text-role-subtitle-line-height);
-    font-weight: var(--text-role-subtitle-font-weight);
-    letter-spacing: var(--text-role-subtitle-letter-spacing);
+  .text-role--display-sm {
+    font-size: var(--text-role-display-sm-font-size);
+    line-height: var(--text-role-display-sm-line-height);
+    font-weight: var(--text-role-display-sm-font-weight);
+    letter-spacing: var(--text-role-display-sm-letter-spacing);
   }
 
-  .text-role--heading {
-    font-size: var(--text-role-heading-font-size);
-    line-height: var(--text-role-heading-line-height);
-    font-weight: var(--text-role-heading-font-weight);
-    letter-spacing: var(--text-role-heading-letter-spacing);
+  .text-role--headline-lg {
+    font-size: var(--text-role-headline-lg-font-size);
+    line-height: var(--text-role-headline-lg-line-height);
+    font-weight: var(--text-role-headline-lg-font-weight);
+    letter-spacing: var(--text-role-headline-lg-letter-spacing);
   }
 
-  .text-role--subheading {
-    font-size: var(--text-role-subheading-font-size);
-    line-height: var(--text-role-subheading-line-height);
-    font-weight: var(--text-role-subheading-font-weight);
-    letter-spacing: var(--text-role-subheading-letter-spacing);
+  .text-role--headline-md {
+    font-size: var(--text-role-headline-md-font-size);
+    line-height: var(--text-role-headline-md-line-height);
+    font-weight: var(--text-role-headline-md-font-weight);
+    letter-spacing: var(--text-role-headline-md-letter-spacing);
   }
 
-  .text-role--caption {
-    font-size: var(--text-role-caption-font-size);
-    line-height: var(--text-role-caption-line-height);
-    font-weight: var(--text-role-caption-font-weight);
-    letter-spacing: var(--text-role-caption-letter-spacing);
+  .text-role--headline-sm {
+    font-size: var(--text-role-headline-sm-font-size);
+    line-height: var(--text-role-headline-sm-line-height);
+    font-weight: var(--text-role-headline-sm-font-weight);
+    letter-spacing: var(--text-role-headline-sm-letter-spacing);
   }
 
-  .text-role--lead {
-    font-size: var(--text-role-lead-font-size);
-    line-height: var(--text-role-lead-line-height);
-    font-weight: var(--text-role-lead-font-weight);
-    letter-spacing: var(--text-role-lead-letter-spacing);
+  .text-role--title-lg {
+    font-size: var(--text-role-title-lg-font-size);
+    line-height: var(--text-role-title-lg-line-height);
+    font-weight: var(--text-role-title-lg-font-weight);
+    letter-spacing: var(--text-role-title-lg-letter-spacing);
   }
 
-  .text-role--body {
-    font-size: var(--text-role-body-font-size);
-    line-height: var(--text-role-body-line-height);
-    font-weight: var(--text-role-body-font-weight);
-    letter-spacing: var(--text-role-body-letter-spacing);
+  .text-role--title-md {
+    font-size: var(--text-role-title-md-font-size);
+    line-height: var(--text-role-title-md-line-height);
+    font-weight: var(--text-role-title-md-font-weight);
+    letter-spacing: var(--text-role-title-md-letter-spacing);
   }
 
-  .text-role--label {
-    font-size: var(--text-role-label-font-size);
-    line-height: var(--text-role-label-line-height);
-    font-weight: var(--text-role-label-font-weight);
-    letter-spacing: var(--text-role-label-letter-spacing);
+  .text-role--title-sm {
+    font-size: var(--text-role-title-sm-font-size);
+    line-height: var(--text-role-title-sm-line-height);
+    font-weight: var(--text-role-title-sm-font-weight);
+    letter-spacing: var(--text-role-title-sm-letter-spacing);
   }
 
-  /* Family and transform, not just size/weight/spacing, because Text.module.css's .stamp is the one
-     role that departs from the shared .root font-family. --font-family-oswald is spent directly,
-     as Text.module.css does; snippets/design-system-bridge.liquid repoints it at the theme's
-     loaded accent font, which is what actually puts a font file behind it. See
-     docs/superpowers/specs/2026-07-20-text-role-block-design.md, "Typography". */
+  .text-role--body-lg {
+    font-size: var(--text-role-body-lg-font-size);
+    line-height: var(--text-role-body-lg-line-height);
+    font-weight: var(--text-role-body-lg-font-weight);
+    letter-spacing: var(--text-role-body-lg-letter-spacing);
+  }
+
+  .text-role--body-md {
+    font-size: var(--text-role-body-md-font-size);
+    line-height: var(--text-role-body-md-line-height);
+    font-weight: var(--text-role-body-md-font-weight);
+    letter-spacing: var(--text-role-body-md-letter-spacing);
+  }
+
+  .text-role--body-sm {
+    font-size: var(--text-role-body-sm-font-size);
+    line-height: var(--text-role-body-sm-line-height);
+    font-weight: var(--text-role-body-sm-font-weight);
+    letter-spacing: var(--text-role-body-sm-letter-spacing);
+  }
+
+  .text-role--label-lg {
+    font-size: var(--text-role-label-lg-font-size);
+    line-height: var(--text-role-label-lg-line-height);
+    font-weight: var(--text-role-label-lg-font-weight);
+    letter-spacing: var(--text-role-label-lg-letter-spacing);
+  }
+
+  .text-role--label-md {
+    font-size: var(--text-role-label-md-font-size);
+    line-height: var(--text-role-label-md-line-height);
+    font-weight: var(--text-role-label-md-font-weight);
+    letter-spacing: var(--text-role-label-md-letter-spacing);
+  }
+
+  .text-role--label-sm {
+    font-size: var(--text-role-label-sm-font-size);
+    line-height: var(--text-role-label-sm-line-height);
+    font-weight: var(--text-role-label-sm-font-weight);
+    letter-spacing: var(--text-role-label-sm-letter-spacing);
+  }
+
+  /* Stamp is a component in ../design-system (src/react/Stamp/Stamp.tsx), not a text role -- a
+     role bundle cannot carry a typeface, a transform or its wide tracking. It stays a value in
+     the `role` select because to a merchant it is still one more way the text can look.
+
+     Size is the exception to the tokens below: Stamp holds no font-size of its own, rendering
+     `<Text variant="label" size={size}>` instead. `lg` because that is the size every Stamp call
+     site in the design system passes -- Stamp.tsx's own `md` default would render this 13px. */
   .text-role--stamp {
-    font-size: var(--text-role-stamp-font-size);
-    line-height: var(--text-role-stamp-line-height);
-    font-weight: var(--text-role-stamp-font-weight);
-    letter-spacing: var(--text-role-stamp-letter-spacing);
-    font-family: var(--font-family-oswald);
-    text-transform: uppercase;
+    font-size: var(--text-role-label-lg-font-size);
+    line-height: var(--text-role-label-lg-line-height);
+    font-weight: var(--stamp-base-font-weight);
+    letter-spacing: var(--stamp-base-letter-spacing);
+    font-family: var(--stamp-base-font-family);
+    text-transform: var(--stamp-base-text-transform);
   }
 
   .text-role--default {
@@ -197,18 +250,24 @@
       "id": "role",
       "label": "Role",
       "options": [
-        { "value": "hero", "label": "Hero" },
-        { "value": "title", "label": "Title" },
-        { "value": "subtitle", "label": "Subtitle" },
-        { "value": "heading", "label": "Heading" },
-        { "value": "subheading", "label": "Subheading" },
-        { "value": "caption", "label": "Caption" },
-        { "value": "lead", "label": "Lead" },
-        { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" },
+        { "value": "display-lg", "label": "Display large" },
+        { "value": "display-md", "label": "Display medium" },
+        { "value": "display-sm", "label": "Display small" },
+        { "value": "headline-lg", "label": "Headline large" },
+        { "value": "headline-md", "label": "Headline medium" },
+        { "value": "headline-sm", "label": "Headline small" },
+        { "value": "title-lg", "label": "Title large" },
+        { "value": "title-md", "label": "Title medium" },
+        { "value": "title-sm", "label": "Title small" },
+        { "value": "body-lg", "label": "Body large" },
+        { "value": "body-md", "label": "Body medium" },
+        { "value": "body-sm", "label": "Body small" },
+        { "value": "label-lg", "label": "Label large" },
+        { "value": "label-md", "label": "Label medium" },
+        { "value": "label-sm", "label": "Label small" },
         { "value": "stamp", "label": "Stamp" }
       ],
-      "default": "body"
+      "default": "body-md"
     },
     {
       "type": "select",

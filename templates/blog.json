@@ -29,7 +29,7 @@
           "name": "Mionas: Title",
           "settings": {
             "text": "<p>{{ closest.blog.title }}</p>",
-            "role": "hero",
+            "role": "display-lg",
             "variant": "default",
             "tag": "h1"
           },

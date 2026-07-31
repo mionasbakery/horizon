@@ -86,13 +86,20 @@
     background: var(--feature-card-base-background);
   }
 
+  /* Weight comes from the title-lg role rather than a FeatureCard token on purpose: the design
+     system deleted --feature-card-title-font-weight once FeatureCard.tsx composed
+     `<Text variant="title" size="lg">`, whose band already carries the weight. Don't reach for a
+     component token here -- there isn't one.
+
+     title-lg's tracking is 0, so this uppercase line sits tighter than the +0.02em it had under
+     the old `heading` role. That is the band's own value, not an omission. */
   .mionas-feature-card__title {
     margin: 0;
     font-family: var(--font-family-archivo);
-    font-size: var(--text-role-heading-font-size);
-    line-height: var(--text-role-heading-line-height);
-    font-weight: var(--feature-card-title-font-weight);
-    letter-spacing: var(--text-role-heading-letter-spacing);
+    font-size: var(--text-role-title-lg-font-size);
+    line-height: var(--text-role-title-lg-line-height);
+    font-weight: var(--text-role-title-lg-font-weight);
+    letter-spacing: var(--text-role-title-lg-letter-spacing);
     text-transform: uppercase;
     color: var(--text-color-inverse-primary);
   }
@@ -100,10 +107,10 @@
   .mionas-feature-card__subtitle {
     margin: 4px 0 0;
     font-family: var(--font-family-archivo);
-    font-size: var(--text-role-body-font-size);
-    line-height: var(--text-role-body-line-height);
-    font-weight: var(--text-role-body-font-weight);
-    letter-spacing: var(--text-role-body-letter-spacing);
+    font-size: var(--text-role-body-md-font-size);
+    line-height: var(--text-role-body-md-line-height);
+    font-weight: var(--text-role-body-md-font-weight);
+    letter-spacing: var(--text-role-body-md-letter-spacing);
     color: var(--text-color-inverse-primary);
     opacity: var(--feature-card-subtitle-opacity);
   }

@@ -8,33 +8,43 @@
 // correctly, match the contract by name, and still be wrong: --text-role-*-letter-spacing once
 // rendered 0.06em instead of 0.02em because the design system emitted var(--letter-spacing-sm)
 // and this theme declares that same name with its own value. Only a value check catches that.
+// That specific collision is dormant now, but it is why the source is dist/tokens.flat.css and not
+// dist/tokens.css: flat resolves every reference to a literal, so a name both sides declare can
+// never quietly bind to the theme's value. Repointing at the unflattened file brings the whole
+// class of bug back.
 export const EXPECTED_TOKENS = {
-  "--text-role-hero-font-size": "48px",
-  "--text-role-hero-line-height": "58px",
-  "--text-role-hero-font-weight": "800",
-  "--text-role-hero-letter-spacing": "0.02em",
-  "--text-role-title-font-size": "28px",
-  "--text-role-title-line-height": "36px",
-  "--text-role-title-letter-spacing": "0.02em",
-  "--text-role-heading-font-size": "22px",
-  "--text-role-heading-line-height": "28px",
-  "--text-role-heading-letter-spacing": "0.02em",
-  "--text-role-subheading-font-size": "18px",
-  "--text-role-subheading-line-height": "24px",
-  "--text-role-subheading-letter-spacing": "0.02em",
-  "--text-role-caption-font-size": "15px",
-  "--text-role-caption-line-height": "20px",
-  "--text-role-caption-letter-spacing": "0.02em",
-  "--text-role-body-font-size": "16px",
-  "--text-role-body-line-height": "24px",
-  "--text-role-body-letter-spacing": "0",
-  // The sizes above serve the six type roles snippets/design-system-bridge.liquid consumes (hero,
-  // title, heading, subheading, caption, body). blocks/mionas-text.liquid additionally spends the
-  // subtitle, lead, label and stamp role *weights*; only the two valued 500 are pinned here, for
-  // the font-face reason spelled out below -- the rest are ordinary weights the theme already
-  // loads, and pinning every role's every axis would make this a copy of the token file.
-  "--text-role-caption-font-weight": "500",
-  "--text-role-label-font-weight": "500",
+  // The seven roles pinned in full are the seven snippets/design-system-bridge.liquid builds
+  // Horizon's heading ladder and paragraph from. That ladder is the theme's own construction, not
+  // a transcription of the design system's, which is exactly why it needs pinning: a revalue
+  // upstream would silently reshape a ladder nobody upstream is maintaining.
+  "--text-role-display-lg-font-size": "48px",
+  "--text-role-display-lg-line-height": "52px",
+  "--text-role-display-lg-letter-spacing": "-0.02em",
+  "--text-role-headline-md-font-size": "28px",
+  "--text-role-headline-md-line-height": "34px",
+  "--text-role-headline-md-letter-spacing": "-0.01em",
+  "--text-role-headline-sm-font-size": "24px",
+  "--text-role-headline-sm-line-height": "30px",
+  "--text-role-headline-sm-letter-spacing": "-0.01em",
+  "--text-role-title-lg-font-size": "22px",
+  "--text-role-title-lg-line-height": "28px",
+  "--text-role-title-lg-letter-spacing": "0",
+  "--text-role-title-md-font-size": "20px",
+  "--text-role-title-md-line-height": "26px",
+  "--text-role-title-md-letter-spacing": "0",
+  "--text-role-title-sm-font-size": "18px",
+  "--text-role-title-sm-line-height": "24px",
+  "--text-role-title-sm-letter-spacing": "0",
+  "--text-role-body-md-font-size": "16px",
+  "--text-role-body-md-line-height": "24px",
+  "--text-role-body-md-letter-spacing": "0",
+  // blocks/mionas-text.liquid exposes all fifteen roles, so the theme technically spends every axis
+  // of every one. Pinning all sixty would make this file a copy of the token file, which the note at
+  // the top rules out -- so beyond the ladder, only what is load-bearing for some other reason is
+  // pinned: the 500 weights below, and the label sizes the form mirrors spend directly.
+  "--text-role-label-lg-font-weight": "500",
+  "--text-role-label-md-font-weight": "500",
+  "--text-role-label-sm-font-weight": "500",
   // Button metrics, not type presets.
   "--button-size-md-height": "48px",
   "--button-size-md-padding": "24px",
@@ -146,26 +156,39 @@ export const EXPECTED_TOKENS = {
   "--checkbox-checked-foreground": "#ffffff",
   "--checkbox-state-disabled-opacity": "0.5",
   "--checkbox-state-focused-border-color": "#0b078c",
-  // Completes the label and body type scales. The comment near the top of this file explains why
-  // only the *weights* of the label role were pinned until now: nothing spent its other axes.
-  // snippets/mionas-form-label.liquid and mionas-form-error.liquid do, because FormLabel.tsx and
-  // FormError.tsx both render through <Text role="label">, and mionas-checkbox's text label needs
-  // the body weight for the same reason (Checkbox.tsx renders it as role="body"). The three axes
-  // already pinned above -- label-font-weight, body-font-size/line-height/letter-spacing -- are not
-  // repeated here; a duplicate key would silently shadow the earlier entry rather than error.
-  "--text-role-label-font-size": "13px",
-  "--text-role-label-line-height": "18px",
-  "--text-role-label-letter-spacing": "0.02em",
-  "--text-role-body-font-weight": "400",
-  // The stamp role, spent by blocks/mionas-text.liquid and blocks/mionas-header-menu.liquid. It
-  // was an unguarded spend until now, which is the same silent-fallback exposure that let
-  // --nav-link-state-hover-foreground rot in the header menu unnoticed: a removed role would
-  // simply stop applying. Pinned in full because unlike the other roles, nothing else in this
-  // contract already covers any of its axes.
-  "--text-role-stamp-font-size": "16px",
-  "--text-role-stamp-line-height": "18px",
-  "--text-role-stamp-font-weight": "600",
-  "--text-role-stamp-letter-spacing": "0.05em",
+  // Completes the label and body scales. snippets/mionas-form-label.liquid and
+  // mionas-form-error.liquid spend the label sizes directly, because FormLabel.tsx and
+  // FormError.tsx both render through <Text role="label-md">, and mionas-checkbox's text label
+  // needs the body weight for the same reason (Checkbox.tsx renders it as role="body-md"). The
+  // axes already pinned above -- the label weights and body-md's size/line-height/letter-spacing --
+  // are not repeated here; a duplicate key would silently shadow the earlier entry rather than error.
+  "--text-role-label-md-font-size": "13px",
+  "--text-role-label-md-line-height": "18px",
+  "--text-role-label-md-letter-spacing": "0.02em",
+  "--text-role-body-md-font-weight": "400",
+  // label-lg's sizes, spent in three places that are not form labels: the mega menu item's own
+  // label (MegaMenuItem.tsx renders it at this exact role), and both Stamp mirrors below.
+  "--text-role-label-lg-font-size": "15px",
+  "--text-role-label-lg-line-height": "20px",
+  "--text-role-label-lg-letter-spacing": "0.02em",
+  // Stamp is a component rather than a text role, spent by blocks/mionas-text.liquid's
+  // .text-role--stamp and blocks/mionas-header-menu.liquid's drawer heading. It carries no
+  // font-size or line-height at all -- it renders <Text variant="label"> -- which is why those
+  // two mirrors take the label-lg sizes above instead.
+  //
+  // --stamp-base-font-family is absent for the reason every component family token is: it is a
+  // var() reference to --font-family-oswald, which the bridge repoints, so pinning it would
+  // assert a literal against a var() and fail.
+  "--stamp-base-font-weight": "600",
+  "--stamp-base-letter-spacing": "0.05em",
+  "--stamp-base-text-transform": "uppercase",
+  // The three foundation font-size steps the theme spends raw, outside any role: form and figure
+  // fine print, the localization form, mionas-submit-button. The steps are named for their px value
+  // now (--font-size-xs became --font-size-13), so the name asserts the value -- a --font-size-13
+  // that stopped being 13px is worth failing the sync over in a way --font-size-xs never was.
+  "--font-size-13": "13px",
+  "--font-size-18": "18px",
+  "--font-size-22": "22px",
   // The mega menu, spent by blocks/mionas-header-menu.liquid (the desktop dropdown and the
   // drawer's card rows) via snippets/mionas-header-menu-panel.liquid.
   //
@@ -215,7 +238,7 @@ export const EXPECTED_TOKENS = {
   "--mega-menu-item-base-media-height": "110px",
   "--mega-menu-item-base-media-radius": "8px",
   "--mega-menu-item-base-media-background": "#ece8e2",
-  // 700, where the caption role this label otherwise follows is 500. Pinned for the font-face
+  // 700, where label-lg -- the role MegaMenuItem renders this label at -- is 500. Pinned for the font-face
   // reason the "every 500 above is load-bearing" note gives: it asks the theme's Archivo for a
   // weight none of the four font settings is guaranteed to load, so a change here is a question
   // about which faces the bridge emits, not just a number to retype.

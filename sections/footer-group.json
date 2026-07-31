@@ -97,7 +97,7 @@
           "name": "Text Role",
           "settings": {
             "text": "",
-            "role": "label",
+            "role": "label-md",
             "variant": "inverse-primary",
             "tag": "div"
           },

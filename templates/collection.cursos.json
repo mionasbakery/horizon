@@ -1,0 +1,218 @@
+{
+  "sections": {
+    "heading": {
+      "type": "section",
+      "blocks": {
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {
+            "menu": "",
+            "home_label": "Inicio",
+            "label": "Breadcrumb",
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          }
+        },
+        "title": {
+          "type": "mionas-text",
+          "name": "Mionas: Title",
+          "settings": {
+            "text": "<p>{{ closest.collection.title }}</p>",
+            "role": "display-lg",
+            "variant": "default",
+            "tag": "h1"
+          }
+        },
+        "description": {
+          "type": "mionas-text",
+          "name": "Mionas: Description",
+          "settings": {
+            "text": "{{ closest.collection.description }}",
+            "role": "body-lg",
+            "variant": "default",
+            "tag": "p"
+          }
+        }
+      },
+      "block_order": ["breadcrumbs", "title", "description"],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "background_media": "none",
+        "border": "none",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 24
+      }
+    },
+    "course_list": {
+      "type": "mionas-course-list",
+      "blocks": {
+        "kicker": {
+          "type": "mionas-text",
+          "name": "Kicker",
+          "settings": {
+            "text": "<p>PRÓXIMAS FECHAS</p>",
+            "role": "label-md",
+            "variant": "primary",
+            "tag": "h2"
+          }
+        },
+        "static-course-row": {
+          "type": "_mionas-course-row",
+          "name": "Mionas: Course row",
+          "static": true,
+          "settings": {
+            "book_label": "Reservar",
+            "waitlist_label": "Lista de espera",
+            "waitlist_url": "",
+            "sold_out_label": "Agotado",
+            "show_duration": true,
+            "show_capacity": true,
+            "show_price": true,
+            "price_from_prefix": "desde",
+            "heading_level": "3",
+            "background_color": "",
+            "corner_radius": 16,
+            "padding-block-start": 16,
+            "padding-block-end": 16,
+            "padding-inline-start": 16,
+            "padding-inline-end": 16
+          }
+        }
+      },
+      "block_order": ["kicker"],
+      "settings": {
+        "collection": "cursos",
+        "max_products": 6,
+        "empty_message": "Próximamente nuevas fechas. Escríbenos para avisarte.",
+        "section_width": "page-width",
+        "gap": 16,
+        "background_color": "",
+        "padding-block-start": 8,
+        "padding-block-end": 48
+      }
+    },
+    "info_panel": {
+      "type": "mionas-split-panel",
+      "blocks": {
+        "static-media": {
+          "type": "group",
+          "name": "Media",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fill",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "image": {
+              "type": "image",
+              "name": "Image",
+              "settings": {
+                "image_ratio": "landscape",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "border": "none",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": ["image"]
+        },
+        "static-copy": {
+          "type": "group",
+          "name": "Copy",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "border": "none",
+            "border_radius": 0,
+            "padding-block-start": 24,
+            "padding-block-end": 24,
+            "padding-inline-start": 24,
+            "padding-inline-end": 24
+          },
+          "blocks": {
+            "heading": {
+              "type": "mionas-text",
+              "name": "Heading",
+              "settings": {
+                "text": "<p>CÓMO ES EL CURSO</p>",
+                "role": "title-sm",
+                "variant": "default",
+                "tag": "h2"
+              }
+            },
+            "lead": {
+              "type": "mionas-text",
+              "name": "Lead",
+              "settings": {
+                "text": "<p>En nuestro obrador de Sitges · 2–3h · grupos de 8–10 · incluye ingredientes, delantal y tus cookies para llevar. Nivel: todos.</p>",
+                "role": "body-md",
+                "variant": "default",
+                "tag": "p"
+              }
+            }
+          },
+          "block_order": ["heading", "lead"]
+        }
+      },
+      "settings": {
+        "variant": "secondary",
+        "media_position": "left",
+        "panel_edge": "card",
+        "media_treatment": "inset",
+        "section_width": "page-width",
+        "section_height": "",
+        "padding-block-start": 0,
+        "padding-block-end": 48
+      }
+    }
+  },
+  "order": ["heading", "course_list", "info_panel"]
+}

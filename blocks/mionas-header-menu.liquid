@@ -1028,18 +1028,18 @@
      the font_modify'd bold of the 600 subheading setting). So this renders on a real face, not a
      synthesised faux-bold, and needs no new @font-face the way the design system's 500 tokens did. */
   .mionas-header-menu-panel__label {
-    font-size: var(--text-role-caption-font-size);
-    line-height: var(--text-role-caption-line-height);
+    font-size: var(--text-role-label-lg-font-size);
+    line-height: var(--text-role-label-lg-line-height);
     font-weight: var(--mega-menu-item-label-font-weight);
-    letter-spacing: var(--text-role-caption-letter-spacing);
+    letter-spacing: var(--text-role-label-lg-letter-spacing);
     color: var(--mega-menu-item-label-foreground);
   }
 
   .mionas-header-menu-panel__tagline {
-    font-size: var(--text-role-label-font-size);
-    line-height: var(--text-role-label-line-height);
-    font-weight: var(--text-role-label-font-weight);
-    letter-spacing: var(--text-role-label-letter-spacing);
+    font-size: var(--text-role-label-md-font-size);
+    line-height: var(--text-role-label-md-line-height);
+    font-weight: var(--text-role-label-md-font-weight);
+    letter-spacing: var(--text-role-label-md-letter-spacing);
     color: var(--mega-menu-item-description-foreground);
   }
 
@@ -1146,10 +1146,10 @@
   }
 
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__label {
-    font-size: var(--text-role-subheading-font-size);
-    line-height: var(--text-role-subheading-line-height);
-    font-weight: var(--text-role-subheading-font-weight);
-    letter-spacing: var(--text-role-subheading-letter-spacing);
+    font-size: var(--text-role-title-sm-font-size);
+    line-height: var(--text-role-title-sm-line-height);
+    font-weight: var(--text-role-title-sm-font-weight);
+    letter-spacing: var(--text-role-title-sm-letter-spacing);
   }
 
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__caret {
@@ -1173,14 +1173,18 @@
      setting is on. A (0,3,0) selector here would only tie with it and fall back to source
      order across two separate stylesheet tags, which is not something to rely on.
      (0,4,0) wins outright, dividers on or off. */
+  /* A Stamp mirror: weight, tracking and transform from Stamp's component tokens, size from the
+     label-lg band Stamp renders Text at. No --stamp-base-font-family on purpose -- this row
+     inherits --mainlist's --menu-top-level-font-* family (see just above), and switching it to
+     Oswald would be a new design decision rather than part of the design-system sync. */
   .menu-drawer__menu .menu-drawer__menu-item.menu-drawer__menu-item--mainlist.menu-drawer__menu-item--mionas-heading {
     min-height: 0;
     padding-block: var(--space-sm) var(--space-xs);
-    font-size: var(--text-role-stamp-font-size);
-    line-height: var(--text-role-stamp-line-height);
-    font-weight: var(--text-role-stamp-font-weight);
-    letter-spacing: var(--text-role-stamp-letter-spacing);
-    text-transform: uppercase;
+    font-size: var(--text-role-label-lg-font-size);
+    line-height: var(--text-role-label-lg-line-height);
+    font-weight: var(--stamp-base-font-weight);
+    letter-spacing: var(--stamp-base-letter-spacing);
+    text-transform: var(--stamp-base-text-transform);
     color: var(--color-vermell-segell);
     justify-content: flex-start;
     cursor: default;

@@ -2,8 +2,8 @@
   Mirrors ../design-system/src/react/FormError/FormError.tsx -- the inline validation message that
   sits under a field's underline.
 
-  FormError.tsx renders `<Text as="p" role="label">`, so this spends the --text-role-label-* scale,
-  not --text-role-body-*. Like the React component it renders nothing at all when there is no
+  FormError.tsx renders `<Text as="p" role="label-md">`, so this spends the --text-role-label-md-* scale,
+  not --text-role-body-md-*. Like the React component it renders nothing at all when there is no
   message: FormField/Checkbox place it inside a flex column with a gap, so an empty <p> would still
   consume a gap and push the underline down.
 
@@ -27,9 +27,9 @@
     padding-left: var(--form-error-base-padding);
     color: var(--form-error-base-foreground);
     font-family: var(--font-family-archivo);
-    font-size: var(--text-role-label-font-size);
-    line-height: var(--text-role-label-line-height);
-    font-weight: var(--text-role-label-font-weight);
-    letter-spacing: var(--text-role-label-letter-spacing);
+    font-size: var(--text-role-label-md-font-size);
+    line-height: var(--text-role-label-md-line-height);
+    font-weight: var(--text-role-label-md-font-weight);
+    letter-spacing: var(--text-role-label-md-letter-spacing);
   }
 {% endstylesheet %}

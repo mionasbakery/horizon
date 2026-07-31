@@ -31,10 +31,10 @@
   /* Top-level nav links -> label (13 / 18 / 0.02em). Weight 600 comes from the slot.
      Was label-lg (15 / 20) before the design system collapsed the label sizes into one role. */
   .menu-list__link {
-    --menu-top-level-font-size-desktop: var(--text-role-label-font-size);
-    --menu-top-level-font-line-height: var(--text-role-label-line-height);
+    --menu-top-level-font-size-desktop: var(--text-role-label-md-font-size);
+    --menu-top-level-font-line-height: var(--text-role-label-md-line-height);
 
-    letter-spacing: var(--text-role-label-letter-spacing);
+    letter-spacing: var(--text-role-label-md-letter-spacing);
   }
 
   /* Horizon has no menu hover-colour setting. It applies
@@ -49,6 +49,6 @@
      drawer renders at --menu-font-2xl--size by Horizon's design and the prototype has no
      mobile reference to match. */
   .menu-drawer__menu-item--mainlist {
-    letter-spacing: var(--text-role-label-letter-spacing);
+    letter-spacing: var(--text-role-label-md-letter-spacing);
   }
 {% endstyle %}

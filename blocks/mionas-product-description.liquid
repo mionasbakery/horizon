@@ -43,7 +43,12 @@
      Four things are left here.
 
      The edge inset, because ProductCard carries no padding of its own -- each subcomponent sets its
-     own, the convention blocks/mionas-price.liquid already follows.
+     own. Note this is no longer a shared convention: blocks/mionas-price.liquid and
+     blocks/mionas-add-to-cart.liquid both dropped their built-in inset for four padding range
+     settings rendered through snippets/spacing-style.liquid, so this block is now the only one in the
+     card that hardcodes it. Keeping it was a deliberate no-op, not an oversight -- nobody has asked
+     for the description's padding to be merchant-editable. Move it to settings the same way if that
+     changes; the ids and mechanism are in mionas-add-to-cart.liquid.
 
      The weight and THE COLOUR, both from the design system's CardDescription tokens
      (Card.module.css:66-71, weight at :69, colour at :70). Note the colour override is the opposite
@@ -82,18 +87,24 @@
       "id": "role",
       "label": "Role",
       "options": [
-        { "value": "hero", "label": "Hero" },
-        { "value": "title", "label": "Title" },
-        { "value": "subtitle", "label": "Subtitle" },
-        { "value": "heading", "label": "Heading" },
-        { "value": "subheading", "label": "Subheading" },
-        { "value": "caption", "label": "Caption" },
-        { "value": "lead", "label": "Lead" },
-        { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" },
+        { "value": "display-lg", "label": "Display large" },
+        { "value": "display-md", "label": "Display medium" },
+        { "value": "display-sm", "label": "Display small" },
+        { "value": "headline-lg", "label": "Headline large" },
+        { "value": "headline-md", "label": "Headline medium" },
+        { "value": "headline-sm", "label": "Headline small" },
+        { "value": "title-lg", "label": "Title large" },
+        { "value": "title-md", "label": "Title medium" },
+        { "value": "title-sm", "label": "Title small" },
+        { "value": "body-lg", "label": "Body large" },
+        { "value": "body-md", "label": "Body medium" },
+        { "value": "body-sm", "label": "Body small" },
+        { "value": "label-lg", "label": "Label large" },
+        { "value": "label-md", "label": "Label medium" },
+        { "value": "label-sm", "label": "Label small" },
         { "value": "stamp", "label": "Stamp" }
       ],
-      "default": "caption",
+      "default": "label-lg",
       "info": "The same text roles as Mionas: Text. Weight and colour stay the card description's."
     }
   ],

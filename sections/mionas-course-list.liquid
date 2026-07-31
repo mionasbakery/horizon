@@ -1,0 +1,301 @@
+{%- comment -%}
+  A date-first list of courses: one row per product, the date as the anchor of the row.
+
+  WHY THIS SECTION EXISTS RATHER THAN mionas-collection WITH columns: 1:
+  the native _product-card is a vertical media/title/price stack and a course row is a horizontal
+  three-zone layout with no image at all; and mionas-collection's carousel, mobile_card_size and
+  1-6 column settings are all meaningless on a course list, so a merchant would face a schema full
+  of switches that do nothing.
+
+  It borrows mionas-collection's frame: a free content_for 'blocks' region ABOVE the list, which is
+  what carries the "PRÓXIMAS FECHAS" kicker as an ordinary mionas-text block rather than a baked-in
+  heading setting. Same reasoning recorded in mionas-collection.liquid and
+  mionas-google-reviews.liquid.
+
+  COLLECTION SIZE IS STILL THE MERCHANT'S JOB: collection.products yields at most 50 products, and
+  the past-date filter below runs in Liquid, AFTER that window. So the filter is a safety
+  net, not a licence to stop drafting past courses -- if the collection ever grows past 50, the
+  truncation happens in the collection's MANUAL order and future courses can be dropped before this
+  section ever sees them.
+
+  The header liquid and the rows capture below sort the collection's products by course_date,
+  drop any whose date has already passed, and cap the result at max_products. When that leaves
+  nothing to show, a merchant-editable fallback message renders in its place. Products with no
+  course_date are excluded from the list and instead named in a theme-editor-only warning (see
+  below), so a missing metafield surfaces as a visible prompt rather than a course quietly
+  vanishing from the storefront.
+{%- endcomment -%}
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign max_products = section.settings.max_products
+
+  # WHY %Y%m%d AND NOT %Y-%m-%d: this one format has to serve two purposes. As a string it sorts
+  # lexicographically into true date order (fixed-width, zero-padded, most-significant first), and
+  # `| plus: 0` turns it into an integer for the past-date comparison below. Liquid has no reliable
+  # string ordering operator, so the numeric form is the only safe way to ask "has this passed?".
+  #
+  # 'now' resolves in the SHOP's timezone, and Shopify's full-page cache means a course whose date
+  # has just passed can linger for a little while past midnight. Accepted: the merchant also drafts
+  # past courses by hand, so this filter is a safety net rather than the only mechanism.
+  assign today = 'now' | date: '%Y%m%d' | plus: 0
+
+  # Keys are "<YYYYMMDD>~<index into collection.products>". Sorting the keys therefore sorts the
+  # products by date, and the index rides along so the product can be recovered afterwards. The
+  # index tie-breaks lexicographically, so same-date rows can order as "~1, ~12, ~3" -- deliberately
+  # unspecified, since the date prefix decides everything that affects the page and the index is
+  # only a recovery handle.
+  assign date_keys = ''
+  assign skipped_products = ''
+
+  for product in collection.products
+    assign course_date = product.metafields.custom.course_date.value
+    if course_date == blank
+      # A product with no date cannot be placed in a date-sorted list. Skipping it silently is a
+      # trap, so its title is collected for the theme-editor warning rendered below.
+      assign skipped_products = skipped_products | append: product.title | append: '|'
+      continue
+    endif
+    assign date_key = course_date | date: '%Y%m%d' | append: '~' | append: forloop.index0
+    assign date_keys = date_keys | append: date_key | append: ','
+  endfor
+
+  assign sorted_keys = date_keys | split: ',' | sort
+
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="
+    mionas-course-list
+    section
+    section--{{ section.settings.section_width }}
+    {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
+    spacing-style
+    gap-style
+  "
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% render 'gap-style', value: section.settings.gap %}
+  "
+>
+  {%- comment -%}
+    Whitespace control on the tag is load-bearing: base.css hides
+    .section-resource-list__content:empty, and a stray newline inside the div would be a text node
+    that defeats :empty, leaving a --gap-sized hole above the rows when no block is added. Copied
+    from mionas-collection.liquid, which carries the same note.
+  {%- endcomment -%}
+  <div class="section-resource-list__content">{%- content_for 'blocks' -%}</div>
+
+  {%- capture rows -%}
+    {%- comment -%}
+      ORDER OF OPERATIONS IS LOAD-BEARING: sort, then drop past dates, then cap at max_products.
+      A `limit:` on the loop above would take N products in the collection's MANUAL order and only
+      then sort those -- with 12 courses and a max of 3, the page would show three arbitrary dates
+      instead of the three soonest. The `rendered` counter is what applies the cap last.
+    {%- endcomment -%}
+    {%- assign rendered = 0 -%}
+    {%- for date_key in sorted_keys -%}
+      {%- if rendered >= max_products -%}
+        {%- break -%}
+      {%- endif -%}
+
+      {%- assign key_parts = date_key | split: '~' -%}
+      {%- assign key_date = key_parts[0] | plus: 0 -%}
+      {%- if key_date < today -%}
+        {%- continue -%}
+      {%- endif -%}
+
+      {%- assign product_index = key_parts[1] | plus: 0 -%}
+      {%- assign course = collection.products[product_index] -%}
+
+      {%- comment -%}
+        One fixed id for every iteration -- see "WHY THE ROW IS A STATIC BLOCK" in
+        blocks/_mionas-course-row.liquid. The product travels as closest.product, exactly as
+        sections/mionas-collection.liquid passes it to its own static card.
+      {%- endcomment -%}
+      {% content_for 'block',
+        type: '_mionas-course-row',
+        id: 'static-course-row',
+        closest.product: course
+      %}
+
+      {%- assign rendered = rendered | plus: 1 -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- liquid
+    assign rows_content = rows | strip
+  -%}
+
+  {%- if rows_content == blank -%}
+    {%- comment -%}
+      Collapsing to nothing would leave the page as a heading above an info panel with no
+      explanation of where the courses went. The fallback line is a setting rather than hardcoded
+      copy because it is the merchant's message, not the theme's.
+    {%- endcomment -%}
+    {%- if section.settings.empty_message != blank -%}
+      <p class="mionas-course-list__empty">{{ section.settings.empty_message }}</p>
+    {%- endif -%}
+  {%- else -%}
+    <div class="mionas-course-list__rows">{{ rows_content }}</div>
+  {%- endif -%}
+
+  {%- comment -%}
+    THEME EDITOR ONLY. A product with no course_date is dropped by the loop above, and a course
+    silently vanishing from the storefront is worse than an ugly warning in the editor. Guarded on
+    request.design_mode so a visitor never sees it.
+
+    The copy is English on an otherwise Spanish page, deliberately: it is merchant-facing tooling in
+    the theme editor, where every other label in this theme's schemas is also English. It is never
+    rendered to a shopper.
+  {%- endcomment -%}
+  {%- if request.design_mode and skipped_products != blank -%}
+    {%- assign skipped_list = skipped_products | split: '|' -%}
+    <p class="mionas-course-list__warning">
+      {{ skipped_list.size }} {% if skipped_list.size == 1 %}product{% else %}products{% endif %} hidden — no “Course date” metafield set:
+      {{ skipped_list | join: ', ' }}
+    </p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mionas-course-list__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .mionas-course-list__empty {
+    margin: 0;
+    font-size: var(--text-role-body-lg-font-size);
+    line-height: var(--text-role-body-lg-line-height);
+  }
+
+  /* Theme editor only -- deliberately loud, and never rendered on the storefront. */
+  .mionas-course-list__warning {
+    margin: var(--space-sm) 0 0;
+    padding: var(--space-xs) var(--space-sm);
+    border: var(--border-width-thin) solid var(--border-danger);
+    border-radius: var(--radius-md);
+    color: var(--color-vermell-segell);
+    font-size: var(--text-role-label-lg-font-size);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Course list",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    { "type": "@theme" },
+    { "type": "@app" },
+    { "type": "_divider" }
+  ],
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:settings.collection"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "t:settings.product_count",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "inline_richtext",
+      "id": "empty_message",
+      "label": "Message when there are no upcoming courses",
+      "default": "Próximamente nuevas fechas. Escríbenos para avisarte."
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        { "value": "page-width", "label": "t:options.page" },
+        { "value": "full-width", "label": "t:options.full" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Course list",
+      "category": "t:categories.product",
+      "settings": {
+        "section_width": "page-width",
+        "max_products": 6,
+        "empty_message": "Próximamente nuevas fechas. Escríbenos para avisarte.",
+        "gap": 28,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      },
+      "blocks": {
+        "static-course-row": {
+          "type": "_mionas-course-row",
+          "name": "Mionas: Course row",
+          "static": true,
+          "settings": {}
+        }
+      }
+    }
+  ]
+}
+{% endschema %}
