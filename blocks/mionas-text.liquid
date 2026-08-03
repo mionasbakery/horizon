@@ -18,11 +18,8 @@
   label-styled span or an h2 with hero styling are both valid.
 
   The Text setting is `richtext` so copy can span several lines, but its block-level markup is
-  flattened to `<br>` before output: `tag` allows `span` and h1-h6, which may only contain inline
-  content, so a raw `<p>` (or `<li>`) from the richtext toolbar inside an `<h1>` would be invalid
-  HTML and get broken apart by the browser. One paragraph break becomes one `<br>` -- this block
-  stays a single text node, matching Text.tsx's `children` (a ReactNode that may hold `<br/>`).
-  Paragraph *spacing* is blocks/text.liquid's job (richtext rendered through `rte`), not this one's.
+  flattened to `<br>` before output by snippets/mionas-inline-richtext.liquid, which documents why.
+  blocks/mionas-stamp.liquid flattens through the same snippet.
 
   Trade-off of that flattening: the theme editor only live-previews a text setting when it's output
   unfiltered and alone inside its element, so typing here re-renders the section instead of updating
@@ -32,16 +29,10 @@
 {% liquid
   assign block_settings = block.settings
   assign tag = block_settings.tag | default: 'p'
-
-  # Every block-level close becomes a line break, every block-level open disappears -- so a paragraph
-  # or list-item boundary anywhere (including `</p><ul>`) turns into exactly one <br>, and the
-  # trailing one from the last close is dropped.
-  assign content = block_settings.text | strip_newlines
-  assign content = content | replace: '</p>', '<br>' | replace: '</li>', '<br>'
-  assign content = content | replace: '<p>', '' | replace: '<li>', ''
-  assign content = content | replace: '<ul>', '' | replace: '</ul>', ''
-  assign content = content | replace: '<ol>', '' | replace: '</ol>', ''
-  assign content = content | strip | remove_last: '<br>' | strip
+%}
+{%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
+{% liquid
+  assign content = content | strip
 
   # An "empty" richtext value is `<p></p>` or `<p><br></p>` -- not blank -- so gate on the visible
   # text, the same way snippets/text.liquid does, or the block emits an empty element.
@@ -50,20 +41,35 @@
 
 {%- comment -%}
   The element itself, and the text-role classes on it, come from snippets/mionas-text.liquid. This
-  block is now the settings-and-richtext half of the pair: it owns the flattening above, the
-  visible-text gate, the schema, and the .text-role CSS below, which stays here rather than moving to
-  the snippet because snippets cannot declare a stylesheet tag.
+  block is now the settings-and-richtext half of the pair: it owns the visible-text gate, the schema,
+  and the .text-role CSS below, which stays here rather than moving to the snippet because snippets
+  cannot declare a stylesheet tag.
 
-  blocks/mionas-price.liquid and blocks/mionas-product-description.liquid render the same snippet
-  with their own dynamic content, so the role vocabulary has one implementation rather than one per
-  block.
+  blocks/mionas-price.liquid renders the same snippet with its own dynamic content, so the role
+  vocabulary has one implementation rather than one per block.
 {%- endcomment -%}
 {%- if visible_text != blank -%}
+  {%- comment -%}
+    `spacing-style` is Horizon's own class (base.css:1352-1381): it turns the four --padding-* custom
+    properties the snippet writes into real padding, with 0px fallbacks, and scales anything above
+    20px responsively. Same mechanism, same four setting ids, as blocks/mionas-price.liquid and
+    blocks/mionas-add-to-cart.liquid, so a merchant insets a text block the way they inset every
+    other block in the theme rather than reaching for a group wrapper.
+
+    No .text-role rule declares padding, so `spacing-style`'s (0,1,0) padding in base.css has nothing
+    in this bundle to lose source order to -- nothing here needs to be two classes deep.
+  {%- endcomment -%}
+  {%- capture text_style -%}
+    {%- render 'spacing-style', settings: block_settings -%}
+  {%- endcapture -%}
+
   {%- render 'mionas-text',
     content: content,
     role: block_settings.role,
     variant: block_settings.variant,
     tag: tag,
+    class: 'spacing-style',
+    style: text_style,
     shopify_attributes: block.shopify_attributes
   -%}
 {%- endif -%}
@@ -188,21 +194,12 @@
     letter-spacing: var(--text-role-label-sm-letter-spacing);
   }
 
-  /* Stamp is a component in ../design-system (src/react/Stamp/Stamp.tsx), not a text role -- a
-     role bundle cannot carry a typeface, a transform or its wide tracking. It stays a value in
-     the `role` select because to a merchant it is still one more way the text can look.
-
-     Size is the exception to the tokens below: Stamp holds no font-size of its own, rendering
-     `<Text variant="label" size={size}>` instead. `lg` because that is the size every Stamp call
-     site in the design system passes -- Stamp.tsx's own `md` default would render this 13px. */
-  .text-role--stamp {
-    font-size: var(--text-role-label-lg-font-size);
-    line-height: var(--text-role-label-lg-line-height);
-    font-weight: var(--stamp-base-font-weight);
-    letter-spacing: var(--stamp-base-letter-spacing);
-    font-family: var(--stamp-base-font-family);
-    text-transform: var(--stamp-base-text-transform);
-  }
+  /* There is deliberately no sixteenth rule here for Stamp. It is a component in ../design-system
+     (src/react/Stamp/Stamp.tsx), not a text role -- a role bundle cannot carry a typeface, a
+     transform or its wide tracking -- so it is blocks/mionas-stamp.liquid, which COMPOSES the label
+     roles above (its Size setting picks one) rather than adding a role beside them, exactly as
+     Stamp.tsx renders `<Text variant="label" size={size}>`. Nothing in the theme spends a
+     .text-role--stamp class any more; the four --stamp-base-* tokens are spent by that block. */
 
   .text-role--default {
     color: var(--text-color-default);
@@ -264,8 +261,7 @@
         { "value": "body-sm", "label": "Body small" },
         { "value": "label-lg", "label": "Label large" },
         { "value": "label-md", "label": "Label medium" },
-        { "value": "label-sm", "label": "Label small" },
-        { "value": "stamp", "label": "Stamp" }
+        { "value": "label-sm", "label": "Label small" }
       ],
       "default": "body-md"
     },
@@ -301,6 +297,50 @@
       ],
       "default": "p",
       "info": "Pick the semantic level; it doesn't have to match Role."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

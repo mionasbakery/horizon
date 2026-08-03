@@ -76,11 +76,11 @@
               "blocks": {}
             },
             "text_role_iU3M77": {
-              "type": "mionas-text",
-              "name": "Text Role",
+              "type": "mionas-stamp",
+              "name": "Stamp",
               "settings": {
                 "text": "<p>Especialidad en cookies</p>",
-                "role": "stamp",
+                "size": "lg",
                 "variant": "accent-inverse",
                 "tag": "p"
               },

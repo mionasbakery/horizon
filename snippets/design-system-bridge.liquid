@@ -197,3 +197,14 @@
   same one header-bridge.liquid gets from its own render in theme.liquid.
 {%- endcomment -%}
 {% render 'product-card-bridge' %}
+
+{%- comment -%}
+  Every .mionas-button rule, for the same reason product-card-bridge is rendered from here: this
+  snippet already runs on every page from layout/theme.liquid, so nothing native had to change.
+
+  It is rendered from here rather than declared in blocks/mionas-button.liquid specifically so the
+  CSS does not depend on that block being on the page -- blocks/mionas-add-to-cart.liquid wears the
+  same classes without rendering the block, and a collection page has no Mionas: Button on it at
+  all. That snippet's header has the full account.
+{%- endcomment -%}
+{% render 'mionas-button-styles' %}

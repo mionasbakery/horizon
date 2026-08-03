@@ -1,0 +1,125 @@
+{%- doc -%}
+  Every rule for ../design-system/src/react/Button/Button.tsx's classes. Rendered once per page from
+  snippets/design-system-bridge.liquid, the same way product-card-bridge is -- so adding it touched
+  no native Horizon file, and the CSS is on every page whether or not any particular block put a
+  button on it.
+
+  WHY THIS IS NOT A {% raw %}{% stylesheet %}{% endraw %} TAG IN blocks/mionas-button.liquid ANY MORE, which is where it
+  lived: a block's stylesheet tag is compiled into compiled_assets/styles.css, and that file is
+  served with a `subset` query parameter -- Shopify ships the subset of block CSS the page actually
+  needs, judged by which blocks render. blocks/mionas-add-to-cart.liquid does not render
+  blocks/mionas-button.liquid (it cannot: that block is an <a> driven by a `link` setting and has no
+  way to submit a form). It only wears its classes. So on a collection page, where no Mionas: Button
+  block exists, nothing told Shopify these rules were needed and they were dropped -- leaving the
+  add-to-cart button with Horizon's own `.button` styling and none of the Mionas modifiers.
+
+  The reported symptom was "Full width does nothing": .mionas-button--full was simply absent, so
+  base.css's `.button { width: fit-content }` was the only width rule left and the button hugged its
+  label. It still looked like a Mionas button -- Horizon's themed `.button` is also a dark blue pill,
+  and the 48px height comes from blocks/mionas-add-to-cart.liquid's own stylesheet, which does ship
+  on that page -- which is what made it read as a width bug rather than as missing CSS.
+
+  Do not move individual rules back into a block. The point of the file is that every
+  .mionas-button rule sits in ONE sheet: split across two, their relative order would decide every
+  tie between them, which is the same class of bug this is fixing.
+
+  Rendered after base.css (theme.liquid links that in the head; the bridge is an inline style block
+  further down), so the rules below that tie with base.css on specificity still win on source order
+  -- but see the --full comment for why the load-bearing one does not rely on that.
+{%- enddoc -%}
+{% style %}
+  .mionas-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid transparent;
+    border-radius: var(--button-base-radius);
+    font-family: var(--button-base-font-family);
+    font-weight: var(--button-base-font-weight);
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    height: var(--button-size-md-height);
+    padding: 0 var(--button-size-md-padding);
+    font-size: var(--button-size-md-font-size);
+  }
+
+  .mionas-button--sm {
+    height: var(--button-size-sm-height);
+    padding: 0 var(--button-size-sm-padding);
+    font-size: var(--button-size-sm-font-size);
+  }
+
+  .mionas-button--lg {
+    height: var(--button-size-lg-height);
+    padding: 0 var(--button-size-lg-padding);
+    font-size: var(--button-size-lg-font-size);
+  }
+
+  /* Button.tsx has no fullWidth prop -- the prototype's `full-width` was its own harness prop.
+     The Contacto page needs a full-width WhatsApp button, so this is a theme-side addition;
+     see the spec's follow-ups about proposing it back to the design system.
+
+     THE SELECTOR IS DOUBLED ON PURPOSE AND MUST NOT BE FLATTENED BACK TO .mionas-button--full.
+     base.css:1006-1040 declares `.button { display: grid; width: fit-content }`, and a Mionas button
+     can carry that class: snippets/add-to-cart-button.liquid prefixes whatever class attribute it is
+     handed with a literal "button", so every product-card add-to-cart button wears both. At one
+     class each, `fit-content` and `width: 100%` tie on specificity and only source order separates
+     them -- and `fit-content` is precisely the "full width does nothing" symptom. Source order
+     favours this file today, but an order-dependent tie is not a win, so the double class settles it
+     at (0,2,0). That matters more here than it did in the block: these rules moved EARLIER in the
+     cascade when they moved out of compiled_assets/styles.css into this inline block.
+
+     `display` is doubled for the same reason: it ties with .button's `grid`. */
+  .mionas-button.mionas-button--full {
+    display: flex;
+    width: 100%;
+  }
+
+  .mionas-button--primary {
+    background: var(--button-primary-background);
+    color: var(--button-primary-foreground);
+  }
+
+  .mionas-button--secondary {
+    background: var(--button-secondary-background);
+    color: var(--button-secondary-foreground);
+  }
+
+  .mionas-button--outline {
+    background: transparent;
+    color: var(--button-outline-foreground);
+    border-color: var(--button-outline-border-color);
+  }
+
+  .mionas-button--ghost {
+    background: transparent;
+    color: var(--button-ghost-foreground);
+  }
+
+  .mionas-button--danger {
+    background: var(--button-danger-background);
+    color: var(--button-danger-foreground);
+  }
+
+  .mionas-button--inverse-primary {
+    background: var(--button-inverse-primary-background);
+    color: var(--button-inverse-primary-foreground);
+  }
+
+  .mionas-button--inverse-ghost {
+    background: transparent;
+    color: var(--button-inverse-ghost-foreground);
+  }
+
+  .mionas-button[aria-disabled="true"] {
+    opacity: var(--button-state-disabled-opacity);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-button:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+{% endstyle %}

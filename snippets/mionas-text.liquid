@@ -1,9 +1,9 @@
 {%- doc -%}
   Renders a single text node at one of ../design-system/src/react/Text/Text.tsx's roles and colour
   variants. Extracted from blocks/mionas-text.liquid so that block is not the only way to spend the
-  role vocabulary: blocks/mionas-price.liquid and blocks/mionas-product-description.liquid render
-  their dynamic product copy through here instead of restating --text-role-* by hand, which is how
-  they drifted out of step with the roles in the first place.
+  role vocabulary: blocks/mionas-price.liquid renders its dynamic product copy through here instead
+  of restating --text-role-* by hand, which is how it drifted out of step with the roles in the
+  first place.
 
   THE .text-role CSS DELIBERATELY DOES NOT LIVE HERE. Snippets cannot declare a stylesheet tag,
   and it stays in blocks/mionas-text.liquid, which is where it already was. Every block
@@ -16,7 +16,7 @@
   pass values from `| money` and product.title. Nothing here escapes; nothing here strips tags.
 
   @param {string} content - The text to render. Emitted unfiltered; see above.
-  @param {string} [role] - A Text.tsx role, `<band>-<size>` across five bands and three sizes: display-lg/md/sm, headline-lg/md/sm, title-lg/md/sm, body-lg/md/sm, label-lg/md/sm. Plus `stamp`, which is a component in the design system rather than a role -- see the .text-role--stamp comment in blocks/mionas-text.liquid. Defaults to body-md.
+  @param {string} [role] - A Text.tsx role, `<band>-<size>` across five bands and three sizes: display-lg/md/sm, headline-lg/md/sm, title-lg/md/sm, body-lg/md/sm, label-lg/md/sm. Nothing else: `stamp` used to be accepted here too, but it is a component in the design system rather than a role, and now lives in blocks/mionas-stamp.liquid, which composes this snippet's label roles instead of extending them. Defaults to body-md.
   @param {string} [variant] - A colour variant: default, primary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
   @param {string} [tag] - p, span, div or h1-h6. Anything else falls back to p.
   @param {string} [class] - Extra classes for the caller's own box (padding, weight overrides).
@@ -42,7 +42,7 @@
 
     Keep this list in step with the .text-role--* rules in blocks/mionas-text.liquid.
   endcomment
-  assign allowed_roles = 'display-lg|display-md|display-sm|headline-lg|headline-md|headline-sm|title-lg|title-md|title-sm|body-lg|body-md|body-sm|label-lg|label-md|label-sm|stamp' | split: '|'
+  assign allowed_roles = 'display-lg|display-md|display-sm|headline-lg|headline-md|headline-sm|title-lg|title-md|title-sm|body-lg|body-md|body-sm|label-lg|label-md|label-sm' | split: '|'
   unless allowed_roles contains resolved_role
     assign resolved_role = 'body-md'
   endunless

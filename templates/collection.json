@@ -125,6 +125,21 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "mionas_product_badges_overlay": {
+              "type": "mionas-product-badges",
+              "name": "Mionas: Product badges (overlay)",
+              "settings": {
+                "kind": "commercial",
+                "placement": "overlay",
+                "corner": "top-left",
+                "size": "label-sm",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "card-gallery": {
               "type": "_product-card-gallery",
               "settings": {
@@ -191,11 +206,26 @@
                   },
                   "blocks": {}
                 },
+                "mionas_product_badges_inline": {
+                  "type": "mionas-product-badges",
+                  "name": "Mionas: Product badges (dietary)",
+                  "settings": {
+                    "kind": "dietary",
+                    "placement": "inline",
+                    "corner": "top-left",
+                    "size": "label-sm",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
                 "mionas_price_x7cMcF": {
                   "type": "mionas-price",
                   "name": "Mionas: Price",
                   "settings": {
-                    "role": "stamp",
+                    "role": "label-lg",
                     "variant": "default",
                     "show_compare_at_price": false,
                     "padding-block-start": 0,
@@ -208,6 +238,7 @@
               },
               "block_order": [
                 "mionas_text_aYPqUG",
+                "mionas_product_badges_inline",
                 "mionas_price_x7cMcF"
               ]
             },
@@ -232,6 +263,7 @@
             }
           },
           "block_order": [
+            "mionas_product_badges_overlay",
             "card-gallery",
             "product_card_group_MVYq3W",
             "add_to_cart"

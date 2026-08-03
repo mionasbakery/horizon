@@ -1,0 +1,72 @@
+{%- doc -%}
+  Builds the class list for a ../design-system/src/react/Button/Button.tsx button. Extracted from
+  blocks/mionas-button.liquid so that block is not the only place the vocabulary is spelled out:
+  blocks/mionas-add-to-cart.liquid needs the same classes on a <button> it cannot render itself, and
+  used to rebuild the same `mionas-button--<variant>` string by hand -- two copies that had to be
+  kept in step, and would silently diverge the moment a variant or size was added.
+
+  IT EMITS CLASSES, NOT AN ELEMENT, and that is the most it can share. The add-to-cart button's
+  markup has to come from snippets/add-to-cart-button.liquid: that snippet is the
+  <add-to-cart-component> wrapper, the ref="addToCartButton" binding and the checkmark-burst spans
+  that drive the added-to-cart animation and the fly-to-cart flight. There is nothing to parameterise
+  there -- a shared element snippet would have to emit an <a>, a submit <button> and a
+  quick-add <button> with on:click, which is three elements wearing one name.
+
+  THE CSS THESE CLASSES NEED IS NOT DELIVERED BY THIS SNIPPET EITHER. It lives in
+  snippets/mionas-button-styles.liquid, rendered once per page from snippets/design-system-bridge.liquid.
+  It used to be a {% raw %}{% stylesheet %}{% endraw %} tag in blocks/mionas-button.liquid, which meant it only shipped on
+  pages where that block actually rendered -- see that snippet's header for what broke.
+
+  @param {string} [variant] - primary, secondary, outline, ghost, danger, inverse-primary or inverse-ghost. Anything else falls back to primary.
+  @param {string} [size] - sm, md or lg. Defaults to md, which adds no modifier because .mionas-button carries the md metrics itself.
+  @param {boolean} [full_width] - Adds the --full modifier.
+  @param {string} [prefix] - Classes to put in front, for a caller's own hooks (e.g. add-to-cart-button, which Horizon's animation CSS hangs off).
+
+  @example
+  {%- capture button_classes -%}
+    {%- render 'mionas-button-class', variant: 'primary', size: 'md', full_width: true -%}
+  {%- endcapture -%}
+{%- enddoc -%}
+{%- liquid
+  comment
+    Whitelisted rather than interpolated: a snippet is reachable from anywhere, and an unrecognised
+    value would emit a modifier class that no rule matches -- a button with the base metrics and no
+    colour at all, which is harder to spot than an obviously wrong one. Same reasoning, and the same
+    shape, as the role whitelist in snippets/mionas-text.liquid.
+
+    Keep both lists in step with the rules in snippets/mionas-button-styles.liquid. The blocks'
+    schemas may offer FEWER options than these -- blocks/mionas-add-to-cart.liquid deliberately
+    exposes four of the seven variants, because danger and the inverse pair would only ever be
+    misconfigurations on a white product card. That restriction belongs in the schema, not here.
+  endcomment
+  assign allowed_variants = 'primary|secondary|outline|ghost|danger|inverse-primary|inverse-ghost' | split: '|'
+  assign resolved_variant = variant | default: 'primary'
+  unless allowed_variants contains resolved_variant
+    assign resolved_variant = 'primary'
+  endunless
+
+  assign allowed_sizes = 'sm|md|lg' | split: '|'
+  assign resolved_size = size | default: 'md'
+  unless allowed_sizes contains resolved_size
+    assign resolved_size = 'md'
+  endunless
+
+  assign classes = 'mionas-button mionas-button--' | append: resolved_variant
+
+  comment
+    md adds no modifier: .mionas-button already carries the md height, padding and font-size, so a
+    --md class would have nothing to declare.
+  endcomment
+  unless resolved_size == 'md'
+    assign classes = classes | append: ' mionas-button--' | append: resolved_size
+  endunless
+
+  if full_width
+    assign classes = classes | append: ' mionas-button--full'
+  endif
+
+  if prefix != blank
+    assign classes = prefix | append: ' ' | append: classes
+  endif
+-%}
+{{- classes -}}

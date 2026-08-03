@@ -144,22 +144,31 @@
       assign quick_add_modal_available = true
     endif
 
-    assign style_variant = block_settings.variant | default: 'primary'
-    assign size = block_settings.size | default: 'md'
 
     comment
-      Same class vocabulary blocks/mionas-button.liquid builds, in the same order, so that block's
-      stylesheet does all the work here. add-to-cart-button is Horizon's own hook for the
-      checkmark-burst and fly-to-cart animation CSS (add-to-cart-button-styles.liquid) and has to
-      stay on regardless of variant.
+      The class vocabulary comes from snippets/mionas-button-class.liquid -- the same snippet
+      blocks/mionas-button.liquid renders -- rather than being rebuilt here. It used to be restated
+      by hand, one copy per block, which is a thing that stays correct only until someone adds a
+      variant.
+
+      add-to-cart-button is passed as the prefix: it is Horizon's own hook for the checkmark-burst
+      and fly-to-cart animation CSS (add-to-cart-button-styles.liquid) and has to stay on regardless
+      of variant.
+
+      The rules for these classes are in snippets/mionas-button-styles.liquid, rendered on every page
+      by snippets/design-system-bridge.liquid. That indirection is load-bearing, not tidiness: while
+      they were a block-level stylesheet tag in blocks/mionas-button.liquid they shipped only on
+      pages where that block rendered, and this block does not render it -- so on a collection page
+      the whole vocabulary resolved to nothing and the button fell back to Horizon's `.button`.
     endcomment
-    assign button_classes = 'add-to-cart-button mionas-button mionas-button--' | append: style_variant
-    unless size == 'md'
-      assign button_classes = button_classes | append: ' mionas-button--' | append: size
-    endunless
-    if block_settings.full_width
-      assign button_classes = button_classes | append: ' mionas-button--full'
-    endif
+    comment
+      One line on purpose: inside a liquid tag every line is its own tag, so a render split across
+      lines parses as an unknown tag named after its first argument. Theme check does not catch it;
+      the dev server's upload does.
+    endcomment
+    capture button_classes
+      render 'mionas-button-class', variant: block_settings.variant, size: block_settings.size, full_width: block_settings.full_width, prefix: 'add-to-cart-button'
+    endcapture
 
     comment
       The icon is hidden with a class rather than by not rendering it. snippets/add-to-cart-button.liquid
@@ -337,7 +346,7 @@
 
      Note the block still sits in a flex `gap`, so removing padding-block-start does not collapse the
      space above the button -- the button is a direct child of blocks/_product-card.liquid, a sibling
-     of mionas-price, product-title and mionas-product-description (no _product-card-group wraps it),
+     of mionas-price and the card's title/description text blocks (no _product-card-group wraps it),
      so the separation above it comes from the card's own product_card_gap setting
      (_product-card.liquid), not a group-level token. The horizontal inset is set on this block
      itself: both templates that place it, templates/index.json and templates/collection.json,

@@ -1,0 +1,125 @@
+{%- comment -%}
+  Mirrors ../design-system/src/react/Stamp/Stamp.tsx: an uppercase Oswald eyebrow -- a short kicker
+  above a title, "ESPECIALIDAD EN COOKIES · SITGES". It owns the three things a bundled `text-role`
+  token cannot carry: the typeface, the wide tracking and the uppercasing.
+
+  Stamp is a component in the design system, not a text role, and this block is where that
+  distinction finally lands in the theme: it used to be one more value in blocks/mionas-text.liquid's
+  `role` select. Everything except family/weight/tracking/transform still comes from Text -- Stamp.tsx
+  renders `<Text variant="label" size={size}>`, so the Size setting below picks a label-band role and
+  this block declares no font-size, line-height or colour of its own.
+
+  Size defaults to `lg`, not Stamp.tsx's own `md`: `lg` is the size every Stamp call site in the
+  design system passes, and it is what the stamps already in this theme were rendering at.
+
+  The text setting is `richtext` and flattened to inline HTML through
+  snippets/mionas-inline-richtext.liquid, for the reasons documented there -- same treatment, same
+  snippet, as blocks/mionas-text.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign block_settings = block.settings
+  assign size = block_settings.size | default: 'lg'
+  assign role = 'label-' | append: size
+-%}
+{%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
+{%- liquid
+  assign content = content | strip
+  assign visible_text = content | strip_html | strip
+-%}
+
+{%- if visible_text != blank -%}
+  {%- render 'mionas-text',
+    content: content,
+    role: role,
+    variant: block_settings.variant,
+    tag: block_settings.tag,
+    class: 'mionas-stamp',
+    shopify_attributes: block.shopify_attributes
+  -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE, for the same reason .text-role.mionas-price is in
+     blocks/mionas-price.liquid: every .text-role--<role> declares font-weight and letter-spacing from
+     a single-class selector in this same compiled stylesheet, so equal specificity would leave the
+     winner to bundle order. .text-role.mionas-stamp is (0,2,0). Do not flatten it.
+
+     Font-size and line-height are deliberately absent -- they come from the .text-role--label-<size>
+     class the Size setting picks. So is `color`: Stamp.module.css carries the same prohibition,
+     because declaring it here would beat .text-role--<variant> at (0,1,0) and break the colour
+     passthrough the Color setting relies on (footer-group.json's stamp is accent-inverse). */
+  .text-role.mionas-stamp {
+    font-family: var(--stamp-base-font-family);
+    font-weight: var(--stamp-base-font-weight);
+    letter-spacing: var(--stamp-base-letter-spacing);
+    text-transform: var(--stamp-base-text-transform);
+  }
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Stamp",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Stamp</p>",
+      "info": "Press Enter for a line break; it renders inside the same element, not as a new paragraph."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
+      ],
+      "default": "lg",
+      "info": "The label-band size the stamp renders at, the same ladder as Mionas: Text."
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "accent"
+    },
+    {
+      "type": "select",
+      "id": "tag",
+      "label": "HTML tag",
+      "options": [
+        { "value": "p", "label": "p" },
+        { "value": "span", "label": "span" },
+        { "value": "div", "label": "div" },
+        { "value": "h1", "label": "h1" },
+        { "value": "h2", "label": "h2" },
+        { "value": "h3", "label": "h3" },
+        { "value": "h4", "label": "h4" },
+        { "value": "h5", "label": "h5" },
+        { "value": "h6", "label": "h6" }
+      ],
+      "default": "p",
+      "info": "Pick the semantic level; it doesn't have to match Size."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Stamp",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

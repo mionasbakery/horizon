@@ -5,7 +5,7 @@
 
   It rendered a Mionas-owned card block until the store unified on one card. The native card
   accepts @theme children (_product-card.liquid:34) and passes closest.product down to them
-  (:9-11), so the Mionas price, description and add-to-cart button compose into it unchanged, and
+  (:9-11), so the Mionas price and add-to-cart button compose into it unchanged, and
   snippets/product-card-bridge.liquid is what gives it the Mionas look. That Mionas card block has
   since been deleted; git history holds it if the bridge's derivation is ever in question.
 
@@ -480,20 +480,13 @@
               "type": "mionas-price",
               "name": "Mionas: Price",
               "settings": {
-                "role": "stamp",
+                "role": "label-lg",
                 "variant": "default",
                 "show_compare_at_price": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 16,
                 "padding-inline-end": 16
-              }
-            },
-            "description": {
-              "type": "mionas-product-description",
-              "name": "Mionas: Description",
-              "settings": {
-                "role": "label-lg"
               }
             },
             "add_to_cart": {
@@ -512,7 +505,7 @@
               }
             }
           },
-          "block_order": ["card-gallery", "title", "price", "description", "add_to_cart"]
+          "block_order": ["card-gallery", "title", "price", "add_to_cart"]
         }
       }
     }

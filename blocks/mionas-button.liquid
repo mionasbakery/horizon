@@ -20,20 +20,26 @@
   resolves through --font-family-archivo, which snippets/design-system-bridge.liquid repoints at
   the theme's loaded body font -- so the family is the design system's decision, delivered by a
   face Shopify actually hosts.
+
+  THIS BLOCK OWNS NEITHER THE CLASSES NOR THE CSS, and is no longer the only way to spend either.
+  The class list comes from snippets/mionas-button-class.liquid and the rules from
+  snippets/mionas-button-styles.liquid, which snippets/design-system-bridge.liquid renders on every
+  page. Both were extracted from here because blocks/mionas-add-to-cart.liquid puts these classes on
+  a <button> it has to build from Horizon's own snippet: it cannot render this block (an <a> driven
+  by a `link` setting cannot submit a form), so it duplicated the class string, and the CSS -- a
+  {% raw %}{% stylesheet %}{% endraw %} tag here -- was dropped by Shopify's block subsetting on every page without a
+  Mionas: Button on it. See mionas-button-styles.liquid's header for what that broke.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
-  assign variant = block_settings.variant | default: 'primary'
-  assign size = block_settings.size | default: 'md'
-
-  assign button_classes = 'mionas-button mionas-button--' | append: variant
-  unless size == 'md'
-    assign button_classes = button_classes | append: ' mionas-button--' | append: size
-  endunless
-  if block_settings.full_width
-    assign button_classes = button_classes | append: ' mionas-button--full'
-  endif
 %}
+{%- capture button_classes -%}
+  {%- render 'mionas-button-class',
+    variant: block_settings.variant,
+    size: block_settings.size,
+    full_width: block_settings.full_width
+  -%}
+{%- endcapture -%}
 
 {%- comment -%}
   The if/else tags below deliberately carry no whitespace-stripping hyphens -- the same shape as
@@ -58,91 +64,6 @@
 >
   {{- block_settings.label -}}
 </a>
-
-{% stylesheet %}
-  .mionas-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1.5px solid transparent;
-    border-radius: var(--button-base-radius);
-    font-family: var(--button-base-font-family);
-    font-weight: var(--button-base-font-weight);
-    cursor: pointer;
-    white-space: nowrap;
-    text-decoration: none;
-    height: var(--button-size-md-height);
-    padding: 0 var(--button-size-md-padding);
-    font-size: var(--button-size-md-font-size);
-  }
-
-  .mionas-button--sm {
-    height: var(--button-size-sm-height);
-    padding: 0 var(--button-size-sm-padding);
-    font-size: var(--button-size-sm-font-size);
-  }
-
-  .mionas-button--lg {
-    height: var(--button-size-lg-height);
-    padding: 0 var(--button-size-lg-padding);
-    font-size: var(--button-size-lg-font-size);
-  }
-
-  /* Button.tsx has no fullWidth prop -- the prototype's `full-width` was its own harness prop.
-     The Contacto page needs a full-width WhatsApp button, so this is a theme-side addition;
-     see the spec's follow-ups about proposing it back to the design system. */
-  .mionas-button--full {
-    display: flex;
-    width: 100%;
-  }
-
-  .mionas-button--primary {
-    background: var(--button-primary-background);
-    color: var(--button-primary-foreground);
-  }
-
-  .mionas-button--secondary {
-    background: var(--button-secondary-background);
-    color: var(--button-secondary-foreground);
-  }
-
-  .mionas-button--outline {
-    background: transparent;
-    color: var(--button-outline-foreground);
-    border-color: var(--button-outline-border-color);
-  }
-
-  .mionas-button--ghost {
-    background: transparent;
-    color: var(--button-ghost-foreground);
-  }
-
-  .mionas-button--danger {
-    background: var(--button-danger-background);
-    color: var(--button-danger-foreground);
-  }
-
-  .mionas-button--inverse-primary {
-    background: var(--button-inverse-primary-background);
-    color: var(--button-inverse-primary-foreground);
-  }
-
-  .mionas-button--inverse-ghost {
-    background: transparent;
-    color: var(--button-inverse-ghost-foreground);
-  }
-
-  .mionas-button[aria-disabled="true"] {
-    opacity: var(--button-state-disabled-opacity);
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .mionas-button:active {
-    transform: scale(var(--button-state-pressed-scale));
-    opacity: var(--button-state-pressed-opacity);
-  }
-{% endstylesheet %}
 
 {% schema %}
 {

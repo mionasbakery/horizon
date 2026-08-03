@@ -3,9 +3,17 @@
   same job but restated --text-role-body-md-* by hand instead of spending the role vocabulary, and so
   could not follow it when a role changed.
 
-  Renders through snippets/mionas-text.liquid, the same snippet blocks/mionas-text.liquid and
-  blocks/mionas-product-description.liquid render, so size, line-height, letter-spacing, family and
-  colour are the role's. Only the weight is the price's own -- see the stylesheet.
+  Renders through snippets/mionas-text.liquid, the same snippet blocks/mionas-text.liquid renders,
+  so size, line-height, letter-spacing, family and colour are the role's. Only the weight is the
+  price's own -- see the stylesheet.
+
+  THE ROLE SELECT IS EXACTLY blocks/mionas-text.liquid's, no more. It used to carry a sixteenth
+  option, Stamp, which is not a Text role at all but a component of its own
+  (../design-system/src/react/Stamp/Stamp.tsx, mirrored here as blocks/mionas-stamp.liquid) -- a
+  price is Text, so it cannot offer it. That also matches ProductCard.module.css, whose `.price`
+  declares a weight and a colour and nothing else: the price inherits Text's own face rather than
+  Stamp's Oswald. The three settings sites that had selected it moved to label-lg, the role Stamp
+  itself renders at, so the figures kept their size and dropped only the uppercase Oswald.
 
   WHY A DEDICATED BLOCK RATHER THAN JUST USING blocks/mionas-text.liquid:
   mionas-text takes literal copy from a richtext setting. A price is not literal copy -- it needs
@@ -89,8 +97,6 @@
 
      And the weight: --product-card-price-font-weight, not the role's. The design system gives
      ProductCardPrice a weight token of its own because the price is 600 whatever size it is set at.
-     blocks/mionas-product-description.liquid makes the same move with its own CardDescription
-     tokens.
 
      COLOUR IS DELIBERATELY NOT OVERRIDDEN, unlike the block this replaces.
      --product-card-price-foreground references {text-color.default} in the design system's own token
@@ -109,8 +115,9 @@
      all configure padding-inline-start/end to 16 here, matching the product-title block beside it, so
      the price does not run to the card's edges. Nothing needs re-adding in CSS to keep that look.
 
-     Note --product-card-base-padding-inline is consequently unspent by this block now.
-     blocks/mionas-product-description.liquid still spends it, so the token is not dead theme-wide.
+     Note --product-card-base-padding-inline is consequently unspent theme-wide now: the only other
+     block that still declared it, blocks/mionas-product-description.liquid, has been deleted. The
+     token stays in assets/design-tokens.css because the design system still defines it.
 
      THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE: every .text-role--<role> declares font-weight from a
      single-class selector in this same compiled stylesheet, so equal specificity would leave the
@@ -160,8 +167,7 @@
         { "value": "body-sm", "label": "Body small" },
         { "value": "label-lg", "label": "Label large" },
         { "value": "label-md", "label": "Label medium" },
-        { "value": "label-sm", "label": "Label small" },
-        { "value": "stamp", "label": "Stamp" }
+        { "value": "label-sm", "label": "Label small" }
       ],
       "default": "body-md",
       "info": "The same text roles as Mionas: Text. The price keeps its own weight."
