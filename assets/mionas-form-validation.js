@@ -15,8 +15,7 @@
  * Deliberately NOT a `Component` subclass, and deliberately not named `*-component`:
  * assets/component.js resolves `on:` bindings to the closest ancestor that is a `Component` or whose
  * tag name ends in `-component` (see getClosestComponent). Staying out of that lookup keeps this
- * element from intercepting anything inside the form. Same reasoning as
- * assets/mionas-review-clamp.js.
+ * element from intercepting anything inside the form.
  */
 
 const FIELD_SELECTOR = '.mionas-form-field';

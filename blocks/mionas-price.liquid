@@ -7,16 +7,17 @@
   so size, line-height, letter-spacing, family and colour are the role's. Only the weight is the
   price's own -- see the stylesheet.
 
-  THE ROLE SELECT'S OPTIONS ARE EXACTLY blocks/mionas-text.liquid's band x size grid, no more --
-  this block still exposes them as one combined "<band>-<size>" select rather than mionas-text's
-  separate Variant/Size ones (see the render call below, which splits it back apart for
-  snippets/mionas-text.liquid). It used to carry a sixteenth option, Stamp, which is not a Text
-  role at all but a component of its own (../design-system/src/react/Stamp/Stamp.tsx, mirrored
-  here as blocks/mionas-stamp.liquid) -- a price is Text, so it cannot offer it. That also matches
-  ProductCard.module.css, whose `.price` declares a weight and a colour and nothing else: the price
-  inherits Text's own face rather than Stamp's Oswald. The three settings sites that had selected
-  it moved to label-lg, the role Stamp itself renders at, so the figures kept their size and
-  dropped only the uppercase Oswald.
+  VARIANT AND SIZE ARE EXACTLY blocks/mionas-text.liquid's band x size grid, no more -- split into
+  the same two settings, 1:1 with Text.tsx's own `variant`/`size` props, for the same reason and at
+  the same time mionas-text's combined Role select was split. Color was renamed from `variant` to
+  `color` for the same reason it was there: the new band setting needed the id `variant`, and a
+  Shopify block schema cannot have two settings share one id. It used to carry a sixteenth option,
+  Stamp, which is not a Text role at all but a component of its own
+  (../design-system/src/react/Stamp/Stamp.tsx, mirrored here as blocks/mionas-stamp.liquid) -- a
+  price is Text, so it cannot offer it. That also matches ProductCard.module.css, whose `.price`
+  declares a weight and a colour and nothing else: the price inherits Text's own face rather than
+  Stamp's Oswald. The three settings sites that had selected it moved to label-lg, the role Stamp
+  itself renders at, so the figures kept their size and dropped only the uppercase Oswald.
 
   WHY A DEDICATED BLOCK RATHER THAN JUST USING blocks/mionas-text.liquid:
   mionas-text takes literal copy from a richtext setting. A price is not literal copy -- it needs
@@ -81,24 +82,11 @@
     {%- render 'spacing-style', settings: block_settings -%}
   {%- endcapture -%}
 
-  {%- comment -%}
-    block_settings.role is still one combined "<band>-<size>" select here (this block's editor UI
-    hasn't been split, unlike blocks/mionas-text.liquid) -- split it for snippets/mionas-text.liquid,
-    which now takes the two axes separately. A stale/malformed stored value splits into a bogus
-    band/size pair, which the snippet's own allowed_roles whitelist catches by falling back to
-    body-md -- same safety net as before, just re-derived from two split filters instead of one
-    passthrough string.
-  {%- endcomment -%}
-  {%- liquid
-    assign role_parts = block_settings.role | split: '-'
-    assign role_variant = role_parts | first
-    assign role_size = role_parts | last
-  -%}
   {%- render 'mionas-text',
     content: price_content,
-    variant: role_variant,
-    size: role_size,
-    color: block_settings.variant,
+    variant: block_settings.variant,
+    size: block_settings.size,
+    color: block_settings.color,
     tag: 'p',
     class: 'mionas-price spacing-style',
     style: price_style,
@@ -167,31 +155,33 @@
   "settings": [
     {
       "type": "select",
-      "id": "role",
-      "label": "Role",
+      "id": "variant",
+      "label": "Variant",
       "options": [
-        { "value": "display-lg", "label": "Display large" },
-        { "value": "display-md", "label": "Display medium" },
-        { "value": "display-sm", "label": "Display small" },
-        { "value": "headline-lg", "label": "Headline large" },
-        { "value": "headline-md", "label": "Headline medium" },
-        { "value": "headline-sm", "label": "Headline small" },
-        { "value": "title-lg", "label": "Title large" },
-        { "value": "title-md", "label": "Title medium" },
-        { "value": "title-sm", "label": "Title small" },
-        { "value": "body-lg", "label": "Body large" },
-        { "value": "body-md", "label": "Body medium" },
-        { "value": "body-sm", "label": "Body small" },
-        { "value": "label-lg", "label": "Label large" },
-        { "value": "label-md", "label": "Label medium" },
-        { "value": "label-sm", "label": "Label small" }
+        { "value": "display", "label": "Display" },
+        { "value": "headline", "label": "Headline" },
+        { "value": "title", "label": "Title" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
       ],
-      "default": "body-md",
-      "info": "The same text roles as Mionas: Text. The price keeps its own weight."
+      "default": "body",
+      "info": "The same text variants as Mionas: Text. The price keeps its own weight."
     },
     {
       "type": "select",
-      "id": "variant",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
+      ],
+      "default": "md",
+      "info": "The step within the Variant band."
+    },
+    {
+      "type": "select",
+      "id": "color",
       "label": "Color",
       "options": [
         { "value": "default", "label": "Default" },

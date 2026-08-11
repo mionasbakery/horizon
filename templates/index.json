@@ -392,8 +392,9 @@
               "type": "mionas-price",
               "name": "Mionas: Price",
               "settings": {
-                "role": "label-lg",
-                "variant": "default",
+                "variant": "label",
+                "size": "lg",
+                "color": "default",
                 "show_compare_at_price": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,

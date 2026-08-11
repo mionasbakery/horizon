@@ -3,20 +3,21 @@
   freely with whatever's nested inside it (CardTitle, CardDescription, CardMedia in React; here,
   any child theme block -- Mionas: Text, image, Mionas: Button, etc.).
 
-  This is a different thing from two other files that already exist:
+  This is a different thing from another file that already exists:
   - blocks/_card.liquid (native, "Card" in the picker) is a generic LAYOUT panel -- background
     image/video, flexible flex-direction content slot -- styled with Horizon's own generic layout
     tokens (--border-radius, --layer-flat, ...), never design-system --card-* tokens. Untouched here.
-  - blocks/mionas-review-card.liquid forks Card's look for one fixed, review-specific composition
-    (rating + quote + attribution). This block is the general-purpose shell Card.tsx actually is --
-    free children, no fixed content -- which review-card intentionally doesn't expose.
+
+  (blocks/mionas-review-card.liquid used to fork Card's look for one fixed, review-specific
+  composition -- rating + quote + attribution. It and the rest of the Google-review pipeline were
+  removed in favour of the Trustindex app; this block is the only Card mirror left, and is the
+  general-purpose shell Card.tsx actually is -- free children, no fixed content.)
 
   ## Why this renders through snippets/group.liquid
 
   The card takes the native Group block's customization surface -- layout direction, alignment, gap,
   size, block link, padding -- by copying those parts of group's schema and delegating rendering to
-  snippets/group.liquid, exactly as blocks/_mionas-google-reviews-summary.liquid and
-  blocks/_product-list-content.liquid do.
+  snippets/group.liquid, exactly as blocks/_product-list-content.liquid does.
 
   Deliberately NOT copied: group's Appearance and Borders sections. The card's surface -- background,
   border, radius, shadow -- is what makes it a Card rather than a group, and it is owned entirely by

@@ -23,22 +23,21 @@
 
   WHY THE CARD IS A STATIC BLOCK:
   every iteration renders the same block type with the same fixed id ('static-product-card'), which
-  is what sections/product-list.liquid and sections/mionas-google-reviews.liquid both do. The theme
-  editor therefore shows ONE card whose settings and children govern every product in the grid -- the
-  merchant composes the card once, not six times, and cannot end up with six cards that disagree.
-  A static slot also cannot be removed, reordered or duplicated, so the section always has exactly one
-  card design.
+  is what sections/product-list.liquid does too. The theme editor therefore shows ONE card whose
+  settings and children govern every product in the grid -- the merchant composes the card once, not
+  six times, and cannot end up with six cards that disagree. A static slot also cannot be removed,
+  reordered or duplicated, so the section always has exactly one card design.
 
-  Layout is delegated to snippets/resource-list.liquid exactly as product-list and
-  mionas-google-reviews do it: every card is captured into one string separated by
-  <!--@list/split-->, that string is split into an array, and both are handed over. resource-list
-  owns grid / carousel / editorial rendering and the mobile-carousel fallback, so this file gets all
-  of those layout settings without reimplementing any of them.
+  Layout is delegated to snippets/resource-list.liquid exactly as product-list does it: every card is
+  captured into one string separated by <!--@list/split-->, that string is split into an array, and
+  both are handed over. resource-list owns grid / carousel / editorial rendering and the
+  mobile-carousel fallback, so this file gets all of those layout settings without reimplementing any
+  of them.
 
   There is no built-in heading or "see all" button setting. The section opens a free
   content_for 'blocks' region above the cards, so both are whatever blocks the merchant puts there --
   a Mionas: Text, a Mionas: Button -- rather than baked-in text settings duplicating what those
-  blocks already do better. This mirrors mionas-google-reviews.liquid's reasoning.
+  blocks already do better.
 {%- endcomment -%}
 
 {%- liquid
@@ -480,8 +479,9 @@
               "type": "mionas-price",
               "name": "Mionas: Price",
               "settings": {
-                "role": "label-lg",
-                "variant": "default",
+                "variant": "label",
+                "size": "lg",
+                "color": "default",
                 "show_compare_at_price": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,

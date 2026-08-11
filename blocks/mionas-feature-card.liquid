@@ -8,10 +8,9 @@
   reskin.
 
   FeatureCard.tsx composes Card (as="a") + CardMedia + Box + Text internally, but none of those are
-  rendered here as separate blocks -- like mionas-review-card.liquid, this reproduces their combined
-  CSS output directly rather than nesting mionas-card/mionas-text, since the anatomy is fixed and
-  Card's own padding-bottom/max-width don't apply here anyway (FeatureCard.module.css overrides both
-  to 0/none for its full-bleed tile).
+  rendered here as separate blocks -- this reproduces their combined CSS output directly rather than
+  nesting mionas-card/mionas-text, since the anatomy is fixed and Card's own padding-bottom/max-width
+  don't apply here anyway (FeatureCard.module.css overrides both to 0/none for its full-bleed tile).
 
   Title uses the "heading" text role, subtitle the "body" role (both --text-role-* tokens, both
   --text-color-inverse-primary), matching Text's role vocabulary the same way

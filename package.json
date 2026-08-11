@@ -2,7 +2,6 @@
   "name": "horizon-theme",
   "private": true,
   "scripts": {
-    "tokens:sync": "node scripts/sync-design-tokens.mjs",
-    "gbp:auth": "node scripts/gbp-auth.mjs"
+    "tokens:sync": "node scripts/sync-design-tokens.mjs"
   }
 }

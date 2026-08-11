@@ -74,7 +74,7 @@ to make it pass. Contract entries are pruned only when the theme genuinely stops
 ## Renames are silent outside the contract
 
 The contract only guards bridge tokens. Blocks spend many more —
-`blocks/mionas-review-card.liquid` alone uses `--card-base-*`, `--review-card-*`, `--space-2xs` —
+`blocks/mionas-feature-card.liquid` alone uses `--card-base-*`, `--feature-card-*`, `--text-role-*` —
 and a stale `var(--old-name)` in a block does not error; the style just falls back to unset. So
 after any design-system rename or removal:
 
@@ -88,7 +88,7 @@ is load-bearing enough to add to `EXPECTED_TOKENS` so future renames fail loudly
 ## Mirroring a design-system component in the theme
 
 Design-system React components (`../design-system/src/react/`) define the look; theme blocks
-reproduce it in Liquid + CSS. `blocks/mionas-review-card.liquid` (mirroring `ReviewCard`) is the
+reproduce it in Liquid + CSS. `blocks/mionas-feature-card.liquid` (mirroring `FeatureCard`) is the
 reference example, with its design doc in `docs/superpowers/specs/`. When creating or updating a
 mirror:
 

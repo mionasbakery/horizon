@@ -17,8 +17,7 @@
     required  Defaults to true, matching FormLabel.tsx's `required = true`. Pass false to append the
               " (optional)" suffix. This is an explicit `== false` test rather than
               `| default: true`, because Liquid's `default` filter treats false as empty and would
-              flip it straight back to true -- the same guard snippets/mionas-google-review-card
-              .liquid uses for show_rating.
+              flip it straight back to true.
     error     Pass true for the error colour. snippets/mionas-form-field.liquid forwards this
               automatically, mirroring FormField.tsx's `error={!!error}`. The error rule is declared
               after the base rule at equal specificity, so it wins even while the field has focus --
