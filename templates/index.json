@@ -139,8 +139,9 @@
               "name": "Heading",
               "settings": {
                 "text": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
-                "role": "display-lg",
-                "variant": "default",
+                "variant": "display",
+                "size": "lg",
+                "color": "default",
                 "tag": "h1"
               },
               "blocks": {}
@@ -150,8 +151,9 @@
               "name": "Lead",
               "settings": {
                 "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la Península.</p>",
-                "role": "body-lg",
-                "variant": "default",
+                "variant": "body",
+                "size": "lg",
+                "color": "default",
                 "tag": "p"
               },
               "blocks": {}
@@ -284,8 +286,9 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>LO MÁS VENDIDO</p>",
-                "role": "headline-md",
-                "variant": "primary",
+                "variant": "headline",
+                "size": "md",
+                "color": "primary",
                 "tag": "h2"
               },
               "blocks": {}
@@ -363,8 +366,9 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>{{ closest.product.title }}</p>",
-                "role": "title-sm",
-                "variant": "default",
+                "variant": "title",
+                "size": "sm",
+                "color": "default",
                 "tag": "p"
               },
               "blocks": {}
@@ -403,8 +407,9 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "{{ closest.product.description }}",
-                "role": "label-lg",
-                "variant": "default",
+                "variant": "label",
+                "size": "lg",
+                "color": "default",
                 "tag": "p"
               },
               "blocks": {}
@@ -512,8 +517,9 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>Que dicen nuestros clientes</p>",
-                "role": "headline-md",
-                "variant": "primary",
+                "variant": "headline",
+                "size": "md",
+                "color": "primary",
                 "tag": "h2"
               },
               "blocks": {}
@@ -696,8 +702,9 @@
               "name": "Heading",
               "settings": {
                 "text": "<p>10% de descuento en tu primera compra</p>",
-                "role": "headline-md",
-                "variant": "primary",
+                "variant": "headline",
+                "size": "md",
+                "color": "primary",
                 "tag": "h2"
               },
               "blocks": {}
@@ -707,8 +714,9 @@
               "name": "Lead",
               "settings": {
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
-                "role": "body-lg",
-                "variant": "default",
+                "variant": "body",
+                "size": "lg",
+                "color": "default",
                 "tag": "p"
               },
               "blocks": {}

@@ -19,7 +19,6 @@
 {%- liquid
   assign block_settings = block.settings
   assign size = block_settings.size | default: 'lg'
-  assign role = 'label-' | append: size
 -%}
 {%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
 {%- liquid
@@ -28,10 +27,17 @@
 -%}
 
 {%- if visible_text != blank -%}
+  {%- comment -%}
+    variant: 'label' is fixed, not a setting -- Stamp.tsx always renders `<Text variant="label"
+    size={size}>`, only Size is a merchant choice. block_settings.variant here is Stamp's own Color
+    setting (kept that id to avoid re-migrating footer-group.json and the rest), passed through as
+    the snippet's `color` param.
+  {%- endcomment -%}
   {%- render 'mionas-text',
     content: content,
-    role: role,
-    variant: block_settings.variant,
+    variant: 'label',
+    size: size,
+    color: block_settings.variant,
     tag: block_settings.tag,
     class: 'mionas-stamp',
     shopify_attributes: block.shopify_attributes

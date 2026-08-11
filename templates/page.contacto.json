@@ -28,7 +28,8 @@
           "type": "mionas-text",
           "settings": {
             "text": "<p>Ven a visitarnos</p>",
-            "role": "headline-md",
+            "variant": "headline",
+            "size": "md",
             "tag": "h1"
           }
         },
@@ -79,7 +80,8 @@
                       "type": "mionas-text",
                       "settings": {
                         "text": "<p>Mionas Bakery</p>",
-                        "role": "title-sm",
+                        "variant": "title",
+                        "size": "sm",
                         "tag": "p"
                       }
                     },
@@ -87,7 +89,8 @@
                       "type": "mionas-text",
                       "settings": {
                         "text": "<p>[Carrer Major, XX] · 08870 Sitges, Barcelona</p>",
-                        "role": "body-md",
+                        "variant": "body",
+                        "size": "md",
                         "tag": "p"
                       }
                     },
@@ -95,7 +98,8 @@
                       "type": "mionas-text",
                       "settings": {
                         "text": "<p><strong>Horario:</strong> [L–D · 9:00–20:30]</p>",
-                        "role": "body-md",
+                        "variant": "body",
+                        "size": "md",
                         "tag": "p"
                       }
                     },
@@ -103,7 +107,8 @@
                       "type": "mionas-text",
                       "settings": {
                         "text": "<p><strong>Recogida de pedidos:</strong> [franja horaria]</p>",
-                        "role": "body-md",
+                        "variant": "body",
+                        "size": "md",
                         "tag": "p"
                       }
                     }

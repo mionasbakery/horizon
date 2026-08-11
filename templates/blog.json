@@ -29,8 +29,9 @@
           "name": "Mionas: Title",
           "settings": {
             "text": "<p>{{ closest.blog.title }}</p>",
-            "role": "display-lg",
-            "variant": "default",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
             "tag": "h1"
           },
           "blocks": {}

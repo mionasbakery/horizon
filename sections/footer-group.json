@@ -97,8 +97,9 @@
           "name": "Text Role",
           "settings": {
             "text": "",
-            "role": "label-md",
-            "variant": "inverse-primary",
+            "variant": "label",
+            "size": "md",
+            "color": "inverse-primary",
             "tag": "div"
           },
           "blocks": {}

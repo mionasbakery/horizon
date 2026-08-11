@@ -7,15 +7,23 @@
   snippets/design-system-bridge.liquid. This block does not touch that one -- it exposes the
   design system's fixed role/variant vocabulary directly, rather than bridging it onto Horizon's
   own presets. This block is named "Mionas: Text" in the block picker to
-  distinguish it from "Text" (Role/Color/HTML tag settings here, vs. Type preset there). See
-  docs/superpowers/specs/2026-07-20-text-role-block-design.md (written when this block was still
-  named "Mionas: Text role").
+  distinguish it from "Text" (Variant/Size/Color/HTML tag settings here, vs. Type preset there).
+  See docs/superpowers/specs/2026-07-20-text-role-block-design.md (written when this block was
+  still named "Mionas: Text role").
+
+  Variant and Size are separate settings, 1:1 with Text.tsx's own `variant` (band: display,
+  headline, title, body, label) and `size` (lg/md/sm) props -- they used to be one combined
+  `role` select (e.g. "display-lg"). snippets/mionas-text.liquid takes the same two params
+  separately and joins them internally; this block just passes them straight through. Color keeps
+  its own axis, same as Text.tsx's `color` prop -- it was also called `variant` here before this
+  split, which would have collided with the new band setting, so it was renamed to `color` to
+  match the design system's own prop name.
 
   The CSS class prefix (`text-role`) and the --text-role-*/--text-color-* tokens keep their names --
   they mirror the design system's own Text.tsx `role` vocabulary, not this block's editor label.
 
-  `tag` and `role` are independent settings, same as Text.tsx's `as` and `role` props -- a
-  label-styled span or an h2 with hero styling are both valid.
+  `tag` is independent of Variant/Size, same as Text.tsx's `as` prop is independent of `variant`/
+  `size` -- a label-styled span or an h2 with hero styling are both valid.
 
   The Text setting is `richtext` so copy can span several lines, but its block-level markup is
   flattened to `<br>` before output by snippets/mionas-inline-richtext.liquid, which documents why.
@@ -65,8 +73,9 @@
 
   {%- render 'mionas-text',
     content: content,
-    role: block_settings.role,
     variant: block_settings.variant,
+    size: block_settings.size,
+    color: block_settings.color,
     tag: tag,
     class: 'spacing-style',
     style: text_style,
@@ -83,8 +92,8 @@
   /* One class per text-role token, 1:1 with Text.tsx's band x size grid: five bands at three
      sizes each. All fifteen are exposed even though the theme only uses nine, because this block
      is the theme's mirror of Text -- a mirror offering a subset would quietly be a different
-     component. Keep the `role` select's options and snippets/mionas-text.liquid's whitelist in
-     step with this list.
+     component. Keep the `variant`/`size` selects' options and snippets/mionas-text.liquid's
+     whitelist in step with this list.
 
      These names replaced a flat ten-role vocabulary; the old-to-new table is in
      docs/superpowers/specs/2026-07-20-text-role-block-design.md, which is also what stored
@@ -244,30 +253,33 @@
     },
     {
       "type": "select",
-      "id": "role",
-      "label": "Role",
+      "id": "variant",
+      "label": "Variant",
       "options": [
-        { "value": "display-lg", "label": "Display large" },
-        { "value": "display-md", "label": "Display medium" },
-        { "value": "display-sm", "label": "Display small" },
-        { "value": "headline-lg", "label": "Headline large" },
-        { "value": "headline-md", "label": "Headline medium" },
-        { "value": "headline-sm", "label": "Headline small" },
-        { "value": "title-lg", "label": "Title large" },
-        { "value": "title-md", "label": "Title medium" },
-        { "value": "title-sm", "label": "Title small" },
-        { "value": "body-lg", "label": "Body large" },
-        { "value": "body-md", "label": "Body medium" },
-        { "value": "body-sm", "label": "Body small" },
-        { "value": "label-lg", "label": "Label large" },
-        { "value": "label-md", "label": "Label medium" },
-        { "value": "label-sm", "label": "Label small" }
+        { "value": "display", "label": "Display" },
+        { "value": "headline", "label": "Headline" },
+        { "value": "title", "label": "Title" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
       ],
-      "default": "body-md"
+      "default": "body",
+      "info": "The typography band, same as Text.tsx's `variant` prop."
     },
     {
       "type": "select",
-      "id": "variant",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
+      ],
+      "default": "md",
+      "info": "The step within the Variant band."
+    },
+    {
+      "type": "select",
+      "id": "color",
       "label": "Color",
       "options": [
         { "value": "default", "label": "Default" },
@@ -296,7 +308,7 @@
         { "value": "h6", "label": "h6" }
       ],
       "default": "p",
-      "info": "Pick the semantic level; it doesn't have to match Role."
+      "info": "Pick the semantic level; it doesn't have to match Variant."
     },
     {
       "type": "header",

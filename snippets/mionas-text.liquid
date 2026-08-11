@@ -16,8 +16,9 @@
   pass values from `| money` and product.title. Nothing here escapes; nothing here strips tags.
 
   @param {string} content - The text to render. Emitted unfiltered; see above.
-  @param {string} [role] - A Text.tsx role, `<band>-<size>` across five bands and three sizes: display-lg/md/sm, headline-lg/md/sm, title-lg/md/sm, body-lg/md/sm, label-lg/md/sm. Nothing else: `stamp` used to be accepted here too, but it is a component in the design system rather than a role, and now lives in blocks/mionas-stamp.liquid, which composes this snippet's label roles instead of extending them. Defaults to body-md.
-  @param {string} [variant] - A colour variant: default, primary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
+  @param {string} [variant] - A Text.tsx band: display, headline, title, body, label. Defaults to body.
+  @param {string} [size] - A Text.tsx size within the band: lg, md, sm. Defaults to md.
+  @param {string} [color] - A colour variant: default, primary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
   @param {string} [tag] - p, span, div or h1-h6. Anything else falls back to p.
   @param {string} [class] - Extra classes for the caller's own box (padding, weight overrides).
   @param {string} [style] - Inline declarations for the caller's own box. Emitted unfiltered like `content`, but unlike `content` it is NOT for caller HTML -- it exists so a block can pass snippets/spacing-style.liquid output (the --padding-* custom properties behind Horizon's `spacing-style` class) alongside that class. Nothing else should go through here.
@@ -25,20 +26,26 @@
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
   @example
-  {% render 'mionas-text', content: product.title, role: 'body-md', tag: 'p', class: 'mionas-price' %}
+  {% render 'mionas-text', content: product.title, variant: 'body', size: 'md', tag: 'p', class: 'mionas-price' %}
 {%- enddoc -%}
 
 {%- liquid
-  assign resolved_role = role | default: 'body-md'
-  assign resolved_variant = variant | default: 'default'
+  assign resolved_variant = variant | default: 'body'
+  assign resolved_size = size | default: 'md'
+  assign resolved_role = resolved_variant | append: '-' | append: resolved_size
+  assign resolved_color = color | default: 'default'
 
   comment
-    An unrecognised role must fall back, not pass through: the role vocabulary was renamed
-    wholesale, and `default` cannot catch a stale value because that filter fires on nil/false/
-    empty, never on a string that has simply stopped being a role. Passing one through emits a
-    class that no longer exists, and the text renders with no size, weight or tracking at all --
-    worse than the body copy it lands on here. Live risk, not hypothetical: settings changed in
-    the theme editor since the last `shopify theme pull` were not part of the migration.
+    An unrecognised variant/size pair must fall back, not pass through: `default` cannot catch a
+    stale value because that filter fires on nil/false/empty, never on a string that has simply
+    stopped being a role. Passing one through emits a class that no longer exists, and the text
+    renders with no size, weight or tracking at all -- worse than the body copy it lands on here.
+    Live risk, not hypothetical: settings changed in the theme editor since the last
+    `shopify theme pull` are not necessarily part of any migration.
+
+    Validated as the JOINED pair, not each axis separately -- callers like blocks/mionas-price.liquid
+    split a single stored `role` setting into variant/size themselves, so a stale stored value can
+    still produce a bogus pair here even though each axis alone looks like a plausible string.
 
     Keep this list in step with the .text-role--* rules in blocks/mionas-text.liquid.
   endcomment
@@ -57,7 +64,7 @@
     assign resolved_tag = 'p'
   endunless
 
-  assign classes = 'text-role text-role--' | append: resolved_role | append: ' text-role--' | append: resolved_variant
+  assign classes = 'text-role text-role--' | append: resolved_role | append: ' text-role--' | append: resolved_color
   if class != blank
     assign classes = classes | append: ' ' | append: class
   endif

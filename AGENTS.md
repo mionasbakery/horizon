@@ -24,26 +24,6 @@ invariant, record it as a comment in the file rather than as a test.
 
 `origin` is `mionasbakery/horizon`. `upstream` is `Shopify/horizon` — fetch and merge from it to pull in upstream theme changes.
 
-## Tools
-
-Two JetBrains tools cover code navigation; prefer both over Bash. They answer different questions:
-
-- **`mcp__jbcontext__*` — semantic search, for when you don't know the name.** Natural-language
-  queries, and the only tool that reaches _other_ repos (`find_repositories`), so it is the only way
-  to answer "who else consumes this?" across repo boundaries. Works without the IDE. **It indexes
-  committed revisions, not your working tree** — during an in-flight rename it returns paths that no
-  longer exist, so confirm a hit still exists before acting on it.
-- **`mcp__idea__*` — the live project model, for when you do know the name, and for everything
-  search can't do.** Exact, resolution-aware lookups (`search_symbol`, `get_symbol_info`,
-  `analyze_calls` for call graphs, `include_external` for library symbols) plus diagnostics and
-  edits: `get_file_problems`, `lint_files`, `reformat_file`, `rename_refactoring`, `build_project`.
-  Reads the working tree, so it sees uncommitted edits. **Requires the IDE open on the project.**
-
-**jbcontext to locate, `idea` to verify and change.** Note the jbcontext `PreToolUse` hook runs in
-`--mode enforce` and blocks Bash discovery (`find`, `grep`, `git log`) until a semantic search has
-run this session — so a jbcontext search comes first even when the exact lookup you want is an
-`idea` call.
-
 ## Superpowers skills
 
 - Never commit anything to git when following a superpowers skill — skip any commit steps entirely.

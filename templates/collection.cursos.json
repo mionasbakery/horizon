@@ -19,8 +19,9 @@
           "name": "Mionas: Title",
           "settings": {
             "text": "<p>{{ closest.collection.title }}</p>",
-            "role": "display-lg",
-            "variant": "default",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
             "tag": "h1"
           }
         },
@@ -29,8 +30,9 @@
           "name": "Mionas: Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
-            "role": "body-lg",
-            "variant": "default",
+            "variant": "body",
+            "size": "lg",
+            "color": "default",
             "tag": "p"
           }
         }
@@ -60,8 +62,9 @@
           "name": "Kicker",
           "settings": {
             "text": "<p>PRÓXIMAS FECHAS</p>",
-            "role": "label-md",
-            "variant": "primary",
+            "variant": "label",
+            "size": "md",
+            "color": "primary",
             "tag": "h2"
           }
         },
@@ -183,8 +186,9 @@
               "name": "Heading",
               "settings": {
                 "text": "<p>CÓMO ES EL CURSO</p>",
-                "role": "title-sm",
-                "variant": "default",
+                "variant": "title",
+                "size": "sm",
+                "color": "default",
                 "tag": "h2"
               }
             },
@@ -193,8 +197,9 @@
               "name": "Lead",
               "settings": {
                 "text": "<p>En nuestro obrador de Sitges · 2–3h · grupos de 8–10 · incluye ingredientes, delantal y tus cookies para llevar. Nivel: todos.</p>",
-                "role": "body-md",
-                "variant": "default",
+                "variant": "body",
+                "size": "md",
+                "color": "default",
                 "tag": "p"
               }
             }

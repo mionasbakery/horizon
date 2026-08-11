@@ -29,8 +29,9 @@
           "name": "Mionas: Title",
           "settings": {
             "text": "<p>{{ closest.collection.title }}</p>",
-            "role": "display-lg",
-            "variant": "default",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
             "tag": "h1"
           },
           "blocks": {}
@@ -40,8 +41,9 @@
           "name": "Mionas: Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
-            "role": "body-lg",
-            "variant": "default",
+            "variant": "body",
+            "size": "lg",
+            "color": "default",
             "tag": "p"
           },
           "blocks": {}
@@ -200,8 +202,9 @@
                   "name": "Mionas: Title",
                   "settings": {
                     "text": "<p>{{ closest.product.title }}</p>",
-                    "role": "title-sm",
-                    "variant": "default",
+                    "variant": "title",
+                    "size": "sm",
+                    "color": "default",
                     "tag": "p"
                   },
                   "blocks": {}
