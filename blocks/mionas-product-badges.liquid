@@ -1,6 +1,12 @@
 {%- comment -%}
   Badges on a product card: short labels like "Sin gluten" or "Nuevo", from the product's
-  custom.badges metafield -- a list of `badge` metaobjects, each carrying a `label` and a `kind`.
+  custom.badges metafield -- a list of `badge` metaobjects, each carrying a `label`, a `kind`, and
+  optional `background_color` / `foreground_color` fields (Shopify `color` type -- an admin color
+  picker, storing "#rrggbb" or blank). A background always forces the fill look regardless of
+  kind's own default -- see the stylesheet's `--colored` rule -- so a badge like "Vegana" can carry
+  its own color instead of every badge of a kind sharing one look. No automatic contrast pairing
+  between the two fields: the merchant picks both and can make a badge unreadable if they choose
+  colors that clash, the same as in any design tool.
 
   WHY A METAFIELD AND NOT TAGS: mionasbakery publishes two locales, es (primary) and ca, and Shopify
   tags are not translatable content. A badge stored as a tag would render its Spanish string on the
@@ -64,6 +70,8 @@
       {%- liquid
         assign badge_kind = badge.kind.value
         assign badge_label = badge.label.value
+        assign badge_background = badge.background_color.value
+        assign badge_foreground = badge.foreground_color.value
 
         comment
           snippets/mionas-text.liquid outputs `content` unfiltered and says so in its doc: callers
@@ -79,6 +87,23 @@
         assign badge_variant = 'default'
 
         assign badge_class = 'mionas-product-badges__badge mionas-product-badges__badge--' | append: badge_kind
+
+        comment
+          `background_color`/`foreground_color` are Shopify `color`-type fields -- a real color
+          picker in admin, storing a "#rrggbb" string or blank, never free text. That format
+          guarantee is what makes it safe to drop straight into an inline style below with no
+          escaping. Deliberately NO automatic contrast pairing between the two: the merchant picks
+          both, same as they would in any design tool, and can make a badge unreadable if they
+          choose colors that clash. Blank background means "use the kind's default fill/outline".
+        endcomment
+        assign badge_style = ''
+        if badge_background != blank
+          assign badge_class = badge_class | append: ' mionas-product-badges__badge--colored'
+          assign badge_style = '--mionas-product-badge-accent: ' | append: badge_background | append: ';'
+          if badge_foreground != blank
+            assign badge_style = badge_style | append: ' --mionas-product-badge-accent-foreground: ' | append: badge_foreground | append: ';'
+          endif
+        endif
       -%}
       {%- if badge_label != blank -%}
         {%- if kind_filter == 'all' or kind_filter == badge_kind -%}
@@ -89,7 +114,8 @@
               size: size_step,
               color: badge_variant,
               tag: 'span',
-              class: badge_class
+              class: badge_class,
+              style: badge_style
             -%}
           </li>
         {%- endif -%}
@@ -199,16 +225,30 @@
     text-transform: uppercase;
   }
 
-  /* Loud, because it is promotion. */
+  /* Loud, because it is promotion. --mionas-product-badge-accent is unset by default, so the
+     fallback is what renders until a --color-* modifier below sets it. */
   .text-role.mionas-product-badges__badge--highlight {
-    background: var(--mionas-product-badge-highlight-background);
+    background: var(--mionas-product-badge-accent, var(--mionas-product-badge-highlight-background));
     color: var(--mionas-product-badge-highlight-foreground);
   }
 
   /* Quiet, because it is a fact. Same shape and size as the highlight one so the two read as one
      family; only the fill differs. The transparent border above is what keeps them the same size. */
   .text-role.mionas-product-badges__badge--information {
-    border-color: var(--mionas-product-badge-information-border-color);
+    border-color: var(--mionas-product-badge-accent, var(--mionas-product-badge-information-border-color));
+  }
+
+  /* A colored badge always renders filled, whatever its kind's own default is -- picking a color
+     is the merchant saying "make this one stand out," and an outline with a colored border alone
+     reads as weaker than the highlight kind's fill. --mionas-product-badge-accent and its
+     -foreground counterpart arrive as an inline style from the badge's own background_color /
+     foreground_color fields (both Shopify `color`-type, a real picker -- see the Liquid comment
+     above), not from a class, so any hex the merchant picks reaches here with no new CSS rule.
+     Two classes deep, matching the kind rules above, for the same equal-specificity reason. */
+  .text-role.mionas-product-badges__badge--colored {
+    background: var(--mionas-product-badge-accent);
+    border-color: transparent;
+    color: var(--mionas-product-badge-accent-foreground, var(--mionas-product-badge-highlight-foreground));
   }
 {% endstylesheet %}
 

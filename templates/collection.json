@@ -32,7 +32,11 @@
             "variant": "display",
             "size": "lg",
             "color": "default",
-            "tag": "h1"
+            "tag": "h1",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -44,7 +48,11 @@
             "variant": "body",
             "size": "lg",
             "color": "default",
-            "tag": "p"
+            "tag": "p",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         }
@@ -127,21 +135,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_product_badges_overlay": {
-              "type": "mionas-product-badges",
-              "name": "Mionas: Product badges (overlay)",
-              "settings": {
-                "kind": "highlight",
-                "placement": "overlay",
-                "corner": "top-left",
-                "size": "label-sm",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "card-gallery": {
               "type": "_product-card-gallery",
               "settings": {
@@ -160,7 +153,7 @@
             },
             "product_card_group_MVYq3W": {
               "type": "_product-card-group",
-              "name": "t:names.group",
+              "name": "Product info",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -197,21 +190,9 @@
                 "padding-inline-end": 16
               },
               "blocks": {
-                "mionas_text_aYPqUG": {
-                  "type": "mionas-text",
-                  "name": "Mionas: Title",
-                  "settings": {
-                    "text": "<p>{{ closest.product.title }}</p>",
-                    "variant": "title",
-                    "size": "sm",
-                    "color": "default",
-                    "tag": "p"
-                  },
-                  "blocks": {}
-                },
                 "mionas_product_badges_inline": {
                   "type": "mionas-product-badges",
-                  "name": "Mionas: Product badges (information)",
+                  "name": "Mionas: Product info badges",
                   "settings": {
                     "kind": "information",
                     "placement": "inline",
@@ -224,12 +205,28 @@
                   },
                   "blocks": {}
                 },
+                "mionas_text_aYPqUG": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Title",
+                  "settings": {
+                    "text": "<p>{{ closest.product.title }}</p>",
+                    "variant": "title",
+                    "size": "sm",
+                    "color": "default",
+                    "tag": "div",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
                 "mionas_price_x7cMcF": {
                   "type": "mionas-price",
                   "name": "Mionas: Price",
                   "settings": {
-                    "variant": "label",
-                    "size": "lg",
+                    "variant": "title",
+                    "size": "sm",
                     "color": "default",
                     "show_compare_at_price": false,
                     "padding-block-start": 0,
@@ -241,8 +238,8 @@
                 }
               },
               "block_order": [
-                "mionas_text_aYPqUG",
                 "mionas_product_badges_inline",
+                "mionas_text_aYPqUG",
                 "mionas_price_x7cMcF"
               ]
             },
@@ -250,7 +247,7 @@
               "type": "mionas-add-to-cart",
               "name": "Mionas: Add to cart",
               "settings": {
-                "label_add": "Añadir al carrito",
+                "label_add": "Añadir a la cesta",
                 "label_choose": "",
                 "label_sold_out": "",
                 "icon_only": false,
@@ -267,7 +264,6 @@
             }
           },
           "block_order": [
-            "mionas_product_badges_overlay",
             "card-gallery",
             "product_card_group_MVYq3W",
             "add_to_cart"

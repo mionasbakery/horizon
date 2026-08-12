@@ -21,7 +21,7 @@
   @param {string} [color] - A colour variant: default, primary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
   @param {string} [tag] - p, span, div or h1-h6. Anything else falls back to p.
   @param {string} [class] - Extra classes for the caller's own box (padding, weight overrides).
-  @param {string} [style] - Inline declarations for the caller's own box. Emitted unfiltered like `content`, but unlike `content` it is NOT for caller HTML -- it exists so a block can pass snippets/spacing-style.liquid output (the --padding-* custom properties behind Horizon's `spacing-style` class) alongside that class. Nothing else should go through here.
+  @param {string} [style] - Inline declarations for the caller's own box. Emitted unfiltered like `content`, but unlike `content` it is NOT for caller HTML -- it exists so a block can pass its own inline CSS, such as snippets/spacing-style.liquid output (the --padding-* custom properties behind Horizon's `spacing-style` class) or a per-instance custom property the caller already validated the shape of (blocks/mionas-product-badges.liquid's per-badge accent colors, sourced from a Shopify `color`-type field so they are guaranteed "#rrggbb" or blank). Never pass merchant free text through here.
   @param {string} [heading_level] - When set, emits role="heading" aria-level="<n>" instead of a real <h*>, matching snippets/text.liquid's product-title branch.
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
