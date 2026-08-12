@@ -10,9 +10,9 @@
   METAOBJECT FIELDS NEED `.value`. `badge.label.value`, not `badge.label` -- each field is a
   metafield drop. Getting this wrong renders blank labels rather than raising, so it fails silently.
 
-  ONE BLOCK, TWO PLACEMENTS. The card mounts this twice: once as an overlay of the commercial
-  badges over the image, once inline under the title for the dietary ones. `kind` is what routes
-  them, which is why it is a constrained choice on the metaobject rather than a free string.
+  ONE BLOCK, TWO PLACEMENTS. The card mounts this twice: once as an overlay of the highlight
+  badges over the image, once inline under the title for the information ones. `kind` is what
+  routes them, which is why it is a constrained choice on the metaobject rather than a free string.
 
   ITS OWN COMPONENT, INHERITING FROM NOTHING. The theme and ../design-system both contain
   badge-adjacent things -- ProductPromoCard's promo flag, Stamp's eyebrow, Horizon's sale/sold-out
@@ -72,7 +72,7 @@
         assign badge_label = badge_label | escape
 
         comment
-          Both kinds render at the role's `default` variant. The commercial fill's foreground is
+          Both kinds render at the role's `default` variant. The highlight fill's foreground is
           this component's own token, applied by the two-classes-deep rule in the stylesheet, so it
           does not borrow a role variant to get its colour.
         endcomment
@@ -135,9 +135,9 @@
     --mionas-product-badge-padding-inline: var(--space-xs);
     --mionas-product-badge-gap: var(--space-2xs);
     --mionas-product-badge-letter-spacing: 0.04em;
-    --mionas-product-badge-commercial-background: var(--brand-accent);
-    --mionas-product-badge-commercial-foreground: var(--brand-accent-inverse);
-    --mionas-product-badge-dietary-border-color: var(--color-warm-300);
+    --mionas-product-badge-highlight-background: var(--brand-accent);
+    --mionas-product-badge-highlight-foreground: var(--brand-accent-inverse);
+    --mionas-product-badge-information-border-color: var(--color-warm-300);
 
     display: flex;
     gap: var(--mionas-product-badge-gap);
@@ -200,15 +200,15 @@
   }
 
   /* Loud, because it is promotion. */
-  .text-role.mionas-product-badges__badge--commercial {
-    background: var(--mionas-product-badge-commercial-background);
-    color: var(--mionas-product-badge-commercial-foreground);
+  .text-role.mionas-product-badges__badge--highlight {
+    background: var(--mionas-product-badge-highlight-background);
+    color: var(--mionas-product-badge-highlight-foreground);
   }
 
-  /* Quiet, because it is a fact. Same shape and size as the commercial one so the two read as one
+  /* Quiet, because it is a fact. Same shape and size as the highlight one so the two read as one
      family; only the fill differs. The transparent border above is what keeps them the same size. */
-  .text-role.mionas-product-badges__badge--dietary {
-    border-color: var(--mionas-product-badge-dietary-border-color);
+  .text-role.mionas-product-badges__badge--information {
+    border-color: var(--mionas-product-badge-information-border-color);
   }
 {% endstylesheet %}
 
@@ -223,10 +223,10 @@
       "label": "Kind",
       "options": [
         { "value": "all", "label": "All" },
-        { "value": "dietary", "label": "Dietary" },
-        { "value": "commercial", "label": "Commercial" }
+        { "value": "information", "label": "Information" },
+        { "value": "highlight", "label": "Highlight" }
       ],
-      "default": "dietary",
+      "default": "information",
       "info": "Which badges from the product's Badges metafield this instance renders."
     },
     {

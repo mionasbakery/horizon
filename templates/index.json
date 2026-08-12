@@ -334,7 +334,7 @@
               "type": "mionas-product-badges",
               "name": "Mionas: Product badges (overlay)",
               "settings": {
-                "kind": "commercial",
+                "kind": "highlight",
                 "placement": "overlay",
                 "corner": "top-left",
                 "size": "label-sm",
@@ -375,9 +375,9 @@
             },
             "mionas_product_badges_inline": {
               "type": "mionas-product-badges",
-              "name": "Mionas: Product badges (dietary)",
+              "name": "Mionas: Product badges (information)",
               "settings": {
-                "kind": "dietary",
+                "kind": "information",
                 "placement": "inline",
                 "corner": "top-left",
                 "size": "label-sm",
