@@ -1,0 +1,115 @@
+{%- comment -%}
+  A labelled divider -- a short line of text centred between two horizontal rules, e.g.
+  "o envíanos un mensaje" between a WhatsApp CTA and a form. No design-system component to mirror:
+  ../design-system has no Divider. Built as its own block (not inlined into whatever composition
+  needed it first) because it is reused across at least two page compositions --
+  templates/page.contacto.json originally had this exact markup/CSS hand-rolled inside
+  blocks/mionas-contact-form.liquid, which owned no business rendering decorative copy between two
+  sibling blocks it doesn't control. See docs/superpowers/specs/2026-08-12-contacto-page-design.md.
+
+  Text renders through snippets/mionas-text.liquid so Variant/Size reuse the same
+  ../design-system/src/react/Text/Text.tsx role vocabulary every other Mionas text block does,
+  rather than this block inventing its own type scale. Colour is NOT one of the exposed settings,
+  though: this always spends --card-description-foreground (the same muted secondary-text token
+  blocks/mionas-map.liquid's empty state and the old inline divider both used), not Text's own
+  colour axis -- ".text-role.mionas-divider__text" beats ".text-role--<color>" on specificity for
+  the same reason blocks/mionas-price.liquid's ".text-role.mionas-price" does (see that file). A
+  divider is secondary copy by definition; if a caller ever needs a different colour, add the
+  setting then rather than guessing at the vocabulary now.
+
+  WIDTH IS FIXED AT 100%, NOT A SETTING. A divider that does not span its container has nothing to
+  divide -- shrink-to-fit is never the wanted behaviour, unlike blocks/mionas-text.liquid or
+  blocks/mionas-stamp.liquid, which are properly inline-ish elements. This was the original bug
+  reported after this block's first version shipped: the outer <div> shrank to its own text width
+  inside its parent group's column layout (every Mionas block earns this by an explicit width
+  setting; this one hard-codes it because there is no legitimate use case for a narrower divider).
+
+  ::before/::after keep the two lines out of the DOM so the text can be centred with plain flex gap
+  rather than manual width math -- moved verbatim from the original .mionas-contact-form__divider.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+%}
+{%- if block_settings.text != blank -%}
+  <div class="mionas-divider" {{ block.shopify_attributes }}>
+    <span class="mionas-divider__line"></span>
+    {%- render 'mionas-text',
+      content: block_settings.text,
+      variant: block_settings.variant,
+      size: block_settings.size,
+      tag: 'span',
+      class: 'mionas-divider__text'
+    -%}
+    <span class="mionas-divider__line"></span>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    text-align: center;
+  }
+
+  .mionas-divider__line {
+    flex: 1;
+    height: 1px;
+    background: var(--form-field-base-border-color);
+  }
+
+  /* (0,2,0), same trick blocks/mionas-price.liquid's ".text-role.mionas-price" uses -- beats the
+     ".text-role--<color>" class snippets/mionas-text.liquid also applies, at (0,1,0), so this
+     block's own muted colour always wins regardless of bundle order. See the file header comment
+     for why colour is fixed rather than a setting. */
+  .text-role.mionas-divider__text {
+    color: var(--card-description-foreground);
+    white-space: nowrap;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Divider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "o"
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "display", "label": "Display" },
+        { "value": "headline", "label": "Headline" },
+        { "value": "title", "label": "Title" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
+      ],
+      "default": "sm"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Divider",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

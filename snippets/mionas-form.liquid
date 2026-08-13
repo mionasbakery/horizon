@@ -11,6 +11,9 @@
     content     Required. The fields' markup, built with {% capture %} before rendering.
     class       Extra classes.
     attributes  Raw string appended to the wrapper tag.
+    gap         Optional CSS length (e.g. "24px"), overriding the column's gap between fields.
+                Defaults to --space-lg, Form.tsx's own `<Box gap="lg">` value. Additive: a caller
+                that passes nothing renders byte-identical to before this param existed.
     validate    Pass true to show client-side validation errors in the design system's own markup
                 instead of the browser's native bubble. Wraps the column in
                 <mionas-form-validation> and loads assets/mionas-form-validation.js, which sets
@@ -36,7 +39,11 @@
   endif
 %}
 {%- capture form_column -%}
-  <div class="{{ form_classes }}" {{ attributes }}>{{ content }}</div>
+  <div
+    class="{{ form_classes }}"
+    {% if gap %}style="--mionas-form-gap: {{ gap }};"{% endif %}
+    {{ attributes }}
+  >{{ content }}</div>
 {%- endcapture -%}
 
 {%- if validate -%}
@@ -69,12 +76,13 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* Form.tsx's <Box gap="lg">. --space-lg is what Box's gap="lg" resolves to. */
+  /* Form.tsx's <Box gap="lg">. --space-lg is what Box's gap="lg" resolves to, and is the fallback
+     when a caller passes no `gap` -- see the `gap` param above. */
   .mionas-form {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    gap: var(--space-lg);
+    gap: var(--mionas-form-gap, var(--space-lg));
   }
 
   /* `display: contents` is load-bearing, not tidiness. An unstyled custom element is `inline`, and

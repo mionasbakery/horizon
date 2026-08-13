@@ -56,6 +56,7 @@
   --radius-full: 999px;
   --icon-size-md: 20px;
   --border-width-thin: 1px;
+  --border-width-thick: 2px;
   --font-family-archivo: Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-family-oswald: Oswald, 'Arial Narrow', sans-serif;
   --font-size-11: 11px;
@@ -104,6 +105,7 @@
   --button-base-font-family: var(--font-family-archivo);
   --button-base-font-weight: 500;
   --button-secondary-background: rgba(11, 7, 140, 0.08);
+  --button-outline-shadow: inset 0 0 0 2px #0b078c;
   --button-size-sm-padding: 16px;
   --button-size-sm-font-size: 13px;
   --button-size-md-padding: 24px;
@@ -307,7 +309,6 @@
   --button-primary-background: #0b078c;
   --button-secondary-foreground: #0b078c;
   --button-outline-foreground: #0b078c;
-  --button-outline-border-color: #0b078c;
   --button-ghost-foreground: #0b078c;
   --button-inverse-primary-foreground: #0b078c;
   --card-note-background: #f7f2e3;

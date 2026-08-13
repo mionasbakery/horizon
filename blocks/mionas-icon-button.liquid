@@ -1,0 +1,138 @@
+{%- comment -%}
+  Ports ../design-system's --icon-button-base-* tokens (assets/design-tokens.css) into a circular
+  icon-only link. Those tokens have existed since the design system sync but had no Liquid consumer
+  until this block -- the Contacto page's Instagram/TikTok/WhatsApp row is the first.
+
+  `default` is the token-faithful surface: filled --icon-button-base-background/-foreground, exactly
+  what the tokens alone define. `outline` is a variant BEYOND what the tokens define -- white
+  background, a --card-base-border-* border, icon in --icon-button-base-foreground -- the same
+  "add a variant the tokens don't cover" move blocks/mionas-card.liquid's outline/plain variants
+  already made for the same reason: the Contacto page's social row needs a bordered look the base
+  tokens alone can't produce. See docs/superpowers/specs/2026-08-12-contacto-page-design.md.
+
+  Icon-only means the label is entirely the accessible name -- there is no visible text for a screen
+  reader to fall back on. `aria_label` is therefore effectively required, not decorative; it carries
+  no schema default on purpose; an empty accessible name is worse than an obviously-blank editor
+  field prompting a merchant to fill it in.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign variant = block_settings.variant | default: 'default'
+
+  assign icon_button_classes = 'mionas-icon-button'
+  unless variant == 'default'
+    assign icon_button_classes = icon_button_classes | append: ' mionas-icon-button--' | append: variant
+  endunless
+%}
+<a
+  {% if block_settings.link == blank %}
+    role="link"
+    aria-disabled="true"
+  {% else %}
+    href="{{ block_settings.link }}"
+  {% endif %}
+  class="{{ icon_button_classes }}"
+  aria-label="{{ block_settings.aria_label }}"
+  {% if block_settings.open_in_new_tab %}
+    target="_blank"
+    rel="noopener noreferrer"
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  <svg class="mionas-icon-button__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    {%- render 'icon', icon: block_settings.icon -%}
+  </svg>
+</a>
+
+{% stylesheet %}
+  .mionas-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--icon-button-base-size);
+    height: var(--icon-button-base-size);
+    border-radius: var(--icon-button-base-radius);
+    border: 1px solid transparent;
+    background: var(--icon-button-base-background);
+    color: var(--icon-button-base-foreground);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .mionas-icon-button__icon {
+    width: var(--icon-button-base-icon-size);
+    height: var(--icon-button-base-icon-size);
+  }
+
+  /* Additive variant, not part of ../design-system's own token set -- see the file header comment. */
+  .mionas-icon-button--outline {
+    background: #fff;
+    border-color: var(--card-base-border-color);
+    border-width: var(--card-base-border-width);
+    color: var(--icon-button-base-foreground);
+  }
+
+  .mionas-icon-button[aria-disabled="true"] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-icon-button:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Icon button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "instagram", "label": "Instagram" },
+        { "value": "tiktok", "label": "TikTok" },
+        { "value": "whatsapp", "label": "WhatsApp" }
+      ],
+      "default": "instagram"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Accessible name",
+      "info": "Announced by screen readers -- this button shows no visible text, so this is its only accessible name. Required in practice."
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "default"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Icon button",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

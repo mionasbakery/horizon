@@ -1,0 +1,513 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section_ebAgwU": {
+      "type": "section",
+      "blocks": {
+        "mionas_breadcrumbs_4MYrVd": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {
+            "menu": "",
+            "home_label": "Home",
+            "label": "Breadcrumb",
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        },
+        "mionas_text_ygndnJ": {
+          "type": "mionas-text",
+          "name": "Mionas: Title",
+          "settings": {
+            "text": "<p>Sobre nosotros</p>",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
+            "tag": "h1",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "mionas_text_k97Ddj": {
+          "type": "mionas-text",
+          "name": "Mionas: Description",
+          "settings": {
+            "text": "{{ closest.collection.description }}",
+            "variant": "body",
+            "size": "lg",
+            "color": "default",
+            "tag": "p",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "mionas_breadcrumbs_4MYrVd",
+        "mionas_text_ygndnJ",
+        "mionas_text_k97Ddj"
+      ],
+      "name": "t:names.heading",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "section_photo": {
+      "type": "section",
+      "name": "Foto",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "custom",
+        "section_height_custom": 33,
+        "background_media": "image",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image": "",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_story": {
+      "type": "section",
+      "blocks": {
+        "group_container": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 20,
+            "width": "custom",
+            "custom_width": 65,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "stamp_eyebrow": {
+              "type": "mionas-stamp",
+              "name": "Mionas: Stamp",
+              "settings": {
+                "text": "<p>Especialidad en cookies · Sitges</p>",
+                "size": "sm",
+                "variant": "accent",
+                "tag": "p"
+              },
+              "blocks": {}
+            },
+            "text_heading": {
+              "type": "mionas-text",
+              "name": "Mionas: Heading",
+              "settings": {
+                "text": "<p>Nuestra historia</p>",
+                "variant": "display",
+                "size": "lg",
+                "color": "default",
+                "tag": "h2",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_para_1": {
+              "type": "mionas-text",
+              "name": "Mionas: Text",
+              "settings": {
+                "text": "<p>Hola! Soy Maria, la fundadora de Mionas Bakery. Ingeniera informática de profesión y pastelera (y empresaria) por vocación.</p>",
+                "variant": "body",
+                "size": "md",
+                "color": "default",
+                "tag": "p",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_para_2": {
+              "type": "mionas-text",
+              "name": "Mionas: Text",
+              "settings": {
+                "text": "<p>Enamorada de mi carrera, de mis estudios, lo que un día fue mi pasión poco a poco se convirtió en mi losa. Y lo que un día fue una idea tonta —«oye, deberíamos abrir un obrador aquí en Sitges»— de repente (bueno, nada es tan de repente: pasaron 5 años hasta materializarlo) se convirtió en realidad. Y apostamos por ello, y nos dejamos llevar.</p>",
+                "variant": "body",
+                "size": "md",
+                "color": "default",
+                "tag": "p",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_para_3": {
+              "type": "mionas-text",
+              "name": "Mionas: Text",
+              "settings": {
+                "text": "<p>Inauguramos el 31 de mayo de 2025 en Sitges, en una callecita del centro, un obrador especializado en cookies americanas. Cada día tenemos una vitrina llena de cookies. De vez en cuando también puedes encontrar otras de nuestras especialidades: el brookie de la casa, cinnamon rolls o cheesecakes. También elaboramos mini cookies, mega cookies y pasteles (layer cakes) por encargo.</p>",
+                "variant": "body",
+                "size": "md",
+                "color": "default",
+                "tag": "p",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "group_salto": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 20,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "image_salto": {
+                  "type": "image",
+                  "name": "Image",
+                  "settings": {
+                    "image": "",
+                    "link": "",
+                    "image_ratio": "landscape",
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fill",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "group_salto_copy": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 8,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "text_salto_heading": {
+                      "type": "mionas-text",
+                      "name": "Mionas: Text",
+                      "settings": {
+                        "text": "<p>El salto al vacío</p>",
+                        "variant": "title",
+                        "size": "sm",
+                        "color": "default",
+                        "tag": "p",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "text_salto_body": {
+                      "type": "mionas-text",
+                      "name": "Mionas: Text",
+                      "settings": {
+                        "text": "<p>Este proyecto es lo más ambicioso y el salto al vacío más grande que he hecho nunca. Si quieres seguir nuestro día a día, te invito a seguirnos en Instagram — y si quieres probar nuestras cookies, pásate por la sección de cookies y cajas y déjate llevar.</p>",
+                        "variant": "body",
+                        "size": "sm",
+                        "color": "default",
+                        "tag": "p",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_salto_heading",
+                    "text_salto_body"
+                  ]
+                }
+              },
+              "block_order": [
+                "image_salto",
+                "group_salto_copy"
+              ]
+            },
+            "group_cta": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "center",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "button_buy": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button",
+                  "settings": {
+                    "label": "Comprar cookies",
+                    "link": "shopify://collections/comprar-cookies",
+                    "open_in_new_tab": false,
+                    "variant": "primary",
+                    "size": "md",
+                    "full_width": false
+                  },
+                  "blocks": {}
+                },
+                "button_visit": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button",
+                  "settings": {
+                    "label": "Visita la tienda",
+                    "link": "/pages/contacto",
+                    "open_in_new_tab": false,
+                    "variant": "outline",
+                    "size": "md",
+                    "full_width": false
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "button_buy",
+                "button_visit"
+              ]
+            }
+          },
+          "block_order": [
+            "stamp_eyebrow",
+            "text_heading",
+            "text_para_1",
+            "text_para_2",
+            "text_para_3",
+            "group_salto",
+            "group_cta"
+          ]
+        }
+      },
+      "block_order": [
+        "group_container"
+      ],
+      "name": "Nuestra historia",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "vertical_alignment": "flex-start",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "flex-start",
+        "gap": 0,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 44,
+        "padding-block-end": 60
+      }
+    }
+  },
+  "order": [
+    "section_ebAgwU",
+    "section_photo",
+    "section_story"
+  ]
+}

@@ -41,13 +41,18 @@
   {% else %}
     href="{{ block_settings.link }}"
   {% endif %}
-  class="mionas-link mionas-link--{{ variant }}{% unless size == 'md' %} mionas-link--{{ size }}{% endunless %}"
+  class="mionas-link mionas-link--{{ variant }}{% unless size == 'md' %} mionas-link--{{ size }}{% endunless %}{% if block_settings.icon != blank and block_settings.icon != 'none' %} mionas-link--with-icon{% endif %}"
   {% if block_settings.open_in_new_tab %}
     target="_blank"
     rel="noopener noreferrer"
   {% endif %}
   {{ block.shopify_attributes }}
 >
+  {%- if block_settings.icon != blank and block_settings.icon != 'none' -%}
+    <svg class="mionas-link__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      {%- render 'icon', icon: block_settings.icon -%}
+    </svg>
+  {%- endif -%}
   {{- block_settings.label -}}
 </a>
 
@@ -67,6 +72,18 @@
   .mionas-link[aria-disabled="true"] {
     cursor: default;
     pointer-events: none;
+  }
+
+  .mionas-link--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .mionas-link__icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
   }
 
   .mionas-link--sm {
@@ -128,6 +145,17 @@
         { "value": "md", "label": "Medium" }
       ],
       "default": "md"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "phone", "label": "Phone" },
+        { "value": "mail", "label": "Mail" }
+      ],
+      "default": "none"
     }
   ],
   "presets": [

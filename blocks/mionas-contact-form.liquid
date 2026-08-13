@@ -10,22 +10,40 @@
   visible per-field labels carrying the design's own wording. See
   docs/superpowers/specs/2026-07-25-contacto-page-design.md.
 
-  This block owns only what the design system has no component for: the card surface, the heading,
-  the submit button, the note and the success banner. Every field is a snippet -- so are the
-  underline, the label colours and the error message -- which is what keeps this form and any future
-  Mionas form from drifting apart. Do not re-add field CSS here.
+  THIS BLOCK OWNS ONLY THE FIELDS, THE SUBMIT BUTTON, AND THE FORM'S OWN VALIDATION/SUCCESS STATE --
+  nothing else. No card, no heading, no WhatsApp CTA, no divider. blocks/mionas-email-signup.liquid
+  follows the identical rule for its one field; read that file's header comment too, the two should
+  never drift apart on this point. Every one of those excluded things is composable in the page
+  template instead: a Mionas: Card wraps this block (and whatever siblings a page wants -- a
+  Mionas: Text heading, a Mionas: Button CTA, another Mionas: Text as a lead-in line) when a carded
+  look is wanted; a bare page with no card wrapper is equally valid. See
+  docs/superpowers/specs/2026-08-12-contacto-page-design.md.
 
-  FIELD NAMING IS LOAD-BEARING. Shopify's contact form only special-cases name, email, phone and
-  body; any other key is printed literally as a label in the merchant's notification email. That
-  failure is invisible in the theme editor and in a screenshot, so keep the field names exactly
-  contact[name], contact[email] and contact[body] -- do not rename them.
+  Two earlier versions of this file existed before landing here -- one where the block drew its own
+  card around everything including a heading/WhatsApp button/divider it also owned, and one where it
+  drew a narrower card around just the fields (matching an earlier reading of
+  blocks/mionas-email-signup.liquid). Both put card ownership inside a form block; asked directly,
+  the answer is that NEITHER a contact form nor an email signup should own a card at all -- the card
+  is composition, not a form concern, and belongs in the template next to whatever the card is
+  wrapping. Do not reintroduce a `.mionas-contact-form__card` (or any surface: background/border/
+  radius/shadow) here.
+
+  FIELD NAMING IS LOAD-BEARING. Per Shopify's own contact-form docs
+  (shopify.dev/docs/storefronts/themes/customer-engagement/add-contact-form), contact[first_name],
+  contact[last_name], contact[email], contact[phone], contact[body] and contact[order_number] are
+  all natively recognised names -- do not rename any of these six. Keep the field names exactly
+  contact[first_name], contact[last_name], contact[email] and contact[body] below.
+
+  contact[request_type] is a CUSTOM field, not one of the six recognised names above -- Shopify
+  titleizes a custom field's identifier into its label in the merchant notification email (its own
+  docs use "request_type" -> "Request type" as the worked example for exactly this dropdown case),
+  so it still reads cleanly, just as its own labelled line rather than folding into a native field.
+  Renaming it to one of the six recognised names above would silently overwrite that field instead
+  of adding a new one -- don't do that.
 
   Known platform limitation, same as blocks/corporate-quote-form.liquid: Shopify's `form` object
   only echoes back name, email, phone and body, so nothing custom repopulates after a validation
   error. Do not work around it.
-
-  This block draws its own card surface rather than nesting inside mionas-card -- the same choice
-  corporate-quote-form.liquid made, and it keeps the heading and the fields in one schema.
 
   CLIENT-SIDE ERRORS ARE JS-DRIVEN ON PURPOSE. `validate: true` on the mionas-form render below
   loads assets/mionas-form-validation.js, which sets `novalidate` on the form FROM JAVASCRIPT and
@@ -43,25 +61,51 @@
 
   The submit button is NOT wrapped in snippets/mionas-form-actions.liquid. FormActions is a row with
   a start inset, meant for a button and a link side by side; this form has one full-width button,
-  and the inset would leave it flush right but indented left.
+  and the inset would leave it flush right but indented left. It IS still rendered by this block
+  (unlike the card/heading/CTA above) because it must sit inside the <form> element to submit it --
+  that is an HTML requirement, not a styling choice, so it cannot become a separate sibling block the
+  way the card/heading/CTA could.
+
+  The `note` param passed to snippets/mionas-submit-button.liquid below is that snippet's OWN note
+  slot, not a duplicate paragraph -- do not re-add a bespoke `.mionas-contact-form__note` element.
+
+  FIELD GAP IS A SETTING, NOT A HARDCODED VALUE. Both this block and mionas-email-signup expose a
+  `field_gap` range, forwarded to snippets/mionas-form.liquid's `gap` param. Default matches
+  Form.tsx's own `<Box gap="lg">` (--space-lg / 24px) so an untouched instance looks identical to
+  before this setting existed.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
   assign form_id = block.id | prepend: 'MionasContactForm-'
 
+  # Same layout-classes/width-custom-property pattern as blocks/mionas-email-signup.liquid, so the
+  # two form blocks are equally configurable in the editor (Width, Width on mobile, Padding) and a
+  # page composing either one reaches for the same settings.
+  assign layout_classes = 'mionas-contact-form'
+
   # The field ids are derived here rather than inline at the render call: the render tag does not
   # accept filters on its arguments. The prefilled VALUES cannot be derived here -- they read the
   # `form` object, which only exists inside the form tag below.
-  assign name_field_id = form_id | append: '-name'
+  assign first_name_field_id = form_id | append: '-first-name'
+  assign last_name_field_id = form_id | append: '-last-name'
   assign email_field_id = form_id | append: '-email'
+  assign request_type_field_id = form_id | append: '-request-type'
   assign body_field_id = form_id | append: '-body'
 %}
 
-<div class="mionas-contact-form" {{ block.shopify_attributes }}>
-  {%- if block_settings.heading != blank -%}
-    <p class="mionas-contact-form__heading">{{ block_settings.heading }}</p>
-  {%- endif -%}
-
+<div
+  class="{{ layout_classes }} spacing-style"
+  style="
+    {%- render 'spacing-style', settings: block_settings -%}
+    {%- if block_settings.width == 'custom' -%}
+      --mionas-contact-form-width: {{ block_settings.custom_width }}%;
+    {%- endif -%}
+    {%- if block_settings.width_mobile == 'custom' -%}
+      --mionas-contact-form-width-mobile: {{ block_settings.custom_width_mobile }}%;
+    {%- endif -%}
+  "
+  {{ block.shopify_attributes }}
+>
   {%- form 'contact', id: form_id -%}
     <input name="contact[id]" type="hidden" value="{{ form_id }}">
 
@@ -83,15 +127,22 @@
       endif
 
       # Prefills, assigned here rather than in the block's opening liquid tag: the `form` object is
-      # scoped to the form tag, so reading form.name/form.email outside it yields nothing and the
-      # field silently comes back empty after a failed submit -- exactly when the user least wants
-      # to retype it. Shopify only echoes name, email, phone and body back, which is why the message
-      # field below repopulates but nothing else custom could.
+      # scoped to the form tag, so reading form.email outside it yields nothing and the field
+      # silently comes back empty after a failed submit -- exactly when the user least wants to
+      # retype it.
+      #
+      # form.name/form.first_name/form.last_name are deliberately NOT used here: Shopify's generic
+      # form-object docs list only body/email/errors/id/posted_successfully? for a contact form --
+      # no name, first_name or last_name -- so neither field repopulates after a failed submit for
+      # any visitor, logged in or not. customer.first_name/customer.last_name (the real Customer
+      # object properties, not form echoes) are used purely as the logged-in-customer default,
+      # same role customer.email already played below.
       #
       # Tag names are spelled out in prose in these comments on purpose: a literal percent-brace
       # sequence inside a `#` comment line is still parsed as a tag, and naming a block tag that way
       # opens one the parser then never sees closed.
-      assign name_value = form.name | default: customer.name
+      assign first_name_value = customer.first_name
+      assign last_name_value = customer.last_name
       assign email_value = form.email | default: customer.email
     %}
 
@@ -105,13 +156,25 @@
     {%- capture contact_form_fields -%}
       {%- render 'mionas-text-field',
         label: block_settings.label_name,
-        name: 'contact[name]',
-        id: name_field_id,
-        value: name_value,
-        autocomplete: 'name',
+        name: 'contact[first_name]',
+        id: first_name_field_id,
+        value: first_name_value,
+        autocomplete: 'given-name',
         required: false,
         optional_text: block_settings.optional_text
       -%}
+
+      {%- if block_settings.label_last_name != blank -%}
+        {%- render 'mionas-text-field',
+          label: block_settings.label_last_name,
+          name: 'contact[last_name]',
+          id: last_name_field_id,
+          value: last_name_value,
+          autocomplete: 'family-name',
+          required: false,
+          optional_text: block_settings.optional_text
+        -%}
+      {%- endif -%}
 
       {%- render 'mionas-text-field',
         label: block_settings.label_email,
@@ -126,6 +189,29 @@
         error: email_error
       -%}
 
+      {%- if block_settings.label_subject != blank -%}
+        {%- capture subject_control -%}
+          <select
+            class="mionas-text-field__input mionas-contact-form__subject-select"
+            id="{{ request_type_field_id }}"
+            name="contact[request_type]"
+          >
+            <option value="">{{ block_settings.subject_placeholder }}</option>
+            <option value="{{ block_settings.subject_option_1 | escape }}">{{ block_settings.subject_option_1 | escape }}</option>
+            <option value="{{ block_settings.subject_option_2 | escape }}">{{ block_settings.subject_option_2 | escape }}</option>
+            <option value="{{ block_settings.subject_option_3 | escape }}">{{ block_settings.subject_option_3 | escape }}</option>
+            <option value="{{ block_settings.subject_option_4 | escape }}">{{ block_settings.subject_option_4 | escape }}</option>
+          </select>
+        {%- endcapture -%}
+        {%- render 'mionas-form-field',
+          control: subject_control,
+          label: block_settings.label_subject,
+          for: request_type_field_id,
+          required: false,
+          optional_text: block_settings.optional_text
+        -%}
+      {%- endif -%}
+
       {%- render 'mionas-text-field',
         label: block_settings.label_message,
         name: 'contact[body]',
@@ -137,34 +223,39 @@
         optional_text: block_settings.optional_text
       -%}
 
-      <button type="submit" class="mionas-contact-form__submit">
-        {{- block_settings.submit_label -}}
-      </button>
-
-      {%- if block_settings.note != blank -%}
-        <p class="mionas-contact-form__note">{{ block_settings.note }}</p>
-      {%- endif -%}
+      {%- render 'mionas-submit-button',
+        label: block_settings.submit_label,
+        variant: block_settings.submit_variant,
+        note: block_settings.note
+      -%}
     {%- endcapture -%}
 
-    {%- render 'mionas-form', content: contact_form_fields, validate: true -%}
+    {%- liquid
+      # The render tag does not accept filters on its arguments -- see the field-id comment above --
+      # so the px suffix has to be applied here first.
+      assign field_gap_css = block_settings.field_gap | append: 'px'
+    -%}
+    {%- render 'mionas-form', content: contact_form_fields, validate: true, gap: field_gap_css -%}
   {%- endform -%}
 </div>
 
 {% stylesheet %}
-  /* The card surface, matching mionas-card's base rule. flex-basis: auto (via width: 100%) keeps
-     the form from collapsing vertically when the section stacks to a column on mobile; the desktop
-     override below zeroes it so the row splits by the group widths instead of by this 100%.
-     Same reasoning as corporate-quote-form.liquid, which hit the identical problem. */
+  /* No surface of its own -- see the file header comment. flex: 1 1 auto with width: 100% keeps the
+     block from collapsing when a parent section stacks to a column on mobile; the desktop override
+     zeroes flex-basis so a row splits by the sibling widths instead of by this 100%. Check
+     mionas-form.liquid and mionas-email-signup.liquid when tuning this -- all three carry the same
+     pattern. */
   .mionas-contact-form {
     flex: 1 1 auto;
     min-width: 0;
-    width: 100%;
-    background: var(--card-base-background);
-    border: var(--card-base-border-width) solid var(--card-base-border-color);
-    border-radius: var(--card-base-radius);
-    box-shadow: var(--card-base-shadow);
-    padding: var(--space-lg);
+    width: var(--mionas-contact-form-width, 100%);
     font-family: var(--font-family-archivo);
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-contact-form {
+      width: var(--mionas-contact-form-width-mobile, var(--mionas-contact-form-width, 100%));
+    }
   }
 
   @media screen and (min-width: 750px) {
@@ -173,46 +264,11 @@
     }
   }
 
-  .mionas-contact-form__heading {
-    margin: 0 0 var(--space-md);
-    font-size: var(--text-role-title-sm-font-size);
-    line-height: var(--text-role-title-sm-line-height);
-    letter-spacing: var(--text-role-title-sm-letter-spacing);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-  }
-
-  /* The submit button reproduces mionas-button's primary/md/full-width look. It cannot render that
-     block -- a block can't nest another block inside its own <form> -- so it spends the same
-     --button-* tokens directly. Keep the two in agreement. */
-  .mionas-contact-form__submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: var(--button-size-md-height);
-    padding: 0 var(--button-size-md-padding);
-    border: 1.5px solid transparent;
-    border-radius: var(--button-base-radius);
-    background: var(--button-primary-background);
-    color: var(--button-primary-foreground);
-    font-family: var(--font-family-archivo);
-    font-size: var(--button-size-md-font-size);
-    font-weight: var(--button-base-font-weight);
-    cursor: pointer;
-  }
-
-  .mionas-contact-form__submit:active {
-    transform: scale(var(--button-state-pressed-scale));
-    opacity: var(--button-state-pressed-opacity);
-  }
-
-  /* Secondary body text, so this spends Card's description token rather than a form-label one. */
-  .mionas-contact-form__note {
-    margin: 0;
-    color: var(--card-description-foreground);
-    font-size: var(--font-size-13);
-    text-align: center;
+  /* .mionas-text-field__input sets appearance: none, which strips the native chevron this select
+     needs to read as a dropdown rather than plain text. Scoped here, not in that shared class,
+     since only this one control needs it. */
+  .mionas-contact-form__subject-select {
+    appearance: auto;
   }
 
   /* No error banner counterpart: field-level errors are FormError's job, rendered by the field
@@ -232,15 +288,15 @@
   "settings": [
     {
       "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Escríbenos"
-    },
-    {
-      "type": "text",
       "id": "label_name",
       "label": "Name label",
       "default": "Nombre"
+    },
+    {
+      "type": "text",
+      "id": "label_last_name",
+      "label": "Last name label",
+      "default": "Apellidos"
     },
     {
       "type": "text",
@@ -253,6 +309,42 @@
       "id": "placeholder_email",
       "label": "Email placeholder",
       "default": "tu@email.com"
+    },
+    {
+      "type": "text",
+      "id": "label_subject",
+      "label": "Subject label",
+      "default": "Asunto"
+    },
+    {
+      "type": "text",
+      "id": "subject_placeholder",
+      "label": "Subject placeholder",
+      "default": "Elige un tema…"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_1",
+      "label": "Subject option 1",
+      "default": "Un pedido"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_2",
+      "label": "Subject option 2",
+      "default": "Tarta por encargo"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_3",
+      "label": "Subject option 3",
+      "default": "Empresas y eventos"
+    },
+    {
+      "type": "text",
+      "id": "subject_option_4",
+      "label": "Subject option 4",
+      "default": "Otro"
     },
     {
       "type": "text",
@@ -274,6 +366,27 @@
       "default": "opcional"
     },
     {
+      "type": "range",
+      "id": "field_gap",
+      "label": "Gap between fields",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24,
+      "info": "24px matches the design system's own Form spacing (--space-lg)."
+    },
+    {
+      "type": "select",
+      "id": "submit_variant",
+      "label": "Submit button style",
+      "options": [
+        { "value": "primary", "label": "Primary (filled)" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
       "type": "text",
       "id": "submit_label",
       "label": "Submit label",
@@ -290,6 +403,97 @@
       "id": "success_text",
       "label": "Success message",
       "default": "¡Mensaje enviado! Te respondemos en 24–48h laborables."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "options": [
+        { "value": "fill", "label": "Fill available space" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "fill",
+      "info": "Fill lets the block share a row with its siblings and split the space between them. A custom width overrides that."
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "label": "Width",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "width_mobile",
+      "label": "Width on mobile",
+      "options": [
+        { "value": "fill", "label": "Fill available space" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width_mobile",
+      "label": "Width on mobile",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

@@ -16,6 +16,10 @@
   Accepts:
     label   Required. Button text.
     note    Optional. Secondary line below the button, centered. Blank renders nothing.
+    variant Optional. 'outline' switches to a transparent/bordered look, spending the same
+            --button-outline-* tokens .mionas-button--outline does. Anything else (including
+            blank) keeps today's filled primary look -- existing callers pass nothing and are
+            unaffected.
     class   Extra classes on the button.
 
   Renders the button and the note as SIBLINGS with no wrapper, so the caller's own flex column
@@ -23,6 +27,9 @@
 {%- endcomment -%}
 {% liquid
   assign submit_classes = 'mionas-submit-button'
+  if variant == 'outline'
+    assign submit_classes = submit_classes | append: ' mionas-submit-button--outline'
+  endif
   if class
     assign submit_classes = submit_classes | append: ' ' | append: class
   endif
@@ -55,6 +62,14 @@
   .mionas-submit-button:active {
     transform: scale(var(--button-state-pressed-scale));
     opacity: var(--button-state-pressed-opacity);
+  }
+
+  /* Additive outline variant -- see blocks/mionas-contact-form.liquid's submit_variant setting.
+     Existing callers pass no `variant` and keep the filled .mionas-submit-button look above. */
+  .mionas-submit-button--outline {
+    background: transparent;
+    color: var(--button-outline-foreground);
+    box-shadow: var(--button-outline-shadow);
   }
 
   /* Secondary body text, so this spends Card's description token rather than a form-label one. */

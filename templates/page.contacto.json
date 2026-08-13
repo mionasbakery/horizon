@@ -9,185 +9,859 @@
  */
 {
   "sections": {
-    "mionas_breadcrumbs_PGC002": {
-      "type": "mionas-breadcrumbs",
-      "name": "Mionas: Breadcrumbs",
-      "settings": {
-        "home_label": "Home",
-        "label": "Breadcrumb",
-        "section_width": "page-width",
-        "background_color": "",
-        "padding-block-start": 12,
-        "padding-block-end": 12
-      }
-    },
-    "visita": {
+    "contacto": {
       "type": "section",
       "blocks": {
         "heading": {
           "type": "mionas-text",
+          "name": "Mionas: Heading",
           "settings": {
-            "text": "<p>Ven a visitarnos</p>",
-            "variant": "headline",
-            "size": "md",
-            "tag": "h1"
-          }
+            "text": "<p>Contacto</p>",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
+            "tag": "h1",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "subtitle": {
+          "type": "mionas-text",
+          "name": "Mionas: Subtitle",
+          "settings": {
+            "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
+            "variant": "body",
+            "size": "lg",
+            "color": "default",
+            "tag": "p",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
         "columns": {
           "type": "group",
+          "name": "Columns",
           "settings": {
             "content_direction": "row",
-            "vertical_on_mobile": true,
-            "vertical_alignment": "flex-start",
-            "gap": 34,
-            "width": "fill"
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 24,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
-            "left": {
+            "group_pV83HJ": {
               "type": "group",
+              "name": "Group: Contact form",
               "settings": {
                 "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
-                "gap": 16,
-                "width": "custom",
-                "custom_width": 55,
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 50,
                 "width_mobile": "fill",
-                "custom_width_mobile": 100
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {
-                "map": {
-                  "type": "mionas-map",
-                  "settings": {
-                    "address": "Carrer Major, XX, 08870 Sitges, Barcelona",
-                    "zoom": 15,
-                    "height": 240,
-                    "title": "Mapa de la ubicación de Mionas Bakery"
-                  }
-                },
-                "info": {
+                "mionas_card_BebNXD": {
                   "type": "mionas-card",
+                  "name": "Mionas: Card",
                   "settings": {
                     "variant": "default",
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 16,
                     "width": "fill",
-                    "gap": 8,
-                    "padding-block-start": 16,
-                    "padding-block-end": 16,
-                    "padding-inline-start": 16,
-                    "padding-inline-end": 16
+                    "custom_width": 40,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fill",
+                    "custom_height": 100,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "padding-block-start": 24,
+                    "padding-block-end": 24,
+                    "padding-inline-start": 24,
+                    "padding-inline-end": 24
                   },
                   "blocks": {
-                    "info_name": {
+                    "mionas_text_hQxt8D": {
                       "type": "mionas-text",
+                      "name": "Mionas: Heading",
                       "settings": {
-                        "text": "<p>Mionas Bakery</p>",
+                        "text": "",
                         "variant": "title",
                         "size": "sm",
-                        "tag": "p"
-                      }
+                        "color": "default",
+                        "tag": "p",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
                     },
-                    "info_address": {
-                      "type": "mionas-text",
+                    "mionas_button_fWdrxR": {
+                      "type": "mionas-button",
+                      "name": "Mionas: Button",
                       "settings": {
-                        "text": "<p>[Carrer Major, XX] · 08870 Sitges, Barcelona</p>",
-                        "variant": "body",
-                        "size": "md",
-                        "tag": "p"
-                      }
-                    },
-                    "info_hours": {
-                      "type": "mionas-text",
-                      "settings": {
-                        "text": "<p><strong>Horario:</strong> [L–D · 9:00–20:30]</p>",
-                        "variant": "body",
-                        "size": "md",
-                        "tag": "p"
-                      }
-                    },
-                    "info_pickup": {
-                      "type": "mionas-text",
-                      "settings": {
-                        "text": "<p><strong>Recogida de pedidos:</strong> [franja horaria]</p>",
-                        "variant": "body",
-                        "size": "md",
-                        "tag": "p"
-                      }
-                    }
-                  },
-                  "block_order": ["info_name", "info_address", "info_hours", "info_pickup"]
-                },
-                "whatsapp": {
-                  "type": "mionas-button",
-                  "settings": {
-                    "label": "WhatsApp — respuesta más rápida",
-                    "link": "https://wa.me/34XXXXXXXXX",
-                    "open_in_new_tab": true,
-                    "variant": "primary",
-                    "size": "md",
-                    "full_width": true
-                  }
-                },
-                "links": {
-                  "type": "group",
-                  "settings": {
-                    "content_direction": "row",
-                    "horizontal_alignment": "center",
-                    "gap": 10,
-                    "width": "fill"
-                  },
-                  "blocks": {
-                    "link_phone": {
-                      "type": "mionas-link",
-                      "settings": {
-                        "label": "[teléfono]",
-                        "link": "tel:+34XXXXXXXXX",
-                        "variant": "primary",
-                        "size": "sm"
-                      }
-                    },
-                    "link_email": {
-                      "type": "mionas-link",
-                      "settings": {
-                        "label": "hola@mionasbakery.com",
-                        "link": "mailto:hola@mionasbakery.com",
-                        "variant": "primary",
-                        "size": "sm"
-                      }
-                    },
-                    "link_instagram": {
-                      "type": "mionas-link",
-                      "settings": {
-                        "label": "@mionasbakery_sitges",
-                        "link": "https://www.instagram.com/mionasbakery_sitges",
+                        "label": "Escríbenos por WhatsApp",
+                        "link": "https://wa.me/34XXXXXXXXX",
                         "open_in_new_tab": true,
                         "variant": "primary",
-                        "size": "sm"
-                      }
+                        "size": "lg",
+                        "full_width": true
+                      },
+                      "blocks": {}
+                    },
+                    "mionas_divider_WG4hiT": {
+                      "type": "mionas-divider",
+                      "name": "Mionas: Divider",
+                      "settings": {
+                        "text": "o envíanos un mensaje",
+                        "variant": "label",
+                        "size": "md"
+                      },
+                      "blocks": {}
+                    },
+                    "mionas_contact_form_WewLVH": {
+                      "type": "mionas-contact-form",
+                      "name": "Mionas: Contact form",
+                      "settings": {
+                        "label_name": "Nombre",
+                        "label_last_name": "Apellidos",
+                        "label_email": "Email",
+                        "placeholder_email": "tu@email.com",
+                        "label_subject": "Asunto",
+                        "subject_placeholder": "Elige un tema…",
+                        "subject_option_1": "Un pedido",
+                        "subject_option_2": "Tarta por encargo",
+                        "subject_option_3": "Empresas y eventos",
+                        "subject_option_4": "Otro",
+                        "label_message": "Mensaje",
+                        "placeholder_message": "¿En qué te ayudamos?",
+                        "optional_text": "opcional",
+                        "field_gap": 24,
+                        "submit_variant": "outline",
+                        "submit_label": "Enviar mensaje",
+                        "note": "Respuesta en 24–48h laborables",
+                        "success_text": "¡Mensaje enviado! Te respondemos en 24–48h laborables.",
+                        "width": "fill",
+                        "custom_width": 100,
+                        "width_mobile": "fill",
+                        "custom_width_mobile": 100,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
                     }
                   },
-                  "block_order": ["link_phone", "link_email", "link_instagram"]
+                  "block_order": [
+                    "mionas_text_hQxt8D",
+                    "mionas_button_fWdrxR",
+                    "mionas_divider_WG4hiT",
+                    "mionas_contact_form_WewLVH"
+                  ]
                 }
               },
-              "block_order": ["map", "info", "whatsapp", "links"]
+              "block_order": [
+                "mionas_card_BebNXD"
+              ]
             },
-            "form": {
-              "type": "mionas-contact-form",
-              "settings": {}
+            "info": {
+              "type": "group",
+              "name": "Group: Store info",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 16,
+                "width": "custom",
+                "custom_width": 60,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "group_UFhtwm": {
+                  "type": "group",
+                  "name": "Columns",
+                  "settings": {
+                    "content_direction": "row",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 12,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fill",
+                    "custom_height": 40,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "mionas_card_Cb3XYY": {
+                      "type": "mionas-card",
+                      "name": "Mionas: Visit us card",
+                      "settings": {
+                        "variant": "default",
+                        "content_direction": "column",
+                        "vertical_on_mobile": true,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "align_baseline": false,
+                        "horizontal_alignment_flex_direction_column": "flex-start",
+                        "vertical_alignment_flex_direction_column": "flex-start",
+                        "gap": 12,
+                        "width": "fill",
+                        "custom_width": 100,
+                        "width_mobile": "fill",
+                        "custom_width_mobile": 100,
+                        "height": "fill",
+                        "custom_height": 100,
+                        "link": "",
+                        "open_in_new_tab": false,
+                        "padding-block-start": 20,
+                        "padding-block-end": 20,
+                        "padding-inline-start": 20,
+                        "padding-inline-end": 20
+                      },
+                      "blocks": {
+                        "mionas_text_dwCwCH": {
+                          "type": "mionas-text",
+                          "name": "Mionas: Title",
+                          "settings": {
+                            "text": "<p>Ven a visitarnos</p>",
+                            "variant": "title",
+                            "size": "sm",
+                            "color": "default",
+                            "tag": "p",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        },
+                        "mionas_text_WUpHUe": {
+                          "type": "mionas-text",
+                          "name": "Mionas: Address",
+                          "settings": {
+                            "text": "<p>Carrer de Sant Bonaventura, 16<br/>08870 Sitges, Barcelona<br/>España</p>",
+                            "variant": "body",
+                            "size": "md",
+                            "color": "default",
+                            "tag": "p",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        },
+                        "mionas_link_y8gUya": {
+                          "type": "mionas-link",
+                          "name": "Mionas: Link",
+                          "settings": {
+                            "label": "hola@mionasbakery.com",
+                            "link": "mailto:hola@mionasbakery.com",
+                            "open_in_new_tab": false,
+                            "variant": "primary",
+                            "size": "md",
+                            "icon": "mail"
+                          },
+                          "blocks": {}
+                        },
+                        "mionas_link_Lpj6bQ": {
+                          "type": "mionas-link",
+                          "name": "Mionas: Link",
+                          "settings": {
+                            "label": "93 334 82 46",
+                            "link": "",
+                            "open_in_new_tab": false,
+                            "variant": "primary",
+                            "size": "md",
+                            "icon": "phone"
+                          },
+                          "blocks": {}
+                        },
+                        "group_QAJTUa": {
+                          "type": "group",
+                          "name": "Socials",
+                          "settings": {
+                            "content_direction": "row",
+                            "vertical_on_mobile": false,
+                            "horizontal_alignment": "flex-start",
+                            "vertical_alignment": "center",
+                            "align_baseline": false,
+                            "horizontal_alignment_flex_direction_column": "flex-start",
+                            "vertical_alignment_flex_direction_column": "center",
+                            "gap": 10,
+                            "width": "fit-content",
+                            "custom_width": 100,
+                            "width_mobile": "fit-content",
+                            "custom_width_mobile": 100,
+                            "height": "fit",
+                            "custom_height": 100,
+                            "background_media": "none",
+                            "background_color": "",
+                            "video_position": "cover",
+                            "background_image_position": "cover",
+                            "toggle_overlay": false,
+                            "overlay_color": "#00000026",
+                            "overlay_style": "solid",
+                            "gradient_direction": "to top",
+                            "border": "none",
+                            "border_width": 1,
+                            "border_opacity": 100,
+                            "border_color": "",
+                            "border_radius": 0,
+                            "link": "",
+                            "open_in_new_tab": false,
+                            "placeholder": "",
+                            "padding-block-start": 4,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {
+                            "mionas_icon_button_r7jrMJ": {
+                              "type": "mionas-icon-button",
+                              "name": "Mionas: Icon button",
+                              "settings": {
+                                "icon": "instagram",
+                                "aria_label": "Instagram",
+                                "link": "https://www.instagram.com/mionasbakery_sitges",
+                                "open_in_new_tab": true,
+                                "variant": "outline"
+                              },
+                              "blocks": {}
+                            },
+                            "mionas_icon_button_H4GHKj": {
+                              "type": "mionas-icon-button",
+                              "name": "Mionas: Icon button",
+                              "settings": {
+                                "icon": "tiktok",
+                                "aria_label": "TikTok",
+                                "link": "",
+                                "open_in_new_tab": true,
+                                "variant": "outline"
+                              },
+                              "blocks": {}
+                            },
+                            "mionas_icon_button_c68Vga": {
+                              "type": "mionas-icon-button",
+                              "name": "Mionas: Icon button",
+                              "settings": {
+                                "icon": "whatsapp",
+                                "aria_label": "WhatsApp",
+                                "link": "https://wa.me/34XXXXXXXXX",
+                                "open_in_new_tab": true,
+                                "variant": "outline"
+                              },
+                              "blocks": {}
+                            }
+                          },
+                          "block_order": [
+                            "mionas_icon_button_r7jrMJ",
+                            "mionas_icon_button_H4GHKj",
+                            "mionas_icon_button_c68Vga"
+                          ]
+                        }
+                      },
+                      "block_order": [
+                        "mionas_text_dwCwCH",
+                        "mionas_text_WUpHUe",
+                        "mionas_link_y8gUya",
+                        "mionas_link_Lpj6bQ",
+                        "group_QAJTUa"
+                      ]
+                    },
+                    "mionas_card_GBQLYT": {
+                      "type": "mionas-card",
+                      "name": "Mionas: Horario card",
+                      "settings": {
+                        "variant": "default",
+                        "content_direction": "column",
+                        "vertical_on_mobile": true,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "align_baseline": false,
+                        "horizontal_alignment_flex_direction_column": "flex-start",
+                        "vertical_alignment_flex_direction_column": "flex-start",
+                        "gap": 8,
+                        "width": "fill",
+                        "custom_width": 100,
+                        "width_mobile": "fill",
+                        "custom_width_mobile": 100,
+                        "height": "fill",
+                        "custom_height": 100,
+                        "link": "",
+                        "open_in_new_tab": false,
+                        "padding-block-start": 20,
+                        "padding-block-end": 20,
+                        "padding-inline-start": 20,
+                        "padding-inline-end": 20
+                      },
+                      "blocks": {
+                        "mionas_text_nzHxRc": {
+                          "type": "mionas-text",
+                          "name": "Mionas: Title",
+                          "settings": {
+                            "text": "<p>Horario</p>",
+                            "variant": "title",
+                            "size": "sm",
+                            "color": "default",
+                            "tag": "p",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        },
+                        "group_CWEBAD": {
+                          "type": "group",
+                          "name": "Martes",
+                          "settings": {
+                            "content_direction": "row",
+                            "vertical_on_mobile": false,
+                            "horizontal_alignment": "space-between",
+                            "vertical_alignment": "flex-start",
+                            "align_baseline": false,
+                            "horizontal_alignment_flex_direction_column": "flex-start",
+                            "vertical_alignment_flex_direction_column": "center",
+                            "gap": 10,
+                            "width": "fill",
+                            "custom_width": 100,
+                            "width_mobile": "fill",
+                            "custom_width_mobile": 100,
+                            "height": "fit",
+                            "custom_height": 100,
+                            "background_media": "none",
+                            "background_color": "",
+                            "video_position": "cover",
+                            "background_image_position": "cover",
+                            "toggle_overlay": false,
+                            "overlay_color": "#00000026",
+                            "overlay_style": "solid",
+                            "gradient_direction": "to top",
+                            "border": "none",
+                            "border_width": 1,
+                            "border_opacity": 100,
+                            "border_color": "",
+                            "border_radius": 0,
+                            "link": "",
+                            "open_in_new_tab": false,
+                            "placeholder": "",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {
+                            "mionas_text_k83whE": {
+                              "type": "mionas-text",
+                              "name": "Mionas: Day",
+                              "settings": {
+                                "text": "<p>Martes - Sábado</p>",
+                                "variant": "body",
+                                "size": "md",
+                                "color": "default",
+                                "tag": "span",
+                                "padding-block-start": 0,
+                                "padding-block-end": 0,
+                                "padding-inline-start": 0,
+                                "padding-inline-end": 0
+                              },
+                              "blocks": {}
+                            },
+                            "mionas_text_xexpWX": {
+                              "type": "mionas-text",
+                              "name": "Mionas: Hours",
+                              "settings": {
+                                "text": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
+                                "variant": "body",
+                                "size": "md",
+                                "color": "default",
+                                "tag": "span",
+                                "padding-block-start": 0,
+                                "padding-block-end": 0,
+                                "padding-inline-start": 0,
+                                "padding-inline-end": 0
+                              },
+                              "blocks": {}
+                            }
+                          },
+                          "block_order": [
+                            "mionas_text_k83whE",
+                            "mionas_text_xexpWX"
+                          ]
+                        },
+                        "group_riJWBR": {
+                          "type": "group",
+                          "name": "Domingo",
+                          "settings": {
+                            "content_direction": "row",
+                            "vertical_on_mobile": false,
+                            "horizontal_alignment": "space-between",
+                            "vertical_alignment": "center",
+                            "align_baseline": false,
+                            "horizontal_alignment_flex_direction_column": "flex-start",
+                            "vertical_alignment_flex_direction_column": "center",
+                            "gap": 10,
+                            "width": "fill",
+                            "custom_width": 100,
+                            "width_mobile": "fill",
+                            "custom_width_mobile": 100,
+                            "height": "fit",
+                            "custom_height": 100,
+                            "background_media": "none",
+                            "background_color": "",
+                            "video_position": "cover",
+                            "background_image_position": "cover",
+                            "toggle_overlay": false,
+                            "overlay_color": "#00000026",
+                            "overlay_style": "solid",
+                            "gradient_direction": "to top",
+                            "border": "none",
+                            "border_width": 1,
+                            "border_opacity": 100,
+                            "border_color": "",
+                            "border_radius": 0,
+                            "link": "",
+                            "open_in_new_tab": false,
+                            "placeholder": "",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {
+                            "mionas_text_7EiDX3": {
+                              "type": "mionas-text",
+                              "name": "Mionas: Day",
+                              "settings": {
+                                "text": "<p>Domingo</p>",
+                                "variant": "body",
+                                "size": "md",
+                                "color": "default",
+                                "tag": "span",
+                                "padding-block-start": 0,
+                                "padding-block-end": 0,
+                                "padding-inline-start": 0,
+                                "padding-inline-end": 0
+                              },
+                              "blocks": {}
+                            },
+                            "mionas_text_B3e8Nd": {
+                              "type": "mionas-text",
+                              "name": "Mionas: Hours",
+                              "settings": {
+                                "text": "<p>10:00 - 14:00</p>",
+                                "variant": "body",
+                                "size": "md",
+                                "color": "default",
+                                "tag": "span",
+                                "padding-block-start": 0,
+                                "padding-block-end": 0,
+                                "padding-inline-start": 0,
+                                "padding-inline-end": 0
+                              },
+                              "blocks": {}
+                            }
+                          },
+                          "block_order": [
+                            "mionas_text_7EiDX3",
+                            "mionas_text_B3e8Nd"
+                          ]
+                        },
+                        "group_m7rq6t": {
+                          "type": "group",
+                          "name": "Lunes",
+                          "settings": {
+                            "content_direction": "row",
+                            "vertical_on_mobile": false,
+                            "horizontal_alignment": "space-between",
+                            "vertical_alignment": "flex-start",
+                            "align_baseline": false,
+                            "horizontal_alignment_flex_direction_column": "flex-start",
+                            "vertical_alignment_flex_direction_column": "center",
+                            "gap": 10,
+                            "width": "fill",
+                            "custom_width": 100,
+                            "width_mobile": "fill",
+                            "custom_width_mobile": 100,
+                            "height": "fit",
+                            "custom_height": 100,
+                            "background_media": "none",
+                            "background_color": "",
+                            "video_position": "cover",
+                            "background_image_position": "cover",
+                            "toggle_overlay": false,
+                            "overlay_color": "#00000026",
+                            "overlay_style": "solid",
+                            "gradient_direction": "to top",
+                            "border": "none",
+                            "border_width": 1,
+                            "border_opacity": 100,
+                            "border_color": "",
+                            "border_radius": 0,
+                            "link": "",
+                            "open_in_new_tab": false,
+                            "placeholder": "",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {
+                            "mionas_text_Wp9Trd": {
+                              "type": "mionas-text",
+                              "name": "Mionas: Day",
+                              "settings": {
+                                "text": "<p>Lunes</p>",
+                                "variant": "body",
+                                "size": "md",
+                                "color": "default",
+                                "tag": "span",
+                                "padding-block-start": 0,
+                                "padding-block-end": 0,
+                                "padding-inline-start": 0,
+                                "padding-inline-end": 0
+                              },
+                              "blocks": {}
+                            },
+                            "mionas_text_6KftEM": {
+                              "type": "mionas-text",
+                              "name": "Mionas: Hours",
+                              "settings": {
+                                "text": "<p>Cerrado</p>",
+                                "variant": "body",
+                                "size": "md",
+                                "color": "default",
+                                "tag": "span",
+                                "padding-block-start": 0,
+                                "padding-block-end": 0,
+                                "padding-inline-start": 0,
+                                "padding-inline-end": 0
+                              },
+                              "blocks": {}
+                            }
+                          },
+                          "block_order": [
+                            "mionas_text_Wp9Trd",
+                            "mionas_text_6KftEM"
+                          ]
+                        },
+                        "mionas_text_LyVtXm": {
+                          "type": "mionas-text",
+                          "name": "Mionas: Text",
+                          "settings": {
+                            "text": "<p>Los horarios pueden variar en días festivos. Consúltanos por WhatsApp o redes sociales para confirmar.</p>",
+                            "variant": "body",
+                            "size": "sm",
+                            "color": "default",
+                            "tag": "p",
+                            "padding-block-start": 16,
+                            "padding-block-end": 8,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        }
+                      },
+                      "block_order": [
+                        "mionas_text_nzHxRc",
+                        "group_CWEBAD",
+                        "group_riJWBR",
+                        "group_m7rq6t",
+                        "mionas_text_LyVtXm"
+                      ]
+                    }
+                  },
+                  "block_order": [
+                    "mionas_card_Cb3XYY",
+                    "mionas_card_GBQLYT"
+                  ]
+                },
+                "map": {
+                  "type": "mionas-map",
+                  "name": "Mionas: Map",
+                  "settings": {
+                    "address": "Mionas Bakery",
+                    "zoom": 15,
+                    "height": 380,
+                    "title": "Mapa de la ubicación de Mionas Bakery"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "group_UFhtwm",
+                "map"
+              ]
             }
           },
-          "block_order": ["left", "form"]
+          "block_order": [
+            "group_pV83HJ",
+            "info"
+          ]
         }
       },
-      "block_order": ["heading", "columns"],
-      "name": "Visita",
+      "block_order": [
+        "heading",
+        "subtitle",
+        "columns"
+      ],
+      "name": "Contacto",
       "settings": {
         "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "flex-start",
-        "gap": 18,
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 8,
         "section_width": "page-width",
-        "padding-block-start": 34,
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
         "padding-block-end": 64
       }
     }
   },
-  "order": ["mionas_breadcrumbs_PGC002", "visita"]
+  "order": [
+    "contacto"
+  ]
 }
