@@ -765,51 +765,34 @@
               },
               "blocks": {}
             },
-            "mionas_card_signup": {
-              "type": "mionas-card",
-              "name": "Mionas: Card",
+            "mionas_email_signup_AdjRU4": {
+              "type": "mionas-email-signup",
+              "name": "Mionas: email signup",
               "settings": {
-                "variant": "default",
-                "content_direction": "column",
-                "gap": 0,
+                "email_label": "Email",
+                "email_placeholder": "",
+                "button_label": "Suscribirme",
+                "button_width": "fit",
+                "success_text": "¡Gracias! Ya estás suscrito.",
+                "customer_tag": "",
+                "layout": "stacked",
                 "width": "fill",
-                "padding-block-start": 16,
-                "padding-block-end": 16,
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {
-                "mionas_email_signup_AdjRU4": {
-                  "type": "mionas-email-signup",
-                  "name": "Mionas: email signup",
-                  "settings": {
-                    "email_label": "",
-                    "email_placeholder": "Tu dirección de correo electrónico",
-                    "button_label": "Suscribirme",
-                    "button_width": "fit",
-                    "success_text": "¡Gracias! Ya estás suscrito.",
-                    "customer_tag": "",
-                    "layout": "stacked",
-                    "width": "fill",
-                    "custom_width": 100,
-                    "width_mobile": "fill",
-                    "custom_width_mobile": 100,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": ["mionas_email_signup_AdjRU4"]
+              "blocks": {}
             }
           },
           "block_order": [
             "mionas_text_TxwLqj",
             "mionas_text_E74aRt",
             "mionas_text_PHRkcU",
-            "mionas_card_signup"
+            "mionas_email_signup_AdjRU4"
           ]
         }
       },

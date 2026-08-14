@@ -267,10 +267,97 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "group_YqhCBM": {
+              "type": "group",
+              "name": "Links",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 0,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "mionas_link_7NKyLY": {
+                  "type": "mionas-link",
+                  "name": "Mionas: Link - Sobre nosotros",
+                  "settings": {
+                    "label": "Sobre nosotros",
+                    "link": "shopify://pages/sobre-nosotros",
+                    "open_in_new_tab": false,
+                    "variant": "inverse-primary-muted",
+                    "size": "sm",
+                    "icon": "none"
+                  },
+                  "blocks": {}
+                },
+                "mionas_link_pq6RUL": {
+                  "type": "mionas-link",
+                  "name": "Mionas: Link - Contacto",
+                  "settings": {
+                    "label": "Contacto",
+                    "link": "shopify://pages/contacto",
+                    "open_in_new_tab": false,
+                    "variant": "inverse-primary-muted",
+                    "size": "sm",
+                    "icon": "none"
+                  },
+                  "blocks": {}
+                },
+                "mionas_link_J9PJjF": {
+                  "type": "mionas-link",
+                  "name": "Mionas: Link - Contacto",
+                  "settings": {
+                    "label": "FAQ",
+                    "link": "shopify://pages/contacto",
+                    "open_in_new_tab": false,
+                    "variant": "inverse-primary-muted",
+                    "size": "sm",
+                    "icon": "none"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "mionas_link_7NKyLY",
+                "mionas_link_pq6RUL",
+                "mionas_link_J9PJjF"
+              ]
             }
           },
           "block_order": [
-            "mionas_text_JNcgWF"
+            "mionas_text_JNcgWF",
+            "group_YqhCBM"
           ]
         },
         "group_T7QEim": {

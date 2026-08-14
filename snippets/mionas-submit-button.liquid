@@ -4,6 +4,7 @@
   @param {string} label - Button text
   @param {string} [note] - Secondary line below the button, centered. Blank renders nothing.
   @param {string} [variant] - 'outline' switches to a transparent/bordered look; anything else keeps the filled primary look
+  @param {string} [size] - 'sm', 'md' or 'lg', spending --button-size-<size>-*. Defaults to 'md'.
   @param {string} [class] - Extra classes on the button
 {%- enddoc -%}
 
@@ -29,6 +30,9 @@
             --button-outline-* tokens .mionas-button--outline does. Anything else (including
             blank) keeps today's filled primary look -- existing callers pass nothing and are
             unaffected.
+    size    Optional. 'sm' or 'lg' switch height/padding/font-size to --button-size-sm-*/-lg-*.
+            Anything else (including blank) keeps today's --button-size-md-* look -- existing
+            callers pass nothing and are unaffected.
     class   Extra classes on the button.
 
   Renders the button and the note as SIBLINGS with no wrapper, so the caller's own flex column
@@ -38,6 +42,9 @@
   assign submit_classes = 'mionas-submit-button'
   if variant == 'outline'
     assign submit_classes = submit_classes | append: ' mionas-submit-button--outline'
+  endif
+  if size == 'sm' or size == 'lg'
+    assign submit_classes = submit_classes | append: ' mionas-submit-button--' | append: size
   endif
   if class
     assign submit_classes = submit_classes | append: ' ' | append: class
@@ -79,6 +86,20 @@
     background: transparent;
     color: var(--button-outline-foreground);
     box-shadow: var(--button-outline-shadow);
+  }
+
+  /* Additive size variants -- default (no modifier class) stays --button-size-md-*, matching
+     every existing caller. */
+  .mionas-submit-button--sm {
+    height: var(--button-size-sm-height);
+    padding: 0 var(--button-size-sm-padding);
+    font-size: var(--button-size-sm-font-size);
+  }
+
+  .mionas-submit-button--lg {
+    height: var(--button-size-lg-height);
+    padding: 0 var(--button-size-lg-padding);
+    font-size: var(--button-size-lg-font-size);
   }
 
   /* Secondary body text, so this spends Card's description token rather than a form-label one. */

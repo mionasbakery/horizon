@@ -1,6 +1,7 @@
 {%- doc -%}
   Renders a contact form built from the Mionas form snippets, wrapping a single {% form 'contact' %}.
-  Owns only fields, submit button and validation/success state -- no card, heading, or divider.
+  Owns only fields, submit button and validation/success state, with an optional card-style surface
+  around the fields (`field_surface`) -- no heading or divider of its own.
 
   Reads `customer` (to prefill name/email) and Shopify's `form`/`request` objects directly; it takes no render-time parameters.
 {%- enddoc -%}
@@ -10,12 +11,20 @@
   reskinning blocks/contact-form.liquid because that block hard-codes its fields onto one row with
   hidden labels and no per-field slots to restyle.
 
-  Owns only the fields, submit button and validation/success state -- no card, heading, CTA or
-  divider. Those are composed in the page template instead (wrap this block in a Mionas: Card,
-  etc.); do not add a surface (background/border/shadow) here.
+  Owns only the fields, submit button and validation/success state -- no heading, CTA or divider.
+  Those are composed in the page template instead (wrap this block in a Mionas: Card, etc.).
 
-  Field names must stay contact[name], contact[email], contact[body] -- Shopify recognises these
-  and titles/echoes them in the merchant email and error messages. Renaming breaks that.
+  `field_surface` duplicates Mionas: Card's own --card-* tokens onto a `<div>` wrapping the fields,
+  not the button rendered after it -- see blocks/mionas-email-signup.liquid's header comment for why
+  it doesn't reuse the actual Card component. Turn it off if the block is already wrapped in one.
+
+  EVERY FIELD EXCEPT EMAIL CAN BE HIDDEN OR MADE OPTIONAL (`show_*`/`require_*` below) -- email
+  stays permanently visible and required since Shopify's contact endpoint depends on it.
+
+  Field names must stay contact[name], contact[email], contact[phone], contact[body] -- Shopify
+  recognises these and titles/echoes them in the merchant email and error messages. Renaming breaks
+  that. Phone defaults to optional (required: false) -- Shopify's contact endpoint doesn't require
+  it either, matching the native blocks/contact-form.liquid and blocks/corporate-quote-form.liquid.
 
   Client-side errors are JS-driven (assets/mionas-form-validation.js, via `validate: true` below)
   so a visitor without JS still gets native browser validation.
@@ -29,6 +38,7 @@
   # Derived here, not inline at the render call -- render doesn't accept filters on its arguments.
   assign name_field_id = form_id | append: '-name'
   assign email_field_id = form_id | append: '-email'
+  assign phone_field_id = form_id | append: '-phone'
   assign body_field_id = form_id | append: '-body'
 %}
 
@@ -72,6 +82,7 @@
       # submit -- customer.name is just the logged-in default.
       assign name_value = customer.name
       assign email_value = form.email | default: customer.email
+      assign phone_value = form.phone | default: customer.phone
     %}
 
     {%- if form.posted_successfully? and form_matches -%}
@@ -98,13 +109,18 @@
       </div>
     {%- else -%}
     {%- capture contact_form_fields -%}
-      {%- render 'mionas-text-field',
-        label: block_settings.label_name,
-        name: 'contact[name]',
-        id: name_field_id,
-        value: name_value,
-        autocomplete: 'name'
-      -%}
+      {%- if block_settings.show_name -%}
+        {%- render 'mionas-text-field',
+          label: block_settings.label_name,
+          name: 'contact[name]',
+          id: name_field_id,
+          value: name_value,
+          placeholder: block_settings.placeholder_name,
+          autocomplete: 'name',
+          required: block_settings.require_name,
+          optional_text: 'opcional'
+        -%}
+      {%- endif -%}
 
       {%- render 'mionas-text-field',
         label: block_settings.label_email,
@@ -119,25 +135,57 @@
         error: email_error
       -%}
 
-      {%- render 'mionas-text-field',
-        label: block_settings.label_message,
-        name: 'contact[body]',
-        id: body_field_id,
-        value: form.body,
-        placeholder: block_settings.placeholder_message,
-        rows: 5
-      -%}
+      {%- if block_settings.show_phone -%}
+        {%- render 'mionas-text-field',
+          label: block_settings.label_phone,
+          name: 'contact[phone]',
+          id: phone_field_id,
+          type: 'tel',
+          value: phone_value,
+          placeholder: block_settings.placeholder_phone,
+          autocomplete: 'tel',
+          inputmode: 'tel',
+          required: block_settings.require_phone,
+          optional_text: 'opcional'
+        -%}
+      {%- endif -%}
+
+      {%- if block_settings.show_message -%}
+        {%- render 'mionas-text-field',
+          label: block_settings.label_message,
+          name: 'contact[body]',
+          id: body_field_id,
+          value: form.body,
+          placeholder: block_settings.placeholder_message,
+          rows: 5,
+          required: block_settings.require_message,
+          optional_text: 'opcional'
+        -%}
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if block_settings.field_surface -%}
+      {%- capture contact_form_content -%}
+        <div class="mionas-contact-form__surface">{{ contact_form_fields }}</div>
+      {%- endcapture -%}
+    {%- else -%}
+      {%- assign contact_form_content = contact_form_fields -%}
+    {%- endif -%}
+
+    {%- capture contact_form_content -%}
+      {{ contact_form_content }}
 
       {%- render 'mionas-submit-button',
         label: block_settings.submit_label,
-        variant: block_settings.submit_variant
+        variant: block_settings.submit_variant,
+        size: block_settings.submit_size
       -%}
     {%- endcapture -%}
 
     {%- liquid
       assign field_gap_css = block_settings.field_gap | append: 'px'
     -%}
-    {%- render 'mionas-form', content: contact_form_fields, validate: true, gap: field_gap_css -%}
+    {%- render 'mionas-form', content: contact_form_content, validate: true, gap: field_gap_css -%}
     {%- endif -%}
   {%- endform -%}
 </div>
@@ -160,6 +208,28 @@
     .mionas-contact-form {
       flex-basis: 0;
     }
+  }
+
+  /* Duplicates Mionas: Card's own surface tokens -- see the header comment's `field_surface` note. */
+  .mionas-contact-form__surface {
+    background: var(--card-base-background);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--card-base-radius);
+    box-shadow: var(--card-base-shadow);
+    padding: var(--card-base-padding);
+    display: flex;
+    flex-direction: column;
+    gap: inherit;
+  }
+
+  /* Each field's underline bleeds to the surface's full width; padding-inline keeps the label/input
+     at their previous inset. width: auto overrides .mionas-form-field's own fixed width: 100%, which
+     otherwise leaves the right edge short under negative margins -- same fix as
+     blocks/mionas-email-signup.liquid's identical rule. */
+  .mionas-contact-form__surface .mionas-form-field {
+    width: auto;
+    margin-inline: calc(-1 * var(--card-base-padding));
+    padding-inline: var(--card-base-padding);
   }
 
   .mionas-contact-form__success {
@@ -201,34 +271,102 @@
   "tag": null,
   "settings": [
     {
+      "type": "checkbox",
+      "id": "show_name",
+      "label": "Show name field",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "label_name",
       "label": "Name label",
-      "default": "Nombre"
+      "default": "Nombre",
+      "visible_if": "{{ block.settings.show_name }}"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_name",
+      "label": "Name placeholder",
+      "visible_if": "{{ block.settings.show_name }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_name",
+      "label": "Require name",
+      "default": true,
+      "visible_if": "{{ block.settings.show_name }}"
     },
     {
       "type": "text",
       "id": "label_email",
       "label": "Email label",
-      "default": "Email"
+      "default": "Email",
+      "info": "Email is always shown and required -- Shopify's contact endpoint and the merchant notification both depend on it."
     },
     {
       "type": "text",
       "id": "placeholder_email",
-      "label": "Email placeholder",
-      "default": "tu@email.com"
+      "label": "Email placeholder"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone field",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_phone",
+      "label": "Phone label",
+      "default": "Teléfono",
+      "visible_if": "{{ block.settings.show_phone }}"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_phone",
+      "label": "Phone placeholder",
+      "visible_if": "{{ block.settings.show_phone }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_phone",
+      "label": "Require phone",
+      "default": false,
+      "visible_if": "{{ block.settings.show_phone }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_message",
+      "label": "Show message field",
+      "default": true
     },
     {
       "type": "text",
       "id": "label_message",
       "label": "Message label",
-      "default": "Mensaje"
+      "default": "Mensaje",
+      "visible_if": "{{ block.settings.show_message }}"
     },
     {
       "type": "text",
       "id": "placeholder_message",
       "label": "Message placeholder",
-      "default": "¿En qué te ayudamos?"
+      "default": "¿En qué te ayudamos?",
+      "visible_if": "{{ block.settings.show_message }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_message",
+      "label": "Require message",
+      "default": true,
+      "visible_if": "{{ block.settings.show_message }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "field_surface",
+      "label": "Card-style field surface",
+      "default": true,
+      "info": "Wraps the visible fields in the design system's card surface, with the button rendered outside it. Turn off if you're already wrapping this whole block in a Mionas: Card, to avoid boxing the fields twice."
     },
     {
       "type": "range",
@@ -238,8 +376,8 @@
       "max": 60,
       "step": 2,
       "unit": "px",
-      "default": 24,
-      "info": "24px matches the design system's own Form spacing (--space-lg)."
+      "default": 16,
+      "info": "16px matches the design system's own Form spacing (--space-md)."
     },
     {
       "type": "select",
@@ -250,6 +388,17 @@
         { "value": "outline", "label": "Outline" }
       ],
       "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "submit_size",
+      "label": "Submit button size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
     },
     {
       "type": "text",

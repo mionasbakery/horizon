@@ -1,7 +1,8 @@
 {%- doc -%}
-  The uppercase label above a form field. Renders nothing if text is blank.
+  The uppercase label above a form field. Renders an invisible, non-labelling placeholder of the
+  same height if text is blank, instead of a real <label>.
 
-  @param {string} text - The label copy. Blank renders nothing.
+  @param {string} text - The label copy. Blank renders a height-preserving placeholder, not a <label>.
   @param {string} [for] - The id of the control this labels. Optional but strongly preferred.
   @param {boolean} [required] - Defaults to true. Pass false to append the " (optional)" suffix.
   @param {boolean} [error] - Pass true for the error colour.
@@ -12,18 +13,17 @@
 {%- comment -%}
   Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx -- the uppercase label above a field.
 
-  BLANK TEXT RENDERS NOTHING AT ALL, and that is a correctness rule rather than tidiness. An empty
-  <label for="..."> does not merely fail to name its control -- it actively SUPPRESSES the name,
-  because an associated label outranks the placeholder in the accessible-name algorithm. Chrome
-  computed `name: ""` for the email signup's input while the label element was present and empty,
-  which leaves a screen reader announcing an unlabelled text field and leaves password managers
-  (1Password among them) unable to identify the field well enough to offer a fill. Dropping the
-  element lets the placeholder become the name instead. Do not "restore" the empty element for
-  layout reasons: mionas-form-field is a flex column with a gap, so an empty label also consumes
-  vertical space it has no business consuming.
+  BLANK TEXT NEVER RENDERS A REAL <label>. An empty <label for="..."> outranks the placeholder in
+  the accessible-name algorithm, so it suppresses the input's name rather than just failing to add
+  one -- Chrome confirmed `name: ""` on the email signup's input. Do not "restore" a real,
+  `for`-associated `<label>` here for layout reasons.
+
+  It renders a height-reserving `<span>` placeholder instead (see below), so a labelless field still
+  aligns with its labelled siblings. `aria-hidden` and no `for` keep it out of the accessible-name
+  problem above.
 
   Accepts:
-    text      The label copy. Blank renders nothing -- see above.
+    text      The label copy. Blank renders a height-reserving placeholder instead -- see above.
     for       Optional but strongly preferred: the id of the control this labels.
     required  Defaults to true, matching FormLabel.tsx's `required = true`. Pass false to append the
               " (optional)" suffix. This is an explicit `== false` test rather than
@@ -73,6 +73,8 @@
       <span class="mionas-form-label__optional"> ({{ optional_text | default: 'optional' }})</span>
     {%- endunless -%}
   </label>
+{%- else -%}
+  <span class="{{ label_classes }} mionas-form-label--placeholder" aria-hidden="true">&nbsp;</span>
 {%- endif -%}
 
 {% stylesheet %}
@@ -91,6 +93,11 @@
 
   .mionas-form-label--error {
     color: var(--form-label-state-error-foreground);
+  }
+
+  /* Occupies the same box a real label would without being seen or announced. */
+  .mionas-form-label--placeholder {
+    visibility: hidden;
   }
 
   /* FormLabel.module.css .optional -- deliberately pinned back to the base colour so the suffix

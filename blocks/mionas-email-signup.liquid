@@ -21,21 +21,19 @@
   merchant point a four-field form at the customer endpoint, where only contact[email] means
   anything and every other field is silently discarded. Do not open that door.
 
-  NO CARD OF ITS OWN. This block renders exactly two things -- the email field and a button under
-  it -- with no surface, no heading, no description and no note: a merchant who wants a title, a
-  carded look, or supporting copy adds a mionas-text block and/or a Mionas: Card around this one,
-  which gives them the full type scale and the theme's own card surface instead of one hard-coded
-  style baked into a form block. That is the same call mionas-form made when it dropped its heading
-  setting, and blocks/mionas-contact-form.liquid follows the identical rule -- read that file's
-  header comment too, the two should never drift apart on this point.
+  NO HEADING OR DESCRIPTION OF ITS OWN. A merchant who wants a title or supporting copy adds
+  a mionas-text block around this one instead, same call mionas-form and mionas-contact-form made.
+  The one exception is `consent_text` below, a single line of fine-print copy the form itself is
+  responsible for -- see NO CONSENT CHECKBOX further down for why.
 
-  The BLOCK has no surface of its own -- the outer wrapper is transparent with 0 default padding,
-  so this drops cleanly into a footer, a split panel, a coloured section, or inside a Mionas: Card a
-  page composes around it.
+  `field_surface` duplicates Mionas: Card's own --card-* tokens onto a plain `<div>` rather than
+  rendering an actual Card, because Card's `overflow: hidden` would clip a button sitting outside
+  its border, and a real child Card would force the field into a child block that can't read `form`.
+  Turn it off if the whole block is already wrapped in an actual Mionas: Card.
 
   FIELD GAP IS A SETTING, NOT A HARDCODED VALUE. `field_gap` below is forwarded to
   snippets/mionas-form.liquid's `gap` param -- the space between the field and the button. Default
-  matches Form.tsx's own `<Box gap="lg">` (--space-lg / 24px).
+  matches Form.tsx's own `<Box gap="md">` (--space-md / 16px).
 
   CLIENT-SIDE ERRORS ARE JS-DRIVEN ON PURPOSE. `validate: true` on the mionas-form render below
   loads assets/mionas-form-validation.js, which sets `novalidate` on the form FROM JAVASCRIPT and
@@ -55,8 +53,9 @@
   merchant would type, and it is what mionas-contact-form already shows.
 
   NO CONSENT CHECKBOX. Shopify records nothing from a client-side checkbox, so a required consent box
-  here would produce no auditable consent record. The honest equivalent is a line of copy in a
-  neighbouring mionas-text block, linking to the privacy policy.
+  here would produce no auditable consent record. The honest equivalent is a line of fine-print copy
+  linking to the privacy policy -- `consent_text` below, rendered outside the form's own gap-column
+  so it reads as a caption under the field+button rather than another gapped row.
 
   THE MULTI-INSTANCE GUARD IS UNVERIFIED ON THE CUSTOMER ENDPOINT. contact[id] demonstrably
   round-trips into form.id on the CONTACT endpoint -- that is what lets mionas-form and
@@ -148,7 +147,7 @@
       </div>
     {%- endif -%}
 
-    {%- capture email_signup_fields -%}
+    {%- capture email_field_markup -%}
       {%- render 'mionas-text-field',
         label: block_settings.email_label,
         name: 'contact[email]',
@@ -161,8 +160,20 @@
         autocapitalize: 'off',
         error: email_error
       -%}
+    {%- endcapture -%}
 
-      {%- render 'mionas-submit-button', label: button_label -%}
+    {%- capture email_signup_fields -%}
+      {%- if block_settings.field_surface -%}
+        <div class="mionas-email-signup__surface">{{ email_field_markup }}</div>
+      {%- else -%}
+        {{ email_field_markup }}
+      {%- endif -%}
+
+      {%- render 'mionas-submit-button',
+        label: button_label,
+        variant: block_settings.submit_variant,
+        size: block_settings.submit_size
+      -%}
     {%- endcapture -%}
 
     {%- liquid
@@ -171,6 +182,24 @@
       assign field_gap_css = block_settings.field_gap | append: 'px'
     -%}
     {%- render 'mionas-form', content: email_signup_fields, validate: true, gap: field_gap_css -%}
+
+    {%- comment -%}
+      Rendered as a sibling AFTER mionas-form, not folded into email_signup_fields, so it does not
+      pick up the form's flex gap or the inline layout's row treatment -- it reads as a caption under
+      the field+button, not a third item in the row/column.
+    {%- endcomment -%}
+    {%- capture consent_content -%}{% render 'mionas-inline-richtext', value: block_settings.consent_text %}{%- endcapture -%}
+    {%- assign consent_visible_text = consent_content | strip_html | strip -%}
+    {%- if consent_visible_text != blank -%}
+      {%- render 'mionas-text',
+        content: consent_content,
+        variant: 'label',
+        size: 'sm',
+        color: 'default',
+        tag: 'p',
+        class: 'mionas-email-signup__consent'
+      -%}
+    {%- endif -%}
   {%- endform -%}
 </div>
 
@@ -200,11 +229,36 @@
     }
   }
 
+  /* Duplicates Mionas: Card's own surface tokens -- see the header comment's `field_surface` note. */
+  .mionas-email-signup__surface {
+    background: var(--card-base-background);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--card-base-radius);
+    box-shadow: var(--card-base-shadow);
+    padding: var(--card-base-padding);
+  }
+
+  /* The field's underline bleeds to the surface's full width; the compensating padding-inline keeps
+     the label/input/error at their previous inset. width: auto overrides .mionas-form-field's own
+     fixed width: 100% -- a fixed width only shifts under negative margins, it doesn't grow, which
+     left the right edge short by the padding amount. */
+  .mionas-email-signup__surface .mionas-form-field {
+    width: auto;
+    margin-inline: calc(-1 * var(--card-base-padding));
+    padding-inline: var(--card-base-padding);
+  }
+
   .mionas-email-signup__success {
     display: flex;
     align-items: center;
     gap: var(--space-xs);
     margin-bottom: var(--space-md);
+  }
+
+  /* No design-system token for muted fine print, so this dims the default role colour directly. */
+  .mionas-email-signup__consent {
+    margin-top: var(--space-xs);
+    opacity: 0.7;
   }
 
   /* Button width, stacked layout. align-self is not optional alongside width: fit-content --
@@ -238,7 +292,8 @@
       align-items: flex-start;
     }
 
-    .mionas-email-signup--inline .mionas-form-field {
+    .mionas-email-signup--inline .mionas-form-field,
+    .mionas-email-signup--inline .mionas-email-signup__surface {
       flex: 1 1 auto;
     }
 
@@ -267,8 +322,7 @@
     {
       "type": "text",
       "id": "email_placeholder",
-      "label": "Email placeholder",
-      "default": "tu@email.com"
+      "label": "Email placeholder"
     },
     {
       "type": "text",
@@ -288,6 +342,34 @@
       "info": "Applies to the stacked layout. The inline layout always fits the button to its text, so the card has room."
     },
     {
+      "type": "select",
+      "id": "submit_variant",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Primary (filled)" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "submit_size",
+      "label": "Button size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "checkbox",
+      "id": "field_surface",
+      "label": "Card-style field surface",
+      "default": true,
+      "info": "Wraps just the email field in the design system's card surface, with the button rendered outside it. Turn off if you're already wrapping this whole block in a Mionas: Card, to avoid boxing the field twice."
+    },
+    {
       "type": "text",
       "id": "success_text",
       "label": "Success message",
@@ -300,6 +382,12 @@
       "info": "Optional. Tags every signup in Shopify admin so they can be segmented, e.g. \"newsletter\". Leave blank to match Shopify's built-in block, which adds no tag. Separating values with commas creates multiple tags."
     },
     {
+      "type": "richtext",
+      "id": "consent_text",
+      "label": "Consent text",
+      "info": "Optional fine print under the button, e.g. a link to the privacy policy. Left blank, nothing renders -- there is no consent checkbox, since Shopify records nothing from one."
+    },
+    {
       "type": "range",
       "id": "field_gap",
       "label": "Gap between field and button",
@@ -307,8 +395,8 @@
       "max": 60,
       "step": 2,
       "unit": "px",
-      "default": 24,
-      "info": "24px matches the design system's own Form spacing (--space-lg)."
+      "default": 16,
+      "info": "16px matches the design system's own Form spacing (--space-md)."
     },
     {
       "type": "header",
