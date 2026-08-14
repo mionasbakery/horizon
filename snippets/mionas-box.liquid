@@ -1,3 +1,29 @@
+{%- doc -%}
+  Layout primitive: a div or button with spacing/radius/background from design tokens.
+
+  @param {string} content - Inner markup, built via {% capture %} before rendering.
+  @param {string} [tag] - 'div' (default) or 'button'.
+  @param {string} [p] - Padding on all sides: '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg'.
+  @param {string} [px] - Padding inline (start and end).
+  @param {string} [py] - Padding block (start and end).
+  @param {string} [pt] - Padding block start.
+  @param {string} [pb] - Padding block end.
+  @param {string} [pl] - Padding inline start.
+  @param {string} [pr] - Padding inline end.
+  @param {string} [gap] - Gap between children.
+  @param {string} [gap_x] - Column gap.
+  @param {string} [gap_y] - Row gap.
+  @param {string} [radius] - Border radius: 'sm' | 'md' | 'lg' | 'xl' | 'full'.
+  @param {string} [bg] - Background surface: 'default' | 'screen' | 'paper' | 'subtle'.
+  @param {string} [direction] - Inline style flex-direction, passed straight through.
+  @param {string} [align] - Inline style align-items, passed straight through.
+  @param {string} [justify] - Inline style justify-content, passed straight through.
+  @param {string} [wrap] - Inline style flex-wrap, passed straight through.
+  @param {string} [align_self] - Inline style align-self, passed straight through.
+  @param {number} [flex] - Inline style flex, passed straight through.
+  @param {string} [class] - Extra classes to append.
+  @param {string} [attributes] - Raw string appended to the tag, e.g. block.shopify_attributes.
+{%- enddoc -%}
 {% comment %}
   Mirrors the design-system Box component (../design-system/src/react/Box) — a layout primitive
   with no editor presence of its own, meant to be `{% render %}`-ed from other Mionas

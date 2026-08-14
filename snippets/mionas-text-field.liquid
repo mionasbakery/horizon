@@ -1,3 +1,26 @@
+{%- doc -%}
+  A labelled text input (or textarea) inside an underline field.
+
+  @param {string} label - Label copy
+  @param {string} name - The form field name, e.g. 'contact[email]'
+  @param {string} id - Required in practice; associates the label with the control
+  @param {string} [type] - Defaults to 'text'
+  @param {string} [value] - Prefilled value
+  @param {string} [placeholder] - Placeholder text
+  @param {number} [rows] - Renders a textarea with this many rows instead of an input
+  @param {boolean} [required] - Defaults to true
+  @param {boolean} [disabled] - Pass true to disable and dim the control
+  @param {string} [error] - Message string; switches the field to error colours and autofocuses it
+  @param {string} [autocomplete] - Passed through when set
+  @param {string} [spellcheck] - Passed through when set
+  @param {string} [autocapitalize] - Passed through when set
+  @param {string} [inputmode] - Passed through when set
+  @param {string} [pattern] - Passed through when set; email fields get a stricter default
+  @param {string} [optional_text] - Forwarded to the label
+  @param {string} [attributes] - Raw string appended to the control tag
+  @param {string} [class] - Extra classes on the field wrapper
+{%- enddoc -%}
+
 {%- comment -%}
   Mirrors ../design-system/src/react/TextField/TextField.tsx -- a labelled text input inside an
   underline field.

@@ -1,3 +1,14 @@
+{%- doc -%}
+  The uppercase label above a form field. Renders nothing if text is blank.
+
+  @param {string} text - The label copy. Blank renders nothing.
+  @param {string} [for] - The id of the control this labels. Optional but strongly preferred.
+  @param {boolean} [required] - Defaults to true. Pass false to append the " (optional)" suffix.
+  @param {boolean} [error] - Pass true for the error colour.
+  @param {string} [optional_text] - Word inside the " (optional)" suffix's parentheses.
+  @param {string} [class] - Extra classes to append.
+{%- enddoc -%}
+
 {%- comment -%}
   Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx -- the uppercase label above a field.
 
@@ -83,9 +94,10 @@
   }
 
   /* FormLabel.module.css .optional -- deliberately pinned back to the base colour so the suffix
-     does not inherit the focused/error colour the rest of the label takes on. */
+     does not inherit the focused/error colour the rest of the label takes on. Uppercase is NOT
+     overridden here: FormLabel.module.css's .optional inherits .root's text-transform: uppercase
+     rather than resetting it, so "(opcional)" reads "(OPCIONAL)" same as the label itself. */
   .mionas-form-label__optional {
     color: var(--form-label-base-foreground);
-    text-transform: none;
   }
 {% endstylesheet %}

@@ -1,0 +1,12 @@
+# Theme IDs (not names) are pinned here: on mionasbakery, several themes have
+# similar names ("horizon/main", "shopify-dawn-theme/production"), and the live
+# theme isn't Horizon, so a name match risked resolving ambiguously or hitting
+# the wrong live theme. IDs make `theme pull`/`theme push` fully non-interactive.
+
+[environments.dev]
+store = "mionasbakery-dev"
+theme = "202080944462" # Horizon (live on the dev store)
+
+[environments.production]
+store = "mionasbakery"
+theme = "203594301771" # horizon/main (unpublished; live theme on production is Dawn)

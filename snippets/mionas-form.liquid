@@ -1,3 +1,22 @@
+{%- doc -%}
+  The column that spaces a form's fields apart. Renders only the Box half of Form.tsx -- callers
+  wrap this in Liquid's own {% form %} tag, which owns the action URL, CSRF token, and form_type.
+
+  @param {string} content - The fields' markup, built with capture before rendering
+  @param {string} [class] - Extra classes
+  @param {string} [attributes] - Raw string appended to the wrapper tag
+  @param {string} [gap] - CSS length overriding the column's gap between fields (default: --space-lg)
+  @param {boolean} [validate] - Show client-side validation errors in design-system markup (opt-in)
+
+  @example
+    {% capture form_fields %}
+      {% render 'mionas-text-field', label: 'Email', name: 'contact[email]', id: 'x-email', type: 'email' %}
+    {% endcapture %}
+    {% form 'contact' %}
+      {% render 'mionas-form', content: form_fields %}
+    {% endform %}
+{%- enddoc -%}
+
 {%- comment -%}
   Mirrors ../design-system/src/react/Form/Form.tsx -- the column that spaces a form's fields apart.
 

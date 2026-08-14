@@ -1,95 +1,34 @@
+{%- doc -%}
+  Renders a contact form built from the Mionas form snippets, wrapping a single {% form 'contact' %}.
+  Owns only fields, submit button and validation/success state -- no card, heading, or divider.
+
+  Reads `customer` (to prefill name/email) and Shopify's `form`/`request` objects directly; it takes no render-time parameters.
+{%- enddoc -%}
+
 {%- comment -%}
-  Composes the Mionas form snippets -- mionas-form / mionas-form-field / mionas-form-label /
-  mionas-text-field / mionas-form-error, mirroring ../design-system/src/react/ -- around a single
-  {% form 'contact' %}.
+  Composes the Mionas form snippets around a single {% form 'contact' %}. Forks rather than
+  reskinning blocks/contact-form.liquid because that block hard-codes its fields onto one row with
+  hidden labels and no per-field slots to restyle.
 
-  Why this forks rather than reskinning blocks/contact-form.liquid: the native block hard-codes
-  name+email onto one flex row, renders every label `visually-hidden` with text from
-  blocks.contact_form.* locale keys, and includes a phone field this design does not have. It
-  exposes no child field blocks, so a CSS bridge can restack and restyle it but cannot produce
-  visible per-field labels carrying the design's own wording. See
-  docs/superpowers/specs/2026-07-25-contacto-page-design.md.
+  Owns only the fields, submit button and validation/success state -- no card, heading, CTA or
+  divider. Those are composed in the page template instead (wrap this block in a Mionas: Card,
+  etc.); do not add a surface (background/border/shadow) here.
 
-  THIS BLOCK OWNS ONLY THE FIELDS, THE SUBMIT BUTTON, AND THE FORM'S OWN VALIDATION/SUCCESS STATE --
-  nothing else. No card, no heading, no WhatsApp CTA, no divider. blocks/mionas-email-signup.liquid
-  follows the identical rule for its one field; read that file's header comment too, the two should
-  never drift apart on this point. Every one of those excluded things is composable in the page
-  template instead: a Mionas: Card wraps this block (and whatever siblings a page wants -- a
-  Mionas: Text heading, a Mionas: Button CTA, another Mionas: Text as a lead-in line) when a carded
-  look is wanted; a bare page with no card wrapper is equally valid. See
-  docs/superpowers/specs/2026-08-12-contacto-page-design.md.
+  Field names must stay contact[name], contact[email], contact[body] -- Shopify recognises these
+  and titles/echoes them in the merchant email and error messages. Renaming breaks that.
 
-  Two earlier versions of this file existed before landing here -- one where the block drew its own
-  card around everything including a heading/WhatsApp button/divider it also owned, and one where it
-  drew a narrower card around just the fields (matching an earlier reading of
-  blocks/mionas-email-signup.liquid). Both put card ownership inside a form block; asked directly,
-  the answer is that NEITHER a contact form nor an email signup should own a card at all -- the card
-  is composition, not a form concern, and belongs in the template next to whatever the card is
-  wrapping. Do not reintroduce a `.mionas-contact-form__card` (or any surface: background/border/
-  radius/shadow) here.
-
-  FIELD NAMING IS LOAD-BEARING. Per Shopify's own contact-form docs
-  (shopify.dev/docs/storefronts/themes/customer-engagement/add-contact-form), contact[first_name],
-  contact[last_name], contact[email], contact[phone], contact[body] and contact[order_number] are
-  all natively recognised names -- do not rename any of these six. Keep the field names exactly
-  contact[first_name], contact[last_name], contact[email] and contact[body] below.
-
-  contact[request_type] is a CUSTOM field, not one of the six recognised names above -- Shopify
-  titleizes a custom field's identifier into its label in the merchant notification email (its own
-  docs use "request_type" -> "Request type" as the worked example for exactly this dropdown case),
-  so it still reads cleanly, just as its own labelled line rather than folding into a native field.
-  Renaming it to one of the six recognised names above would silently overwrite that field instead
-  of adding a new one -- don't do that.
-
-  Known platform limitation, same as blocks/corporate-quote-form.liquid: Shopify's `form` object
-  only echoes back name, email, phone and body, so nothing custom repopulates after a validation
-  error. Do not work around it.
-
-  CLIENT-SIDE ERRORS ARE JS-DRIVEN ON PURPOSE. `validate: true` on the mionas-form render below
-  loads assets/mionas-form-validation.js, which sets `novalidate` on the form FROM JAVASCRIPT and
-  writes the same field/label classes and message paragraph the server-side `error` param produces,
-  so the two error states are indistinguishable. Because novalidate is set from JS rather than in
-  the form tag, a visitor without JavaScript keeps the browser's native validation. Do not move it
-  into Liquid. type="email" on its own lets "marc@gmail" and "a@b" through, so
-  snippets/mionas-text-field.liquid adds a stricter default `pattern` to every email field -- the
-  regex and its reasoning live there. Shopify's own check is still the backstop and renders through
-  the same markup.
-
-  Only email is required, which is why the name and message labels carry the design system's
-  " (optional)" suffix. That is FormLabel.tsx's own behaviour for a non-required field, not a
-  styling accident.
-
-  The submit button is NOT wrapped in snippets/mionas-form-actions.liquid. FormActions is a row with
-  a start inset, meant for a button and a link side by side; this form has one full-width button,
-  and the inset would leave it flush right but indented left. It IS still rendered by this block
-  (unlike the card/heading/CTA above) because it must sit inside the <form> element to submit it --
-  that is an HTML requirement, not a styling choice, so it cannot become a separate sibling block the
-  way the card/heading/CTA could.
-
-  The `note` param passed to snippets/mionas-submit-button.liquid below is that snippet's OWN note
-  slot, not a duplicate paragraph -- do not re-add a bespoke `.mionas-contact-form__note` element.
-
-  FIELD GAP IS A SETTING, NOT A HARDCODED VALUE. Both this block and mionas-email-signup expose a
-  `field_gap` range, forwarded to snippets/mionas-form.liquid's `gap` param. Default matches
-  Form.tsx's own `<Box gap="lg">` (--space-lg / 24px) so an untouched instance looks identical to
-  before this setting existed.
+  Client-side errors are JS-driven (assets/mionas-form-validation.js, via `validate: true` below)
+  so a visitor without JS still gets native browser validation.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
   assign form_id = block.id | prepend: 'MionasContactForm-'
 
-  # Same layout-classes/width-custom-property pattern as blocks/mionas-email-signup.liquid, so the
-  # two form blocks are equally configurable in the editor (Width, Width on mobile, Padding) and a
-  # page composing either one reaches for the same settings.
   assign layout_classes = 'mionas-contact-form'
 
-  # The field ids are derived here rather than inline at the render call: the render tag does not
-  # accept filters on its arguments. The prefilled VALUES cannot be derived here -- they read the
-  # `form` object, which only exists inside the form tag below.
-  assign first_name_field_id = form_id | append: '-first-name'
-  assign last_name_field_id = form_id | append: '-last-name'
+  # Derived here, not inline at the render call -- render doesn't accept filters on its arguments.
+  assign name_field_id = form_id | append: '-name'
   assign email_field_id = form_id | append: '-email'
-  assign request_type_field_id = form_id | append: '-request-type'
   assign body_field_id = form_id | append: '-body'
 %}
 
@@ -107,7 +46,14 @@
   {{ block.shopify_attributes }}
 >
   {%- form 'contact', id: form_id -%}
-    <input name="contact[id]" type="hidden" value="{{ form_id }}">
+    {%- comment -%}
+      No contact[id] field: the form tag's `id:` param already sets form.id, and an extra
+      contact[...] field would leak an "Id: ..." line into the merchant email.
+
+      Shopify's contact form always posts to /contact, not this page -- return_to sends the
+      visitor back here after submit instead of wherever /contact resolves to.
+    {%- endcomment -%}
+    <input name="return_to" type="hidden" value="{{ request.path }}">
 
     {% liquid
       assign form_matches = false
@@ -115,66 +61,50 @@
         assign form_matches = true
       endif
 
-      # Shopify only ever reports an error against email on the contact form. Routed into the
-      # field's own `error` param rather than a banner above the form, so the underline, the label
-      # colour and the message all come from FormField/FormLabel/FormError as the design system
-      # composes them.
-      # Kept on one line: inside a liquid tag every newline ends the statement, so a filter
-      # chain wrapped across lines is a syntax error, not a continuation.
+      # Shopify only reports an error against email, routed into the field's own `error` param so
+      # the underline/label/message all come from FormField/FormLabel/FormError.
       assign email_error = ''
       if form.errors and form_matches
         assign email_error = form.errors.translated_fields.email | capitalize | append: ' ' | append: form.errors.messages.email
       endif
 
-      # Prefills, assigned here rather than in the block's opening liquid tag: the `form` object is
-      # scoped to the form tag, so reading form.email outside it yields nothing and the field
-      # silently comes back empty after a failed submit -- exactly when the user least wants to
-      # retype it.
-      #
-      # form.name/form.first_name/form.last_name are deliberately NOT used here: Shopify's generic
-      # form-object docs list only body/email/errors/id/posted_successfully? for a contact form --
-      # no name, first_name or last_name -- so neither field repopulates after a failed submit for
-      # any visitor, logged in or not. customer.first_name/customer.last_name (the real Customer
-      # object properties, not form echoes) are used purely as the logged-in-customer default,
-      # same role customer.email already played below.
-      #
-      # Tag names are spelled out in prose in these comments on purpose: a literal percent-brace
-      # sequence inside a `#` comment line is still parsed as a tag, and naming a block tag that way
-      # opens one the parser then never sees closed.
-      assign first_name_value = customer.first_name
-      assign last_name_value = customer.last_name
+      # form.name doesn't exist on the contact form object, so it can't repopulate after a failed
+      # submit -- customer.name is just the logged-in default.
+      assign name_value = customer.name
       assign email_value = form.email | default: customer.email
     %}
 
     {%- if form.posted_successfully? and form_matches -%}
       <div class="mionas-contact-form__success" tabindex="-1" autofocus>
-        {{- 'icon-checkmark.svg' | inline_asset_content -}}
-        {{ block_settings.success_text }}
+        <span class="mionas-contact-form__success-icon">
+          {{- 'icon-checkmark.svg' | inline_asset_content -}}
+        </span>
+        {%- render 'mionas-text',
+          content: block_settings.success_title,
+          variant: 'title',
+          size: 'md',
+          tag: 'p',
+          class: 'mionas-contact-form__success-title'
+        -%}
+        {%- if block_settings.success_text != blank -%}
+          {%- render 'mionas-text',
+            content: block_settings.success_text,
+            variant: 'body',
+            size: 'md',
+            tag: 'p',
+            class: 'mionas-contact-form__success-text'
+          -%}
+        {%- endif -%}
       </div>
-    {%- endif -%}
-
+    {%- else -%}
     {%- capture contact_form_fields -%}
       {%- render 'mionas-text-field',
         label: block_settings.label_name,
-        name: 'contact[first_name]',
-        id: first_name_field_id,
-        value: first_name_value,
-        autocomplete: 'given-name',
-        required: false,
-        optional_text: block_settings.optional_text
+        name: 'contact[name]',
+        id: name_field_id,
+        value: name_value,
+        autocomplete: 'name'
       -%}
-
-      {%- if block_settings.label_last_name != blank -%}
-        {%- render 'mionas-text-field',
-          label: block_settings.label_last_name,
-          name: 'contact[last_name]',
-          id: last_name_field_id,
-          value: last_name_value,
-          autocomplete: 'family-name',
-          required: false,
-          optional_text: block_settings.optional_text
-        -%}
-      {%- endif -%}
 
       {%- render 'mionas-text-field',
         label: block_settings.label_email,
@@ -189,62 +119,30 @@
         error: email_error
       -%}
 
-      {%- if block_settings.label_subject != blank -%}
-        {%- capture subject_control -%}
-          <select
-            class="mionas-text-field__input mionas-contact-form__subject-select"
-            id="{{ request_type_field_id }}"
-            name="contact[request_type]"
-          >
-            <option value="">{{ block_settings.subject_placeholder }}</option>
-            <option value="{{ block_settings.subject_option_1 | escape }}">{{ block_settings.subject_option_1 | escape }}</option>
-            <option value="{{ block_settings.subject_option_2 | escape }}">{{ block_settings.subject_option_2 | escape }}</option>
-            <option value="{{ block_settings.subject_option_3 | escape }}">{{ block_settings.subject_option_3 | escape }}</option>
-            <option value="{{ block_settings.subject_option_4 | escape }}">{{ block_settings.subject_option_4 | escape }}</option>
-          </select>
-        {%- endcapture -%}
-        {%- render 'mionas-form-field',
-          control: subject_control,
-          label: block_settings.label_subject,
-          for: request_type_field_id,
-          required: false,
-          optional_text: block_settings.optional_text
-        -%}
-      {%- endif -%}
-
       {%- render 'mionas-text-field',
         label: block_settings.label_message,
         name: 'contact[body]',
         id: body_field_id,
         value: form.body,
         placeholder: block_settings.placeholder_message,
-        rows: 5,
-        required: false,
-        optional_text: block_settings.optional_text
+        rows: 5
       -%}
 
       {%- render 'mionas-submit-button',
         label: block_settings.submit_label,
-        variant: block_settings.submit_variant,
-        note: block_settings.note
+        variant: block_settings.submit_variant
       -%}
     {%- endcapture -%}
 
     {%- liquid
-      # The render tag does not accept filters on its arguments -- see the field-id comment above --
-      # so the px suffix has to be applied here first.
       assign field_gap_css = block_settings.field_gap | append: 'px'
     -%}
     {%- render 'mionas-form', content: contact_form_fields, validate: true, gap: field_gap_css -%}
+    {%- endif -%}
   {%- endform -%}
 </div>
 
 {% stylesheet %}
-  /* No surface of its own -- see the file header comment. flex: 1 1 auto with width: 100% keeps the
-     block from collapsing when a parent section stacks to a column on mobile; the desktop override
-     zeroes flex-basis so a row splits by the sibling widths instead of by this 100%. Check
-     mionas-form.liquid and mionas-email-signup.liquid when tuning this -- all three carry the same
-     pattern. */
   .mionas-contact-form {
     flex: 1 1 auto;
     min-width: 0;
@@ -264,20 +162,36 @@
     }
   }
 
-  /* .mionas-text-field__input sets appearance: none, which strips the native chevron this select
-     needs to read as a dropdown rather than plain text. Scoped here, not in that shared class,
-     since only this one control needs it. */
-  .mionas-contact-form__subject-select {
-    appearance: auto;
-  }
-
-  /* No error banner counterpart: field-level errors are FormError's job, rendered by the field
-     snippet. This is only the success confirmation, which the design system has no component for. */
   .mionas-contact-form__success {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: var(--space-xs);
-    margin-bottom: var(--space-md);
+    text-align: center;
+    padding-block: var(--space-md);
+  }
+
+  /* No design-system token for success green -- deliberate one-off. */
+  .mionas-contact-form__success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--space-2xs);
+    border-radius: 50%;
+    background: #4a7c59;
+    color: var(--color-white, #fff);
+  }
+
+  .mionas-contact-form__success-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Higher specificity than .text-role--<color> so the muted colour always wins. */
+  .text-role.mionas-contact-form__success-text {
+    color: var(--card-description-foreground);
   }
 {% endstylesheet %}
 
@@ -294,12 +208,6 @@
     },
     {
       "type": "text",
-      "id": "label_last_name",
-      "label": "Last name label",
-      "default": "Apellidos"
-    },
-    {
-      "type": "text",
       "id": "label_email",
       "label": "Email label",
       "default": "Email"
@@ -312,42 +220,6 @@
     },
     {
       "type": "text",
-      "id": "label_subject",
-      "label": "Subject label",
-      "default": "Asunto"
-    },
-    {
-      "type": "text",
-      "id": "subject_placeholder",
-      "label": "Subject placeholder",
-      "default": "Elige un tema…"
-    },
-    {
-      "type": "text",
-      "id": "subject_option_1",
-      "label": "Subject option 1",
-      "default": "Un pedido"
-    },
-    {
-      "type": "text",
-      "id": "subject_option_2",
-      "label": "Subject option 2",
-      "default": "Tarta por encargo"
-    },
-    {
-      "type": "text",
-      "id": "subject_option_3",
-      "label": "Subject option 3",
-      "default": "Empresas y eventos"
-    },
-    {
-      "type": "text",
-      "id": "subject_option_4",
-      "label": "Subject option 4",
-      "default": "Otro"
-    },
-    {
-      "type": "text",
       "id": "label_message",
       "label": "Message label",
       "default": "Mensaje"
@@ -357,13 +229,6 @@
       "id": "placeholder_message",
       "label": "Message placeholder",
       "default": "¿En qué te ayudamos?"
-    },
-    {
-      "type": "text",
-      "id": "optional_text",
-      "label": "Word shown after an optional field's label",
-      "info": "Only email is required, so the name and message labels are suffixed with this in parentheses.",
-      "default": "opcional"
     },
     {
       "type": "range",
@@ -394,15 +259,15 @@
     },
     {
       "type": "text",
-      "id": "note",
-      "label": "Note below the button",
-      "default": "Respuesta en 24–48h laborables"
+      "id": "success_title",
+      "label": "Success title",
+      "default": "¡Mensaje enviado!"
     },
     {
       "type": "text",
       "id": "success_text",
-      "label": "Success message",
-      "default": "¡Mensaje enviado! Te respondemos en 24–48h laborables."
+      "label": "Success text",
+      "default": "Te respondemos en 24–48h laborables."
     },
     {
       "type": "header",

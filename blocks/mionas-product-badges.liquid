@@ -1,3 +1,9 @@
+{%- doc -%}
+  Renders a product's custom.badges metafield as a row or overlay of colored badge pills.
+
+  @param {product} [closest.product] - The product whose badges to render. Renders nothing if absent.
+{%- enddoc -%}
+
 {%- comment -%}
   Badges on a product card: short labels like "Sin gluten" or "Nuevo", from the product's
   custom.badges metafield -- a list of `badge` metaobjects, each carrying a `label`, a `kind`, and

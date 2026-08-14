@@ -20,6 +20,31 @@ This theme has no test suite, deliberately. Never write test files — not for M
 `shopify theme check` and a `shopify theme dev` preview instead. If something has a non-obvious
 invariant, record it as a comment in the file rather than as a test.
 
+## Comments
+
+Keep comments minimal. Only write one when the WHY isn't obvious from the code — a platform
+quirk, a deliberate tradeoff, a constraint that would otherwise look like an oversight. Skip
+comments that restate what the code already says, narrate file history, or read like a design
+doc. One or two plain sentences, no jargon — if it takes a paragraph to explain, the code likely
+needs to be simpler, not the comment longer.
+
+## Documentation
+
+Every `mionas-*.liquid` block and snippet must start with a LiquidDoc `{% doc %}` block: a one-line
+description of what it renders, plus `@param` entries. Shopify's `doc` tag is only valid in blocks
+and snippets — **not** sections (`theme check` raises `UnsupportedDocTag` there) — so for
+`mionas-*.liquid` sections, put the one-line description as the first line of the existing
+`{% comment %}` block instead.
+
+- **Snippets**: document the explicit params accepted via `{% render %}` calls.
+- **Blocks**: document only variables consumed from the surrounding Liquid context
+  (e.g. `closest.product`, `block`) — not schema settings, which are already
+  self-describing in the theme editor schema.
+
+The `{% doc %}` block (or, for sections, the description line) is additive to, not a replacement
+for, existing explanatory `{% comment %}` blocks that record the *why* behind non-obvious
+decisions.
+
 ## Git
 
 `origin` is `mionasbakery/horizon`. `upstream` is `Shopify/horizon` — fetch and merge from it to pull in upstream theme changes.

@@ -1,3 +1,12 @@
+{%- doc -%}
+  The Mionas form submit button and an optional note below it, rendered as siblings.
+
+  @param {string} label - Button text
+  @param {string} [note] - Secondary line below the button, centered. Blank renders nothing.
+  @param {string} [variant] - 'outline' switches to a transparent/bordered look; anything else keeps the filled primary look
+  @param {string} [class] - Extra classes on the button
+{%- enddoc -%}
+
 {%- comment -%}
   The Mionas form submit button. There is no design-system Button component to mirror for a
   <button>: ../design-system's Button renders an anchor, and so does blocks/mionas-button.liquid

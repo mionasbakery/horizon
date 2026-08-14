@@ -1,3 +1,6 @@
+{%- doc -%}
+  A labelled divider -- a short line of text centred between two horizontal rules.
+{%- enddoc -%}
 {%- comment -%}
   A labelled divider -- a short line of text centred between two horizontal rules, e.g.
   "o envíanos un mensaje" between a WhatsApp CTA and a form. No design-system component to mirror:
@@ -26,13 +29,19 @@
 
   ::before/::after keep the two lines out of the DOM so the text can be centred with plain flex gap
   rather than manual width math -- moved verbatim from the original .mionas-contact-form__divider.
+
+  THE LINE RENDERS EVEN WITH BLANK TEXT. Only the middle `mionas-text` render is gated on
+  `block_settings.text` -- a divider with no label is still a divider, not nothing. This differs
+  from most Mionas blocks (e.g. mionas-text itself), where blank content means the whole block
+  renders nothing; a divider's job is the rule, and the text is a label on top of it, not the
+  reason it exists.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
 %}
-{%- if block_settings.text != blank -%}
-  <div class="mionas-divider" {{ block.shopify_attributes }}>
-    <span class="mionas-divider__line"></span>
+<div class="mionas-divider" {{ block.shopify_attributes }}>
+  <span class="mionas-divider__line"></span>
+  {%- if block_settings.text != blank -%}
     {%- render 'mionas-text',
       content: block_settings.text,
       variant: block_settings.variant,
@@ -40,9 +49,9 @@
       tag: 'span',
       class: 'mionas-divider__text'
     -%}
-    <span class="mionas-divider__line"></span>
-  </div>
-{%- endif -%}
+  {%- endif -%}
+  <span class="mionas-divider__line"></span>
+</div>
 
 {% stylesheet %}
   .mionas-divider {

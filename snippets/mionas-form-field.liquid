@@ -1,3 +1,17 @@
+{%- doc -%}
+  Label above a control, an underline below it, and an optional error message under that.
+
+  @param {string} control - The control's markup, built with capture before rendering
+  @param {string} label - Label copy, handed to mionas-form-label
+  @param {string} [for] - The control's id, passed to the label so it associates natively
+  @param {string} [error] - Message string; present and non-blank switches to error state
+  @param {string} [error_id] - Optional id for the error message, for aria-describedby
+  @param {boolean} [required] - Defaults to true; forwarded to the label's "(optional)" suffix
+  @param {string} [optional_text] - Forwarded to the label; see that snippet
+  @param {string} [class] - Extra classes on the wrapper
+  @param {string} [attributes] - Raw string appended to the wrapper tag, e.g. block.shopify_attributes
+{%- enddoc -%}
+
 {%- comment -%}
   Mirrors ../design-system/src/react/FormField/FormField.tsx -- label above a control, an underline
   below it, and an optional error message under that.

@@ -1,3 +1,10 @@
+{%- doc -%}
+  Renders the row at the foot of a form for a submit button and links to sit side by side.
+
+  @param {string} content - The actions' markup, built with {% capture %} before rendering.
+  @param {string} [class] - Extra classes.
+  @param {string} [attributes] - Raw string appended to the wrapper tag.
+{%- enddoc -%}
 {%- comment -%}
   Mirrors ../design-system/src/react/FormActions/FormActions.tsx -- the row at the foot of a form,
   so a submit button and a link (or several buttons) can sit side by side.

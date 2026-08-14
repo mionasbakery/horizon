@@ -1,3 +1,19 @@
+{%- doc -%}
+  Renders a checkbox with a visually hidden native input, a drawn box, an optional label, and an
+  optional error message.
+
+  @param {string} name - The form field name (required)
+  @param {string} id - The input id, also used to associate the label and error (required)
+  @param {string} [label] - Text beside the box
+  @param {string} [value] - The submitted value when checked (default: 'on')
+  @param {boolean} [checked] - Render pre-checked
+  @param {boolean} [disabled] - Disable and dim the control
+  @param {string} [error] - Error message rendered underneath via mionas-form-error
+  @param {boolean} [required] - Mark the field required (default: false)
+  @param {string} [class] - Extra classes on the wrapper
+  @param {string} [attributes] - Raw string appended to the input tag
+{%- enddoc -%}
+
 {%- comment -%}
   Mirrors ../design-system/src/react/Checkbox/Checkbox.tsx -- a visually hidden native checkbox, a
   drawn box that stands in for it, and an optional text label, with an optional error underneath.

@@ -1,3 +1,10 @@
+{%- doc -%}
+  Renders the breadcrumb trail <nav>, shared by the standalone section and the nested block.
+
+  @param {string} home_label - Copy for the first crumb.
+  @param {string} landmark_label - Accessible name for the nav landmark.
+  @param {object} [menu] - Linklist to derive the hierarchy from. Falls back to navigation-menu.
+{%- enddoc -%}
 {%- comment -%}
   The breadcrumb trail itself -- the single implementation shared by sections/mionas-breadcrumbs.liquid
   (standalone, top of a template) and blocks/mionas-breadcrumbs.liquid (nested inside a Section, next

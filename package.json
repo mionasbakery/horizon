@@ -2,6 +2,11 @@
   "name": "horizon-theme",
   "private": true,
   "scripts": {
-    "tokens:sync": "node scripts/sync-design-tokens.mjs"
+    "tokens:sync": "node scripts/sync-design-tokens.mjs",
+    "theme:check": "shopify theme check",
+    "theme:pull:dev": "shopify theme pull --environment=dev",
+    "theme:push:dev": "shopify theme check && shopify theme push --environment=dev --allow-live",
+    "theme:pull:production": "shopify theme pull --environment=production",
+    "theme:push:production": "shopify theme check && shopify theme push --environment=production"
   }
 }

@@ -1,3 +1,10 @@
+{%- doc -%}
+  Renders the add-to-cart / choose-options / quick-add action row for a product card.
+
+  @param {product} [closest.product] - The product this block acts on. Must be available in the
+    rendering context (e.g. as a child of blocks/_product-card.liquid); renders nothing without it.
+{%- enddoc -%}
+
 {%- comment -%}
   Mirrors ../design-system/src/react/ProductCard/ProductCardActions.tsx plus the Button it wraps:
   the action row at the foot of a product card. ProductCard.md's example is

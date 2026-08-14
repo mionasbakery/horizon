@@ -1,0 +1,11 @@
+extends:
+  - theme-check:recommended
+
+# The date-picker block below is provided by an installed app (cx-elevate-date-time-picker) and
+# only exists on the store, not in this repo, so Theme Check can never resolve it locally.
+JSONMissingBlock:
+  enabled: true
+  severity: error
+  ignore:
+    - 'templates/product.product-with-date.json'
+    - 'templates/product.producto-personalizado.json'

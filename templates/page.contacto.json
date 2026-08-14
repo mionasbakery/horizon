@@ -124,6 +124,29 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "mionas_button_fWdrxR": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button",
+                  "settings": {
+                    "label": "Escríbenos por WhatsApp",
+                    "link": "https://wa.me/34XXXXXXXXX",
+                    "open_in_new_tab": true,
+                    "variant": "primary",
+                    "size": "lg",
+                    "full_width": true
+                  },
+                  "blocks": {}
+                },
+                "mionas_divider_WG4hiT": {
+                  "type": "mionas-divider",
+                  "name": "Mionas: Divider",
+                  "settings": {
+                    "text": "o envíanos un mensaje",
+                    "variant": "label",
+                    "size": "md"
+                  },
+                  "blocks": {}
+                },
                 "mionas_card_BebNXD": {
                   "type": "mionas-card",
                   "name": "Mionas: Card",
@@ -147,8 +170,8 @@
                     "open_in_new_tab": false,
                     "padding-block-start": 24,
                     "padding-block-end": 24,
-                    "padding-inline-start": 24,
-                    "padding-inline-end": 24
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {
                     "mionas_text_hQxt8D": {
@@ -162,31 +185,8 @@
                         "tag": "p",
                         "padding-block-start": 0,
                         "padding-block-end": 0,
-                        "padding-inline-start": 0,
-                        "padding-inline-end": 0
-                      },
-                      "blocks": {}
-                    },
-                    "mionas_button_fWdrxR": {
-                      "type": "mionas-button",
-                      "name": "Mionas: Button",
-                      "settings": {
-                        "label": "Escríbenos por WhatsApp",
-                        "link": "https://wa.me/34XXXXXXXXX",
-                        "open_in_new_tab": true,
-                        "variant": "primary",
-                        "size": "lg",
-                        "full_width": true
-                      },
-                      "blocks": {}
-                    },
-                    "mionas_divider_WG4hiT": {
-                      "type": "mionas-divider",
-                      "name": "Mionas: Divider",
-                      "settings": {
-                        "text": "o envíanos un mensaje",
-                        "variant": "label",
-                        "size": "md"
+                        "padding-inline-start": 24,
+                        "padding-inline-end": 24
                       },
                       "blocks": {}
                     },
@@ -195,23 +195,15 @@
                       "name": "Mionas: Contact form",
                       "settings": {
                         "label_name": "Nombre",
-                        "label_last_name": "Apellidos",
                         "label_email": "Email",
                         "placeholder_email": "tu@email.com",
-                        "label_subject": "Asunto",
-                        "subject_placeholder": "Elige un tema…",
-                        "subject_option_1": "Un pedido",
-                        "subject_option_2": "Tarta por encargo",
-                        "subject_option_3": "Empresas y eventos",
-                        "subject_option_4": "Otro",
                         "label_message": "Mensaje",
                         "placeholder_message": "¿En qué te ayudamos?",
-                        "optional_text": "opcional",
                         "field_gap": 24,
                         "submit_variant": "outline",
                         "submit_label": "Enviar mensaje",
-                        "note": "Respuesta en 24–48h laborables",
-                        "success_text": "¡Mensaje enviado! Te respondemos en 24–48h laborables.",
+                        "success_title": "¡Mensaje enviado!",
+                        "success_text": "Te respondemos en 24–48h laborables.",
                         "width": "fill",
                         "custom_width": 100,
                         "width_mobile": "fill",
@@ -226,13 +218,13 @@
                   },
                   "block_order": [
                     "mionas_text_hQxt8D",
-                    "mionas_button_fWdrxR",
-                    "mionas_divider_WG4hiT",
                     "mionas_contact_form_WewLVH"
                   ]
                 }
               },
               "block_order": [
+                "mionas_button_fWdrxR",
+                "mionas_divider_WG4hiT",
                 "mionas_card_BebNXD"
               ]
             },

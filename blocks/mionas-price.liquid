@@ -1,3 +1,9 @@
+{%- doc -%}
+  Renders a product's price as a Mionas text role, with an optional struck-through compare-at price.
+
+  @param {product} [closest.product] - The product whose price to render. Renders nothing if absent.
+{%- enddoc -%}
+
 {%- comment -%}
   The product price as a Mionas text role. Replaces blocks/mionas-product-price.liquid, which did the
   same job but restated --text-role-body-md-* by hand instead of spending the role vocabulary, and so
