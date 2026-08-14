@@ -1,16 +1,10 @@
 {%- doc -%}
   CSS-only layout patch for templates/page.contacto.json, rendered there via a "Custom Liquid"
   block (`{% render 'contacto-page-bridge' %}`). Takes no params. `{% style %}` output isn't
-  scoped to the block that rendered it or to the section it's placed in, so the rules that would
-  otherwise target the generic `.group-block-content` / `.group-block--width-fill` classes shared
-  by every group block in the theme are scoped via the marker div below instead: it renders only
-  when this snippet does, so `:has()` on it means "the section this bridge was placed in" without
-  depending on a section id (tried first and reverted -- a section defined inline in a JSON
-  template renders as `id="shopify-section-template--<numeric-template-id>__<key>"`, where the
-  numeric id is store/environment-specific) or on unrelated page content like `.mionas-map` (also
-  tried and reverted -- a merchant deleting that block in the theme editor would silently break
-  the layout again). The remaining rules key off `.mionas-card` / `.mionas-contact-form` directly,
-  which are Mionas components that only appear on this page and need no extra scoping.
+  scoped to the block or section it's rendered from, so every rule is scoped through the marker
+  div below instead: `:has(.contacto-layout-scope)` stands in for "the section this bridge was
+  placed in". `.mionas-card` and `.mionas-contact-form` get the same scoping even though they're
+  page-unique today, since both are generic Mionas components rather than page-specific classes.
 {%- enddoc -%}
 <div class="contacto-layout-scope" hidden></div>
 {% style %}
@@ -43,36 +37,39 @@
   /* :has(> .mionas-card), not a bare descendant :has(): the outer "info" column also has
      .mionas-card among its descendants (as grandchildren, through this row), so a descendant
      match would also flip info itself into row mode. */
-  .group-block-content:has(> .mionas-card) {
+  [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) {
     flex-direction: column;
   }
 
   /* Cards default to height: fill, which in column mode stretches them to share the column's
-     height instead of sizing to content. */
-  .group-block-content:has(> .mionas-card) .mionas-card {
+     height instead of sizing to content. min-width is the same floor in both states (column
+     below 1300px, row at/above it), capped at (340px - 12px gap) / 2 so two cards side by side
+     in row mode can't outgrow the info column's own 340px floor and overflow it. */
+  [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) .mionas-card {
     height: auto;
     flex: 0 0 auto;
+    min-width: min(160px, 100%);
   }
 
   /* Each card's own width: 100% means 100% of the row; two children at 100% each overlap
      instead of sitting side by side, so row mode needs an explicit half-width override. */
   @media (min-width: 1300px) {
-    .group-block-content:has(> .mionas-card) {
+    [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) {
       flex-direction: row;
     }
 
-    .group-block-content:has(> .mionas-card) .mionas-card {
+    [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) .mionas-card {
       width: calc((100% - 12px) / 2);
       flex: 0 0 calc((100% - 12px) / 2);
     }
   }
 
   /* Address and day/hours text must not line-wrap regardless of card width. */
-  .mionas-card p.text-role:has(br) {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-card p.text-role:has(br) {
     white-space: nowrap;
   }
 
-  .mionas-card span.text-role {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-card span.text-role {
     white-space: nowrap;
   }
 
@@ -81,19 +78,19 @@
      as blank space below the submit button. :has(textarea), not :last-child, so it still
      targets the message row if fields are ever reordered. resize: none since a manually
      resized textarea would fight the auto-grow. */
-  .mionas-contact-form > form {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form > form {
     height: 100%;
   }
 
-  .mionas-contact-form > form > .mionas-form {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form > form > .mionas-form {
     flex: 1;
   }
 
-  .mionas-contact-form .mionas-form > .mionas-contact-form__surface {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form .mionas-form > .mionas-contact-form__surface {
     flex: 1;
   }
 
-  .mionas-contact-form__surface .mionas-form-field:has(textarea) {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form__surface .mionas-form-field:has(textarea) {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -103,7 +100,7 @@
      no JS. Chromium-only for now -- Safari/Firefox just keep the static baseline height, no
      breakage. min-height keeps its own rows="5" floor even when the flex-filled baseline would
      otherwise be shorter (e.g. once the form column is short on mobile). */
-  .mionas-contact-form__surface .mionas-form-field:has(textarea) textarea {
+  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form__surface .mionas-form-field:has(textarea) textarea {
     flex: 1;
     height: 100%;
     min-height: 5lh;

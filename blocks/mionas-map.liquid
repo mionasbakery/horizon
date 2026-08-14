@@ -12,6 +12,11 @@
 
   Border and radius come from --card-base-* so the map and the info card beneath it read as one
   stack.
+
+  Height follows the same fit/fill/custom convention as group.liquid and mionas-card.liquid so it
+  reads consistently in the editor. "Fill" needs flex-grow, not just height: 100% -- Horizon renders
+  block content as a direct flex item of the parent group's content div, and a column-direction flex
+  item won't grow along the main axis from a percentage height alone.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -24,8 +29,12 @@
 %}
 
 <div
-  class="mionas-map"
-  style="--mionas-map-height: {{ block_settings.height }}px;"
+  class="mionas-map mionas-map--height-{{ block_settings.height }}"
+  {% if block_settings.height == 'custom' %}
+    style="--mionas-map-height: {{ block_settings.custom_height }}px;"
+  {% elsif block_settings.height == 'fill' %}
+    style="--mionas-map-min-height: {{ block_settings.min_height }}px;"
+  {% endif %}
   {{ block.shopify_attributes }}
 >
   {%- if block_settings.address == blank -%}
@@ -46,12 +55,32 @@
 {% stylesheet %}
   .mionas-map {
     width: 100%;
-    /* Height is a block setting, passed in as a custom property so the schema stays the single
-       source of it. The fallback matches the schema default. */
-    height: var(--mionas-map-height, 240px);
     border: var(--card-base-border-width) solid var(--card-base-border-color);
     border-radius: var(--card-base-radius);
     overflow: hidden;
+  }
+
+  /* Fit: a sensible default height, no merchant input needed. */
+  .mionas-map--height-fit {
+    height: 240px;
+  }
+
+  /* Custom: height is a block setting, passed in as a custom property so the schema stays the
+     single source of it. */
+  .mionas-map--height-custom {
+    height: var(--mionas-map-height);
+  }
+
+  /* Fill: grow to the remaining space in the parent flex column (e.g. matching a sibling contact
+     form's height). min-height overrides the flex item's default auto floor (which would size to
+     the iframe's intrinsic height and could overflow) and keeps the map from collapsing to nothing
+     when the column itself is short, e.g. once columns stack on mobile. Block setting, passed in
+     as a custom property so the schema stays the single source of it; the fallback matches the
+     schema default. */
+  .mionas-map--height-fill {
+    flex: 1 1 auto;
+    min-height: var(--mionas-map-min-height, 240px);
+    height: 100%;
   }
 
   .mionas-map__frame {
@@ -98,14 +127,48 @@
       "default": 15
     },
     {
-      "type": "range",
+      "type": "select",
       "id": "height",
-      "label": "Height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "fit",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fit",
+      "info": "Fill grows the map to match a sibling's height, e.g. the contact form column."
+    },
+    {
+      "type": "range",
+      "id": "custom_height",
+      "label": "t:settings.custom_height",
       "min": 160,
       "max": 600,
       "step": 10,
       "unit": "px",
-      "default": 240
+      "default": 240,
+      "visible_if": "{{ block.settings.height == 'custom' }}"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimum height",
+      "min": 100,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 240,
+      "info": "Floor while Fill is stretching, e.g. once columns stack on mobile.",
+      "visible_if": "{{ block.settings.height == 'fill' }}"
     },
     {
       "type": "text",
