@@ -6,16 +6,8 @@
   @param {string} [attributes] - Raw string appended to the wrapper tag.
 {%- enddoc -%}
 {%- comment -%}
-  Mirrors ../design-system/src/react/FormActions/FormActions.tsx -- the row at the foot of a form,
-  so a submit button and a link (or several buttons) can sit side by side.
-
-  Accepts:
-    content     Required. The actions' markup, built with {% capture %} before rendering.
-    class       Extra classes.
-    attributes  Raw string appended to the wrapper tag.
-
-  FormActions.tsx is `<Box direction="row" gap="sm">` plus one padding rule, so this spends
-  --space-sm for the gap -- the same token Box's gap="sm" resolves to -- and
+  Mirrors ../design-system/src/react/FormActions/FormActions.tsx: `<Box direction="row" gap="sm">`
+  plus one padding rule. Spends --space-sm for the gap (same token Box's gap="sm" resolves to) and
   --form-actions-base-padding for the start inset that lines the row up with the fields above it.
 {%- endcomment -%}
 {% liquid

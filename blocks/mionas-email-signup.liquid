@@ -2,71 +2,37 @@
   A customer email signup form built on the Mionas form snippets.
 {%- enddoc -%}
 {%- comment -%}
-  Horizon's native blocks/email-signup.liquid, rebuilt on the Mionas form snippets. Same contract:
-  one {% raw %}{% form 'customer' %}{% endraw %} with a single contact[email], which is what creates
-  the customer profile and its marketing consent. Everything else in the native block is appearance
-  settings -- border style, integrated button, arrow-vs-text button, custom colours, type presets --
-  that the design system answers with tokens instead, so none of it carries over.
+  Horizon's native blocks/email-signup.liquid, rebuilt on the Mionas form snippets: a single
+  {% raw %}{% form 'customer' %}{% endraw %} with contact[email]. The native block's appearance
+  settings are dropped in favor of design-system tokens.
 
-  WHY THIS IS ITS OWN BLOCK AND NOT A PRESET OF blocks/mionas-form.liquid. That block's children
-  cannot read the `form` object -- theme blocks receive no variables from parent code and `form` is a
-  tag-scoped local -- so its errors can only ever be a banner above the fields. An email signup has
-  exactly one field, and a malformed address is the only thing Shopify ever rejects, so a banner
-  would put the message somewhere other than the control it belongs to. Owning the form tag here
-  lets the error go straight into snippets/mionas-text-field.liquid's `error` param, which gives the
-  underline, aria-invalid, aria-describedby and the autofocus. Same reasoning that kept
-  blocks/mionas-contact-form.liquid off mionas-form.
+  Not a preset of blocks/mionas-form.liquid, because that block's children can't read the
+  tag-scoped `form` object and so can only show a banner error -- owning the form tag here instead
+  routes the email error into snippets/mionas-text-field.liquid's `error` param. mionas-form also
+  hardcodes the contact form type; making that a setting would let a merchant point it at the
+  customer endpoint, where only contact[email] means anything.
 
-  Second reason: mionas-form hardcodes the contact form type. Making that a setting would let a
-  merchant point a four-field form at the customer endpoint, where only contact[email] means
-  anything and every other field is silently discarded. Do not open that door.
+  No heading/description setting -- wrap this in a mionas-text block instead, as mionas-form and
+  mionas-contact-form do. `consent_text` is the one exception: fine print the form itself owns (see
+  NO CONSENT CHECKBOX below).
 
-  NO HEADING OR DESCRIPTION OF ITS OWN. A merchant who wants a title or supporting copy adds
-  a mionas-text block around this one instead, same call mionas-form and mionas-contact-form made.
-  The one exception is `consent_text` below, a single line of fine-print copy the form itself is
-  responsible for -- see NO CONSENT CHECKBOX further down for why.
+  `field_surface` duplicates Card's tokens onto a `<div>` rather than a real Card, since Card's
+  `overflow: hidden` would clip the button outside its border. Turn it off if already inside a Card.
 
-  `field_surface` duplicates Mionas: Card's own --card-* tokens onto a plain `<div>` rather than
-  rendering an actual Card, because Card's `overflow: hidden` would clip a button sitting outside
-  its border, and a real child Card would force the field into a child block that can't read `form`.
-  Turn it off if the whole block is already wrapped in an actual Mionas: Card.
+  Errors are validated client-side via assets/mionas-form-validation.js (`validate: true`), which
+  sets `novalidate` from JavaScript rather than in the tag, so a no-JS visitor keeps native browser
+  validation.
 
-  FIELD GAP IS A SETTING, NOT A HARDCODED VALUE. `field_gap` below is forwarded to
-  snippets/mionas-form.liquid's `gap` param -- the space between the field and the button. Default
-  matches Form.tsx's own `<Box gap="md">` (--space-md / 16px).
+  `type="email"` alone accepts malformed addresses ("a@b") that Shopify then rejects on submit,
+  which looks like a silently ignored button click. snippets/mionas-text-field.liquid adds a
+  stricter `pattern` for email fields to catch these before submit.
 
-  CLIENT-SIDE ERRORS ARE JS-DRIVEN ON PURPOSE. `validate: true` on the mionas-form render below
-  loads assets/mionas-form-validation.js, which sets `novalidate` on the form FROM JAVASCRIPT and
-  writes the same field/label classes and message paragraph the server-side `error` param produces,
-  so the two error states are indistinguishable. Because novalidate is set from JS rather than in
-  the form tag, a visitor without JavaScript keeps the browser's native validation. Do not move it
-  into Liquid.
+  No consent checkbox: Shopify records nothing from a client-side checkbox, so `consent_text` (fine
+  print linking to the privacy policy) is the auditable equivalent.
 
-  type="email" on its own parses far too loosely -- it accepts "marc@gmail" and "a@b", which then
-  submit, get rejected by Shopify and come back as a full page load, looking for all the world like
-  the button ignoring the error. snippets/mionas-text-field.liquid therefore adds a stricter default
-  `pattern` to every email field; that is where the regex and its reasoning live. Shopify's own
-  check remains the authority for everything the pattern cannot know, and it renders through the
-  very same markup, so a value that still slips past fails visibly rather than differently.
-
-  NO MERCHANT-SETTABLE ERROR COPY. Shopify's own translated message is more accurate than anything a
-  merchant would type, and it is what mionas-contact-form already shows.
-
-  NO CONSENT CHECKBOX. Shopify records nothing from a client-side checkbox, so a required consent box
-  here would produce no auditable consent record. The honest equivalent is a line of fine-print copy
-  linking to the privacy policy -- `consent_text` below, rendered outside the form's own gap-column
-  so it reads as a caption under the field+button rather than another gapped row.
-
-  THE MULTI-INSTANCE GUARD IS UNVERIFIED ON THE CUSTOMER ENDPOINT. contact[id] demonstrably
-  round-trips into form.id on the CONTACT endpoint -- that is what lets mionas-form and
-  mionas-contact-form scope their banners. Whether the customer endpoint does the same has not been
-  confirmed, and Horizon's native blocks/email-signup.liquid guards on form.id == blank alone, which
-  hints that it may not. The guard below is written as if it holds: correct if it does, and harmless
-  if it does not. If it does not, two email signups on one page both show the success or error
-  message when either is submitted -- identical to the native block's behaviour, so a platform
-  limitation rather than a regression. Do not paper over it with JavaScript: the message is
-  server-rendered into a fresh document, and hiding one copy client-side would leave a screen reader
-  announcing both.
+  The multi-instance guard below is confirmed on the contact endpoint but unverified on this
+  block's customer endpoint. Written as if it holds; if it doesn't, two signups on one page both
+  show the same message on submit, same as the native block.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -106,40 +72,36 @@
     {%- endif -%}
 
     {% liquid
-      # Two signups on one page would otherwise fire each other's messages: Shopify re-renders the
-      # whole page after a post and every form object sees the same posted data. How far this
-      # actually holds on the customer endpoint is recorded in this file's header comment -- read it
-      # before relying on the guard.
+      # Two signups on a page would otherwise fire each other's messages, since every form object
+      # sees the same posted data after Shopify re-renders the page. See the header comment for
+      # the customer-endpoint caveat.
       assign form_matches = false
       if form.id == form_id or form.id == blank
         assign form_matches = true
       endif
 
-      # Shopify only ever reports an error against email here. Routed into the field's own `error`
-      # param rather than a banner, so the underline, the label colour and the message all come from
-      # FormField/FormLabel/FormError as the design system composes them.
-      # Kept on one line: inside a liquid tag every newline ends the statement, so a filter chain
-      # wrapped across lines is a syntax error, not a continuation.
+      # Routed into the field's own `error` param rather than a banner, so the underline, label
+      # colour and message all come from the design system's FormField/FormLabel/FormError.
+      # Kept on one line: inside a liquid tag a newline ends the statement, so a wrapped filter
+      # chain would be a syntax error.
       assign email_error = ''
       if form.errors and form_matches
         assign email_error = form.errors.translated_fields.email | capitalize | append: ' ' | append: form.errors.messages.email
       endif
 
-      # Assigned inside the form tag, not above it: the form object is scoped to the tag, so reading
-      # form.email outside yields nothing and the field comes back empty after a failed submit --
-      # exactly when the user least wants to retype it. Whether the customer endpoint echoes email
-      # back at all is unconfirmed; if it does not, this is simply blank and nothing breaks.
+      # Assigned inside the form tag since `form` is scoped to it -- reading form.email outside
+      # would leave the field empty after a failed submit. Unconfirmed whether the customer
+      # endpoint echoes email back at all; if not, this is simply blank.
       assign email_value = form.email
     %}
 
     {%- if form.posted_successfully? and form_matches -%}
       {%- comment -%}
-        A banner ABOVE the fields, which stay in place -- matching blocks/mionas-form.liquid. It does
-        not replace the form body: consistency with the other two Mionas forms wins, and the form
-        staying visible keeps the block editable in the theme editor after a test submit.
+        A banner above the fields, which stay in place -- matches blocks/mionas-form.liquid and
+        keeps the block editable in the theme editor after a test submit.
 
-        autofocus is load-bearing: after a post the page is a fresh document with focus on <body> and
-        no announcement that anything happened. Moving focus here is what a screen reader reports.
+        autofocus is load-bearing: after a post the page is a fresh document with focus on <body>,
+        so moving focus here is what makes a screen reader announce success.
       {%- endcomment -%}
       <div class="mionas-email-signup__success" tabindex="-1" autofocus>
         {{- 'icon-checkmark.svg' | inline_asset_content -}}
@@ -184,9 +146,9 @@
     {%- render 'mionas-form', content: email_signup_fields, validate: true, gap: field_gap_css -%}
 
     {%- comment -%}
-      Rendered as a sibling AFTER mionas-form, not folded into email_signup_fields, so it does not
-      pick up the form's flex gap or the inline layout's row treatment -- it reads as a caption under
-      the field+button, not a third item in the row/column.
+      Rendered as a sibling after mionas-form, not folded into email_signup_fields, so it doesn't
+      pick up the form's flex gap or inline row treatment -- it reads as a caption, not a third
+      row item.
     {%- endcomment -%}
     {%- capture consent_content -%}{% render 'mionas-inline-richtext', value: block_settings.consent_text %}{%- endcapture -%}
     {%- assign consent_visible_text = consent_content | strip_html | strip -%}
@@ -204,12 +166,12 @@
 </div>
 
 {% stylesheet %}
-  /* The BLOCK has no surface -- see the header comment.
+  /* The block itself has no surface -- see the header comment.
 
      flex: 1 1 auto with width: 100% keeps the block from collapsing when a parent section stacks to
-     a column on mobile; the desktop override zeroes flex-basis so a row splits by the sibling widths
-     instead of by this 100%. blocks/mionas-form.liquid and blocks/mionas-contact-form.liquid both
-     carry this same pattern -- check all three when tuning it. */
+     a column on mobile; the desktop override zeroes flex-basis so a row splits by sibling widths
+     instead. blocks/mionas-form.liquid and blocks/mionas-contact-form.liquid share this pattern --
+     check all three when tuning it. */
   .mionas-email-signup {
     flex: 1 1 auto;
     min-width: 0;
@@ -238,10 +200,9 @@
     padding: var(--card-base-padding);
   }
 
-  /* The field's underline bleeds to the surface's full width; the compensating padding-inline keeps
-     the label/input/error at their previous inset. width: auto overrides .mionas-form-field's own
-     fixed width: 100% -- a fixed width only shifts under negative margins, it doesn't grow, which
-     left the right edge short by the padding amount. */
+  /* The field's underline bleeds to the surface's full width; padding-inline compensates to keep
+     label/input/error at their previous inset. width: auto overrides .mionas-form-field's fixed
+     width: 100%, which only shifts under negative margins rather than growing to fill them. */
   .mionas-email-signup__surface .mionas-form-field {
     width: auto;
     margin-inline: calc(-1 * var(--card-base-padding));
@@ -261,31 +222,24 @@
     opacity: 0.7;
   }
 
-  /* Button width, stacked layout. align-self is not optional alongside width: fit-content --
-     snippets/mionas-form.liquid's flex column stretches its children by default, so without it the
-     button would still span the full width and this setting would appear to do nothing.
+  /* align-self is required alongside width: fit-content -- snippets/mionas-form.liquid's flex
+     column stretches children by default, so without it the button would still span full width.
 
-     The inline layout below overrides width regardless: a full-width button in a row would leave no
-     space for the field, so inline has one sensible answer and takes it. That makes this setting a
-     no-op there, which is intended, not a conflict. */
+     The inline layout overrides width regardless, since a full-width button in a row would leave
+     no space for the field; this setting becoming a no-op there is intended. */
   .mionas-email-signup--button-fit .mionas-submit-button {
     width: fit-content;
     align-self: flex-start;
   }
 
-  /* The inline layout is a MODIFIER, not a second markup path: the stacked column is
-     snippets/mionas-form.liquid's own flex column and stays untouched. Only three things change --
-     the direction, the field taking the free space, and the button's width:100% from
-     snippets/mionas-submit-button.liquid.
+  /* The inline layout is a modifier of snippets/mionas-form.liquid's flex column, not a second
+     markup path -- only direction, field flex-grow, and button width change.
 
-     align-items: flex-start, NOT flex-end. The field's wrapper (snippets/mionas-form-field.liquid)
-     grows DOWNWARD when it reports an error, so bottom-aligning would shove the button down with it
-     every time validation fails. Top-aligning keeps the button still. The button is shorter than the
-     field, so it sits at the field's top edge -- accepted, and part of why this is not the default
-     layout.
+     align-items: flex-start, not flex-end: the field's wrapper grows downward on a validation
+     error, so bottom-aligning would shove the button down with it.
 
-     Below 750px this rule does not apply at all, so inline falls back to the stacked column. That is
-     deliberate: an input and a button side by side on a phone leaves neither usable. */
+     Below 750px this rule doesn't apply, so inline falls back to stacked -- a phone-width row
+     leaves neither input nor button usable. */
   @media screen and (min-width: 750px) {
     .mionas-email-signup--inline .mionas-form {
       flex-direction: row;

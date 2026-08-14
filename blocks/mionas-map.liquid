@@ -3,17 +3,12 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  A Google Maps embed for the Contacto page's location panel.
+  A Google Maps embed for the Contacto page's location panel. Uses
+  https://www.google.com/maps?q=<address>&output=embed, which needs no API key -- the trade-off is
+  no styling control over the map itself, only its frame. Chosen over a custom-liquid block so the
+  merchant edits an address field rather than raw iframe HTML.
 
-  https://www.google.com/maps?q=<address>&output=embed needs no API key and no app, which is why
-  it is used instead of the Maps Embed API. The trade-off is no styling control over the map
-  itself -- only its frame.
-
-  Chosen over a one-off custom-liquid block so the merchant edits an address field rather than raw
-  iframe HTML.
-
-  PRIVACY: this is a third-party iframe that sets Google cookies on load. If the store takes on a
-  cookie-consent obligation, gating or replacing this embed is a follow-up -- see the spec.
+  This is a third-party iframe and sets Google cookies on load.
 
   Border and radius come from --card-base-* so the map and the info card beneath it read as one
   stack.

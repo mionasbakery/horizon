@@ -3,40 +3,13 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Text/Text.tsx: a single text node whose typography role and
-  colour variant come straight from the design system's --text-role-* / --text-color-* tokens.
+  Mirrors ../design-system/src/react/Text/Text.tsx's role/size/color vocabulary directly, unlike
+  Horizon's native blocks/text.liquid, which bridges its own preset typography instead.
 
-  A different file, blocks/text.liquid, is Horizon's built-in "Text" block (t:names.text) -- an
-  editorial rich-text block with its own custom-size typography system flowing through
-  snippets/design-system-bridge.liquid. This block does not touch that one -- it exposes the
-  design system's fixed role/variant vocabulary directly, rather than bridging it onto Horizon's
-  own presets. This block is named "Mionas: Text" in the block picker to
-  distinguish it from "Text" (Variant/Size/Color/HTML tag settings here, vs. Type preset there).
-  See docs/superpowers/specs/2026-07-20-text-role-block-design.md (written when this block was
-  still named "Mionas: Text role").
-
-  Variant and Size are separate settings, 1:1 with Text.tsx's own `variant` (band: display,
-  headline, title, body, label) and `size` (lg/md/sm) props -- they used to be one combined
-  `role` select (e.g. "display-lg"). snippets/mionas-text.liquid takes the same two params
-  separately and joins them internally; this block just passes them straight through. Color keeps
-  its own axis, same as Text.tsx's `color` prop -- it was also called `variant` here before this
-  split, which would have collided with the new band setting, so it was renamed to `color` to
-  match the design system's own prop name.
-
-  The CSS class prefix (`text-role`) and the --text-role-*/--text-color-* tokens keep their names --
-  they mirror the design system's own Text.tsx `role` vocabulary, not this block's editor label.
-
-  `tag` is independent of Variant/Size, same as Text.tsx's `as` prop is independent of `variant`/
-  `size` -- a label-styled span or an h2 with hero styling are both valid.
-
-  The Text setting is `richtext` so copy can span several lines, but its block-level markup is
-  flattened to `<br>` before output by snippets/mionas-inline-richtext.liquid, which documents why.
-  blocks/mionas-stamp.liquid flattens through the same snippet.
-
-  Trade-off of that flattening: the theme editor only live-previews a text setting when it's output
-  unfiltered and alone inside its element, so typing here re-renders the section instead of updating
-  instantly. Keeping bold/italic/link on existing copy is worth that -- the alternative (a plain
-  `textarea` output unfiltered, with `white-space: pre-line`) would drop inline formatting.
+  The Text setting is richtext, flattened to inline HTML by mionas-inline-richtext.liquid to keep
+  bold/italic/link support -- the tradeoff is that the editor re-renders the section on every
+  keystroke instead of live-previewing, since Shopify only live-previews a setting output raw and
+  alone in its own element.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -52,24 +25,16 @@
 %}
 
 {%- comment -%}
-  The element itself, and the text-role classes on it, come from snippets/mionas-text.liquid. This
-  block is now the settings-and-richtext half of the pair: it owns the visible-text gate, the schema,
-  and the .text-role CSS below, which stays here rather than moving to the snippet because snippets
-  cannot declare a stylesheet tag.
-
-  blocks/mionas-price.liquid renders the same snippet with its own dynamic content, so the role
-  vocabulary has one implementation rather than one per block.
+  The .text-role CSS below stays in this block rather than moving to snippets/mionas-text.liquid
+  because snippets can't declare a stylesheet tag; mionas-price.liquid renders that same snippet
+  with its own dynamic content, sharing this one implementation.
 {%- endcomment -%}
 {%- if visible_text != blank -%}
   {%- comment -%}
-    `spacing-style` is Horizon's own class (base.css:1352-1381): it turns the four --padding-* custom
-    properties the snippet writes into real padding, with 0px fallbacks, and scales anything above
-    20px responsively. Same mechanism, same four setting ids, as blocks/mionas-price.liquid and
-    blocks/mionas-add-to-cart.liquid, so a merchant insets a text block the way they inset every
-    other block in the theme rather than reaching for a group wrapper.
-
-    No .text-role rule declares padding, so `spacing-style`'s (0,1,0) padding in base.css has nothing
-    in this bundle to lose source order to -- nothing here needs to be two classes deep.
+    `spacing-style` is Horizon's own class (base.css): it turns the --padding-* custom properties
+    the snippet writes into real padding, the same mechanism blocks/mionas-price.liquid and
+    blocks/mionas-add-to-cart.liquid use, so a merchant insets this block the way they inset any
+    other one rather than reaching for a group wrapper.
   {%- endcomment -%}
   {%- capture text_style -%}
     {%- render 'spacing-style', settings: block_settings -%}
@@ -93,15 +58,9 @@
     font-family: var(--font-family-archivo);
   }
 
-  /* One class per text-role token, 1:1 with Text.tsx's band x size grid: five bands at three
-     sizes each. All fifteen are exposed even though the theme only uses nine, because this block
-     is the theme's mirror of Text -- a mirror offering a subset would quietly be a different
-     component. Keep the `variant`/`size` selects' options and snippets/mionas-text.liquid's
-     whitelist in step with this list.
-
-     These names replaced a flat ten-role vocabulary; the old-to-new table is in
-     docs/superpowers/specs/2026-07-20-text-role-block-design.md, which is also what stored
-     settings were migrated by. */
+  /* All fifteen band x size combinations are exposed, even though the theme only uses nine, so
+     this stays a true mirror of Text.tsx rather than a silently reduced subset. Keep the
+     `variant`/`size` selects and snippets/mionas-text.liquid's whitelist in step with this list. */
   .text-role--display-lg {
     font-size: var(--text-role-display-lg-font-size);
     line-height: var(--text-role-display-lg-line-height);
@@ -207,12 +166,8 @@
     letter-spacing: var(--text-role-label-sm-letter-spacing);
   }
 
-  /* There is deliberately no sixteenth rule here for Stamp. It is a component in ../design-system
-     (src/react/Stamp/Stamp.tsx), not a text role -- a role bundle cannot carry a typeface, a
-     transform or its wide tracking -- so it is blocks/mionas-stamp.liquid, which COMPOSES the label
-     roles above (its Size setting picks one) rather than adding a role beside them, exactly as
-     Stamp.tsx renders `<Text variant="label" size={size}>`. Nothing in the theme spends a
-     .text-role--stamp class any more; the four --stamp-base-* tokens are spent by that block. */
+  /* No text-role--stamp rule here on purpose: blocks/mionas-stamp.liquid composes the label roles
+     above rather than adding one beside them, mirroring Stamp.tsx's <Text variant="label">. */
 
   .text-role--default {
     color: var(--text-color-default);

@@ -25,30 +25,10 @@
   @param {string} [attributes] - Raw string appended to the tag, e.g. block.shopify_attributes.
 {%- enddoc -%}
 {% comment %}
-  Mirrors the design-system Box component (../design-system/src/react/Box) — a layout primitive
-  with no editor presence of its own, meant to be `{% render %}`-ed from other Mionas
-  sections/blocks. Owns no tokens; every class below spends a --space-*, --radius-* or --surface-*
-  token from assets/design-tokens.css, matching Box.module.css step for step.
-
-  Column-stacking by default (like an RN <View>), matching Box.tsx's .root.
-
-  Accepts:
-    content     - required, the inner markup (build via {% capture %} before rendering)
-    tag         - 'div' (default) or 'button'
-    p/px/py/pt/pb/pl/pr, gap/gap_x/gap_y - '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg'
-    radius      - 'sm' | 'md' | 'lg' | 'xl' | 'full'
-    bg          - 'default' | 'screen' | 'paper' | 'subtle'
-    direction, align, justify, wrap, align_self - passed straight through as inline style,
-                  same as Box.tsx's layout props (no token involved)
-    flex        - number, passed straight through as inline style
-    class       - extra classes to append
-    attributes  - raw string appended to the tag, e.g. block.shopify_attributes
-
-  Usage:
-    {% capture box_content %}
-      <p>Pa de vidre</p>
-    {% endcapture %}
-    {% render 'mionas-box', content: box_content, direction: 'row', gap: 'sm', p: 'md', bg: 'paper', radius: 'lg' %}
+  Mirrors the design-system Box component (../design-system/src/react/Box) -- a layout primitive
+  rendered via {% render %}, with no editor presence of its own. Every class here spends a
+  --space-*, --radius-* or --surface-* token from assets/design-tokens.css, matching
+  Box.module.css step for step. Column-stacking by default matches Box.tsx's .root.
 {% endcomment %}
 {% liquid
   assign box_tag = tag | default: 'div'

@@ -1,51 +1,34 @@
 {%- comment -%}
   Renders a date-sorted list of upcoming course products, soonest first.
 
-  A date-first list of courses: one row per product, the date as the anchor of the row.
+  A course row is a horizontal, imageless date/title/price layout, so it can't reuse
+  _product-card's vertical stack -- and mionas-collection's carousel, mobile_card_size and column
+  settings would all be meaningless here. It still borrows mionas-collection's free content_for
+  'blocks' region above the list for the "PRÓXIMAS FECHAS" kicker (same reasoning as that file).
 
-  WHY THIS SECTION EXISTS RATHER THAN mionas-collection WITH columns: 1:
-  the native _product-card is a vertical media/title/price stack and a course row is a horizontal
-  three-zone layout with no image at all; and mionas-collection's carousel, mobile_card_size and
-  1-6 column settings are all meaningless on a course list, so a merchant would face a schema full
-  of switches that do nothing.
+  collection.products caps at 50, and the past-date filter below runs after that window -- a
+  safety net, not a substitute for drafting past courses out of the collection, since truncation
+  happens in the collection's manual order before this section ever sees the products.
 
-  It borrows mionas-collection's frame: a free content_for 'blocks' region ABOVE the list, which is
-  what carries the "PRÓXIMAS FECHAS" kicker as an ordinary mionas-text block rather than a baked-in
-  heading setting. Same reasoning recorded in mionas-collection.liquid.
-
-  COLLECTION SIZE IS STILL THE MERCHANT'S JOB: collection.products yields at most 50 products, and
-  the past-date filter below runs in Liquid, AFTER that window. So the filter is a safety
-  net, not a licence to stop drafting past courses -- if the collection ever grows past 50, the
-  truncation happens in the collection's MANUAL order and future courses can be dropped before this
-  section ever sees them.
-
-  The header liquid and the rows capture below sort the collection's products by course_date,
-  drop any whose date has already passed, and cap the result at max_products. When that leaves
-  nothing to show, a merchant-editable fallback message renders in its place. Products with no
-  course_date are excluded from the list and instead named in a theme-editor-only warning (see
-  below), so a missing metafield surfaces as a visible prompt rather than a course quietly
-  vanishing from the storefront.
+  Products missing course_date are excluded from the list and named in a theme-editor-only
+  warning below, so a missing metafield surfaces as a visible prompt instead of a course quietly
+  vanishing.
 {%- endcomment -%}
 
 {%- liquid
   assign collection = section.settings.collection
   assign max_products = section.settings.max_products
 
-  # WHY %Y%m%d AND NOT %Y-%m-%d: this one format has to serve two purposes. As a string it sorts
-  # lexicographically into true date order (fixed-width, zero-padded, most-significant first), and
-  # `| plus: 0` turns it into an integer for the past-date comparison below. Liquid has no reliable
-  # string ordering operator, so the numeric form is the only safe way to ask "has this passed?".
+  # %Y%m%d (not %Y-%m-%d) sorts lexicographically as a string and converts to an integer via
+  # `| plus: 0` for the past-date comparison below -- one format serves both needs.
   #
-  # 'now' resolves in the SHOP's timezone, and Shopify's full-page cache means a course whose date
-  # has just passed can linger for a little while past midnight. Accepted: the merchant also drafts
-  # past courses by hand, so this filter is a safety net rather than the only mechanism.
+  # 'now' resolves in the shop's timezone, and full-page caching can leave a just-passed course
+  # visible briefly; the merchant drafting past courses by hand is the real safety net.
   assign today = 'now' | date: '%Y%m%d' | plus: 0
 
-  # Keys are "<YYYYMMDD>~<index into collection.products>". Sorting the keys therefore sorts the
-  # products by date, and the index rides along so the product can be recovered afterwards. The
-  # index tie-breaks lexicographically, so same-date rows can order as "~1, ~12, ~3" -- deliberately
-  # unspecified, since the date prefix decides everything that affects the page and the index is
-  # only a recovery handle.
+  # Keys are "<YYYYMMDD>~<index>"; sorting them sorts products by date while the index recovers
+  # the product afterward. Same-date rows tie-break lexicographically on the index (e.g. ~1, ~12,
+  # ~3) -- unspecified deliberately, since only the date prefix affects the page.
   assign date_keys = ''
   assign skipped_products = ''
 
@@ -95,10 +78,9 @@
 
   {%- capture rows -%}
     {%- comment -%}
-      ORDER OF OPERATIONS IS LOAD-BEARING: sort, then drop past dates, then cap at max_products.
-      A `limit:` on the loop above would take N products in the collection's MANUAL order and only
-      then sort those -- with 12 courses and a max of 3, the page would show three arbitrary dates
-      instead of the three soonest. The `rendered` counter is what applies the cap last.
+      Order matters: sort, then drop past dates, then cap at max_products. A `limit:` on the loop
+      above would cap products in the collection's manual order before sorting, which could show
+      arbitrary dates instead of the soonest ones.
     {%- endcomment -%}
     {%- assign rendered = 0 -%}
     {%- for date_key in sorted_keys -%}
@@ -148,13 +130,9 @@
   {%- endif -%}
 
   {%- comment -%}
-    THEME EDITOR ONLY. A product with no course_date is dropped by the loop above, and a course
-    silently vanishing from the storefront is worse than an ugly warning in the editor. Guarded on
-    request.design_mode so a visitor never sees it.
-
-    The copy is English on an otherwise Spanish page, deliberately: it is merchant-facing tooling in
-    the theme editor, where every other label in this theme's schemas is also English. It is never
-    rendered to a shopper.
+    Theme editor only (request.design_mode): a course silently vanishing from the storefront is
+    worse than a visible warning, so products missing course_date are named here instead of just
+    dropped. English on purpose, matching the rest of this theme's schema labels.
   {%- endcomment -%}
   {%- if request.design_mode and skipped_products != blank -%}
     {%- assign skipped_list = skipped_products | split: '|' -%}

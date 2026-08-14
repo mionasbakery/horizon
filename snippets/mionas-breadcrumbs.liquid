@@ -6,40 +6,23 @@
   @param {object} [menu] - Linklist to derive the hierarchy from. Falls back to navigation-menu.
 {%- enddoc -%}
 {%- comment -%}
-  The breadcrumb trail itself -- the single implementation shared by sections/mionas-breadcrumbs.liquid
-  (standalone, top of a template) and blocks/mionas-breadcrumbs.liquid (nested inside a Section, next
-  to a Heading). Both callers own their own wrapper element and its shopify_attributes; this snippet
-  emits only the <nav> landmark, so neither caller's editor affordances leak into the other.
+  Shared by sections/mionas-breadcrumbs.liquid (standalone) and blocks/mionas-breadcrumbs.liquid
+  (nested). Both callers own their wrapper and shopify_attributes; this snippet emits only the
+  <nav> landmark. Mirrors the design-system Breadcrumbs + BreadcrumbLink components
+  (../design-system/src/react/Breadcrumbs); no native Horizon file produces a breadcrumb trail, so
+  this is a fork by necessity.
 
-  Mirrors the design-system Breadcrumbs + BreadcrumbLink components
-  (../design-system/src/react/Breadcrumbs). No native Horizon file produces a breadcrumb trail at
-  all, so there is nothing to reskin; this is a fork by necessity, not by choice.
+  home_label and landmark_label are required because {% render %} is an isolated scope -- routes,
+  request, template and the resource objects resolve here as globals, but these two do not.
 
-  Accepts:
-    home_label     - copy for the first crumb (required; caller defaults it)
-    landmark_label - accessible name for the nav landmark (required; caller defaults it)
-    menu           - a linklist to derive the hierarchy from; falls back to navigation-menu
-
-  {% render %} is an isolated scope, so those three must be passed explicitly. Everything else the
-  trail reads (routes, request, template, collection, blog, article, product, page, linklists) is a
-  global and resolves in here unchanged.
-
-  Every crumb renders as a real <a>, including the current page -- matching BreadcrumbLink, which
-  is always a Link/anchor; Breadcrumbs.tsx marks the last one current via aria-current="page"
-  rather than swapping it for inert text, and BreadcrumbLink's own CSS keys its "current" look off
-  that attribute rather than a prop. See .cursor/rules/breadcrumb-accessibility.mdc for the
-  underlying WAI-ARIA pattern (nav landmark + ordered list + aria-current) this follows.
-
-  The one exception: a menu ancestor whose URL is the site root (this store's "Tienda" parent) is a
-  <span>, not an <a>, because the Home crumb already links there and two adjacent crumbs pointing
-  at the same page is worse than one non-interactive label. The rule is "no crumb duplicates Home's
-  target", not "some crumbs are text".
+  Every crumb, including the current page, renders as a real <a> with aria-current="page" on the
+  last one rather than swapping it for inert text -- see .cursor/rules/breadcrumb-accessibility.mdc.
+  The one exception: a menu ancestor whose URL is the site root is a <span>, since Home already
+  links there and two crumbs pointing at the same page is worse than one non-interactive label.
 {%- endcomment -%}
 {% liquid
-  # page_title is the SEO title, not the resource name: it's whatever the merchant typed into the
-  # search-listing editor (often truncated to fit a search result), and on a tag-filtered collection
-  # Shopify appends the tag ("Breads - sourdough"). The crumb wants the resource's own name, so take
-  # it from the resource whenever the template has one and keep page_title only as the last resort.
+  # page_title is the SEO title (merchant-edited, sometimes tag-suffixed), not the resource name.
+  # Prefer the resource's own title and fall back to page_title only when there is no resource.
   assign current_title = page_title
   case template.name
     when 'collection'
@@ -54,16 +37,15 @@
       assign current_title = page.title | default: page_title
   endcase
 
-  # The trail follows the merchant's navigation menu, so the crumbs match the path a visitor
-  # actually clicked rather than a second, invented hierarchy. Shopify menus nest at most three
-  # levels, so a page has at most two ancestors -- no recursion needed, just two nested loops.
-  # link.current is the exact-URL match; child_active/child_current mark the branch containing it.
-  # The link_list setting type only accepts "main-menu" or "footer" as a schema default -- anything
-  # else is rejected as "default is invalid" at render time -- so the real default lives here:
-  # navigation-menu is the menu sections/header-group.json renders, and Shopify's main-menu starter
-  # list is unused on this store.
-  # `== blank` rather than `.links.size == 0`: an unset link_list setting is nil, and nil == 0 is
-  # false in Liquid, so a size check silently leaves the menu nil and no crumb ever matches.
+  # The trail follows the merchant's navigation menu so crumbs match the path a visitor actually
+  # clicked. Menus nest at most three levels, so two nested loops cover every case with no
+  # recursion. link.current is the exact match; child_active/child_current mark the active branch.
+  #
+  # link_list settings only accept "main-menu" or "footer" as a schema default, so the real
+  # fallback lives here instead: navigation-menu, which sections/header-group.json renders.
+  #
+  # `== blank` rather than `.links.size == 0`: nil == 0 is false in Liquid, so a size check would
+  # silently leave an unset menu nil and no crumb would ever match.
   if menu == blank
     assign menu = linklists['navigation-menu']
   endif
@@ -105,10 +87,9 @@
     </li>
 
     {%- comment -%}
-      Menu ancestors first, then the resource crumb -- the two are additive, not alternatives. A
-      product opened from a collection (/collections/x/products/y) makes the menu's *collection*
-      branch active, so the menu supplies the grouping above the collection while the collection
-      itself still has to come from `collection`. Treating them as either/or drops that crumb.
+      Menu ancestors and the resource crumb are additive, not alternatives: a product opened from
+      a collection makes the menu's collection branch active, but the collection crumb itself
+      still has to come from `collection`. Treating them as either/or would drop a crumb.
     {%- endcomment -%}
     {%- if menu_matched -%}
       {%- if ancestor_1_title != blank -%}

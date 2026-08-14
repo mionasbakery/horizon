@@ -22,53 +22,26 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/TextField/TextField.tsx -- a labelled text input inside an
-  underline field.
+  Mirrors ../design-system/src/react/TextField/TextField.tsx.
 
-  The input draws NO border and NO background of its own. The line under it belongs to
-  snippets/mionas-form-field.liquid, which this snippet wraps itself in. Adding a border here would
-  produce a boxed input sitting on top of an underline.
+  The input draws no border or background of its own; the underline belongs to
+  snippets/mionas-form-field.liquid, which wraps this snippet. A border here would double up.
 
-  Accepts:
-    label         Required. Label copy.
-    name          Required. The form field name, e.g. 'contact[email]'.
-    id            Required in practice -- it associates the label with the control. Callers derive
-                  it from the block id so two of the same form on one page don't collide.
-    type          Defaults to 'text', matching TextField.tsx's `type = "text"`.
-    value         Prefilled value.
-    placeholder   Optional.
-    rows          Renders a <textarea> with this many rows instead of an <input>. THIS IS A THEME
-                  EXTENSION: the design system has no Textarea component, so there is no .module.css
-                  to mirror for it. It reuses the input's styling verbatim and adds only
-                  `resize: vertical`. Worth proposing back to ../design-system if a second form needs
-                  it -- see the mionas-design-component skill on new patterns.
-    required      Defaults to true (TextField.tsx's `required = true`). Sets the `required` and
-                  `aria-required` attributes and drops the label's " (optional)" suffix. Explicit
-                  `== false` test, because Liquid's `default` filter treats false as empty.
-    disabled      Pass true to disable and dim the control.
-    error         Message string. Switches the field to error colours, renders the message, and sets
-                  aria-invalid + aria-describedby + autofocus on the control.
+  `rows` renders a <textarea> instead of an <input>. This is a theme extension -- the design system
+  has no Textarea component -- so it reuses the input's styling and adds only `resize: vertical`.
 
-                  The autofocus is load-bearing, not decoration. A Shopify form posts and the page
-                  re-renders, so without it a failed submit drops the user back at the top of a
-                  fresh document with focus on <body> and no announcement that anything went wrong.
-                  It sits on the errored CONTROL rather than on the message, so the user lands
-                  somewhere they can immediately type -- and aria-describedby means the message is
-                  read out on arrival anyway. Only one field can hold it: if a form ever reports two
-                  errors at once, pass `error` to the first one only, or the browser honours the
-                  first autofocus in document order and silently ignores the rest.
-    autocomplete, spellcheck, autocapitalize, inputmode
-                  Passed through when set.
-    pattern       Passed through when set. An email field that does not set one gets a stricter
-                  default -- see the liquid tag below for why type="email" on its own is not enough.
-    optional_text Forwarded to the label; see snippets/mionas-form-label.liquid.
-    attributes    Raw string appended to the control tag, for anything not covered above.
-    class         Extra classes on the field wrapper.
+  `required` uses an explicit `== false` check because Liquid's `default` filter treats false as
+  empty and would flip it back to true.
 
-  Fonts: --text-field-base-font-family, exactly as TextField.module.css spends it. It resolves
-  through --font-family-archivo, which snippets/design-system-bridge.liquid repoints at the theme's
-  loaded body font -- so the family is the design system's decision, delivered by a face Shopify
-  actually hosts.
+  `error` autofocuses the control (not the message) so a failed Shopify form re-render doesn't
+  strand the user at the top of the page with no indication anything went wrong; aria-describedby
+  still announces the message. Only one field per form should pass `error`, since the browser only
+  honours the first autofocus in document order.
+
+  `pattern` defaults to a stricter email check when `type` is 'email' -- see the liquid tag below.
+
+  Fonts: --text-field-base-font-family resolves through --font-family-archivo, which
+  snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
 {%- endcomment -%}
 {% liquid
   assign field_type = type | default: 'text'
@@ -85,20 +58,9 @@
     assign field_has_error = true
   endif
 
-  # type="email" alone is far too permissive: the HTML spec's own definition accepts "marc@gmail"
-  # and even "a@b", because a dotless domain is legal in the abstract. Those addresses sail past the
-  # browser, past assets/mionas-form-validation.js, and only fail once Shopify has already taken the
-  # round trip -- which reads to the visitor as the button submitting despite an obviously
-  # incomplete address.
-  #
-  # So every Mionas email field gets a stricter pattern by default: something before the @, a
-  # domain, a dot, and a TLD of at least two characters. Applied here rather than in each block so
-  # the rule is single-sourced, and skipped when a caller passes its own `pattern`.
-  #
-  # It is a floor, not a full RFC 5322 parser -- that is not a thing a regex should attempt, and
-  # Shopify's own server-side check is still the authority. It just stops the obvious cases from
-  # costing a page load. patternMismatch lands on the same "invalid" message as typeMismatch in
-  # mionas-form-validation.js, and it also tightens the no-JS fallback.
+  # type="email" alone accepts things like "a@b" per the HTML spec, which only get caught after a
+  # full round trip to Shopify. Default to a stricter pattern (skipped if the caller passes its own)
+  # so the common cases fail fast in the browser instead.
   assign field_pattern = pattern
   if field_pattern == blank and field_type == 'email'
     assign field_pattern = '[^@\s]+@[^@\s]+\.[^@\s]{2,}'
@@ -152,9 +114,8 @@
 -%}
 
 {% stylesheet %}
-  /* TextField.module.css .input. `padding: 0` then `padding-left` is not redundant: browsers give
-     inputs and textareas their own default padding, and the design's only inset is the start one,
-     which lines the text up with the label and the error message above and below it. */
+  /* `padding: 0` then `padding-left` isn't redundant -- browsers give inputs their own default
+     padding, and the design only wants the start inset. */
   .mionas-text-field__input {
     appearance: none;
     width: 100%;

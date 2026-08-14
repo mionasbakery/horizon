@@ -36,16 +36,13 @@
   assign resolved_color = color | default: 'default'
 
   comment
-    An unrecognised variant/size pair must fall back, not pass through: `default` cannot catch a
-    stale value because that filter fires on nil/false/empty, never on a string that has simply
-    stopped being a role. Passing one through emits a class that no longer exists, and the text
-    renders with no size, weight or tracking at all -- worse than the body copy it lands on here.
-    Live risk, not hypothetical: settings changed in the theme editor since the last
-    `shopify theme pull` are not necessarily part of any migration.
+    A stale variant/size pair must fall back, not pass through: `default` only catches nil/blank,
+    not a string that stopped being a valid role, and an invalid class leaves the text with no
+    size, weight or tracking at all.
 
-    Validated as the JOINED pair, not each axis separately -- callers like blocks/mionas-price.liquid
-    split a single stored `role` setting into variant/size themselves, so a stale stored value can
-    still produce a bogus pair here even though each axis alone looks like a plausible string.
+    Validated as the joined pair, not each axis separately: callers like blocks/mionas-price.liquid
+    split a stored `role` setting into variant/size themselves, so a stale value can produce a
+    bogus pair even when each axis looks plausible alone.
 
     Keep this list in step with the .text-role--* rules in blocks/mionas-text.liquid.
   endcomment
@@ -71,9 +68,8 @@
 -%}
 
 {%- comment -%}
-  The tag is interpolated rather than switched through a {% case %}. blocks/mionas-text.liquid
-  carried a ten-branch case for this, one per allowed tag, differing only in the element name; with
-  the value whitelisted above there is nothing left for the branches to guard.
+  Interpolated rather than switched through a {% case %}: resolved_tag is already whitelisted
+  above, so a per-tag branch would have nothing left to guard.
 {%- endcomment -%}
 <{{ resolved_tag }}
   class="{{ classes }}"

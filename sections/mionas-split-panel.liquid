@@ -1,46 +1,27 @@
 {%- comment -%}
   Renders a two-column split panel: a static media side and a static copy side on a colour panel.
 
-  A split panel: copy on one side, media on the other, on a colour panel. Four roles come out of
-  one shape -- the home page hero (flush, bleed), the campaign banner (card, bleed, primary panel),
-  the loyalty banner (card, inset) and the newsletter card (card, bleed, media left, with an
-  email-signup block in the copy). Only the first two ship as presets; the other two are a Campaign
-  with its settings and copy blocks swapped.
+  One shape, four roles: the home hero (flush, bleed), the campaign banner (card, bleed, primary
+  panel), the loyalty banner (card, inset), and the newsletter card (card, bleed, media left, with
+  an email-signup block in the copy). Only the first two ship as presets; the other two are a
+  Campaign with its settings and copy blocks swapped.
 
-  This file was `mionas-split-hero.liquid` until the section stopped being hero-specific. In Shopify
-  a section's `type` IS its filename, so that rename is a rename of published store data: every
-  `"type": "mionas-split-hero"` in templates/ had to move with it, and the Liquid and the templates
-  have to be pushed together. Pushing one without the other -- or running `shopify theme pull` in
-  between -- leaves a stored section pointing at a type that no longer exists, which renders as a
-  blank slot. Same rule applies to any future rename.
+  A section's `type` is its filename, so renaming this file means moving every
+  `"type": "mionas-split-panel"` reference in templates/ along with it, pushed together --
+  otherwise a stored section points at a type that no longer exists.
 
-  The home page uses this section rather than building the shape by hand -- templates/index.json's
-  "Split hero" instance is a `mionas-split-panel` section whose two sides are the static media and
-  copy `group` blocks described below, with the copy group holding three `mionas-text` blocks and a
-  nested `group` of two native `button` blocks. Reproducing that tree by hand elsewhere would mean
-  recreating it block by block, and two hand-built copies would drift apart. This section makes the
-  shape a unit instead.
+  The two sides are static blocks (content_for 'block' with a fixed type and id) of types that
+  already exist, so a merchant can't remove, reorder or duplicate a side -- the same mechanism
+  carousel.liquid and product-list.liquid use for their own static slots. This section adds no
+  typography, buttons or image rendering of its own.
 
-  The two sides are *static* blocks -- rendered with content_for 'block' plus an explicit type and
-  id -- of types that already exist. A static slot cannot be removed, reordered or duplicated by a
-  merchant, so the section always has exactly one media side and one copy side. That is the same
-  mechanism sections/carousel.liquid uses for its static header and sections/product-list.liquid
-  for its header and cards -- and it is why this file re-implements no typography, no buttons and
-  no image rendering. Contrast with the deleted blocks/mionas-split-hero.liquid (removed in
-  bce9ff0), which emitted its own markup and therefore needed its own design tokens, bridge entries
-  and a contract test to pin them. None of that is needed here.
+  The copy side is a `group` (blocks/group.liquid) that renders its children dynamically, so the
+  merchant can retitle, reorder, add or remove the eyebrow/heading/lead/actions per instance -- the
+  lock is on the section's shape, not the copy's contents. A line-by-line lock would need a private
+  `_`-prefixed static block instead (the _carousel-content / _product-list-content pattern).
 
-  The copy side is a `group` (blocks/group.liquid), which renders its children dynamically via
-  content_for 'blocks' --
-  so the eyebrow/heading/lead and the nested actions row are its ordinary children: the merchant
-  can retitle, reorder, add or remove them per instance. That is deliberate and mirrors the home
-  page hero's own outer group -- the lock is on the section's shape, not on the copy's contents,
-  exactly as the actions row already worked. If the copy ever needs to be locked line-by-line, the
-  route is a private `_`-prefixed block that renders each line as its own static slot (the
-  _carousel-content / _product-list-content pattern), not a native group.
-
-  Only the split grid and the panel colour live here. Everything else belongs to the blocks --
-  including the copy column's flow, gap and alignment, which are the group's settings.
+  Only the split grid and panel colour live here; everything else -- including the copy column's
+  flow, gap and alignment -- belongs to the group blocks.
 {%- endcomment -%}
 
 {% liquid
@@ -82,10 +63,9 @@
 {% stylesheet %}
   .mionas-split-panel {
     display: grid;
-    /* minmax(0, 1fr) rather than a bare 1fr: grid items default to min-width: auto, so a wide
-       image, a long unbreakable word, or a button row that refuses to wrap can push its column
-       past half and quietly break the even split. Flooring the minimum at 0 keeps it exactly
-       50/50 regardless of content. */
+    /* minmax(0, 1fr) not a bare 1fr: grid items default to min-width: auto, so wide content in
+       one column can push it past 50%. Flooring the minimum at 0 keeps the split even regardless
+       of content. */
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
     gap: calc(var(--space-md) * 2);
@@ -93,10 +73,8 @@
     background: var(--mionas-split-panel-panel, var(--color-background));
   }
 
-  /* Only the grid cell and its padding. The copy's own layout -- column flow, gap, alignment --
-     belongs to the `group` block inside it (blocks/group.liquid), the same way the home page's
-     hero delegates to its outer group. Duplicating that here would fight the merchant's own
-     group settings. */
+  /* Only the grid cell and padding; column flow/gap/alignment belongs to the group block inside
+     (blocks/group.liquid) -- duplicating that here would fight the merchant's group settings. */
   .mionas-split-panel__copy {
     padding: calc(var(--space-lg) * 2) calc(var(--space-md) * 2);
   }
@@ -150,26 +128,23 @@
     }
   }
 
-  /* Card edge: radius + the design system's card shadow, and no border. The prototype's
-     .mi-card carries a 1px border, but all three banners override it with border: 0, so
-     the border is deliberately absent here.
-     --card-base-shadow (0 1px 2px) is subtler than the prototype's 0 4px 8px shadow. It is
-     the nearest existing token, and spending a token beats matching the mock exactly. */
+  /* Card edge: radius + card shadow, no border -- the prototype's border is deliberately dropped
+     since all three banners override it to 0. --card-base-shadow is subtler than the prototype's
+     shadow but is the nearest existing token. */
   .mionas-split-panel--edge-card {
     border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: var(--card-base-shadow);
   }
 
-  /* Inset pads the panel itself, so the copy cell must drop its own padding -- otherwise the
-     two stack and the copy sits twice as far in as the media. Declared after the mobile block
-     on purpose: it ties on specificity with the mobile copy rule and needs source order to win. */
+  /* Inset pads the panel itself, so the copy cell drops its own padding -- otherwise the two
+     stack and double the inset. Declared after the mobile block on purpose: it ties specificity
+     with the mobile copy rule and needs source order to win. */
   .mionas-split-panel--treatment-inset {
     padding: calc(var(--space-lg) * 1.5) calc(var(--space-lg) + var(--space-md));
-    /* Redeclares the base gap on purpose: this and the mobile `.mionas-split-panel { gap: 0 }`
-       rule are both specificity (0,1,0), and this rule comes later in source, so it wins at
-       <=749px. That is what keeps a 32px gap between stacked media and copy for an inset panel
-       on mobile, while every other configuration collapses to 0. Do not delete as redundant. */
+    /* Redeclares the base gap on purpose: this ties specificity with the mobile
+       `.mionas-split-panel { gap: 0 }` rule, and source order lets it win at <=749px -- keeping
+       a gap for inset panels on mobile while other configurations collapse to 0. Not redundant. */
     gap: calc(var(--space-md) * 2);
   }
 

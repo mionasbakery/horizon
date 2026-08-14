@@ -18,38 +18,13 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Form/Form.tsx -- the column that spaces a form's fields apart.
+  Mirrors ../design-system/src/react/Form/Form.tsx. Form.tsx is `<form>` wrapping `<Box gap="lg">`;
+  this snippet is only the Box half, since on a Shopify storefront the `<form>` itself comes from
+  Liquid's {% form %} tag, which owns the action URL, CSRF token, and form_type. Callers render
+  {% form %} themselves and put this immediately inside it.
 
-  Form.tsx is `<form>` wrapping `<Box gap="lg">`. This snippet is only the Box half, and that is
-  deliberate: on a Shopify storefront the <form> element itself is emitted by Liquid's {% form %}
-  tag, which owns the action URL, the CSRF token and the form_type field. So callers render
-  {% form %} themselves and put this immediately inside it -- the resulting DOM is the same
-  form > div > fields that Form.tsx produces.
-
-  Accepts:
-    content     Required. The fields' markup, built with {% capture %} before rendering.
-    class       Extra classes.
-    attributes  Raw string appended to the wrapper tag.
-    gap         Optional CSS length (e.g. "24px"), overriding the column's gap between fields.
-                Defaults to --space-lg, Form.tsx's own `<Box gap="lg">` value. Additive: a caller
-                that passes nothing renders byte-identical to before this param existed.
-    validate    Pass true to show client-side validation errors in the design system's own markup
-                instead of the browser's native bubble. Wraps the column in
-                <mionas-form-validation> and loads assets/mionas-form-validation.js, which sets
-                `novalidate` on the surrounding form and writes the same classes and message
-                paragraph that a server-side `error` param produces.
-
-                OPT-IN, not the default. blocks/mionas-form.liquid is the third caller of this
-                snippet and composes arbitrary child field blocks, so the two error messages below
-                cannot be assumed to fit it. Turn it on there only when someone asks.
-
-  Usage:
-    {% capture form_fields %}
-      {% render 'mionas-text-field', label: 'Email', name: 'contact[email]', id: 'x-email', type: 'email' %}
-    {% endcapture %}
-    {% form 'contact' %}
-      {% render 'mionas-form', content: form_fields %}
-    {% endform %}
+  `validate` is opt-in, not the default: blocks/mionas-form.liquid composes arbitrary child field
+  blocks, so the built-in error messages below can't be assumed to fit it.
 {%- endcomment -%}
 {% liquid
   assign form_classes = 'mionas-form'
@@ -67,16 +42,13 @@
 
 {%- if validate -%}
   {%- comment -%}
-    The messages are literals, not schema settings: blocks/mionas-email-signup.liquid's header
-    records why merchant-settable error copy was rejected, and the same reasoning holds here.
+    The messages are literals, not schema settings -- see blocks/mionas-email-signup.liquid for why
+    merchant-settable error copy was rejected. Both current callers have exactly one required field
+    (email), so the copy names it directly; a form with a different required field passes
+    data-message-required via mionas-text-field.liquid's `attributes` param instead.
 
-    Both current callers have exactly one required field and it is the email, so the copy names it.
-    A form with some other required field passes data-message-required on that input itself, via
-    snippets/mionas-text-field.liquid's `attributes` param -- the per-input value wins.
-
-    The script tag repeats per form instance, which is fine: the browser dedupes a module by URL and
-    the customElements.define in the asset is guarded. Same pattern as blocks/popup-link.liquid
-    loading dialog.js.
+    The script tag repeats per form instance safely: the browser dedupes a module by URL, and the
+    customElements.define in the asset is guarded.
   {%- endcomment -%}
   {%- comment -%}
     Carries a class as well as its tag name so the stylesheet below can select it the way every
@@ -104,11 +76,9 @@
     gap: var(--mionas-form-gap, var(--space-lg));
   }
 
-  /* `display: contents` is load-bearing, not tidiness. An unstyled custom element is `inline`, and
-     this one sits between the form and .mionas-form -- which is exactly the chain
-     blocks/mionas-email-signup.liquid's inline layout reaches through to flip .mionas-form to a
-     row. Generating no box at all keeps that layout byte-for-byte what it was before validation
-     was added. */
+  /* `display: contents` is load-bearing: an unstyled custom element defaults to `inline`, which
+     would break blocks/mionas-email-signup.liquid's inline layout that reaches through this element
+     to flip .mionas-form to a row. */
   .mionas-form-validation {
     display: contents;
   }

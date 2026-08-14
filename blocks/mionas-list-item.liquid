@@ -2,17 +2,12 @@
   A row inside a Mionas: List, optionally pressable when it has a link.
 {%- enddoc -%}
 {%- comment -%}
-  Mirrors ../design-system/src/react/List/ListItem.tsx: a row (icon/text/whatever content, laid out
-  horizontally and vertically centred, `p="md"`) that becomes pressable when it has a destination.
+  Mirrors ../design-system/src/react/List/ListItem.tsx. A static theme block has no equivalent of
+  its `onClick` callback, so an optional `link` setting turns the row into an `<a>` instead, the same
+  substitution mionas-button.liquid/mionas-link.liquid make elsewhere.
 
-  ListItem.tsx's `onClick` is a JS callback with no navigation semantics of its own; a static theme
-  block has no equivalent, so this follows the same substitution mionas-button.liquid/
-  mionas-link.liquid make elsewhere in this theme -- an optional `link` setting turns the row into an
-  <a>, with the same `:active` dimming ListItem.tsx's `pressed` class provides via Box's `onPress`.
-
-  The divider-before-every-item-except-the-first behaviour lives in blocks/mionas-list.liquid's
-  stylesheet (a `:not(:first-child)` rule on this block's own class), not here -- see that file's
-  header comment for why.
+  The divider-before-every-item-except-the-first rule lives in blocks/mionas-list.liquid's
+  stylesheet, not here.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings

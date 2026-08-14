@@ -3,22 +3,13 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Stamp/Stamp.tsx: an uppercase Oswald eyebrow -- a short kicker
-  above a title, "ESPECIALIDAD EN COOKIES · SITGES". It owns the three things a bundled `text-role`
-  token cannot carry: the typeface, the wide tracking and the uppercasing.
+  Mirrors ../design-system/src/react/Stamp/Stamp.tsx: an uppercase Oswald eyebrow that owns the
+  typeface, tracking and uppercasing a bundled `text-role` token can't carry. Everything else still
+  comes from Text -- Stamp.tsx renders `<Text variant="label" size={size}>`, so this block declares
+  no font-size, line-height or colour of its own; the Size setting just picks a label-band role.
 
-  Stamp is a component in the design system, not a text role, and this block is where that
-  distinction finally lands in the theme: it used to be one more value in blocks/mionas-text.liquid's
-  `role` select. Everything except family/weight/tracking/transform still comes from Text -- Stamp.tsx
-  renders `<Text variant="label" size={size}>`, so the Size setting below picks a label-band role and
-  this block declares no font-size, line-height or colour of its own.
-
-  Size defaults to `lg`, not Stamp.tsx's own `md`: `lg` is the size every Stamp call site in the
-  design system passes, and it is what the stamps already in this theme were rendering at.
-
-  The text setting is `richtext` and flattened to inline HTML through
-  snippets/mionas-inline-richtext.liquid, for the reasons documented there -- same treatment, same
-  snippet, as blocks/mionas-text.liquid.
+  Size defaults to `lg`, not Stamp.tsx's own `md`, matching every Stamp call site in the design
+  system and the stamps already live in this theme.
 {%- endcomment -%}
 {%- liquid
   assign block_settings = block.settings
@@ -32,10 +23,8 @@
 
 {%- if visible_text != blank -%}
   {%- comment -%}
-    variant: 'label' is fixed, not a setting -- Stamp.tsx always renders `<Text variant="label"
-    size={size}>`, only Size is a merchant choice. block_settings.variant here is Stamp's own Color
-    setting (kept that id to avoid re-migrating footer-group.json and the rest), passed through as
-    the snippet's `color` param.
+    block_settings.variant here is Stamp's own Color setting, not Text's band -- the id stayed
+    `variant` to avoid re-migrating existing stored settings like footer-group.json's.
   {%- endcomment -%}
   {%- render 'mionas-text',
     content: content,
@@ -49,15 +38,10 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* THE SELECTOR IS TWO CLASSES DEEP ON PURPOSE, for the same reason .text-role.mionas-price is in
-     blocks/mionas-price.liquid: every .text-role--<role> declares font-weight and letter-spacing from
-     a single-class selector in this same compiled stylesheet, so equal specificity would leave the
-     winner to bundle order. .text-role.mionas-stamp is (0,2,0). Do not flatten it.
-
-     Font-size and line-height are deliberately absent -- they come from the .text-role--label-<size>
-     class the Size setting picks. So is `color`: Stamp.module.css carries the same prohibition,
-     because declaring it here would beat .text-role--<variant> at (0,1,0) and break the colour
-     passthrough the Color setting relies on (footer-group.json's stamp is accent-inverse). */
+  /* The selector is two classes deep on purpose, same as .text-role.mionas-price: a single-class
+     selector would tie in specificity with .text-role--<role> and leave the winner to bundle order.
+     Font-size, line-height and color are deliberately absent -- they must come from the
+     .text-role--label-<size>/--<variant> classes the Size/Color settings pick. */
   .text-role.mionas-stamp {
     font-family: var(--stamp-base-font-family);
     font-weight: var(--stamp-base-font-weight);

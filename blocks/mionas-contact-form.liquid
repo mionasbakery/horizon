@@ -1,7 +1,7 @@
 {%- doc -%}
   Renders a contact form built from the Mionas form snippets, wrapping a single {% form 'contact' %}.
-  Owns only fields, submit button and validation/success state, with an optional card-style surface
-  around the fields (`field_surface`) -- no heading or divider of its own.
+  Owns only fields, submit button and validation/success state, with a card-style surface around the
+  fields -- no heading or divider of its own.
 
   Reads `customer` (to prefill name/email) and Shopify's `form`/`request` objects directly; it takes no render-time parameters.
 {%- enddoc -%}
@@ -11,22 +11,23 @@
   reskinning blocks/contact-form.liquid because that block hard-codes its fields onto one row with
   hidden labels and no per-field slots to restyle.
 
-  Owns only the fields, submit button and validation/success state -- no heading, CTA or divider.
-  Those are composed in the page template instead (wrap this block in a Mionas: Card, etc.).
+  Owns only the fields, submit button and validation/success state -- no heading, CTA or divider;
+  those are composed in the page template instead (wrap this block in a Mionas: Card, etc.).
 
-  `field_surface` duplicates Mionas: Card's own --card-* tokens onto a `<div>` wrapping the fields,
-  not the button rendered after it -- see blocks/mionas-email-signup.liquid's header comment for why
-  it doesn't reuse the actual Card component. Turn it off if the block is already wrapped in one.
+  The fields surface duplicates Mionas: Card's own --card-* tokens onto the wrapping `<div>` rather
+  than reusing the Card component -- see blocks/mionas-email-signup.liquid's header comment for why.
+  `field_gap` spaces the fields inside that surface; `button_gap` spaces the surface from the submit
+  button via the outer mionas-form gap.
 
-  EVERY FIELD EXCEPT EMAIL CAN BE HIDDEN OR MADE OPTIONAL (`show_*`/`require_*` below) -- email
-  stays permanently visible and required since Shopify's contact endpoint depends on it.
+  Every field except email can be hidden or made optional (`show_*`/`require_*` below) -- email
+  stays permanently visible and required since Shopify's contact endpoint depends on it. Phone
+  defaults to optional -- Shopify's contact endpoint doesn't require it, same as
+  blocks/corporate-quote-form.liquid.
 
   Field names must stay contact[name], contact[email], contact[phone], contact[body] -- Shopify
-  recognises these and titles/echoes them in the merchant email and error messages. Renaming breaks
-  that. Phone defaults to optional (required: false) -- Shopify's contact endpoint doesn't require
-  it either, matching the native blocks/contact-form.liquid and blocks/corporate-quote-form.liquid.
+  recognises these and titles/echoes them in the merchant email and error messages.
 
-  Client-side errors are JS-driven (assets/mionas-form-validation.js, via `validate: true` below)
+  Client-side errors are JS-driven (assets/mionas-form-validation.js, via `validate: true` below),
   so a visitor without JS still gets native browser validation.
 {%- endcomment -%}
 {% liquid
@@ -44,27 +45,10 @@
 
 <div
   class="{{ layout_classes }} spacing-style"
-  style="
-    {%- render 'spacing-style', settings: block_settings -%}
-    {%- if block_settings.width == 'custom' -%}
-      --mionas-contact-form-width: {{ block_settings.custom_width }}%;
-    {%- endif -%}
-    {%- if block_settings.width_mobile == 'custom' -%}
-      --mionas-contact-form-width-mobile: {{ block_settings.custom_width_mobile }}%;
-    {%- endif -%}
-  "
+  style="{%- render 'spacing-style', settings: block_settings -%}"
   {{ block.shopify_attributes }}
 >
   {%- form 'contact', id: form_id -%}
-    {%- comment -%}
-      No contact[id] field: the form tag's `id:` param already sets form.id, and an extra
-      contact[...] field would leak an "Id: ..." line into the merchant email.
-
-      Shopify's contact form always posts to /contact, not this page -- return_to sends the
-      visitor back here after submit instead of wherever /contact resolves to.
-    {%- endcomment -%}
-    <input name="return_to" type="hidden" value="{{ request.path }}">
-
     {% liquid
       assign form_matches = false
       if form.id == form_id or form.id == blank
@@ -164,16 +148,12 @@
       {%- endif -%}
     {%- endcapture -%}
 
-    {%- if block_settings.field_surface -%}
-      {%- capture contact_form_content -%}
-        <div class="mionas-contact-form__surface">{{ contact_form_fields }}</div>
-      {%- endcapture -%}
-    {%- else -%}
-      {%- assign contact_form_content = contact_form_fields -%}
-    {%- endif -%}
-
+    {%- liquid
+      assign field_gap_css = block_settings.field_gap | append: 'px'
+      assign button_gap_css = block_settings.button_gap | append: 'px'
+    -%}
     {%- capture contact_form_content -%}
-      {{ contact_form_content }}
+      <div class="mionas-contact-form__surface" style="--mionas-contact-form-field-gap: {{ field_gap_css }};">{{ contact_form_fields }}</div>
 
       {%- render 'mionas-submit-button',
         label: block_settings.submit_label,
@@ -182,10 +162,7 @@
       -%}
     {%- endcapture -%}
 
-    {%- liquid
-      assign field_gap_css = block_settings.field_gap | append: 'px'
-    -%}
-    {%- render 'mionas-form', content: contact_form_content, validate: true, gap: field_gap_css -%}
+    {%- render 'mionas-form', content: contact_form_content, validate: true, gap: button_gap_css -%}
     {%- endif -%}
   {%- endform -%}
 </div>
@@ -194,14 +171,8 @@
   .mionas-contact-form {
     flex: 1 1 auto;
     min-width: 0;
-    width: var(--mionas-contact-form-width, 100%);
+    width: 100%;
     font-family: var(--font-family-archivo);
-  }
-
-  @media screen and (max-width: 749px) {
-    .mionas-contact-form {
-      width: var(--mionas-contact-form-width-mobile, var(--mionas-contact-form-width, 100%));
-    }
   }
 
   @media screen and (min-width: 750px) {
@@ -210,7 +181,7 @@
     }
   }
 
-  /* Duplicates Mionas: Card's own surface tokens -- see the header comment's `field_surface` note. */
+  /* Duplicates Mionas: Card's own surface tokens -- see the header comment's fields-surface note. */
   .mionas-contact-form__surface {
     background: var(--card-base-background);
     border: var(--card-base-border-width) solid var(--card-base-border-color);
@@ -219,7 +190,7 @@
     padding: var(--card-base-padding);
     display: flex;
     flex-direction: column;
-    gap: inherit;
+    gap: var(--mionas-contact-form-field-gap, var(--space-md));
   }
 
   /* Each field's underline bleeds to the surface's full width; padding-inline keeps the label/input
@@ -362,13 +333,6 @@
       "visible_if": "{{ block.settings.show_message }}"
     },
     {
-      "type": "checkbox",
-      "id": "field_surface",
-      "label": "Card-style field surface",
-      "default": true,
-      "info": "Wraps the visible fields in the design system's card surface, with the button rendered outside it. Turn off if you're already wrapping this whole block in a Mionas: Card, to avoid boxing the fields twice."
-    },
-    {
       "type": "range",
       "id": "field_gap",
       "label": "Gap between fields",
@@ -378,6 +342,17 @@
       "unit": "px",
       "default": 16,
       "info": "16px matches the design system's own Form spacing (--space-md)."
+    },
+    {
+      "type": "range",
+      "id": "button_gap",
+      "label": "Gap before submit button",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24,
+      "info": "Gap between the field card and the submit button."
     },
     {
       "type": "select",
@@ -417,53 +392,6 @@
       "id": "success_text",
       "label": "Success text",
       "default": "Te respondemos en 24–48h laborables."
-    },
-    {
-      "type": "header",
-      "content": "Layout"
-    },
-    {
-      "type": "select",
-      "id": "width",
-      "label": "Width",
-      "options": [
-        { "value": "fill", "label": "Fill available space" },
-        { "value": "custom", "label": "Custom" }
-      ],
-      "default": "fill",
-      "info": "Fill lets the block share a row with its siblings and split the space between them. A custom width overrides that."
-    },
-    {
-      "type": "range",
-      "id": "custom_width",
-      "label": "Width",
-      "min": 20,
-      "max": 100,
-      "step": 5,
-      "unit": "%",
-      "default": 100,
-      "visible_if": "{{ block.settings.width == 'custom' }}"
-    },
-    {
-      "type": "select",
-      "id": "width_mobile",
-      "label": "Width on mobile",
-      "options": [
-        { "value": "fill", "label": "Fill available space" },
-        { "value": "custom", "label": "Custom" }
-      ],
-      "default": "fill"
-    },
-    {
-      "type": "range",
-      "id": "custom_width_mobile",
-      "label": "Width on mobile",
-      "min": 20,
-      "max": 100,
-      "step": 5,
-      "unit": "%",
-      "default": 100,
-      "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
     },
     {
       "type": "header",

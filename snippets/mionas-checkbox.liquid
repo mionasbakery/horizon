@@ -15,34 +15,16 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Checkbox/Checkbox.tsx -- a visually hidden native checkbox, a
-  drawn box that stands in for it, and an optional text label, with an optional error underneath.
+  Mirrors ../design-system/src/react/Checkbox/Checkbox.tsx: a visually hidden native checkbox, a
+  drawn box standing in for it, an optional text label, and an optional error underneath.
 
-  The real <input> is never hidden with `display: none` or `visibility: hidden`: either would take
-  it out of the focus order and out of the accessibility tree, and the whole control would stop
-  working for keyboard and screen-reader users. It is clipped instead (Checkbox.module.css .input),
-  so it still receives focus, still submits, and still announces its own checked state.
+  The real <input> is clipped, not hidden with `display: none`/`visibility: hidden` -- either would
+  drop it from the focus order and accessibility tree, breaking it for keyboard and screen-reader
+  users.
 
-  Accepts:
-    label       Optional. Text beside the box. Omitted renders the box alone.
-    name        Required. The form field name.
-    id          Required in practice -- both labels point at it.
-    value       The submitted value when checked. Defaults to 'on', the browser default, so the
-                merchant sees something meaningful rather than an empty string.
-    checked     Pass true to render pre-checked.
-    disabled    Pass true to disable and dim.
-    error       Message string, rendered by snippets/mionas-form-error.liquid underneath.
-    required    Pass true to require it (a consent checkbox, say). Unlike the text field this
-                defaults to FALSE, matching Checkbox.tsx, which has no `required` prop at all.
-    class       Extra classes on the wrapper.
-    attributes  Raw string appended to the input tag.
-
-  ONE DELIBERATE DIVERGENCE from Checkbox.tsx: React re-renders on state change, so it renders the
-  checkmark <svg> only when `checked` and swaps the .checked class itself. Liquid renders once and
-  never sees the user tick the box, so both the checkmark and the checked colours are driven by
-  `:checked + .mionas-checkbox__box` in CSS and the svg is always in the DOM. Same result without
-  JavaScript. Do not "fix" this back to a Liquid conditional -- the box would then never respond to
-  being ticked.
+  One deliberate divergence from Checkbox.tsx: React swaps a `.checked` class on state change, but
+  Liquid renders once and never sees the box get ticked. So the checkmark and checked colours are
+  driven by `:checked + .mionas-checkbox__box` in CSS instead, with the svg always in the DOM.
 {%- endcomment -%}
 {% liquid
   assign checkbox_value = value | default: 'on'

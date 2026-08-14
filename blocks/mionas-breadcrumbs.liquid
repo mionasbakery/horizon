@@ -4,20 +4,15 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  The breadcrumb trail as a theme block, so it can be dropped inside a Section next to a Heading
-  block and share that container's width, background and spacing instead of being a separate
-  full-width band above it. sections/mionas-breadcrumbs.liquid is the standalone placement; both
-  render snippets/mionas-breadcrumbs.liquid, which owns the crumb logic and the styles.
+  The breadcrumb trail as a theme block, so it can nest inside a Section and share that container's
+  width/background/spacing instead of standing as a separate full-width band (that placement is
+  sections/mionas-breadcrumbs.liquid; both render snippets/mionas-breadcrumbs.liquid).
 
-  Public (no leading underscore) on purpose: sections/section.liquid -- and every other Horizon
-  section -- whitelists child blocks as "@theme", which resolves to exactly the public blocks in
-  blocks/. Naming the file this way is the whole integration; no native section schema is touched.
+  Public (no leading underscore) on purpose: Horizon sections whitelist child blocks as "@theme",
+  which resolves to exactly the public blocks in blocks/ -- the filename is the whole integration.
 
-  Padding is the only layout setting this block adds. Width, background and horizontal alignment
-  are deliberately left to the parent Section -- that is the entire reason to nest the trail rather
-  than use the standalone section. An alignment control here would also be inert: the parent's
-  `horizontal_alignment` makes its children shrink-to-fit, so this wrapper is only as wide as the
-  trail and a justify-content on the list would have no slack to move anything within.
+  Padding is the only layout setting here; width/background/alignment are deliberately left to the
+  parent Section, since the parent's `horizontal_alignment` already shrink-wraps this block.
 {%- endcomment -%}
 {% liquid
   assign home_label = block.settings.home_label | default: 'Home'

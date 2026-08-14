@@ -36,18 +36,15 @@
   assign flattened = flattened | replace: '</ul>', '' | replace: '</ol>', ''
 
   comment
-    OPENING tags may carry attributes, so they cannot be dropped by matching '<p>' literally.
+    Opening tags may carry attributes, so they can't be dropped by matching '<p>' literally. A
+    dynamic-source richtext value (e.g. product.description) can come back as
+    `<p data-start="107">`, which survives a literal replace; nested inside the <p> that
+    snippets/mionas-text.liquid emits, the browser auto-closes it and the copy loses every
+    .text-role class.
 
-    A richtext setting bound to a DYNAMIC SOURCE carries whatever markup the source holds, not the
-    bare markup the richtext toolbar emits: product.description written in the Shopify admin comes
-    back as `<p data-start="107" data-end="357">`. That tag survived the literal replace, and a `<p>`
-    nested inside the `<p>` snippets/mionas-text.liquid emits is auto-closed by the browser, which
-    lifts the copy out into a sibling element carrying NONE of the .text-role classes -- so the
-    block's Role and Color settings silently stopped applying to every dynamic-source instance.
-
-    Liquid has no regex, so each opening tag is dropped by splitting on `<name` and removing each
-    following chunk's leading attribute list up to its first `>`. The name must be followed by `>`
-    or a space, or `<p` would also eat `<pre` and `<li` would eat `<link`.
+    Liquid has no regex, so each opening tag is dropped by splitting on `<name` and stripping the
+    following chunk's leading attributes up to its first `>`. The name must be followed by `>` or a
+    space, or `<p` would also eat `<pre` and `<li` would eat `<link`.
   endcomment
   assign open_tags = 'p|li|ul|ol|div|h1|h2|h3|h4|h5|h6' | split: '|'
   for open_tag in open_tags
@@ -68,11 +65,11 @@
   endfor
 
   comment
-    NESTED closes each contribute their own break, so `<div><p>Text</p></div>` lands as `Text<br><br>`
-    and a single remove_last below would leave a phantom blank line. Collapse runs first. `replace` is
-    global, so each pass halves the longest run -- six passes cover any nesting a richtext value can
-    plausibly reach. A merchant's own deliberate double break is collapsed too, which is correct here:
-    the result is one text node, not a document with paragraph spacing.
+    Nested closes each contribute their own break, so `<div><p>Text</p></div>` becomes
+    `Text<br><br>` and a single remove_last would leave a phantom blank line -- collapse runs
+    first. `replace` is global, so each pass halves the longest run; six passes cover any nesting a
+    richtext value can plausibly reach. A merchant's own deliberate double break is collapsed too,
+    since the result must be one text node, not paragraph-spaced.
   endcomment
   for i in (1..6)
     if flattened contains '<br><br>'

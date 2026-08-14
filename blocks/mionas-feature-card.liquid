@@ -3,26 +3,19 @@
 {%- enddoc -%}
 {%- comment -%}
   Mirrors ../design-system/src/react/FeatureCard/FeatureCard.tsx: a full-bleed photo tile with a
-  bottom gradient scrim, an uppercase heading, and a subtitle -- always a link, anatomy never
-  varies (no variant prop, no children slot), meant for a promo/category grid.
+  bottom gradient scrim, an uppercase title, and a subtitle -- always a link, anatomy fixed (no
+  variant prop, no children slot).
 
-  No native Horizon block/section covers this (grepped for "feature card"/"promo card"/"highlight
-  card" -- nothing), so this forks a new file per mionas-design-component's rule; there's no structure to
-  reskin.
+  No native Horizon block/section covers this, so it forks a new file per mionas-design-component's
+  rule rather than reskinning.
 
-  FeatureCard.tsx composes Card (as="a") + CardMedia + Box + Text internally, but none of those are
-  rendered here as separate blocks -- this reproduces their combined CSS output directly rather than
-  nesting mionas-card/mionas-text, since the anatomy is fixed and Card's own padding-bottom/max-width
-  don't apply here anyway (FeatureCard.module.css overrides both to 0/none for its full-bleed tile).
+  FeatureCard.tsx composes Card + CardMedia + Box + Text, but none render here as separate blocks --
+  this reproduces their combined CSS directly, since the anatomy is fixed and Card's own
+  padding/max-width don't apply (FeatureCard.module.css overrides both to 0/none).
 
-  Title uses the "heading" text role, subtitle the "body" role (both --text-role-* tokens, both
-  --text-color-inverse-primary), matching Text's role vocabulary the same way
-  blocks/mionas-text.liquid exposes it -- only what FeatureCard.module.css layers on top (uppercase +
-  its own font-weight override on the title, a dimming opacity on the subtitle) is added locally.
-  Family is --font-family-archivo, the design system's body primitive, which
-  snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
-  FeatureCard.module.css sets no family of its own -- in React it inherits -- so this spends the
-  primitive its Text children resolve to rather than inventing a component token for it.
+  Family is --font-family-archivo, the design system's body primitive that
+  snippets/design-system-bridge.liquid repoints at the theme's loaded body font -- spent directly
+  since FeatureCard.module.css itself sets no family and just inherits it from Text.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -88,13 +81,8 @@
     background: var(--feature-card-base-background);
   }
 
-  /* Weight comes from the title-lg role rather than a FeatureCard token on purpose: the design
-     system deleted --feature-card-title-font-weight once FeatureCard.tsx composed
-     `<Text variant="title" size="lg">`, whose band already carries the weight. Don't reach for a
-     component token here -- there isn't one.
-
-     title-lg's tracking is 0, so this uppercase line sits tighter than the +0.02em it had under
-     the old `heading` role. That is the band's own value, not an omission. */
+  /* Weight comes from the title-lg role, not a FeatureCard token -- the design system has none;
+     Text's title-lg band already carries the weight. Its tracking is 0 (not an omission). */
   .mionas-feature-card__title {
     margin: 0;
     font-family: var(--font-family-archivo);

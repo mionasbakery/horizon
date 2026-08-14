@@ -3,61 +3,25 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Card/Card.tsx: a bordered/shadowed content shell that composes
-  freely with whatever's nested inside it (CardTitle, CardDescription, CardMedia in React; here,
-  any child theme block -- Mionas: Text, image, Mionas: Button, etc.).
+  Mirrors ../design-system/src/react/Card/Card.tsx: a bordered/shadowed shell that composes freely
+  with any nested child block. Distinct from the native blocks/_card.liquid, which is a generic
+  layout panel on Horizon's own tokens rather than the design system's --card-* ones.
 
-  This is a different thing from another file that already exists:
-  - blocks/_card.liquid (native, "Card" in the picker) is a generic LAYOUT panel -- background
-    image/video, flexible flex-direction content slot -- styled with Horizon's own generic layout
-    tokens (--border-radius, --layer-flat, ...), never design-system --card-* tokens. Untouched here.
+  Renders through snippets/group.liquid, borrowing its layout/size/link schema, but deliberately
+  omits Group's Appearance/Borders sections and Card.module.css's max-width cap: the `variant`
+  setting below owns the surface entirely, and the Size settings are the single answer to width, so
+  a hidden cap silently contradicting a merchant's choice would be worse than losing that bit of
+  fidelity.
 
-  (blocks/mionas-review-card.liquid used to fork Card's look for one fixed, review-specific
-  composition -- rating + quote + attribution. It and the rest of the Google-review pipeline were
-  removed in favour of the Trustindex app; this block is the only Card mirror left, and is the
-  general-purpose shell Card.tsx actually is -- free children, no fixed content.)
+  Background/border/radius are applied via the `style:` param rather than a plain CSS rule, because
+  snippets/border-override.liquid emits unconditionally and would tie with `.mionas-card` at equal
+  specificity; `style:` is appended last, so it always wins.
 
-  ## Why this renders through snippets/group.liquid
+  Padding starts at 0 on every side, diverging from Card.tsx's own default bottom padding, so
+  children bleed to all edges until a merchant adds what the composition needs.
 
-  The card takes the native Group block's customization surface -- layout direction, alignment, gap,
-  size, block link, padding -- by copying those parts of group's schema and delegating rendering to
-  snippets/group.liquid, exactly as blocks/_product-list-content.liquid does.
-
-  Deliberately NOT copied: group's Appearance and Borders sections. The card's surface -- background,
-  border, radius, shadow -- is what makes it a Card rather than a group, and it is owned entirely by
-  the `variant` setting below (Default / Outline / Plain). A merchant who wants an arbitrary
-  background colour or border on a free-form container should reach for a Group; a Mionas: Card is
-  the design-system surface, sized and laid out however they need. Card.module.css's 320px
-  `max-width` cap is dropped for the same reason: the Size settings are now the single answer to how
-  wide a card is, and a hidden cap silently contradicting a merchant's Width choice is worse than
-  losing that bit of Card.tsx fidelity.
-
-  Surface properties still can't be plain CSS on .mionas-card, though: snippets/group.liquid
-  hardcodes `border-style` into its class list and snippets/border-override.liquid emits
-  unconditionally, so `.border-style { border-width: var(--border-width); ... }` would fight
-  `.mionas-card { border: ... }` at equal specificity -- and block stylesheet CSS is bundled
-  separately from assets/base.css, so source order isn't something this theme can guarantee.
-
-  The `style:` param is the deterministic way out: the snippet appends it LAST inside the style
-  attribute, after border-override, so the `card_style` capture below always wins. It feeds the
-  border/radius custom properties that `.border-style` reads, rather than declaring `border` itself.
-
-  Padding behaves exactly as the group's does, defaulting to 0 on every side. This is a conscious
-  divergence from Card.tsx, whose .root always carries a bottom padding -- a card here starts with
-  no padding at all and the merchant adds what the composition needs. Children therefore bleed to
-  all four edges by default, which is still what CardMedia expects on the top and sides.
-
-  Card.tsx is a discriminated union (`as="div"|"a"|"button"`); this only covers div/a (no "as
-  button" -- same scope decision mionas-button.liquid and mionas-link.liquid made) via the `link`
-  setting. Group renders that as an absolutely-positioned overlay anchor rather than by wrapping the
-  card in an <a>, which is the same clickable-whole-surface result and keeps nested links usable.
-
-  snippets/group.liquid also renders background-media and contrast-override, but both are no-ops
-  when their settings are absent, so omitting the Appearance schema costs nothing at render time.
-
-  Every colour/radius/shadow/spacing/family here is a --card-* token (assets/design-tokens.css),
-  matching Card.module.css. --card-base-font-family resolves through --font-family-archivo, which
-  snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
+  Only covers Card.tsx's `as="div"|"a"` (no "as button"), the same scope call mionas-button.liquid
+  and mionas-link.liquid make elsewhere.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -105,9 +69,8 @@
 -%}
 
 {% stylesheet %}
-  /* Background, border and radius are NOT declared here -- they ride on the `style:` param above,
-     which is the only way to beat .border-style deterministically. See the file comment. Padding is
-     absent entirely: it comes from the Padding settings alone, which start at 0. */
+  /* Background, border and radius ride on the `style:` param above, not here -- see the file
+     comment. Padding is absent entirely: it comes from the Padding settings alone. */
   .mionas-card {
     box-shadow: var(--card-base-shadow);
     font-family: var(--card-base-font-family);

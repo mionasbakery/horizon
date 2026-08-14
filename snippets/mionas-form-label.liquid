@@ -11,46 +11,27 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx -- the uppercase label above a field.
+  Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx.
 
-  BLANK TEXT NEVER RENDERS A REAL <label>. An empty <label for="..."> outranks the placeholder in
-  the accessible-name algorithm, so it suppresses the input's name rather than just failing to add
-  one -- Chrome confirmed `name: ""` on the email signup's input. Do not "restore" a real,
-  `for`-associated `<label>` here for layout reasons.
+  Blank text never renders a real <label>: an empty `<label for="...">` outranks the placeholder in
+  the accessible-name algorithm and suppresses the input's name entirely (confirmed in Chrome as
+  `name: ""`). It renders a height-reserving `<span>` instead, with `aria-hidden` and no `for` to
+  stay out of that problem.
 
-  It renders a height-reserving `<span>` placeholder instead (see below), so a labelless field still
-  aligns with its labelled siblings. `aria-hidden` and no `for` keep it out of the accessible-name
-  problem above.
+  `required` uses an explicit `== false` check because Liquid's `default` filter treats false as
+  empty and would flip it back to true.
 
-  Accepts:
-    text      The label copy. Blank renders a height-reserving placeholder instead -- see above.
-    for       Optional but strongly preferred: the id of the control this labels.
-    required  Defaults to true, matching FormLabel.tsx's `required = true`. Pass false to append the
-              " (optional)" suffix. This is an explicit `== false` test rather than
-              `| default: true`, because Liquid's `default` filter treats false as empty and would
-              flip it straight back to true.
-    error     Pass true for the error colour. snippets/mionas-form-field.liquid forwards this
-              automatically, mirroring FormField.tsx's `error={!!error}`. The error rule is declared
-              after the base rule at equal specificity, so it wins even while the field has focus --
-              matching FormLabel.tsx, where `error ? styles.error : focused ? styles.focused : ...`
-              checks error first.
-    optional_text
-              The word inside the parentheses of the " (optional)" suffix. Defaults to the literal
-              FormLabel.tsx uses. There is no locale key for this -- nothing under `general.form.*`
-              exists in locales/en.default.json -- and a `| t` on a missing key renders the string
-              "translation missing: ..." rather than falling through to a default, so this is a
-              plain parameter. Spanish callers pass optional_text: 'opcional'.
-    class     Extra classes to append.
+  There's no locale key for `optional_text`'s default -- nothing under `general.form.*` exists in
+  locales/en.default.json, and `| t` on a missing key renders "translation missing: ..." rather than
+  falling through -- so it stays a plain parameter; Spanish callers pass `optional_text: 'opcional'`.
 
-  FOCUS COLOUR IS NOT SET HERE. FormLabel.module.css's .root reads
-  `var(--form-label-focus-color, var(--form-label-base-foreground))`, and FormField.module.css's
-  `.root:focus-within` is what assigns --form-label-focus-color. That indirection is what lets the
-  colour reach a label that PRECEDES the input in the DOM, where no sibling combinator can. This
-  snippet keeps the design system's own custom-property name so the two stay greppable together.
+  Focus colour is not set here: FormLabel.module.css's `.root` reads
+  `var(--form-label-focus-color, var(--form-label-base-foreground))`, and
+  FormField.module.css's `.root:focus-within` assigns that variable -- the indirection that lets
+  colour reach a label that precedes the input in the DOM, where no sibling combinator could.
 
-  Fonts: --font-family-archivo, the design system's body primitive, repointed at the theme's
-  loaded body font by snippets/design-system-bridge.liquid. FormLabel.module.css sets no family of
-  its own, so this spends the primitive rather than inventing a component token.
+  Fonts: --font-family-archivo, repointed at the theme's loaded body font by
+  snippets/design-system-bridge.liquid.
 {%- endcomment -%}
 {% liquid
   assign label_is_required = true
@@ -100,10 +81,9 @@
     visibility: hidden;
   }
 
-  /* FormLabel.module.css .optional -- deliberately pinned back to the base colour so the suffix
-     does not inherit the focused/error colour the rest of the label takes on. Uppercase is NOT
-     overridden here: FormLabel.module.css's .optional inherits .root's text-transform: uppercase
-     rather than resetting it, so "(opcional)" reads "(OPCIONAL)" same as the label itself. */
+  /* Pinned back to the base colour so the suffix doesn't inherit the label's focused/error colour.
+     Uppercase is inherited from .root rather than reset, so "(opcional)" reads "(OPCIONAL)" same as
+     the label itself. */
   .mionas-form-label__optional {
     color: var(--form-label-base-foreground);
   }

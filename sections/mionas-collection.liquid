@@ -1,45 +1,25 @@
 {%- comment -%}
   Renders a collection product grid/carousel with a composable, merchant-editable static card.
 
-  A collection grid whose cards are composed, not baked in: the section loops the collection and
-  renders Horizon's native _product-card once per product, and that card's contents -- media, title,
-  price, and anything else -- are merchant-editable child blocks, native and Mionas mixed.
+  The section loops the collection and renders Horizon's native _product-card once per product;
+  the card's contents (media, title, price, native and Mionas blocks) are merchant-editable
+  children rather than baked into this section. _product-card accepts @theme children and passes
+  closest.product down to them (_product-card.liquid:9-11,34), and
+  snippets/product-card-bridge.liquid gives it the Mionas look -- a Mionas-owned card block used
+  to exist here but was deleted once the store unified on the native card.
 
-  It rendered a Mionas-owned card block until the store unified on one card. The native card
-  accepts @theme children (_product-card.liquid:34) and passes closest.product down to them
-  (:9-11), so the Mionas price and add-to-cart button compose into it unchanged, and
-  snippets/product-card-bridge.liquid is what gives it the Mionas look. That Mionas card block has
-  since been deleted; git history holds it if the bridge's derivation is ever in question.
+  Same shape as sections/mionas-split-panel.liquid: the frame (grid) is owned here, the slot
+  (card) is static -- every iteration renders the same fixed id ('static-product-card'), so the
+  merchant composes one card design that applies to every product, and a static slot can't be
+  removed, reordered or duplicated.
 
-  This is the same shape as sections/mionas-split-panel.liquid, which owns the frame and hands each
-  half to a static `group` slot the merchant fills. Here the frame is the grid and the slot is the
-  card. The preset at the bottom ships a ready composition (media + title + price) so the section is
-  useful the moment it is added, and every part of it can then be reordered, restyled or removed.
+  There's no built-in heading or "see all" setting: the section opens a free content_for 'blocks'
+  region above the grid for that, the same way product-list opens one below its grid.
 
-  WHY THIS SECTION EXISTS AT ALL:
-  That reasoning is now about the section's header region rather than its cards. product-list puts a
-  merchant-added block in a trailing content_for 'blocks' that renders once BELOW the grid; this
-  section opens the same region ABOVE it, which is what carries the "LO MÁS VENDIDO" heading and the
-  "Ver todo" button. No product-list setting moves that region, so this section still has to exist --
-  it just no longer has to exist for the card's sake.
-
-  WHY THE CARD IS A STATIC BLOCK:
-  every iteration renders the same block type with the same fixed id ('static-product-card'), which
-  is what sections/product-list.liquid does too. The theme editor therefore shows ONE card whose
-  settings and children govern every product in the grid -- the merchant composes the card once, not
-  six times, and cannot end up with six cards that disagree. A static slot also cannot be removed,
-  reordered or duplicated, so the section always has exactly one card design.
-
-  Layout is delegated to snippets/resource-list.liquid exactly as product-list does it: every card is
-  captured into one string separated by <!--@list/split-->, that string is split into an array, and
-  both are handed over. resource-list owns grid / carousel / editorial rendering and the
-  mobile-carousel fallback, so this file gets all of those layout settings without reimplementing any
-  of them.
-
-  There is no built-in heading or "see all" button setting. The section opens a free
-  content_for 'blocks' region above the cards, so both are whatever blocks the merchant puts there --
-  a Mionas: Text, a Mionas: Button -- rather than baked-in text settings duplicating what those
-  blocks already do better.
+  Layout is delegated to snippets/resource-list.liquid, exactly as product-list does it: every
+  card is captured into one string separated by <!--@list/split-->, split into an array, and both
+  handed over so resource-list owns grid/carousel/editorial rendering and the mobile-carousel
+  fallback.
 {%- endcomment -%}
 
 {%- liquid
@@ -77,14 +57,13 @@
   <div class="section-resource-list__content">{%- content_for 'blocks' -%}</div>
 
   {%- comment -%}
-    PLACEMENT IS LOAD-BEARING: these go outside the capture below, mirroring where
-    snippets/product-grid.liquid:110-111 sits relative to its own children capture. Inside the loop
-    they would be emitted once per product AND swept into the <!--@list/split--> payload that the
-    split on the next line cuts on, corrupting the array resource-list receives.
+    Placement matters: these render outside the capture below, mirroring
+    snippets/product-grid.liquid:110-111. Inside the loop they'd emit once per product and get
+    swept into the <!--@list/split--> payload, corrupting the array resource-list receives.
 
-    Needed at all because snippets/resource-list.liquid renders neither, unlike product-grid. Every
-    other style the native card needs -- quick-add, swatches, variant picker, badges, buy buttons --
-    blocks/_product-card.liquid:14-21 already renders itself.
+    Needed here because snippets/resource-list.liquid renders neither, unlike product-grid --
+    every other card style (quick-add, swatches, badges) blocks/_product-card.liquid already
+    renders itself.
   {%- endcomment -%}
   {% render 'product-card-styles' %}
   {% render 'product-card-gallery-zoom-details-styles' %}
@@ -94,10 +73,9 @@
       {%- unless forloop.first -%}<!--@list/split-->{%- endunless -%}
       <div class="resource-list__item">
         {%- comment -%}
-          One fixed id for every iteration -- see "WHY THE CARD IS A STATIC BLOCK" above. The product
-          travels as closest.product, which is how every child block (media, title, price, and any
-          native product block the merchant adds) resolves which product it is rendering, exactly as
-          sections/product-list.liquid:37-42 renders the same block type this section now does.
+          One fixed id for every iteration -- see the static-slot note above. The product travels
+          as closest.product, which is how every child block resolves which product it is
+          rendering (sections/product-list.liquid:37-42 does the same).
         {%- endcomment -%}
         {% content_for 'block',
           type: '_product-card',
@@ -125,10 +103,9 @@
 </div>
 
 {% stylesheet %}
-  /* Layout (display, gaps, padding, width) is owned by the section/section-resource-list/
-     spacing-style/gap-style classes, exactly as in product-list; these two rules only make the card
-     fill its grid cell. Without them the card sizes to its content and a row of cards with different
-     title lengths ends up with different heights. */
+  /* Layout is owned by the section/section-resource-list/spacing-style/gap-style classes; these
+     two rules only make the card fill its grid cell, so cards with different title lengths don't
+     end up different heights. */
   .mionas-collection .resource-list__item {
     display: flex;
     height: 100%;

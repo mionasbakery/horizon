@@ -4,8 +4,10 @@
 
 :root {
   --button-size-sm-height: 40px;
+  --button-size-sm-icon-size: 16px;
   --button-size-md-height: 48px;
   --button-size-lg-height: 56px;
+  --button-size-lg-icon-size: 24px;
   --button-state-pressed-scale: 0.97;
   --button-state-pressed-opacity: 0.92;
   --button-state-disabled-opacity: 0.5;
@@ -104,12 +106,14 @@
   --button-base-radius: 999px;
   --button-base-font-family: var(--font-family-archivo);
   --button-base-font-weight: 500;
+  --button-base-gap: 8px;
   --button-secondary-background: rgba(11, 7, 140, 0.08);
   --button-outline-shadow: inset 0 0 0 2px #0b078c;
   --button-size-sm-padding: 16px;
   --button-size-sm-font-size: 13px;
   --button-size-md-padding: 24px;
   --button-size-md-font-size: 16px;
+  --button-size-md-icon-size: 20px;
   --button-size-lg-padding: 24px;
   --button-size-lg-font-size: 18px;
   --card-base-radius: 16px;

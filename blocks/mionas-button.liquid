@@ -1,38 +1,25 @@
 {%- doc -%}
-  Renders a link styled as a button, in one of seven variants and three sizes.
+  Renders a link styled as a button, in one of seven variants, three sizes, and an optional
+  leading/trailing icon.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Button/Button.tsx: a link styled as a button, in one of seven
-  variants (primary, secondary, outline, ghost, danger, inverse-primary, inverse-ghost) and three
-  sizes (sm, md, lg).
+  Mirrors ../design-system/src/react/Button/Button.tsx. Horizon's native blocks/button.liquid only
+  exposes four style_class options with no schema path to outline/ghost/danger/inverse variants, so
+  this forks a new block per mionas-design-component's rule instead of stretching the native one.
 
-  Horizon's native blocks/button.liquid (t:names.button) only exposes four style_class options
-  (button / button-secondary / button-unstyled / button-custom) via snippets/button.liquid -- there
-  is no schema path to outline, ghost, danger, or either inverse variant, so this forks a new block
-  per mionas-design-component's rule rather than trying to stretch the native one. blocks/button.liquid and
-  snippets/button.liquid are untouched by this -- the native button still gets its current look from
-  snippets/design-system-bridge.liquid's global `.button` override, unrelated to this block.
+  Covers only the `as="a"` case of Button.tsx's discriminated union, since it's always used as a
+  static block with no `:disabled` state; `aria-disabled` stands in for that when no link is set.
 
-  Button.tsx is a discriminated union (`as="a"` has no `disabled`; `as="button"` does) -- this block
-  only covers the `as="a"` case, the same way it's always used as a block inside static theme
-  content, so there's no `:disabled` state to reproduce. `aria-disabled` stands in for it when no
-  link is set, same convention as snippets/button.liquid.
+  The class list and CSS live in snippets/mionas-button-class.liquid / mionas-button-styles.liquid
+  rather than here, because blocks/mionas-add-to-cart.liquid needs the same classes on a `<button>`
+  it builds itself (this block's `<a>` can't submit a form) -- keeping one shared implementation
+  also avoids Shopify's block-subsetting dropping this block's own `{% raw %}{% stylesheet %}{% endraw %}` tag on pages
+  with no Mionas: Button on them.
 
-  Every colour, radius, size metric and the family come from --button-* tokens
-  (assets/design-tokens.css), exactly as Button.module.css spends them. --button-base-font-family
-  resolves through --font-family-archivo, which snippets/design-system-bridge.liquid repoints at
-  the theme's loaded body font -- so the family is the design system's decision, delivered by a
-  face Shopify actually hosts.
-
-  THIS BLOCK OWNS NEITHER THE CLASSES NOR THE CSS, and is no longer the only way to spend either.
-  The class list comes from snippets/mionas-button-class.liquid and the rules from
-  snippets/mionas-button-styles.liquid, which snippets/design-system-bridge.liquid renders on every
-  page. Both were extracted from here because blocks/mionas-add-to-cart.liquid puts these classes on
-  a <button> it has to build from Horizon's own snippet: it cannot render this block (an <a> driven
-  by a `link` setting cannot submit a form), so it duplicated the class string, and the CSS -- a
-  {% raw %}{% stylesheet %}{% endraw %} tag here -- was dropped by Shopify's block subsetting on every page without a
-  Mionas: Button on it. See mionas-button-styles.liquid's header for what that broke.
+  `icon`/`icon_position` mirror Button.tsx's `icon`/`iconPosition` props, but the `icon` setting's
+  value vocabulary (whatsapp, instagram, tiktok...) is this theme's own -- see snippets/icon.liquid
+  -- since Button.tsx just takes an opaque ReactNode and has no icon registry of its own.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -43,6 +30,13 @@
     size: block_settings.size,
     full_width: block_settings.full_width
   -%}
+{%- endcapture -%}
+{%- capture button_icon -%}
+  {%- if block_settings.icon != 'none' -%}
+    <svg class="mionas-button__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      {%- render 'icon', icon: block_settings.icon -%}
+    </svg>
+  {%- endif -%}
 {%- endcapture -%}
 
 {%- comment -%}
@@ -66,7 +60,11 @@
   {% endif %}
   {{ block.shopify_attributes }}
 >
-  {{- block_settings.label -}}
+  {%- if block_settings.icon_position == 'trailing' -%}
+    {{ block_settings.label }}{{ button_icon }}
+  {%- else -%}
+    {{ button_icon }}{{ block_settings.label }}
+  {%- endif -%}
 </a>
 
 {% schema %}
@@ -122,6 +120,28 @@
       "id": "full_width",
       "label": "Full width",
       "default": false
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "whatsapp", "label": "WhatsApp" },
+        { "value": "instagram", "label": "Instagram" },
+        { "value": "tiktok", "label": "TikTok" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Icon position",
+      "options": [
+        { "value": "leading", "label": "Leading" },
+        { "value": "trailing", "label": "Trailing" }
+      ],
+      "default": "leading"
     }
   ],
   "presets": [

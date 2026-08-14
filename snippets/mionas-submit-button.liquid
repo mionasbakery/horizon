@@ -9,33 +9,14 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  The Mionas form submit button. There is no design-system Button component to mirror for a
-  <button>: ../design-system's Button renders an anchor, and so does blocks/mionas-button.liquid
-  (see its line 45). So this reproduces the primary/md/full-width Button look by spending the same
-  --button-* tokens directly.
+  There is no design-system Button component to mirror for a <button>: ../design-system's Button
+  renders an anchor, and so does blocks/mionas-button.liquid. This reproduces the
+  primary/md/full-width Button look by spending the same --button-* tokens directly.
 
-  It exists as a snippet rather than being inlined because it had two callers the moment
-  blocks/_mionas-form-submit.liquid was added, and the copy in blocks/mionas-contact-form.liquid
-  carried a "Keep the two in agreement" comment that had already started to be a liability. One
-  implementation, two callers.
+  blocks/corporate-quote-form.liquid deliberately does not use this snippet -- it uses Horizon's
+  native `.button` class, and repointing it here would restyle a live B2B page.
 
-  NOT a caller: blocks/corporate-quote-form.liquid. That form uses Horizon's native `.button` class
-  with only `align-self: flex-start`. Repointing it here would restyle a live B2B page, so it was
-  deliberately left alone -- see the spec's "corporate-quote-form is not a copy" section.
-
-  Accepts:
-    label   Required. Button text.
-    note    Optional. Secondary line below the button, centered. Blank renders nothing.
-    variant Optional. 'outline' switches to a transparent/bordered look, spending the same
-            --button-outline-* tokens .mionas-button--outline does. Anything else (including
-            blank) keeps today's filled primary look -- existing callers pass nothing and are
-            unaffected.
-    size    Optional. 'sm' or 'lg' switch height/padding/font-size to --button-size-sm-*/-lg-*.
-            Anything else (including blank) keeps today's --button-size-md-* look -- existing
-            callers pass nothing and are unaffected.
-    class   Extra classes on the button.
-
-  Renders the button and the note as SIBLINGS with no wrapper, so the caller's own flex column
+  Renders the button and the note as siblings with no wrapper, so the caller's own flex column
   (snippets/mionas-form.liquid, or the block's card) provides the gap between them.
 {%- endcomment -%}
 {% liquid
@@ -56,8 +37,7 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* Reproduces mionas-button's primary/md/full-width look. Moved verbatim from
-     blocks/mionas-contact-form.liquid, which now renders this snippet instead. */
+  /* Reproduces mionas-button's primary/md/full-width look -- see header comment. */
   .mionas-submit-button {
     display: flex;
     align-items: center;

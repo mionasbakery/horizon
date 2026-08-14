@@ -1,17 +1,12 @@
 {%- comment -%}
-  B2B quote request form.
+  B2B quote request form. Uses {% form 'contact' %} so Shopify emails every contact[*] pair to the
+  store with no app or CRM needed -- field keys are human-worded because Shopify prints the raw
+  key as the label in that email. The "Servicio" select carries four pipelines through one form;
+  the merchant filters the inbox on its value. Mirrors blocks/contact-form.liquid for the form_id /
+  error / success pattern.
 
-  One {% form 'contact' %}: Shopify emails every contact[*] pair to the store, so this needs no app
-  and no CRM. The field keys are human-worded because Shopify prints the raw key as the label in
-  that email -- see the spec, "Field naming is load-bearing".
-
-  The "Servicio" select carries four pipelines through one form; the merchant filters the inbox on
-  its value.
-
-  Mirrors blocks/contact-form.liquid for the form_id / error / success pattern.
-
-  Known platform limitation: Shopify's form object only echoes back name, email, phone and body, so
-  the custom fields are not repopulated after a validation error. Do not work around this.
+  Platform limitation: Shopify's form object only echoes back name, email, phone and body, so the
+  custom fields are not repopulated after a validation error. Do not work around this.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -148,12 +143,9 @@
 
 {% stylesheet %}
   .corporate-quote-form {
-    /* The block renders no size-style, so it has no --size-style-width. flex-basis: auto (via
-       width: 100%) keeps the form from collapsing vertically when the section stacks to a
-       column on mobile. On desktop this basis resolves to the form's own 100% width, which
-       out-competes the sibling group's 50% basis and skews the row to ~33/67 -- see the
-       desktop override below, which zeroes the basis so the row splits evenly.
-       min-width: 0 stops long option text from forcing an overflow. */
+    /* flex-basis: auto (via width: 100%) keeps the form from collapsing vertically when the
+       section stacks to a column on mobile; the desktop override below zeroes it so the row
+       splits evenly with the sibling group instead of skewing to ~33/67. */
     flex: 1 1 auto;
     min-width: 0;
     background-color: var(--card-base-background);
@@ -167,9 +159,7 @@
 
   @media screen and (min-width: 750px) {
     .corporate-quote-form {
-      /* Zero the flex-basis so it no longer resolves to the form's 100% width, which let it
-         out-grow the sibling group's 50% basis. Mobile keeps flex-basis: auto (above) so the
-         form doesn't collapse vertically when the section stacks to a column. */
+      /* Zero the flex-basis so the form no longer out-grows the sibling group's 50% basis. */
       flex-basis: 0;
     }
   }

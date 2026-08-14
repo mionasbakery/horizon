@@ -1,33 +1,19 @@
 {%- comment -%}
   Renders the breadcrumb trail as a standalone page section.
 
-  The standalone placement of the breadcrumb trail: a section a merchant adds at the top of a
-  template's section list (product, collection, page, blog, article), independently added, removed
-  and reordered there. blocks/mionas-breadcrumbs.liquid is the same trail as a theme block, for
-  nesting inside a Section alongside a Heading; both render snippets/mionas-breadcrumbs.liquid, so
-  the crumb logic and styles live in exactly one place and cannot drift between the two placements.
+  The standalone placement: a section a merchant adds, removes and reorders independently at the
+  top of a template's section list. blocks/mionas-breadcrumbs.liquid is the same trail as a theme
+  block, for nesting inside a Section next to a Heading; both render
+  snippets/mionas-breadcrumbs.liquid, which owns the crumb logic and styles. Section and block both
+  exist because a page-level trail usually stands alone, but merchants also want it sharing a
+  Section's width/background/spacing with a heading -- only a block can do that.
 
-  Section *and* block, not one or the other: the trail is a page-level element that usually wants to
-  sit above main content on its own (Section's job), but merchants also want it tucked into the same
-  container as the page heading so the two share that container's width, background and spacing --
-  which only a block can do. Neither placement subsumes the other.
+  The trail follows the merchant's navigation menu first (defaulting to navigation-menu, the one
+  sections/header-group.json actually renders) so crumbs match a path a visitor could have clicked,
+  rather than an invented hierarchy. Templates the menu has no entry for fall back to Shopify's
+  template context -- see the snippet for the full derivation rules.
 
-  The trail comes from the merchant's navigation menu first (the `menu` setting, defaulting to
-  navigation-menu -- the one sections/header-group.json actually renders, not Shopify's unused
-  main-menu starter list), so the crumbs match a path a visitor could actually have clicked instead
-  of a parallel hierarchy invented here. Templates the menu has no entry for -- products, articles
-  -- fall back to Shopify's template context. See the snippet for the full derivation rules.
-
-  Besides the menu, the settings are the two pieces of copy a merchant would want to localize: the
-  Home label and the landmark's accessible name (the design system's own doc says "Set label to
-  localize the landmark's accessible name").
-
-  section_width / background_color / padding controls are the same boilerplate every other Horizon
-  section carries (see sections/collection-links.liquid) -- merchants get sizing controls to
-  match, and contrast-override.liquid gives correct text/link contrast on a custom background for
-  free rather than a new bridge rule.
-
-  The setting ids below are referenced by every templates/*.json entry that places this section --
+  The setting ids below are referenced by every templates/*.json entry that places this section;
   renaming or removing one silently drops that setting from all of those placements.
 {%- endcomment -%}
 {% liquid

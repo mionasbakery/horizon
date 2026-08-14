@@ -29,15 +29,10 @@
 {%- enddoc -%}
 {%- liquid
   comment
-    Whitelisted rather than interpolated: a snippet is reachable from anywhere, and an unrecognised
-    value would emit a modifier class that no rule matches -- a button with the base metrics and no
-    colour at all, which is harder to spot than an obviously wrong one. Same reasoning, and the same
-    shape, as the role whitelist in snippets/mionas-text.liquid.
-
-    Keep both lists in step with the rules in snippets/mionas-button-styles.liquid. The blocks'
-    schemas may offer FEWER options than these -- blocks/mionas-add-to-cart.liquid deliberately
-    exposes four of the seven variants, because danger and the inverse pair would only ever be
-    misconfigurations on a white product card. That restriction belongs in the schema, not here.
+    Whitelisted rather than interpolated: an unrecognised value would silently emit a modifier class
+    that no rule matches, producing a button with no colour at all -- harder to spot than an
+    obviously wrong one. Same pattern as the role whitelist in snippets/mionas-text.liquid; keep both
+    lists in step with snippets/mionas-button-styles.liquid.
   endcomment
   assign allowed_variants = 'primary|secondary|outline|ghost|danger|inverse-primary|inverse-ghost' | split: '|'
   assign resolved_variant = variant | default: 'primary'

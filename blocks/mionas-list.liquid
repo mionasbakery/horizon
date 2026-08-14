@@ -3,21 +3,11 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/List/List.tsx: a vertical container that inserts a hairline
-  divider before every child except the first (React does this by walking `Children.toArray` and
-  interleaving a separator Box).
-
-  Shopify's theme-block system has no equivalent of that interleaving for an editor-added, arbitrary
-  set of child blocks -- {% content_for 'blocks' %} renders every child in order but gives the parent
-  no way to inject markup between them. This block gets the same visual result with CSS instead: each
-  Mionas: List item draws its own top border via `:not(:first-child)`, which is structurally
-  equivalent to React's "index > 0" check on the flattened children array. The `separator` setting
-  reaches those children through a `data-separator` attribute on this wrapper and a descendant
-  selector, since child blocks don't automatically inherit parent block settings.
-
-  Pairs with blocks/mionas-list-item.liquid (mirrors ListItem.tsx). Allows any other theme block
-  too ("@theme"), matching List.tsx's actual signature -- it accepts any ReactNode child, not only
-  ListItem.
+  Mirrors ../design-system/src/react/List/List.tsx's divider-between-children behaviour. Shopify's
+  `{% content_for 'blocks' %}` renders children in order but gives the parent no way to inject markup
+  between them, so each child draws its own top border via `:not(:first-child)` in CSS instead. The
+  `separator` setting reaches those children through a `data-separator` attribute here, since child
+  blocks don't inherit parent settings automatically.
 {%- endcomment -%}
 <div class="mionas-list" data-separator="{{ block.settings.separator }}" {{ block.shopify_attributes }}>
   {% content_for 'blocks' %}

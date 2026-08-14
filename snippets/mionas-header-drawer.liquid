@@ -12,54 +12,24 @@
 {%- enddoc -%}
 
 {% comment %}
-  FORKED FROM: snippets/header-drawer.liquid @ 95ca657 (Horizon v4.0.0, 2026-06-15)
+  Forked from snippets/header-drawer.liquid (Horizon v4.0.0 @ 95ca657) rather than edited in
+  place, so upstream changes land silently and must be replayed manually after each merge:
+  `git diff 95ca657..HEAD -- snippets/header-drawer.liquid`, then bump the sha above.
 
-  RE-SYNC AFTER EVERY UPSTREAM MERGE. Git will never conflict here - this is a separate file,
-  so upstream's changes to header-drawer.liquid land silently and this copy quietly goes stale.
-  That file saw 12 upstream commits in the last 12 months, so assume it moved.
+  Three intended deltas from the native file, present in all three branches (levels < 3
+  accordion, levels < 3 flat, and levels >= 3):
+    A. Each childlist <ul> is replaced by a render of 'mionas-header-menu-panel' with
+       variant: 'drawer', so mobile and desktop share one card implementation.
+    B. In the flat branch (drawer_accordion == false), a parent with children renders as a
+       <span class="...--mionas-heading"> instead of an <a> - it names the card group below it
+       rather than linking anywhere, so its own URL is dropped only here (desktop still links
+       it). The accordion and >=3-level branches keep a <summary>, which must stay interactive.
+    C. Childless top-level links render the forward caret, matching what the >=3-level branch
+       already renders for its parents.
 
-      git log  95ca657..HEAD -- snippets/header-drawer.liquid   # empty? nothing to do
-      git diff 95ca657..HEAD -- snippets/header-drawer.liquid   # else: replay these hunks here
-
-  Then bump the sha above. The delta list below tells you which lines are intentionally ours.
-
-  FORK OF snippets/header-drawer.liquid. Keep this a near-verbatim copy. There are exactly
-  THREE intended deltas, and `diff snippets/header-drawer.liquid
-  snippets/mionas-header-drawer.liquid` should show nothing beyond them:
-
-    A. EACH of the three childlist <ul>s is replaced by
-       {% render 'mionas-header-menu-panel', ... variant: 'drawer', labelled_by: ... %},
-       so mobile and desktop share one card implementation. Each render is preceded by an
-       {% assign panel_label_id = ... %} line; filters inside render arguments have no
-       precedent in this theme, so the id is built beforehand.
-
-    B. In the flat branch (levels < 3, drawer_accordion == false), the parent-with-children
-       <a> is a <span class="... menu-drawer__menu-item--mionas-heading"> instead. The
-       Mionas design renders that parent as a section heading naming the cards below it, not
-       as a tappable row. Its own URL is deliberately dropped IN THE DRAWER ONLY - desktop
-       still links it. Only the flat branch: the accordion and >=3-level branches use a
-       <summary> that must stay interactive because it toggles or drills down.
-
-    C. Childless top-level links render the forward caret
-       (<span class="svg-wrapper icon-caret icon-caret--forward">), matching what the
-       >=3-level branch already renders for its parents.
-
-  If you re-sync this fork against upstream, re-check that all three survive.
-
-  THERE ARE THREE, NOT ONE. This file branches on `{% if linklist.levels < 3 %}` and the two
-  halves each render their own childlist. The first version of this fork patched only the
-  >=3-levels branch, so the drawer silently kept its native markup on the live store, whose
-  navigation-menu is 2 levels deep. All three are now patched:
-    1. levels < 3, accordion variant   (drawer_accordion == true)
-    2. levels < 3, flat variant        (drawer_accordion == false)  <- the live one today
-    3. levels >= 3, inside .menu-drawer__inner-submenu
-  If you ever re-sync this fork against upstream, re-check that all three are still replaced.
-
-  THE DRAWER'S OWN BEHAVIOUR IS DELIBERATELY UNTOUCHED. Opening, the back button, the close
-  button and the animation index all still come from this file's native machinery
-  (<details>, header-drawer/open/submenu, header-drawer/back). The click-toggle controller in
-  assets/mionas-header-menu.js applies to the DESKTOP panel only - here the panel is simply the
-  submenu's content, not a toggled overlay.
+  The drawer's own open/close/back/animation behaviour is untouched and still comes from this
+  file's native machinery. The click-toggle controller in assets/mionas-header-menu.js applies
+  only to the desktop panel - here the panel is just the submenu's content, not a toggled overlay.
 {% endcomment %}
 
 {% liquid
@@ -152,9 +122,6 @@
           class="menu-drawer__menu has-submenu"
           role="list"
         >
-          {%- comment -%}
-            Handle menus with fewer than 3 levels of links
-          {%- endcomment -%}
           {% if linklist.levels < 3 %}
             {% assign first_accordion_open = false %}
             {% assign animation_index = 0 %}
@@ -165,9 +132,6 @@
                 class="{%- if block_settings.drawer_accordion -%}menu-drawer__list-item--deep{%- else -%}menu-drawer__list-item--flat{%- endif -%}{% if block_settings.drawer_dividers %} menu-drawer__list-item--divider{% endif %}"
               >
                 {% if block_settings.drawer_accordion and link.links != blank %}
-                  {%- comment -%}
-                    Accordion for links with children, in menus with fewer than 3 levels of links
-                  {%- endcomment -%}
                   {% liquid
                     assign should_open_first = false
                     if first_accordion_open == false and block_settings.drawer_accordion_expand_first
@@ -214,24 +178,13 @@
                   %}
                 {% elsif block_settings.drawer_accordion == false and link.links != blank %}
                   {%- comment -%}
-                    Flat menus for links with children, in menus with fewer than 3 levels of links
-                  {%- endcomment -%}
-                  {%- comment -%}
-                    MIONAS DELTA B. A <span>, not an <a>: in the drawer this parent names the
-                    card group below it rather than being a destination. Not an <h2> either -
-                    the group is named through aria-labelledby on the panel's grid, so a real
-                    heading element buys nothing and would inject an entry into the heading
-                    outline of every page on the store. The menu-drawer__menu-item and
-                    --mainlist classes stay because of what they still supply once
-                    blocks/mionas-header-menu.liquid overrides the link affordances: --mainlist
-                    carries the --menu-top-level-font-* family (:898-905 below), and
-                    .menu-drawer__menu-item carries display:flex/position:relative/align-items
-                    (:965-972) plus width:100% (:888-892) - which is why this row never hit the
-                    fit-content sizing that the sibling panel <div> did (see the width fix in
-                    blocks/mionas-header-menu.liquid). Inline padding comes from
-                    .menu-drawer__menu, not from these. menu-drawer__animated-element
-                    is a separate class, kept for the stagger animation. focus-inset is dropped -
-                    nothing here is focusable.
+                    MIONAS DELTA B: a <span>, not an <a> - this parent names the card group below
+                    it rather than linking anywhere. Not an <h2> either: the group is already
+                    named via aria-labelledby on the panel's grid, so a heading would only add a
+                    spurious entry to every page's heading outline. menu-drawer__menu-item and
+                    --mainlist stay for their layout/font styling (see the width fix in
+                    blocks/mionas-header-menu.liquid); focus-inset is dropped since nothing here
+                    is focusable.
                   {%- endcomment -%}
                   <span
                     id="HeaderDrawer-{{ link.handle }}"
@@ -258,9 +211,6 @@
                     labelled_by: panel_label_id
                   %}
                 {% else %}
-                  {%- comment -%}
-                    Simple links for links with no children (regardless of accordion setting), in menus with fewer than 3 levels of links
-                  {%- endcomment -%}
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
                     href="{{ link.url }}"
@@ -279,9 +229,6 @@
               </li>
             {%- endfor -%}
           {% else %}
-            {%- comment -%}
-              Handle menus with 3 levels of links
-            {%- endcomment -%}
             {% assign animation_index = 0 %}
             {%- for link in linklist.links -%}
               {% assign animation_index = animation_index | plus: 1 %}
@@ -290,9 +237,6 @@
                 style="--menu-drawer-animation-index: {{ animation_index }};"
               >
                 {%- if link.links != blank -%}
-                  {%- comment -%}
-                    Regardless of the Accordion setting, in menus with 3 levels of links, we use a details element to handle the top level of the menu for links that have children.
-                  {%- endcomment -%}
                   <details
                     id="Details-menu-drawer-menu-item-{{ forloop.index }}"
                     class="menu-drawer__menu-container{% if block_settings.drawer_dividers %} menu-drawer__menu-container--divider{% endif %}"
@@ -410,9 +354,6 @@
                     </div>
                   </details>
                 {%- else -%}
-                  {%- comment -%}
-                    Simple links for links with no children (regardless of accordion setting), in menus with 3 levels of links
-                  {%- endcomment -%}
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
                     href="{{ link.url }}"
@@ -987,9 +928,7 @@
     object-fit: cover;
   }
 
-  /* Fix alignment for collection image mode links without images in drawer */
-
-  /* Target menu items in grids that have images */
+  /* Align menu items without images so they still match their siblings inside image grids */
   .menu-drawer__menu--grid:has(.menu-drawer__link-image) .menu-drawer__menu-item:not(:has(> .menu-drawer__link-image)) {
     display: flex;
     flex-direction: column;

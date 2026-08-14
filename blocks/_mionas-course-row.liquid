@@ -1,47 +1,27 @@
 {%- comment -%}
   The per-course row of sections/mionas-course-list.liquid: date badge, title, meta line, and a
-  single CTA that is either "Reservar" (to the product page) or "Lista de espera" when the course
-  has sold out.
+  single CTA that is either "Reservar" (to the product page) or "Lista de espera" when sold out.
 
-  WHY THIS IS PRIVATE (leading underscore):
-  it reads closest.product and would render nothing outside a product context, so it must not appear
-  in the merchant's block picker -- the same reasoning the private _mionas-google-* blocks behind
-  the now-removed sections/mionas-google-reviews.liquid used to follow.
+  Private (leading underscore) because it reads closest.product and renders nothing outside a
+  product context, so it must not appear in the merchant's block picker. It's a static block
+  (fixed id via content_for 'block') so the editor shows one settings row governing every course,
+  not one per iteration.
 
-  WHY THE ROW IS A STATIC BLOCK:
-  it is reached only through the section's content_for 'block', type: '_mionas-course-row',
-  id: 'static-course-row'. One fixed id shared by every iteration means the theme editor shows a
-  single row whose settings govern every course, so the merchant composes the row once and cannot
-  end up with rows that disagree.
+  Unlike snippets/group.liquid, the row can't use a whole-card overlay link: its CTA is itself an
+  `<a>`, and an overlay link plus a button anchor puts a link inside a link's hit area. It would
+  also contradict the sold-out state, where the CTA is deliberately inert. The CTA is a link, not
+  add-to-cart, because the family workshop has two variants at different prices and this is a
+  considered purchase people research before committing.
 
-  WHY THE ROW IS NOT A LINK, unlike snippets/group.liquid:
-  group renders a whole-card link as an absolutely-positioned overlay anchor over its children. This
-  row cannot use that technique, because its CTA is itself an <a> -- an overlay link plus a button
-  anchor is a link inside a link's hit area, and 671eda0 already paid for that bug class in the mega
-  menu. It would
-  also contradict the sold-out state, where a whole-row link would carry a visitor to the product
-  page from a row whose only CTA is deliberately inert. The CTA is the row's single interactive
-  element, and the title is deliberately plain text.
+  It wears .mionas-button--outline directly rather than duplicating the CSS (as
+  snippets/mionas-submit-button.liquid must, for its own reasons) because the CTA is already an
+  anchor. That also means the inert waitlist button inherits
+  .mionas-button[aria-disabled="true"]'s dimmed styling for free.
 
-  WHY THE CTA IS A LINK AND NOT AN ADD-TO-CART:
-  the family workshop has two variants at different prices and one button cannot ask which. A course
-  is also a considered purchase -- people want the description before committing.
-
-  WHY IT WEARS .mionas-button--outline RATHER THAN REPRODUCING IT:
-  snippets/mionas-submit-button.liquid had to duplicate the button CSS because it needed a <button>
-  element and the design system's Button is an anchor; that reason is in its own header comment.
-  This CTA *is* an anchor, so the class applies directly and no CSS is duplicated. That also means
-  the placeholder waitlist button inherits .mionas-button[aria-disabled="true"] -- dimmed and inert.
-  That is intended: a button that goes nowhere should not look like one that does.
-
-  The `custom.course_date` metafield IS reachable from Liquid and `| date:` DOES accept its value
-  directly -- day and month rendered correctly, not blank and not a raw '2026-09-18' string. So no
-  string-parsing fallback (split on '-') is needed here.
-
-  But `| date: '%b'` renders the ENGLISH abbreviation ('AUG' for 2026-08-08), not the Spanish one
-  ('AGO') -- the storefront locale does not reach this filter. So the month IS looked up from a
-  fixed Spanish list below, keyed by `| date: '%m'` (which is safe because '%m' is numeric and
-  locale-independent), rather than trusting `%b`.
+  `| date:` accepts the `custom.course_date` metafield value directly, so no string-parsing
+  fallback is needed. But `| date: '%b'` renders the English abbreviation regardless of storefront
+  locale, so the Spanish month label below is looked up from a fixed list keyed by the
+  locale-independent `%m` instead.
 {%- endcomment -%}
 
 {%- liquid
@@ -126,11 +106,9 @@
     {{ block.shopify_attributes }}
   >
     {%- comment -%}
-      The badge is the single source of truth for the course date. Ten draft courses were meant to
-      have their `DD/MM ` title prefix removed once course_date shipped; that rename was cancelled
-      late, so those products still carry the prefix in product.title as well as the course_date
-      metafield. Republishing one without stripping the prefix duplicates the date -- once here,
-      once in the title rendered below.
+      The badge is the single source of truth for the course date. Some products still carry a
+      leftover `DD/MM ` prefix in their title as well as the course_date metafield -- strip that
+      prefix before publishing, or the date renders twice.
     {%- endcomment -%}
     <div class="mionas-course-row__date">
       <time datetime="{{ course_date | date: '%Y-%m-%d' }}">
@@ -152,13 +130,11 @@
       {%- endunless -%}
 
       {%- comment -%}
-        The blank-link branch is copied from blocks/mionas-button.liquid:45-50 -- role="link" plus
-        aria-disabled="true", which .mionas-button[aria-disabled="true"] already renders dimmed and
-        pointer-events: none. The waitlist destination is a deliberate placeholder for now.
-
-        The if/else tags below carry no whitespace-stripping hyphens, for the reason recorded in
-        blocks/mionas-button.liquid:38-43: a stripping hyphen glues the anchor to its first
-        attribute and emits an unknown element instead of a link.
+        Blank-link branch matches blocks/mionas-button.liquid:45-50 -- role="link" plus
+        aria-disabled="true", rendered dimmed and inert by .mionas-button[aria-disabled="true"].
+        The if/else tags carry no whitespace-stripping hyphens for the same reason as there
+        (blocks/mionas-button.liquid:38-43): stripping glues the anchor to its first attribute and
+        breaks the element.
       {%- endcomment -%}
       <a
         {% if cta_url == blank %}
@@ -177,9 +153,8 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* Mobile first (layout A): date block on the left, title and meta beside it, CTA full-width
-     beneath. The desktop three-zone line is the min-width: 750px override below -- the same
-     mobile-first direction the other Mionas components use. */
+  /* Mobile first: date on the left, title/meta beside it, CTA full-width beneath. Desktop becomes
+     a three-zone line via the min-width: 750px override below. */
   .mionas-course-row {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -200,12 +175,9 @@
     line-height: 1;
   }
 
-  /* The <time> element wrapping the day/month spans has no layout role of its own -- display:
-     contents drops its box from the tree so .mionas-course-row__day/__month keep participating in
-     the flex container above exactly as if <time> were not there, while still giving the badge a
-     single machine-readable datetime. Chosen over moving the flex declarations onto <time> itself
-     because that would mean duplicating them (the container above still needs to exist as a plain
-     div) for no layout benefit. */
+  /* display: contents drops <time>'s own box so its day/month children keep participating in the
+     parent flex container as if <time> weren't there, while still giving the badge one
+     machine-readable datetime. */
   .mionas-course-row__date time {
     display: contents;
   }
@@ -227,13 +199,10 @@
     min-width: 0;
   }
 
-  /* The title is deliberately body typography (size/line-height) on an <h3>-by-default heading
-     element, kept a heading only for document outline/accessibility. This rule only overrides the
-     properties it declares -- base.css's h3 preset (text-transform, letter-spacing, keyed off
-     this store's type_case_h3 setting) otherwise leaks through for anything left undeclared, which
-     is exactly how titles rendered in uppercase with heading tracking. text-transform and
-     letter-spacing are set below for the same reason blocks/mionas-text.liquid's .text-role
-     declares font-family: to neutralise a heading preset that would otherwise win. */
+  /* Body typography on a heading element, kept a heading only for document outline/accessibility.
+     text-transform and letter-spacing are set explicitly to override base.css's h3 preset
+     (uppercase, tracked), which otherwise leaks through -- same reason
+     blocks/mionas-text.liquid's .text-role declares font-family. */
   .mionas-course-row__title {
     margin: 0;
     font-size: var(--text-role-body-md-font-size);

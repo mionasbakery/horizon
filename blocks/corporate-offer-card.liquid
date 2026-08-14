@@ -66,15 +66,12 @@
 
   @media screen and (min-width: 750px) {
     .corporate-offer-card {
-      /* Row-direction sections give custom blocks no flex basis of their own (no size-style
-         class here), so with unequal content the four cards size to their content and come
-         out uneven. flex: 1 1 0 shares the row evenly; min-width: 0 lets a card shrink below
-         its content's intrinsic width. */
+      /* No size-style class here, so flex: 1 1 0 shares the row evenly instead of cards sizing
+         to their own uneven content; min-width: 0 lets a card shrink below that content's width. */
       flex: 1 1 0;
       min-width: 0;
 
-      /* The row section aligns items flex-start (no cross-axis stretch), so the card opts
-         itself into stretch to get equal heights across the four cards. */
+      /* The row section aligns items flex-start, so opt into stretch for equal card heights. */
       align-self: stretch;
     }
   }

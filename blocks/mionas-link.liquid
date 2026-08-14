@@ -2,27 +2,16 @@
   An inline text link, distinct from Button's CTA vocabulary.
 {%- enddoc -%}
 {%- comment -%}
-  Mirrors ../design-system/src/react/Link/Link.tsx: an inline text link with a variant/size
-  vocabulary distinct from Button's -- no background, underline only on hover, and "inverse"
-  variants that swap only the foreground colour (Link has nothing to invert a background of).
+  Mirrors ../design-system/src/react/Link/Link.tsx's inline-text vocabulary, distinct from Button's
+  CTA styling (no background, underline only on hover). Horizon's native "button-unstyled" style
+  renders a plain <a> too, but still carries Button's width settings rather than this vocabulary.
 
-  Horizon's native blocks/button.liquid has a "button-unstyled" style_class that also renders a
-  plain <a> (see snippets/button.liquid), but it's still a CTA element with width/custom_width
-  settings, not Link's inline-text vocabulary (no variant/size options, no hover-underline-only
-  behaviour) -- same reasoning blocks/mionas-button.liquid documents for the other style_class
-  options. Native button.liquid/snippets/button.liquid are untouched by this.
+  Only covers Link.tsx's `as="a"` case -- its `as="span"` mode rides along on a parent's own click
+  (e.g. inside a Card), which has no equivalent for a standalone, independently insertable block.
 
-  Link.tsx also supports `as="span"` -- decorative text riding along on a parent's own click (e.g.
-  inside a Card rendered as="a"). That mode doesn't translate to a standalone, independently
-  insertable Shopify block (there's no parent click to ride along on here), so this block only
-  covers the `as="a"` case, same scope decision mionas-button.liquid made for Button's `as="button"`.
-
-  Every colour/weight/size/family comes from --link-* tokens (assets/design-tokens.css), the same
-  ones Link.module.css spends. --link-base-font-family resolves through --font-family-archivo,
-  which snippets/design-system-bridge.liquid repoints at the theme's loaded body font.
-
-  --link-base-font-weight is 500, a weight none of the theme's font settings load; the same bridge
-  emits the Archivo 500 face that makes it render as medium rather than falling back to 400.
+  --link-base-font-weight is 500, a weight none of the theme's font settings load on their own;
+  design-system-bridge.liquid emits the Archivo 500 face so it renders medium instead of falling
+  back to 400.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings

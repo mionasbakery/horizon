@@ -1,45 +1,28 @@
 {% comment %}
   Overrides Horizon's final type variables with Mionas design-system tokens from
-  assets/design-tokens.css.
+  assets/design-tokens.css, rendered after theme-styles-variables so these win the cascade.
 
-  Rendered AFTER theme-styles-variables so these declarations win the cascade.
-
-  Only size, line-height and letter-spacing are bridged: they are the only three values
-  Shopify settings cannot express (the size enum has no 38/28/22, line-heights are ratios,
-  and tracking is capped at +/-0.03em where the brand needs 0.02em). Family, weight and case
-  come from the theme's font settings so Shopify keeps hosting and preloading the faces.
+  Only size, line-height and letter-spacing are bridged -- the only three values Shopify
+  settings can't express (size enum lacks 38/28/22, line-heights are ratios, tracking is
+  capped at +/-0.03em vs the brand's 0.02em). Family/weight/case stay on the theme's font
+  settings so Shopify keeps hosting and preloading the faces.
 
   Token names are mirrored in scripts/design-tokens-contract.mjs, which fails the sync if any
-  of them stop existing.
+  stop existing.
 {% endcomment %}
 {%- comment -%}
-  Archivo 500 (medium). The theme's four font settings load Archivo at 400 (body), 600
-  (subheading) and 800 (heading), each plus its font_modify'd bold -- so the browser has
-  400/600/700/800 and no 500. The design system loads 400;500;600;700;800 (../design-system/
-  src/fonts.css), and several of its tokens are 500: --link-base-font-weight,
-  --button-base-font-weight, and every size of the label band (--text-role-label-lg/md/sm-font-weight).
+  Archivo 500 (medium). The theme's four font settings only load Archivo at 400/600/800 (plus
+  font_modify'd bold), but several design-system tokens (links, buttons, the label text-role
+  band) need weight 500. With no 500 face available, CSS font matching silently falls back to
+  400 -- no error, just wrong-looking text -- so this derives and emits the 500 face from the
+  body font directly. Guarded because font_modify returns blank when a weight isn't in
+  Shopify's library for that family.
 
-  CSS font matching for a requested 500 with no 500 face checks 500, then descends -- landing on
-  400. So every one of those tokens silently rendered at body weight, with no error anywhere:
-  the token exists, the contract passes, the var() resolves, and the text is just wrong. That is
-  what made links indistinguishable from body copy.
+  Preloaded like snippets/fonts.liquid does for the four settings fonts, so this weight doesn't
+  flash the fallback under font-display: swap while the others are already warm.
 
-  There is no fifth Shopify font setting to hang this on, so derive the face from the body font
-  and emit it here. Guarded because font_modify returns blank when a weight isn't in Shopify's
-  library for that family, and font_face on blank emits nothing -- exactly the silent fallback
-  this is fixing. If the guard ever goes false, 500 text drops back to 400 and this comment is
-  the place to start.
-
-  Preloaded as well as declared, mirroring what snippets/fonts.liquid does for the four settings
-  fonts. The @font-face alone is what makes the weight render -- a preload never was load-bearing
-  for correctness -- but without it this face is the only Archivo weight the browser discovers
-  late, so 500 text flashes the fallback under font-display: swap while every other weight is
-  already warm. It also means n5 shows up alongside n4/n6/n8 in the head, so "is the medium face
-  there?" stays answerable by reading the markup, which is where anyone will look first.
-
-  Lives here rather than in snippets/fonts.liquid because that file is stock Horizon and this
-  theme merges from Shopify/horizon -- keeping all the Archivo-500 handling in this one
-  Mionas-owned snippet keeps it out of the way of upstream merges.
+  Kept in this Mionas-owned snippet rather than snippets/fonts.liquid, which is stock Horizon
+  and would conflict with upstream merges.
 {%- endcomment -%}
 {%- assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500' -%}
 {%- if body_font_medium -%}
@@ -50,41 +33,23 @@
 {%- endif -%}
 {% style %}
   :root {
-    /* Font families: the design system's two primitives, repointed at the faces this theme
-       actually loads. A --font-family-* token is an inert string -- a custom property loads no
-       font file -- so spending one renders Archivo only by coincidence, and falls back the
-       moment a font setting changes. Shopify hosts and preloads fonts through theme settings, so
-       --font-body--family / --font-accent--family are the only families that are really here.
-
-       This is the whole font-family story for the theme. Every component token
-       (--link-base-font-family, --card-base-font-family, ...) is a var() reference to one of
-       these two in dist/tokens.flat.css, so blocks spend their own component token, mirror their
-       .module.css verbatim, and resolve through here automatically. A new design-system component
-       needs no change in this file. Both names are pinned by value in
-       scripts/design-tokens-contract.mjs, so re-pointing one design-system side fails the sync
-       instead of silently keeping the mapping below. */
+    /* Font families: repoint the design system's two primitives at the faces Shopify actually
+       hosts/preloads (--font-body--family / --font-accent--family) rather than the design
+       system's own --font-family-* tokens, which are inert strings with no loaded font behind
+       them. Every component token resolves through these two, so new design-system components
+       need no change here. Both names are pinned in scripts/design-tokens-contract.mjs. */
     --font-family-archivo: var(--font-body--family);
     --font-family-oswald: var(--font-accent--family);
 
-    /* THE HEADING LADDER IS THIS FILE'S OWN CONSTRUCTION, not a mapping the design system hands
-       over. Its text roles are a band x size grid where band and outline level are independent --
-       any band may render at any heading level -- so nothing upstream says which six steps h1-h6
-       should be. These six are the heading bands read top-down (display-lg, headline md/sm, title
-       lg/md/sm): 48/28/24/22/20/18, no repeat.
+    /* The h1-h6 ladder below is this file's own construction, not something the design system
+       hands over -- its text roles are a band x size grid with no inherent mapping to heading
+       levels. label-* is excluded despite holding the two smallest sizes: that band is "form
+       labels and UI chrome, not page content" in the design system, and a merchant's h6 is
+       page content -- which is why h5/h6 land on 20/18px rather than an unbroken 18/15 sequence. */
 
-       label-* is excluded even though it holds the two smallest steps: the design system defines
-       that band as "form labels and UI chrome, not page content", and a merchant's <h6> is page
-       content. That exclusion is why h5 is 20px and h6 18px rather than the 18/15 an unbroken
-       size ordering would give. */
-
-    /* h1 -> display-lg. Fixed, not clamped, regardless of the token's value -- this overrides
-       --font-h1--size directly (base.css:704 reads it as a plain property), bypassing
-       theme-styles-variables.liquid's own settings-driven clamp() generation entirely. That
-       matters here because display-lg is 48px, which sits exactly at Horizon's 48px fluid
-       cutoff. Were this bridged through Shopify's own type_size_h1 setting instead of a direct
-       token override, landing on the cutoff would reintroduce a clamp() with a derived
-       2.75rem/44px floor -- so keep this a direct var() reference, not a value Shopify's
-       fluid-size logic ever sees. */
+    /* h1 -> display-lg. Set directly rather than through Shopify's type_size_h1 setting:
+       display-lg is 48px, exactly Horizon's fluid-size cutoff, so going through the setting
+       would reintroduce a clamp() with a derived 44px floor instead of a fixed 48px. */
     --font-h1--size: var(--text-role-display-lg-font-size);
     --font-h1--line-height: var(--text-role-display-lg-line-height);
     --font-h1--letter-spacing: var(--text-role-display-lg-letter-spacing);
@@ -94,8 +59,7 @@
     --font-h2--line-height: var(--text-role-headline-md-line-height);
     --font-h2--letter-spacing: var(--text-role-headline-md-letter-spacing);
 
-    /* h3 -> headline-sm. A real step of its own (24px): h2 and h3 shared one 28px role under the
-       old collapsed scale, and the three-size grid is what ended that. */
+    /* h3 -> headline-sm (24px), a step of its own distinct from h2's 28px. */
     --font-h3--size: var(--text-role-headline-sm-font-size);
     --font-h3--line-height: var(--text-role-headline-sm-line-height);
     --font-h3--letter-spacing: var(--text-role-headline-sm-letter-spacing);
@@ -131,45 +95,30 @@
     --button-padding-inline: var(--button-size-md-padding);
   }
 
-  /* Font smoothing. The design system sets none anywhere, so its components rasterise with the
-     platform default -- subpixel antialiasing on macOS. Horizon sets
-     -webkit-font-smoothing: antialiased in five places, and the first is `body` (base.css:677).
-     The property inherits, so that one declaration reaches every element on the page, the Mionas
-     mirrors included.
+  /* Font smoothing: the design system renders with the platform default (subpixel AA on
+     macOS), but Horizon sets -webkit-font-smoothing: antialiased on `body` (base.css:677),
+     which inherits everywhere including Mionas markup and reads visibly thinner, independent
+     of the Archivo-500 fix above.
 
-     Grayscale antialiasing renders visibly lighter than subpixel at an identical weight, which is
-     why the whole theme still read thinner than Storybook after the Archivo 500 face was loading
-     correctly. Two different causes, the same symptom; this is the second one.
-
-     The universal selector and the !important are both deliberate. Four of the five declarations
-     live in files this theme merges from Shopify/horizon (base.css, overflow-list.css,
-     header-actions.liquid, contact-form.liquid) and their selectors range from `body` to
-     `slot[name='more'] .button`. Restating that list here would mean re-copying upstream selectors
-     after every merge, and any declaration Shopify adds later would silently restore the thin
-     rendering. Normalising one inherited property once is the version that keeps working.
-     blocks/corporate-quote-form.liquid is the fifth; it is this theme's own file, so the
-     declaration was removed there outright rather than overridden here. */
+     Universal selector + !important because four of the five upstream declarations live in
+     files this theme merges from Shopify/horizon, so restating their selectors here would need
+     re-copying after every merge and miss anything Shopify adds later. The fifth,
+     blocks/corporate-quote-form.liquid, is this theme's own file and had its declaration
+     removed outright instead. */
   *,
   *::before,
   *::after {
     -webkit-font-smoothing: auto !important;
   }
 
-  /* Horizon gives button labels the paragraph weight (400, base.css:1245). No Shopify setting
-     exposes button weight, so this needs a rule.
+  /* Horizon gives button labels the paragraph weight (400, base.css:1245); no Shopify setting
+     exposes button weight, so this needs a rule. Spends the token, not a hardcoded value, so
+     native Horizon buttons and blocks/mionas-button.liquid stay in sync -- this only renders
+     correctly because of the Archivo 500 face emitted above.
 
-     Spends the token rather than a hardcoded step, so native Horizon buttons and
-     blocks/mionas-button.liquid stay at one weight. This was --font-weight-semibold (600) until
-     ../design-system bd2ec5e retokenized Button.module.css onto --button-base-font-weight (500);
-     the commit message doesn't mention weight, so the drop was confirmed deliberate with the
-     design system's author rather than inferred from the diff. Note this is one of the weights
-     that only renders correctly because of the Archivo 500 face emitted above.
-
-     Same selector list as base.css:1229-1232, and this snippet renders after base.css, so it
-     wins on source order at equal specificity.
-     .button-unstyled is excluded: it strips padding/background/border to read as plain text
-     (base.css:1361), and must not be weighted up. base.css uses this same :not() idiom at
-     line 1265. */
+     Same selector list as base.css:1229-1232; renders after base.css so it wins on source
+     order. .button-unstyled is excluded since it strips styling to read as plain text
+     (base.css:1361), matching base.css's own :not() idiom at line 1265. */
   .button:not(.button-unstyled),
   .button-secondary,
   .button-custom,
@@ -177,34 +126,26 @@
     font-weight: var(--button-base-font-weight);
   }
 
-  /* Footer tagline — a merchant-added `text` block inside the footer group, set to
-     type_preset "custom" with font "Accent" (Oswald), reads as the design system's tagline line
-     (e.g. "Bakery & specialty coffee · Sitges"). `text.liquid`/`typography-style.liquid` always
-     emit `--font-family: var(--font-accent--family);` inline plus a `custom-typography` class for
-     that combination, so this targets it directly rather than adding a dedicated Horizon block
-     type. Scoped to the real `<footer>` element `theme.liquid` wraps the footer-group render in,
-     so it can't affect accent-font custom text elsewhere on the page. */
+  /* Footer tagline: a merchant `text` block with font "Accent" reads as the design system's
+     tagline line. text.liquid/typography-style.liquid always emit
+     `--font-family: var(--font-accent--family)` inline plus `custom-typography` for that
+     combination, so this targets that signature directly instead of adding a dedicated block
+     type. Scoped to `<footer>` so it can't catch accent-font text elsewhere on the page. */
   footer .custom-typography[style*='--font-family: var(--font-accent--family)'] {
     color: var(--footer-tagline-foreground);
   }
 {% endstyle %}
 
 {%- comment -%}
-  Reskin of Horizon's native product card. It opens its own style block, and rendering it from here
-  rather than from layout/theme.liquid means adding it touched no native Horizon file at all, so
-  merges from upstream Shopify/horizon stay clean. This snippet already renders after
-  theme-styles-variables and after base.css, which is the cascade position the bridge needs -- the
-  same one header-bridge.liquid gets from its own render in theme.liquid.
+  Reskin of Horizon's native product card, rendered from here rather than layout/theme.liquid so
+  adding it touched no native Horizon file -- keeps upstream merges clean. This snippet already
+  renders after theme-styles-variables and base.css, the cascade position the bridge needs.
 {%- endcomment -%}
 {% render 'product-card-bridge' %}
 
 {%- comment -%}
-  Every .mionas-button rule, for the same reason product-card-bridge is rendered from here: this
-  snippet already runs on every page from layout/theme.liquid, so nothing native had to change.
-
-  It is rendered from here rather than declared in blocks/mionas-button.liquid specifically so the
-  CSS does not depend on that block being on the page -- blocks/mionas-add-to-cart.liquid wears the
-  same classes without rendering the block, and a collection page has no Mionas: Button on it at
-  all. That snippet's header has the full account.
+  Every .mionas-button rule, rendered from here rather than blocks/mionas-button.liquid so the
+  CSS doesn't depend on that block being on the page -- blocks/mionas-add-to-cart.liquid wears
+  the same classes without rendering the block.
 {%- endcomment -%}
 {% render 'mionas-button-styles' %}

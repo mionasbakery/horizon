@@ -32,6 +32,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: var(--button-base-gap);
     border: 1.5px solid transparent;
     border-radius: var(--button-base-radius);
     font-family: var(--button-base-font-family);
@@ -50,10 +51,20 @@
     font-size: var(--button-size-sm-font-size);
   }
 
+  .mionas-button--sm .mionas-button__icon {
+    width: var(--button-size-sm-icon-size);
+    height: var(--button-size-sm-icon-size);
+  }
+
   .mionas-button--lg {
     height: var(--button-size-lg-height);
     padding: 0 var(--button-size-lg-padding);
     font-size: var(--button-size-lg-font-size);
+  }
+
+  .mionas-button--lg .mionas-button__icon {
+    width: var(--button-size-lg-icon-size);
+    height: var(--button-size-lg-icon-size);
   }
 
   /* Button.tsx has no fullWidth prop -- the prototype's `full-width` was its own harness prop.
@@ -121,5 +132,12 @@
   .mionas-button:active {
     transform: scale(var(--button-state-pressed-scale));
     opacity: var(--button-state-pressed-opacity);
+  }
+
+  .mionas-button__icon {
+    display: inline-flex;
+    flex: none;
+    width: var(--button-size-md-icon-size);
+    height: var(--button-size-md-icon-size);
   }
 {% endstyle %}

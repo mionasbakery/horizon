@@ -72,22 +72,16 @@
 
   assign columns = grid_columns_count | default: settings.panel_columns | default: 6
 
-  # Each property is emitted ONLY when its setting has a value, so an unset setting falls
-  # through to the CSS default rather than writing an empty declaration.
+  # Each property is emitted only when its setting has a value, so an unset setting falls
+  # through to the CSS default instead of an empty declaration.
   #
-  # TWO PROPERTIES, DOWN FROM SEVEN. The panel paints nothing now - no background, no shadow, no
-  # hairline - and takes its padding from the native .menu-list__submenu-inner, so
-  # panel_background, panel_shadow, panel_padding_block and panel_padding_inline were removed from
-  # the block's schema rather than left as theme-editor controls with nothing to control. See the
-  # note in blocks/mionas-header-menu.liquid where the panel's own rule used to be.
+  # The panel paints nothing itself (no background, shadow or hairline -- padding comes from the
+  # native .menu-list__submenu-inner), so panel_background/shadow/padding settings were removed
+  # from the schema rather than kept as controls with nothing to control.
   #
-  # NAMING: every property here is `--mionas-header-menu-panel-<setting id minus its panel_
-  # prefix>`, so panel_gap is --mionas-header-menu-panel-gap and the mapping is mechanical in
-  # both directions. Some of these used to drop the `panel` segment while background and shadow
-  # kept it; they were normalised because the split tracked nothing and made the
-  # settings-to-property lookup a guess. Keep new panel properties on this pattern. They are
-  # block-local: nothing outside this snippet and blocks/mionas-header-menu.liquid declares or
-  # reads them, which is what made the rename safe and what keeps it safe to rename again.
+  # Naming is mechanical: `--mionas-header-menu-panel-<setting id minus its panel_ prefix>`. These
+  # properties are block-local to this snippet and blocks/mionas-header-menu.liquid, so keep new
+  # ones on this pattern.
   capture panel_style
     echo '--mionas-header-menu-panel-columns: ' | append: columns | append: ';'
     if settings.panel_max_width != blank
@@ -100,14 +94,9 @@
 -%}
 
 {%- comment -%}
-  TWO ELEMENTS, AND THE REASON IS NO LONGER WHAT IT WAS. The outer .mionas-header-menu-panel used
-  to be a full-bleed white surface carrying a drop shadow, with __inner centring and capping the
-  content so the surface could reach the viewport edges while the grid stayed at 1240px. The panel
-  paints NOTHING now - no background, no shadow, no hairline - so the outer element has no rule of
-  its own on desktop at all, and the two-element split survives for the drawer's sake only: the
-  drawer needs a width on the outer div and needs __inner's 1240px cap and centring switched off.
-  Both live in blocks/mionas-header-menu.liquid's --drawer rules. If you are tempted to flatten
-  these into one div, read that rule first.
+  Two elements because the drawer needs a width on the outer div and needs __inner's 1240px cap
+  and centring switched off; on desktop the panel paints nothing, so the outer element has no rule
+  of its own. Both live in blocks/mionas-header-menu.liquid's --drawer rules.
 {%- endcomment -%}
 <div class="mionas-header-menu-panel{% if is_drawer %} mionas-header-menu-panel--drawer{% endif %}" style="{{ panel_style }}">
  <div class="mionas-header-menu-panel__inner">
@@ -134,12 +123,10 @@
             -%}
           </span>
           {%- comment -%}
-            The __text wrapper exists for the drawer's three-column row grid (thumb | text |
-            caret): without it, label and tagline are separate grid items and cannot share a
-            column. On desktop it has NO gap - label and tagline sit flush, which is what
-            MegaMenuItem draws - while the drawer variant re-adds a small one. Both live on
-            .mionas-header-menu-panel__text in blocks/mionas-header-menu.liquid; read the comment
-            there before changing either.
+            The __text wrapper exists for the drawer's three-column grid (thumb | text | caret):
+            without it, label and tagline are separate grid items and can't share a column. Gap
+            differs by variant (flush on desktop, matching MegaMenuItem) -- see
+            .mionas-header-menu-panel__text in blocks/mionas-header-menu.liquid.
           {%- endcomment -%}
           <span class="mionas-header-menu-panel__text">
             <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>
