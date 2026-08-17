@@ -6,74 +6,22 @@
   placed in". `.mionas-card` and `.mionas-contact-form` get the same scoping even though they're
   page-unique today, since both are generic Mionas components rather than page-specific classes.
 {%- enddoc -%}
+{%- comment -%}
+  The row/column wrapping, per-column minimum widths, and the card row's 1300px breakpoint used to
+  live here too, but they're now native mionas-group/mionas-card settings (wrap_children,
+  min_width) set directly on the relevant blocks in page.contacto.json -- organic wrap based on
+  available space, not a hardcoded viewport number. The address/day/hours nowrap rules moved the
+  same way, onto each mionas-text block's own `prevent_wrap` setting. What's left below -- the
+  align-items: stretch override and the form height chaining -- doesn't map to any block's
+  settings.
+{%- endcomment -%}
 <div class="contacto-layout-scope" hidden></div>
 {% style %}
-  /* Native `width: fill` is `flex: 1 1 0%`, and Horizon hardcodes `flex-wrap: nowrap` above
-     749px, so this row otherwise squeezes both columns instead of wrapping. */
+  /* Native `vertical_alignment: center` visibly centers the two columns once they're different
+     heights; `stretch` top-aligns them and grows the shorter one to match. Not expressible as a
+     mionas-group setting -- the native vertical_alignment select has no "stretch" option. */
   [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content {
-    flex-wrap: wrap;
-    /* Native `vertical_alignment: center` visibly centers the two columns once they're
-       different heights; `stretch` top-aligns them and grows the shorter one to match. */
     align-items: stretch;
-  }
-
-  /* Minimum comfortable width per column before the row wraps. `min(<n>px, 100%)` so a phone
-     narrower than the floor gets 100% width instead of being forced wider than the screen. */
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > .group-block--width-fill:first-child {
-    min-width: min(480px, 100%);
-  }
-
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > .group-block--width-fill:last-child {
-    min-width: min(340px, 100%);
-  }
-
-  /* A wrapped flex item's `height: fill` (100%) resolves against the combined height of every
-     wrapped line, not just its own -- without this the shorter column stretches to match the
-     taller one's total and leaves empty space beneath it. */
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > .group-block--width-fill {
-    height: auto;
-  }
-
-  /* :has(> .mionas-card), not a bare descendant :has(): the outer "info" column also has
-     .mionas-card among its descendants (as grandchildren, through this row), so a descendant
-     match would also flip info itself into row mode. */
-  [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) {
-    flex-direction: column;
-  }
-
-  /* Cards default to height: fill, which in column mode stretches them to share the column's
-     height instead of sizing to content. min-width is the same floor in both states (column
-     below 1300px, row at/above it) -- 320px so lines like the address or the day/hours pairs
-     don't wrap. Two cards at 320px + the 12px gap (652px) comfortably exceed the info column's
-     own 340px floor: once the info column is narrower than ~652px, this min-width overrides the
-     row-mode width: calc(...) exact-half split below, so the cards outgrow their 50/50 split and
-     the row overflows instead of matching the column's actual width. */
-  [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) .mionas-card {
-    height: auto;
-    flex: 0 0 auto;
-    min-width: min(320px, 100%);
-  }
-
-  /* Each card's own width: 100% means 100% of the row; two children at 100% each overlap
-     instead of sitting side by side, so row mode needs an explicit half-width override. */
-  @media (min-width: 1300px) {
-    [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) {
-      flex-direction: row;
-    }
-
-    [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) .mionas-card {
-      width: calc((100% - 12px) / 2);
-      flex: 0 0 calc((100% - 12px) / 2);
-    }
-  }
-
-  /* Address and day/hours text must not line-wrap regardless of card width. */
-  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-card p.text-role:has(br) {
-    white-space: nowrap;
-  }
-
-  [data-testid='section-content']:has(.contacto-layout-scope) .mionas-card span.text-role {
-    white-space: nowrap;
   }
 
   /* Contact form grows to the column's full height (align-items: stretch above); this chain

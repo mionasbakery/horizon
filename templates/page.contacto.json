@@ -45,11 +45,12 @@
           "blocks": {}
         },
         "columns": {
-          "type": "group",
+          "type": "mionas-group",
           "name": "Columns",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
+            "wrap_children": true,
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "align_baseline": false,
@@ -85,7 +86,7 @@
           },
           "blocks": {
             "group_pV83HJ": {
-              "type": "group",
+              "type": "mionas-group",
               "name": "Group: Contact form",
               "settings": {
                 "content_direction": "column",
@@ -98,6 +99,7 @@
                 "gap": 24,
                 "width": "fill",
                 "custom_width": 50,
+                "min_width": 480,
                 "width_mobile": "custom",
                 "custom_width_mobile": 100,
                 "height": "fill",
@@ -234,7 +236,7 @@
               ]
             },
             "info": {
-              "type": "group",
+              "type": "mionas-group",
               "name": "Group: Store info",
               "settings": {
                 "content_direction": "column",
@@ -247,6 +249,7 @@
                 "gap": 16,
                 "width": "fill",
                 "custom_width": 60,
+                "min_width": 340,
                 "width_mobile": "custom",
                 "custom_width_mobile": 100,
                 "height": "fill",
@@ -274,11 +277,12 @@
               },
               "blocks": {
                 "group_UFhtwm": {
-                  "type": "group",
+                  "type": "mionas-group",
                   "name": "Columns",
                   "settings": {
                     "content_direction": "row",
                     "vertical_on_mobile": true,
+                    "wrap_children": true,
                     "horizontal_alignment": "flex-start",
                     "vertical_alignment": "flex-start",
                     "align_baseline": false,
@@ -330,7 +334,8 @@
                         "custom_width": 100,
                         "width_mobile": "custom",
                         "custom_width_mobile": 100,
-                        "height": "custom",
+                        "min_width": 320,
+                        "height": "fill",
                         "custom_height": 100,
                         "link": "",
                         "open_in_new_tab": false,
@@ -365,6 +370,7 @@
                             "size": "md",
                             "color": "default",
                             "tag": "p",
+                            "prevent_wrap": true,
                             "padding-block-start": 0,
                             "padding-block-end": 0,
                             "padding-inline-start": 0,
@@ -507,7 +513,8 @@
                         "custom_width": 100,
                         "width_mobile": "custom",
                         "custom_width_mobile": 100,
-                        "height": "custom",
+                        "min_width": 320,
+                        "height": "fill",
                         "custom_height": 100,
                         "link": "",
                         "open_in_new_tab": false,
@@ -622,6 +629,7 @@
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
+                                    "prevent_wrap": true,
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -638,6 +646,7 @@
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
+                                    "prevent_wrap": true,
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -700,6 +709,7 @@
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
+                                    "prevent_wrap": true,
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -716,6 +726,7 @@
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
+                                    "prevent_wrap": true,
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -778,6 +789,7 @@
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
+                                    "prevent_wrap": true,
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -794,6 +806,7 @@
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
+                                    "prevent_wrap": true,
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,

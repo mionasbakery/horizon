@@ -1,0 +1,126 @@
+{%- doc -%}
+  Renders block content for mionas-group and mionas-card: a fork of snippets/group.liquid (the
+  native group block's own renderer) that additionally supports `wrap_children` and `min_width`.
+
+  @param {string} children - The DOM content of the group block.
+  @param {object} settings - The settings of the group block.
+  @param {string} shopify_attributes - String with Shopify attributes for the editor.
+  @param {string} [class] - Custom classes for the group block.
+  @param {string} [style] - Custom inline styles for the group block.
+  @param {string} [background_color] - The background color of the group block.
+  @param {string} [block_id] - The ID of the group block.
+
+  @example
+  {% render 'mionas-group', children: children, settings: block.settings, shopify_attributes: block.shopify_attributes %}
+{%- enddoc -%}
+
+{%- comment -%}
+  Forked instead of editing snippets/group.liquid directly, since that's a native theme file --
+  see CLAUDE.md. `wrap_children` overrides the `--flex-wrap` custom property inline, not by adding
+  a `flex-wrap` class rule: snippets/layout-panel-style.liquid (also native) already sets
+  `--flex-wrap: nowrap` inline on the content div, and base.css's `.layout-panel-flex--row` reads
+  it via `flex-flow: row var(--flex-wrap)`. A same-specificity class-based override is a coin flip
+  against that rule depending on stylesheet source order; redeclaring the inline custom property
+  after Horizon's own render call always wins, since it's the same style attribute.
+{%- endcomment -%}
+
+{% liquid
+  assign skip_contrast = false
+  if settings.background_media != blank and settings.background_media != 'none'
+    assign skip_contrast = true
+  endif
+%}
+{% render 'contrast-override', background_color: background_color, section_id: block_id, skip_contrast: skip_contrast %}
+
+<div
+  class="
+    group-block
+    group-block--height-{{ settings.height }}
+    group-block--width-{{ settings.width }}
+    border-style
+    spacing-style
+    size-style
+    {{ class }}
+    {% if background_color != blank %} color-custom-{{ block_id }}{% endif %}
+  "
+  style="
+    {% render 'border-override', settings: settings %}
+    {% render 'spacing-style', settings: settings %}
+    {% render 'size-style', settings: settings %}
+    {%- if settings.min_width > 0 -%}
+      min-width: min({{ settings.min_width }}px, 100%);
+    {%- endif -%}
+    {{ style }}
+  "
+  {{ shopify_attributes }}
+  data-testid="group-block"
+>
+  {%- if settings.link != blank -%}
+    <a
+      href="{{ settings.link }}"
+      class="group-block__link"
+      {% if settings.open_in_new_tab %}
+        target="_blank" rel="noopener"
+      {% endif %}
+    ></a>
+  {%- endif -%}
+
+  <div class="group-block__media-wrapper">
+    {% render 'background-media',
+      background_media: settings.background_media,
+      background_video: settings.video,
+      background_video_position: settings.video_position,
+      background_image: settings.background_image,
+      background_image_position: settings.background_image_position,
+      placeholder: settings.placeholder
+    %}
+    {% if settings.toggle_overlay %}
+      {% render 'overlay', settings: settings, layer: '0' %}
+    {% endif %}
+  </div>
+
+  <div
+    class="
+      group-block-content
+      {% if request.design_mode %}group-block-content--design-mode{% endif %}
+      layout-panel-flex
+      layout-panel-flex--{{ settings.content_direction | default: 'column' }}
+      {% if settings.vertical_on_mobile %} mobile-column{% endif %}
+      {% if settings.wrap_children %} mionas-group-content--wrap{% endif %}
+    "
+    style="
+      {% render 'layout-panel-style', settings: settings %}
+      {%- if settings.wrap_children -%}
+        --flex-wrap: wrap;
+      {%- endif -%}
+    "
+  >
+    {{- children -}}
+  </div>
+</div>
+
+{% stylesheet %}
+  .group-block__link {
+    position: absolute;
+    inset: 0;
+  }
+
+  .group-block__link ~ :is(.group-block-content, .group-block__media-wrapper) {
+    pointer-events: none;
+
+    :is(a, button, input, textarea, select) {
+      pointer-events: auto;
+    }
+  }
+
+  /* Needs the .group-block__link ~ to be specific enough to take effect. */
+  .group-block__link ~ .group-block-content--design-mode {
+    pointer-events: auto;
+  }
+
+  /* A wrapped flex item's height: fill (100%) resolves against the combined height of every
+     wrapped line, not just its own -- height: auto lets it size to its own line instead. */
+  .mionas-group-content--wrap > .group-block--height-fill {
+    height: auto;
+  }
+{% endstylesheet %}

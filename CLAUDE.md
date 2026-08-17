@@ -45,6 +45,12 @@ The `{% doc %}` block (or, for sections, the description line) is additive to, n
 for, existing explanatory `{% comment %}` blocks that record the *why* behind non-obvious
 decisions.
 
+## Native files
+
+Never edit a native (non-`mionas-`prefixed) file — hard rule, no exceptions for convenience. If
+native structure/schema can't express what's needed, ask the user before forking it into a
+`mionas-`prefixed copy (per mionas-design-component); don't fork silently.
+
 ## Git
 
 `origin` is `mionasbakery/horizon`. `upstream` is `Shopify/horizon` — fetch and merge from it to pull in upstream theme changes.

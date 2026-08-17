@@ -92,22 +92,24 @@
             "text_role_iU3M77"
           ]
         },
-        "group_7cGVTq": {
-          "type": "group",
-          "name": "Group: Tienda",
+        "group_menus": {
+          "type": "mionas-group",
+          "name": "Group: Menus",
           "settings": {
-            "content_direction": "column",
+            "content_direction": "row",
             "vertical_on_mobile": true,
+            "wrap_children": true,
             "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
+            "vertical_alignment": "flex-start",
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
+            "gap": 40,
             "width": "fill",
             "custom_width": 100,
-            "width_mobile": "custom",
+            "width_mobile": "fill",
             "custom_width_mobile": 100,
+            "min_width": 0,
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
@@ -132,25 +134,9 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_text_rftGfJ": {
-              "type": "mionas-text",
-              "name": "Mionas: Text",
-              "settings": {
-                "text": "<p><strong>TIENDA</strong></p>",
-                "variant": "label",
-                "size": "lg",
-                "color": "inverse-primary",
-                "tag": "h3",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "group_gbgDte": {
-              "type": "group",
-              "name": "Links",
+            "group_7cGVTq": {
+              "type": "mionas-group",
+              "name": "Group: Tienda",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -162,8 +148,9 @@
                 "gap": 12,
                 "width": "fill",
                 "custom_width": 100,
-                "width_mobile": "fill",
+                "width_mobile": "custom",
                 "custom_width_mobile": 100,
+                "min_width": 160,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
@@ -188,89 +175,89 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "mionas_link_ENfFHr": {
-                  "type": "mionas-link",
-                  "name": "Mionas: Link",
+                "mionas_text_rftGfJ": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text",
                   "settings": {
-                    "label": "Cookies",
-                    "link": "shopify://collections/cookies",
-                    "open_in_new_tab": false,
-                    "variant": "inverse-primary-muted",
-                    "size": "sm",
-                    "icon": "none"
+                    "text": "<p><strong>TIENDA</strong></p>",
+                    "variant": "label",
+                    "size": "lg",
+                    "color": "inverse-primary",
+                    "tag": "h3",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "group_gbgDte": {
+                  "type": "group",
+                  "name": "Links",
+                  "settings": {
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 12,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "mionas_link_ENfFHr": {
+                      "type": "mionas-link",
+                      "name": "Mionas: Link",
+                      "settings": {
+                        "label": "Cookies",
+                        "link": "shopify://collections/cookies",
+                        "open_in_new_tab": false,
+                        "variant": "inverse-primary-muted",
+                        "size": "sm",
+                        "icon": "none"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "mionas_link_ENfFHr"
+                  ]
                 }
               },
               "block_order": [
-                "mionas_link_ENfFHr"
+                "mionas_text_rftGfJ",
+                "group_gbgDte"
               ]
-            }
-          },
-          "block_order": [
-            "mionas_text_rftGfJ",
-            "group_gbgDte"
-          ]
-        },
-        "group_qrfYBP": {
-          "type": "group",
-          "name": "Group: Más",
-          "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "width": "fill",
-            "custom_width": 100,
-            "width_mobile": "custom",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "custom_height": 100,
-            "background_media": "none",
-            "background_color": "",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_color": "",
-            "border_radius": 0,
-            "link": "",
-            "open_in_new_tab": false,
-            "placeholder": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "mionas_text_JNcgWF": {
-              "type": "mionas-text",
-              "name": "Mionas: Text",
-              "settings": {
-                "text": "<p><strong>MÁS</strong></p>",
-                "variant": "label",
-                "size": "lg",
-                "color": "inverse-primary",
-                "tag": "h3",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
             },
-            "group_YqhCBM": {
-              "type": "group",
-              "name": "Links",
+            "group_qrfYBP": {
+              "type": "mionas-group",
+              "name": "Group: Más",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -279,11 +266,12 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 0,
+                "gap": 12,
                 "width": "fill",
                 "custom_width": 100,
-                "width_mobile": "fill",
+                "width_mobile": "custom",
                 "custom_width_mobile": 100,
+                "min_width": 160,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
@@ -308,64 +296,127 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "mionas_link_7NKyLY": {
-                  "type": "mionas-link",
-                  "name": "Mionas: Link - Sobre nosotros",
+                "mionas_text_JNcgWF": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text",
                   "settings": {
-                    "label": "Sobre nosotros",
-                    "link": "shopify://pages/sobre-nosotros",
-                    "open_in_new_tab": false,
-                    "variant": "inverse-primary-muted",
-                    "size": "sm",
-                    "icon": "none"
+                    "text": "<p><strong>MÁS</strong></p>",
+                    "variant": "label",
+                    "size": "lg",
+                    "color": "inverse-primary",
+                    "tag": "h3",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
                 },
-                "mionas_link_pq6RUL": {
-                  "type": "mionas-link",
-                  "name": "Mionas: Link - Contacto",
+                "group_YqhCBM": {
+                  "type": "group",
+                  "name": "Links",
                   "settings": {
-                    "label": "Contacto",
-                    "link": "shopify://pages/contacto",
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 0,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
                     "open_in_new_tab": false,
-                    "variant": "inverse-primary-muted",
-                    "size": "sm",
-                    "icon": "none"
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
-                  "blocks": {}
-                },
-                "mionas_link_J9PJjF": {
-                  "type": "mionas-link",
-                  "name": "Mionas: Link - Contacto",
-                  "settings": {
-                    "label": "FAQ",
-                    "link": "shopify://pages/contacto",
-                    "open_in_new_tab": false,
-                    "variant": "inverse-primary-muted",
-                    "size": "sm",
-                    "icon": "none"
+                  "blocks": {
+                    "mionas_link_7NKyLY": {
+                      "type": "mionas-link",
+                      "name": "Mionas: Link - Sobre nosotros",
+                      "settings": {
+                        "label": "Sobre nosotros",
+                        "link": "shopify://pages/sobre-nosotros",
+                        "open_in_new_tab": false,
+                        "variant": "inverse-primary-muted",
+                        "size": "sm",
+                        "icon": "none"
+                      },
+                      "blocks": {}
+                    },
+                    "mionas_link_pq6RUL": {
+                      "type": "mionas-link",
+                      "name": "Mionas: Link - Contacto",
+                      "settings": {
+                        "label": "Contacto",
+                        "link": "shopify://pages/contacto",
+                        "open_in_new_tab": false,
+                        "variant": "inverse-primary-muted",
+                        "size": "sm",
+                        "icon": "none"
+                      },
+                      "blocks": {}
+                    },
+                    "mionas_link_J9PJjF": {
+                      "type": "mionas-link",
+                      "name": "Mionas: Link - Contacto",
+                      "settings": {
+                        "label": "FAQ",
+                        "link": "shopify://pages/contacto",
+                        "open_in_new_tab": false,
+                        "variant": "inverse-primary-muted",
+                        "size": "sm",
+                        "icon": "none"
+                      },
+                      "blocks": {}
+                    }
                   },
-                  "blocks": {}
+                  "block_order": [
+                    "mionas_link_7NKyLY",
+                    "mionas_link_pq6RUL",
+                    "mionas_link_J9PJjF"
+                  ]
                 }
               },
               "block_order": [
-                "mionas_link_7NKyLY",
-                "mionas_link_pq6RUL",
-                "mionas_link_J9PJjF"
+                "mionas_text_JNcgWF",
+                "group_YqhCBM"
               ]
             }
           },
           "block_order": [
-            "mionas_text_JNcgWF",
-            "group_YqhCBM"
+            "group_7cGVTq",
+            "group_qrfYBP"
           ]
         },
         "group_T7QEim": {
-          "type": "group",
+          "type": "mionas-group",
           "name": "Group: Info",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": true,
+            "wrap_children": true,
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "align_baseline": false,
@@ -401,7 +452,7 @@
           },
           "blocks": {
             "group_Vmn3tw": {
-              "type": "group",
+              "type": "mionas-group",
               "name": "Group: Ven a visitarnos",
               "settings": {
                 "content_direction": "column",
@@ -416,6 +467,7 @@
                 "custom_width": 100,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
+                "min_width": 260,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
@@ -480,7 +532,7 @@
               ]
             },
             "group_a4xFtY": {
-              "type": "group",
+              "type": "mionas-group",
               "name": "Group: Horario",
               "settings": {
                 "content_direction": "column",
@@ -495,6 +547,7 @@
                 "custom_width": 100,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
+                "min_width": 260,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
@@ -782,23 +835,14 @@
                 "group_dcMteb",
                 "group_HXBJQY"
               ]
-            },
-            "mionas_flex_wrap_bridge_info": {
-              "type": "mionas-flex-wrap-bridge",
-              "name": "Mionas: Info Row Wrap",
-              "settings": {
-                "min_width": 260
-              },
-              "blocks": {}
             }
           },
           "block_order": [
             "group_Vmn3tw",
-            "group_a4xFtY",
-            "mionas_flex_wrap_bridge_info"
+            "group_a4xFtY"
           ]
         },
-        "mionas_footer_layout_bridge": {
+        "mionas_footer_bridge": {
           "type": "mionas-flex-wrap-bridge",
           "name": "Mionas: Footer Columns Wrap",
           "settings": {
@@ -809,10 +853,9 @@
       },
       "block_order": [
         "group_GbLjqM",
-        "group_7cGVTq",
-        "group_qrfYBP",
+        "group_menus",
         "group_T7QEim",
-        "mionas_footer_layout_bridge"
+        "mionas_footer_bridge"
       ],
       "name": "t:names.footer",
       "settings": {

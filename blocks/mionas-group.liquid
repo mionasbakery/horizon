@@ -1,100 +1,28 @@
 {%- doc -%}
-  Renders a bordered/shadowed content shell that composes freely with nested child theme blocks.
+  Renders a group of blocks with configurable layout, sizing, appearance and wrap behavior.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Card/Card.tsx: a bordered/shadowed shell that composes freely
-  with any nested child block. Distinct from the native blocks/_card.liquid, which is a generic
-  layout panel on Horizon's own tokens rather than the design system's --card-* ones.
-
-  Renders through snippets/mionas-group.liquid (a fork of the native group block's renderer that
-  adds `wrap_children`/`min_width`), borrowing its layout/size/link schema, but deliberately omits
-  Group's Appearance/Borders sections and Card.module.css's max-width cap: the `variant` setting
-  below owns the surface entirely, and the Size settings are the single answer to width, so a
-  hidden cap silently contradicting a merchant's choice would be worse than losing that bit of
-  fidelity.
-
-  Background/border/radius are applied via the `style:` param rather than a plain CSS rule, because
-  snippets/border-override.liquid emits unconditionally and would tie with `.mionas-card` at equal
-  specificity; `style:` is appended last, so it always wins.
-
-  Padding starts at 0 on every side, diverging from Card.tsx's own default bottom padding, so
-  children bleed to all edges until a merchant adds what the composition needs.
-
-  Only covers Card.tsx's `as="div"|"a"` (no "as button"), the same scope call mionas-button.liquid
-  and mionas-link.liquid make elsewhere.
+  Forked from blocks/group.liquid: identical settings and rendering, plus `wrap_children` and
+  `min_width` (handled by snippets/mionas-group.liquid, a fork of the native group renderer) so a
+  group can wrap its own children onto a new line instead of squeezing them -- Horizon's native
+  group hardcodes `flex-wrap: nowrap` above 749px and has no per-child minimum width.
 {%- endcomment -%}
-{% liquid
-  assign block_settings = block.settings
-  assign variant = block_settings.variant | default: 'default'
+{%- capture children %}
+  {% content_for 'blocks' %}
+{% endcapture %}
 
-  assign card_classes = 'mionas-card'
-  unless variant == 'default'
-    assign card_classes = card_classes | append: ' mionas-card--' | append: variant
-  endunless
-  if block_settings.link != blank
-    assign card_classes = card_classes | append: ' mionas-card--interactive'
-  endif
-%}
-
-{%- comment -%}
-  The whole card surface, driven by `variant` alone. Plain is a transparent, square, borderless
-  surface -- it contributes no background so whatever sits behind the card shows through.
-{%- endcomment -%}
-{%- capture card_style -%}
-  {%- case variant -%}
-    {%- when 'plain' -%}
-      --border-width: 0; --border-style: none; --border-radius: 0;
-    {%- when 'outline' -%}
-      background: var(--card-base-background);
-      --border-width: var(--card-base-border-width); --border-style: solid;
-      --border-color: var(--card-outline-border-color); --border-radius: var(--card-base-radius);
-    {%- else -%}
-      background: var(--card-base-background);
-      --border-width: var(--card-base-border-width); --border-style: solid;
-      --border-color: var(--card-base-border-color); --border-radius: var(--card-base-radius);
-  {%- endcase -%}
-{%- endcapture -%}
-
-{%- capture children -%}
-  {%- content_for 'blocks' -%}
-{%- endcapture -%}
-
-{%- render 'mionas-group',
+{% render 'mionas-group',
   children: children,
-  settings: block_settings,
+  settings: block.settings,
   shopify_attributes: block.shopify_attributes,
-  block_id: block.id,
-  class: card_classes,
-  style: card_style
--%}
-
-{% stylesheet %}
-  /* Background, border and radius ride on the `style:` param above, not here -- see the file
-     comment. Padding is absent entirely: it comes from the Padding settings alone. */
-  .mionas-card {
-    box-shadow: var(--card-base-shadow);
-    font-family: var(--card-base-font-family);
-    overflow: hidden;
-  }
-
-  .mionas-card--outline,
-  .mionas-card--plain {
-    box-shadow: none;
-  }
-
-  .mionas-card--interactive {
-    cursor: pointer;
-  }
-
-  .mionas-card--interactive:active {
-    opacity: var(--card-state-pressed-opacity);
-  }
-{% endstylesheet %}
+  background_color: block.settings.background_color,
+  block_id: block.id
+%}
 
 {% schema %}
 {
-  "name": "Mionas: Card",
+  "name": "Mionas: Group",
   "tag": null,
   "blocks": [
     {
@@ -108,17 +36,6 @@
     }
   ],
   "settings": [
-    {
-      "type": "select",
-      "id": "variant",
-      "label": "Variant",
-      "options": [
-        { "value": "default", "label": "Default" },
-        { "value": "outline", "label": "Outline" },
-        { "value": "plain", "label": "Plain" }
-      ],
-      "default": "default"
-    },
     {
       "type": "header",
       "content": "t:content.layout"
@@ -144,6 +61,14 @@
       "id": "vertical_on_mobile",
       "label": "t:settings.vertical_on_mobile",
       "default": true,
+      "visible_if": "{{ block.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "wrap_children",
+      "label": "Wrap children",
+      "default": false,
+      "info": "Let children wrap onto a new line once they no longer fit, instead of shrinking to stay on one line.",
       "visible_if": "{{ block.settings.content_direction == 'row' }}"
     },
     {
@@ -253,8 +178,7 @@
       "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 0,
-      "info": "0 matches the design system: children stack flush, the way CardMedia sits against the text under it."
+      "default": 12
     },
     {
       "type": "header",
@@ -331,7 +255,7 @@
       "step": 10,
       "default": 0,
       "unit": "px",
-      "info": "The smallest this card will shrink to before wrapping onto its own line, when placed in a wrapping parent. 0 means no minimum."
+      "info": "The smallest this block will shrink to before wrapping onto its own line, when placed in a wrapping parent. 0 means no minimum."
     },
     {
       "type": "select",
@@ -366,6 +290,189 @@
     },
     {
       "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "select",
+      "id": "background_media",
+      "label": "t:settings.background_media",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "image",
+          "label": "t:options.image"
+        },
+        {
+          "value": "video",
+          "label": "t:options.video"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.background_media == 'none' }}"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "t:settings.video",
+      "visible_if": "{{ block.settings.background_media == 'video' }}"
+    },
+    {
+      "type": "select",
+      "id": "video_position",
+      "label": "t:settings.video_position",
+      "options": [
+        {
+          "value": "cover",
+          "label": "t:options.cover"
+        },
+        {
+          "value": "contain",
+          "label": "t:options.contain"
+        }
+      ],
+      "default": "cover",
+      "visible_if": "{{ block.settings.background_media == 'video' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.image",
+      "visible_if": "{{ block.settings.background_media == 'image' }}"
+    },
+    {
+      "type": "select",
+      "id": "background_image_position",
+      "label": "t:settings.image_position",
+      "options": [
+        {
+          "value": "cover",
+          "label": "t:options.cover"
+        },
+        {
+          "value": "fit",
+          "label": "t:options.fit"
+        }
+      ],
+      "default": "cover",
+      "visible_if": "{{ block.settings.background_media == 'image' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "toggle_overlay",
+      "label": "t:settings.background_overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "t:settings.overlay_color",
+      "alpha": true,
+      "default": "#00000026",
+      "visible_if": "{{ block.settings.toggle_overlay }}"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "t:settings.overlay_style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        },
+        {
+          "value": "gradient",
+          "label": "t:options.gradient"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.toggle_overlay }}"
+    },
+    {
+      "type": "select",
+      "id": "gradient_direction",
+      "label": "t:settings.gradient_direction",
+      "options": [
+        {
+          "value": "to top",
+          "label": "t:options.up"
+        },
+        {
+          "value": "to bottom",
+          "label": "t:options.down"
+        }
+      ],
+      "default": "to top",
+      "visible_if": "{{ block.settings.toggle_overlay and block.settings.overlay_style == 'gradient' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.borders"
+    },
+    {
+      "type": "select",
+      "id": "border",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:settings.thickness",
+      "default": 1,
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "t:settings.opacity",
+      "default": 100,
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:settings.color",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
       "content": "t:content.block_link"
     },
     {
@@ -378,6 +485,12 @@
       "id": "open_in_new_tab",
       "label": "t:settings.open_new_tab",
       "default": false
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "t:settings.image",
+      "visible_if": "{{ false }}"
     },
     {
       "type": "header",
@@ -426,12 +539,8 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Card",
-      "category": "t:categories.layout",
-      "settings": {
-        "variant": "default",
-        "gap": 0
-      }
+      "name": "Mionas: Group",
+      "category": "t:categories.layout"
     }
   ]
 }
