@@ -43,12 +43,15 @@
 
   /* Cards default to height: fill, which in column mode stretches them to share the column's
      height instead of sizing to content. min-width is the same floor in both states (column
-     below 1300px, row at/above it), capped at (340px - 12px gap) / 2 so two cards side by side
-     in row mode can't outgrow the info column's own 340px floor and overflow it. */
+     below 1300px, row at/above it) -- 320px so lines like the address or the day/hours pairs
+     don't wrap. Two cards at 320px + the 12px gap (652px) comfortably exceed the info column's
+     own 340px floor: once the info column is narrower than ~652px, this min-width overrides the
+     row-mode width: calc(...) exact-half split below, so the cards outgrow their 50/50 split and
+     the row overflows instead of matching the column's actual width. */
   [data-testid='section-content']:has(.contacto-layout-scope) .group-block-content:has(> .mionas-card) .mionas-card {
     height: auto;
     flex: 0 0 auto;
-    min-width: min(160px, 100%);
+    min-width: min(320px, 100%);
   }
 
   /* Each card's own width: 100% means 100% of the row; two children at 100% each overlap

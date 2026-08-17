@@ -1,0 +1,65 @@
+{%- doc -%}
+  CSS-only bridge that makes its parent element wrap its children to a new row once they no
+  longer fit at the configured minimum width, instead of squeezing them. Renders nothing
+  visible; add as a block inside any flex or grid container.
+{%- enddoc -%}
+{%- comment -%}
+  Generalizes the marker + `:has()` technique from snippets/contacto-page-bridge.liquid: the
+  hidden marker below stands in for "this bridge's own parent", so the override never leaks past
+  the one container it was placed in. Parameterized (unlike a one-off bridge) because the same
+  shape solves two unrelated problems in this theme -- the footer's top-level column row (a grid,
+  needs `display: flex` first) and the "Info" group's address/schedule row (a native group block,
+  already flex, just missing `flex-wrap` since Horizon hardcodes `nowrap` above 749px) -- both are
+  just "wrap once children stop fitting at N px", nothing about the parent's own layout system.
+  Uses `{% style %}`, not `{% stylesheet %}`, because the min-width is per-instance and
+  `{% stylesheet %}` output is deduped once per block file across the whole page.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign min_width = block_settings.min_width | default: 200
+%}
+<div
+  data-mionas-flex-wrap-bridge-scope="{{ block.id }}"
+  hidden
+  {{ block.shopify_attributes }}
+></div>
+
+{% style %}
+  *:has(> [data-mionas-flex-wrap-bridge-scope="{{ block.id }}"]) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* min(<n>px, 100%) so a phone narrower than the floor gets 100% width instead of being forced
+     wider than the screen. */
+  *:has(> [data-mionas-flex-wrap-bridge-scope="{{ block.id }}"]) > * {
+    flex: 1 1 min({{ min_width }}px, 100%);
+    min-width: min({{ min_width }}px, 100%);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Mionas: Flex Wrap Bridge",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "min_width",
+      "label": "Minimum column width",
+      "min": 100,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 200,
+      "info": "How narrow a child can get before the row wraps onto a new line."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Flex Wrap Bridge",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

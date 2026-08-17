@@ -38,6 +38,9 @@
   {%- endcomment -%}
   {%- capture text_style -%}
     {%- render 'spacing-style', settings: block_settings -%}
+    {%- if block_settings.prevent_wrap -%}
+      white-space: nowrap;
+    {%- endif -%}
   {%- endcapture -%}
 
   {%- render 'mionas-text',
@@ -268,6 +271,13 @@
       ],
       "default": "p",
       "info": "Pick the semantic level; it doesn't have to match Variant."
+    },
+    {
+      "type": "checkbox",
+      "id": "prevent_wrap",
+      "label": "Prevent wrapping",
+      "default": false,
+      "info": "Keeps the text on one line (still breaks at an explicit line break). Useful for an address or a schedule squeezed into a narrow column."
     },
     {
       "type": "header",
