@@ -26,6 +26,7 @@
       "blocks": {
         "offer_events": {
           "type": "corporate-offer-card",
+          "name": "Corporate offer card — Events",
           "settings": {
             "heading": "Esdeveniments i càtering",
             "description": "Eventos, convenciones",
@@ -35,6 +36,7 @@
         },
         "offer_gifts": {
           "type": "corporate-offer-card",
+          "name": "Corporate offer card — Gifts",
           "settings": {
             "heading": "Regals d'empresa",
             "description": "Logo cookies, lotes Nadal, welcome kits",
@@ -44,6 +46,7 @@
         },
         "offer_wholesale": {
           "type": "corporate-offer-card",
+          "name": "Corporate offer card — Wholesale",
           "settings": {
             "heading": "Oficines i wholesale",
             "description": "Subscripciones, cafés, hoteles",
@@ -53,6 +56,7 @@
         },
         "offer_teambuilding": {
           "type": "corporate-offer-card",
+          "name": "Corporate offer card — Team building",
           "settings": {
             "heading": "Team building",
             "description": "Workshops de cookies",
@@ -67,7 +71,7 @@
         "offer_wholesale",
         "offer_teambuilding"
       ],
-      "name": "Què fem",
+      "name": "Section — What we offer",
       "settings": {
         "content_direction": "row",
         "vertical_on_mobile": true,
@@ -102,6 +106,7 @@
       "blocks": {
         "left_column": {
           "type": "group",
+          "name": "Group — How we work",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -141,6 +146,7 @@
           "blocks": {
             "credibility_heading": {
               "type": "text",
+              "name": "Text — Heading",
               "settings": {
                 "text": "<h2>Com treballem</h2>",
                 "width": "100%",
@@ -166,6 +172,7 @@
             },
             "figure_response": {
               "type": "corporate-figure",
+              "name": "Corporate figure — Response",
               "settings": {
                 "figure": "24h",
                 "caption": "respuesta"
@@ -174,6 +181,7 @@
             },
             "step_1": {
               "type": "corporate-figure",
+              "name": "Corporate figure — Step 1",
               "settings": {
                 "figure": "1",
                 "caption": "Cuéntanos qué necesitas"
@@ -182,6 +190,7 @@
             },
             "step_2": {
               "type": "corporate-figure",
+              "name": "Corporate figure — Step 2",
               "settings": {
                 "figure": "2",
                 "caption": "Propuesta y precio en 24h"
@@ -190,6 +199,7 @@
             },
             "step_3": {
               "type": "corporate-figure",
+              "name": "Corporate figure — Step 3",
               "settings": {
                 "figure": "3",
                 "caption": "Producción y entrega coordinada"
@@ -198,6 +208,7 @@
             },
             "recurring_note": {
               "type": "text",
+              "name": "Text — Note",
               "settings": {
                 "text": "<p>Recurrentes: factura con IVA desglosado, pedidos periódicos y persona de contacto fija.</p>",
                 "width": "100%",
@@ -254,7 +265,7 @@
         "left_column",
         "quote_form"
       ],
-      "name": "Pressupost",
+      "name": "Section — Quote request",
       "settings": {
         "content_direction": "row",
         "vertical_on_mobile": true,
@@ -289,6 +300,7 @@
       "blocks": {
         "contact_text": {
           "type": "text",
+          "name": "Text — Description",
           "settings": {
             "text": "<p>¿Prefieres hablarlo? Escríbenos y te respondemos en 24h laborables.</p>",
             "width": "100%",
@@ -314,6 +326,7 @@
         },
         "contact_cta": {
           "type": "button",
+          "name": "Button — CTA",
           "settings": {
             "label": "WhatsApp",
             "link": "",
@@ -335,7 +348,7 @@
         "contact_text",
         "contact_cta"
       ],
-      "name": "Contacte",
+      "name": "Section — Contact",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,

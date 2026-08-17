@@ -1,0 +1,68 @@
+{%- doc -%}
+  CSS-only responsive layout for the footer columns, rendered from a "Custom Liquid" block inside
+  the footer's top-level Mionas group ({% render 'mionas-footer-bridge' %}). Takes no params.
+  Turns that group's content into a grid and declares each breakpoint's layout as named areas.
+{%- enddoc -%}
+{%- comment -%}
+  Same scoped-marker pattern as snippets/contacto-page-bridge.liquid. This lives in CSS rather
+  than group settings because the three layouts skip flex-wrap's natural 2-per-row state (logo
+  alone on tablet, three columns on desktop), which no wrap/min-width combination can express.
+  Children are matched by position, so the group's block order must stay: logo, tienda, más,
+  visitarnos, horario, this bridge last.
+{%- endcomment -%}
+<div class="mionas-footer-scope" hidden></div>
+{% style %}
+  .group-block-content:has(.mionas-footer-scope) {
+    display: grid;
+    grid-template-areas:
+      'logo'
+      'tienda'
+      'mas'
+      'visitanos'
+      'horario';
+  }
+
+  /* The custom-liquid block's own wrapper div must not occupy a grid cell. */
+  .group-block-content:has(.mionas-footer-scope) > :has(.mionas-footer-scope) {
+    display: none;
+  }
+
+  .group-block-content:has(.mionas-footer-scope) > :nth-child(1) {
+    grid-area: logo;
+  }
+
+  .group-block-content:has(.mionas-footer-scope) > :nth-child(2) {
+    grid-area: tienda;
+  }
+
+  .group-block-content:has(.mionas-footer-scope) > :nth-child(3) {
+    grid-area: mas;
+  }
+
+  .group-block-content:has(.mionas-footer-scope) > :nth-child(4) {
+    grid-area: visitanos;
+  }
+
+  .group-block-content:has(.mionas-footer-scope) > :nth-child(5) {
+    grid-area: horario;
+  }
+
+  @media screen and (min-width: 750px) {
+    .group-block-content:has(.mionas-footer-scope) {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        'logo logo'
+        'tienda mas'
+        'visitanos horario';
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .group-block-content:has(.mionas-footer-scope) {
+      grid-template-columns: auto 1fr 1fr auto;
+      grid-template-areas:
+        'logo tienda mas visitanos'
+        'logo tienda mas horario';
+    }
+  }
+{% endstyle %}

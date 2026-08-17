@@ -33,7 +33,7 @@
   {% else %}
     href="{{ block_settings.link }}"
   {% endif %}
-  class="mionas-link mionas-link--{{ variant }}{% unless size == 'md' %} mionas-link--{{ size }}{% endunless %}{% if block_settings.icon != blank and block_settings.icon != 'none' %} mionas-link--with-icon{% endif %}"
+  class="mionas-link mionas-link--{{ variant }}{% unless size == 'md' %} mionas-link--{{ size }}{% endunless %}{% if block_settings.icon != blank and block_settings.icon != 'none' %} mionas-link--with-icon{% endif %}{% if block_settings.text_wrap == 'nowrap' %} mionas-link--nowrap{% endif %}"
   {% if block_settings.open_in_new_tab %}
     target="_blank"
     rel="noopener noreferrer"
@@ -55,6 +55,10 @@
     font-size: var(--link-size-md-font-size);
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .mionas-link--nowrap {
+    white-space: nowrap;
   }
 
   .mionas-link:hover {
@@ -148,6 +152,16 @@
         { "value": "mail", "label": "Mail" }
       ],
       "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "text_wrap",
+      "label": "Text wrapping",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "nowrap", "label": "No wrap" }
+      ],
+      "default": "normal"
     }
   ],
   "presets": [

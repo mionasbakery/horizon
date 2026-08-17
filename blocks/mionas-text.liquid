@@ -38,7 +38,7 @@
   {%- endcomment -%}
   {%- capture text_style -%}
     {%- render 'spacing-style', settings: block_settings -%}
-    {%- if block_settings.prevent_wrap -%}
+    {%- if block_settings.text_wrap == 'nowrap' -%}
       white-space: nowrap;
     {%- endif -%}
   {%- endcapture -%}
@@ -273,11 +273,15 @@
       "info": "Pick the semantic level; it doesn't have to match Variant."
     },
     {
-      "type": "checkbox",
-      "id": "prevent_wrap",
-      "label": "Prevent wrapping",
-      "default": false,
-      "info": "Keeps the text on one line (still breaks at an explicit line break). Useful for an address or a schedule squeezed into a narrow column."
+      "type": "select",
+      "id": "text_wrap",
+      "label": "Text wrapping",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "nowrap", "label": "No wrap" }
+      ],
+      "default": "normal",
+      "info": "No wrap keeps the text on one line (still breaks at an explicit line break). Useful for an address or a schedule squeezed into a narrow column."
     },
     {
       "type": "header",

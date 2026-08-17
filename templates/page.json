@@ -23,10 +23,11 @@
     },
     "main": {
       "type": "main-page",
+      "name": "Page",
       "blocks": {
         "heading": {
           "type": "text",
-          "name": "t:names.title",
+          "name": "Text — Encabezado",
           "settings": {
             "text": "<h1>{{ closest.page.title }}</h1>",
             "width": "100%",
@@ -51,6 +52,7 @@
         },
         "page-content": {
           "type": "page-content",
+          "name": "Page content",
           "settings": {},
           "blocks": {}
         }

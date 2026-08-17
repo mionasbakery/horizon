@@ -14,7 +14,7 @@
       "blocks": {
         "heading": {
           "type": "mionas-text",
-          "name": "Mionas: Heading",
+          "name": "Mionas: Text — Heading",
           "settings": {
             "text": "<p>Contacto</p>",
             "variant": "display",
@@ -30,7 +30,7 @@
         },
         "subtitle": {
           "type": "mionas-text",
-          "name": "Mionas: Subtitle",
+          "name": "Mionas: Text — Subtitle",
           "settings": {
             "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
             "variant": "body",
@@ -46,7 +46,7 @@
         },
         "columns": {
           "type": "mionas-group",
-          "name": "Columns",
+          "name": "Mionas: Group — Columns",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -87,7 +87,7 @@
           "blocks": {
             "group_pV83HJ": {
               "type": "mionas-group",
-              "name": "Group: Contact form",
+              "name": "Mionas: Group — Contact form",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -128,7 +128,7 @@
               "blocks": {
                 "mionas_button_fWdrxR": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button",
+                  "name": "Mionas: Button — CTA",
                   "settings": {
                     "label": "Escríbenos por WhatsApp",
                     "link": "https://wa.me/34XXXXXXXXX",
@@ -153,7 +153,7 @@
                 },
                 "mionas_card_BebNXD": {
                   "type": "group",
-                  "name": "Group: Contact form",
+                  "name": "Group",
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
@@ -237,7 +237,7 @@
             },
             "info": {
               "type": "mionas-group",
-              "name": "Group: Store info",
+              "name": "Mionas: Group — Store info",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -278,7 +278,7 @@
               "blocks": {
                 "group_UFhtwm": {
                   "type": "mionas-group",
-                  "name": "Columns",
+                  "name": "Mionas: Group — Columns",
                   "settings": {
                     "content_direction": "row",
                     "vertical_on_mobile": true,
@@ -319,7 +319,7 @@
                   "blocks": {
                     "mionas_card_Cb3XYY": {
                       "type": "mionas-card",
-                      "name": "Mionas: Visit us card",
+                      "name": "Mionas: Card — Visit us",
                       "settings": {
                         "variant": "default",
                         "content_direction": "column",
@@ -347,7 +347,7 @@
                       "blocks": {
                         "mionas_text_dwCwCH": {
                           "type": "mionas-text",
-                          "name": "Mionas: Title",
+                          "name": "Mionas: Text — Heading",
                           "settings": {
                             "text": "<p>Ven a visitarnos</p>",
                             "variant": "title",
@@ -363,14 +363,14 @@
                         },
                         "mionas_text_WUpHUe": {
                           "type": "mionas-text",
-                          "name": "Mionas: Address",
+                          "name": "Mionas: Text — Address",
                           "settings": {
                             "text": "<p>Carrer de Sant Bonaventura, 16<br/>08870 Sitges, Barcelona<br/>España</p>",
                             "variant": "body",
                             "size": "md",
                             "color": "default",
                             "tag": "p",
-                            "prevent_wrap": true,
+                            "text_wrap": "nowrap",
                             "padding-block-start": 0,
                             "padding-block-end": 0,
                             "padding-inline-start": 0,
@@ -380,7 +380,7 @@
                         },
                         "mionas_link_y8gUya": {
                           "type": "mionas-link",
-                          "name": "Mionas: Link",
+                          "name": "Mionas: Link — Email",
                           "settings": {
                             "label": "hola@mionasbakery.com",
                             "link": "mailto:hola@mionasbakery.com",
@@ -393,7 +393,7 @@
                         },
                         "mionas_link_Lpj6bQ": {
                           "type": "mionas-link",
-                          "name": "Mionas: Link",
+                          "name": "Mionas: Link — Phone",
                           "settings": {
                             "label": "93 334 82 46",
                             "link": "",
@@ -406,7 +406,7 @@
                         },
                         "group_QAJTUa": {
                           "type": "group",
-                          "name": "Socials",
+                          "name": "Group — Social",
                           "settings": {
                             "content_direction": "row",
                             "vertical_on_mobile": false,
@@ -446,7 +446,7 @@
                           "blocks": {
                             "mionas_icon_button_r7jrMJ": {
                               "type": "mionas-icon-button",
-                              "name": "Mionas: Icon button",
+                              "name": "Mionas: Icon button — Instagram",
                               "settings": {
                                 "icon": "instagram",
                                 "aria_label": "Instagram",
@@ -458,7 +458,7 @@
                             },
                             "mionas_icon_button_H4GHKj": {
                               "type": "mionas-icon-button",
-                              "name": "Mionas: Icon button",
+                              "name": "Mionas: Icon button — TikTok",
                               "settings": {
                                 "icon": "tiktok",
                                 "aria_label": "TikTok",
@@ -470,7 +470,7 @@
                             },
                             "mionas_icon_button_c68Vga": {
                               "type": "mionas-icon-button",
-                              "name": "Mionas: Icon button",
+                              "name": "Mionas: Icon button — WhatsApp",
                               "settings": {
                                 "icon": "whatsapp",
                                 "aria_label": "WhatsApp",
@@ -498,7 +498,7 @@
                     },
                     "mionas_card_GBQLYT": {
                       "type": "mionas-card",
-                      "name": "Mionas: Horario card",
+                      "name": "Mionas: Card — Hours",
                       "settings": {
                         "variant": "default",
                         "content_direction": "column",
@@ -526,7 +526,7 @@
                       "blocks": {
                         "mionas_text_nzHxRc": {
                           "type": "mionas-text",
-                          "name": "Mionas: Title",
+                          "name": "Mionas: Text — Heading",
                           "settings": {
                             "text": "<p>Horario</p>",
                             "variant": "title",
@@ -542,7 +542,7 @@
                         },
                         "group_6cXPXh": {
                           "type": "group",
-                          "name": "Group: Hours",
+                          "name": "Group — Hours",
                           "settings": {
                             "content_direction": "column",
                             "vertical_on_mobile": true,
@@ -582,7 +582,7 @@
                           "blocks": {
                             "group_MBzcMN": {
                               "type": "group",
-                              "name": "Martes",
+                              "name": "Tuesday",
                               "settings": {
                                 "content_direction": "row",
                                 "vertical_on_mobile": false,
@@ -622,14 +622,14 @@
                               "blocks": {
                                 "mionas_text_gPEBPb": {
                                   "type": "mionas-text",
-                                  "name": "Mionas: Day",
+                                  "name": "Mionas: Text — Day",
                                   "settings": {
                                     "text": "<p>Martes - Sábado</p>",
                                     "variant": "body",
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
-                                    "prevent_wrap": true,
+                                    "text_wrap": "nowrap",
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -639,14 +639,14 @@
                                 },
                                 "mionas_text_QLENAP": {
                                   "type": "mionas-text",
-                                  "name": "Mionas: Hours",
+                                  "name": "Mionas: Text — Hours",
                                   "settings": {
                                     "text": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
                                     "variant": "body",
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
-                                    "prevent_wrap": true,
+                                    "text_wrap": "nowrap",
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -662,7 +662,7 @@
                             },
                             "group_PiF8pN": {
                               "type": "group",
-                              "name": "Domingo",
+                              "name": "Sunday",
                               "settings": {
                                 "content_direction": "row",
                                 "vertical_on_mobile": false,
@@ -702,14 +702,14 @@
                               "blocks": {
                                 "mionas_text_R9mGbj": {
                                   "type": "mionas-text",
-                                  "name": "Mionas: Day",
+                                  "name": "Mionas: Text — Day",
                                   "settings": {
                                     "text": "<p>Domingo</p>",
                                     "variant": "body",
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
-                                    "prevent_wrap": true,
+                                    "text_wrap": "nowrap",
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -719,14 +719,14 @@
                                 },
                                 "mionas_text_jYEPTy": {
                                   "type": "mionas-text",
-                                  "name": "Mionas: Hours",
+                                  "name": "Mionas: Text — Hours",
                                   "settings": {
                                     "text": "<p>10:00 - 14:00</p>",
                                     "variant": "body",
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
-                                    "prevent_wrap": true,
+                                    "text_wrap": "nowrap",
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -742,7 +742,7 @@
                             },
                             "group_nfqbCq": {
                               "type": "group",
-                              "name": "Lunes",
+                              "name": "Monday",
                               "settings": {
                                 "content_direction": "row",
                                 "vertical_on_mobile": false,
@@ -782,14 +782,14 @@
                               "blocks": {
                                 "mionas_text_YpY9Vw": {
                                   "type": "mionas-text",
-                                  "name": "Mionas: Day",
+                                  "name": "Mionas: Text — Day",
                                   "settings": {
                                     "text": "<p>Lunes</p>",
                                     "variant": "body",
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
-                                    "prevent_wrap": true,
+                                    "text_wrap": "nowrap",
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -799,14 +799,14 @@
                                 },
                                 "mionas_text_Lk8Vee": {
                                   "type": "mionas-text",
-                                  "name": "Mionas: Hours",
+                                  "name": "Mionas: Text — Hours",
                                   "settings": {
                                     "text": "<p>Cerrado</p>",
                                     "variant": "body",
                                     "size": "md",
                                     "color": "default",
                                     "tag": "span",
-                                    "prevent_wrap": true,
+                                    "text_wrap": "nowrap",
                                     "padding-block-start": 0,
                                     "padding-block-end": 0,
                                     "padding-inline-start": 0,
@@ -829,7 +829,7 @@
                         },
                         "mionas_text_LyVtXm": {
                           "type": "mionas-text",
-                          "name": "Mionas: Text",
+                          "name": "Mionas: Text — Note",
                           "settings": {
                             "text": "<p>Los horarios pueden variar en días festivos. Consúltanos por WhatsApp o redes sociales para confirmar.</p>",
                             "variant": "body",
@@ -883,7 +883,7 @@
         },
         "responsive_css": {
           "type": "custom-liquid",
-          "name": "Responsive CSS",
+          "name": "Custom liquid — Responsive CSS",
           "settings": {
             "custom_liquid": "{% render 'contacto-page-bridge' %}"
           },
@@ -896,7 +896,7 @@
         "columns",
         "responsive_css"
       ],
-      "name": "Contacto",
+      "name": "Section — Contact",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
