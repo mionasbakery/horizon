@@ -153,7 +153,7 @@
                 },
                 "mionas_card_BebNXD": {
                   "type": "group",
-                  "name": "Group",
+                  "name": "Group — Contact form",
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
@@ -404,12 +404,13 @@
                           },
                           "blocks": {}
                         },
-                        "group_QAJTUa": {
-                          "type": "group",
-                          "name": "Group — Social",
+                        "group_social_p2XKvT": {
+                          "type": "mionas-group",
+                          "name": "Mionas: Group — Social links",
                           "settings": {
                             "content_direction": "row",
                             "vertical_on_mobile": false,
+                            "wrap_children": true,
                             "horizontal_alignment": "flex-start",
                             "vertical_alignment": "center",
                             "align_baseline": false,
@@ -420,6 +421,7 @@
                             "custom_width": 100,
                             "width_mobile": "fit-content",
                             "custom_width_mobile": 100,
+                            "min_width": 0,
                             "height": "fit",
                             "custom_height": 100,
                             "background_media": "none",
@@ -444,47 +446,52 @@
                             "padding-inline-end": 0
                           },
                           "blocks": {
-                            "mionas_icon_button_r7jrMJ": {
-                              "type": "mionas-icon-button",
-                              "name": "Mionas: Icon button — Instagram",
+                            "mionas_social_link_whatsapp": {
+                              "type": "mionas-social-link",
+                              "name": "Mionas: Social link — WhatsApp",
                               "settings": {
-                                "icon": "instagram",
-                                "aria_label": "Instagram",
-                                "link": "https://www.instagram.com/mionasbakery_sitges",
-                                "open_in_new_tab": true,
-                                "variant": "outline"
+                                "platform": "whatsapp",
+                                "link": "https://wa.me/34933348246",
+                                "variant": "default"
                               },
                               "blocks": {}
                             },
-                            "mionas_icon_button_H4GHKj": {
-                              "type": "mionas-icon-button",
-                              "name": "Mionas: Icon button — TikTok",
+                            "mionas_social_link_instagram": {
+                              "type": "mionas-social-link",
+                              "name": "Mionas: Social link — Instagram",
                               "settings": {
-                                "icon": "tiktok",
-                                "aria_label": "TikTok",
-                                "link": "",
-                                "open_in_new_tab": true,
-                                "variant": "outline"
+                                "platform": "instagram",
+                                "link": "https://instagram.com/mionasbakery_sitges",
+                                "variant": "default"
                               },
                               "blocks": {}
                             },
-                            "mionas_icon_button_c68Vga": {
-                              "type": "mionas-icon-button",
-                              "name": "Mionas: Icon button — WhatsApp",
+                            "mionas_social_link_tiktok": {
+                              "type": "mionas-social-link",
+                              "name": "Mionas: Social link — TikTok",
                               "settings": {
-                                "icon": "whatsapp",
-                                "aria_label": "WhatsApp",
-                                "link": "https://wa.me/34XXXXXXXXX",
-                                "open_in_new_tab": true,
-                                "variant": "outline"
+                                "platform": "tiktok",
+                                "link": "https://tiktok.com/@mionasbakery_sitges",
+                                "variant": "default"
+                              },
+                              "blocks": {}
+                            },
+                            "mionas_social_link_youtube": {
+                              "type": "mionas-social-link",
+                              "name": "Mionas: Social link — YouTube",
+                              "settings": {
+                                "platform": "youtube",
+                                "link": "https://www.youtube.com/@mionasbakery_sitges",
+                                "variant": "default"
                               },
                               "blocks": {}
                             }
                           },
                           "block_order": [
-                            "mionas_icon_button_r7jrMJ",
-                            "mionas_icon_button_H4GHKj",
-                            "mionas_icon_button_c68Vga"
+                            "mionas_social_link_whatsapp",
+                            "mionas_social_link_instagram",
+                            "mionas_social_link_tiktok",
+                            "mionas_social_link_youtube"
                           ]
                         }
                       },
@@ -493,7 +500,7 @@
                         "mionas_text_WUpHUe",
                         "mionas_link_y8gUya",
                         "mionas_link_Lpj6bQ",
-                        "group_QAJTUa"
+                        "group_social_p2XKvT"
                       ]
                     },
                     "mionas_card_GBQLYT": {

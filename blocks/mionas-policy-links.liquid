@@ -1,0 +1,49 @@
+{%- doc -%}
+  Footer-utilities block: renders the store's legal policies as inline text links.
+{%- enddoc -%}
+{% render 'mionas-policy-links', settings: block.settings, shopify_attributes: block.shopify_attributes %}
+
+{% schema %}
+{
+  "name": "Mionas: Policy links",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows one link per policy set under Settings > Policies. Hidden automatically if no policies are set."
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" }
+      ],
+      "default": "inverse-primary-muted",
+      "info": "Inverse primary (muted) matches the footer's default text color."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "t:settings.size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" }
+      ],
+      "default": "sm"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Policy links",
+      "category": "t:categories.footer"
+    }
+  ]
+}
+{% endschema %}

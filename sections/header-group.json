@@ -26,6 +26,7 @@
         },
         "header-menu": {
           "type": "mionas-header-menu",
+          "name": "Mionas: Header menu",
           "static": true,
           "settings": {
             "menu": "navigation-menu",

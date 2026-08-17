@@ -1,0 +1,136 @@
+{%- doc -%}
+  Renders an inline text link styled by ../design-system/src/react/Link/Link.tsx's role/size
+  vocabulary, as either an <a> or a <button>.
+
+  @param {string} content - Label content. Emitted unfiltered; caller must sanitise if needed.
+  @param {string} [variant] - primary, inverse-primary or inverse-primary-muted. Defaults to primary.
+  @param {string} [size] - sm or md. Defaults to md.
+  @param {string} [icon] - Icon name, passed through to snippets/icon.liquid. Blank/"none" for no icon.
+  @param {string} [text_wrap] - normal or nowrap. Defaults to normal.
+  @param {string} [tag] - "a" (default) or "button".
+  @param {string} [link] - href, used only when tag is "a". Blank renders a disabled, non-interactive link.
+  @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer". Used only when tag is "a".
+  @param {string} [attributes] - Raw extra attributes for the <button> tag, including "type" -- this snippet doesn't default it. Caller-controlled only -- never pass merchant free text through here.
+  @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
+
+  @example
+  {% render 'mionas-link', content: 'Contact us', link: '/pages/contact', variant: 'primary' %}
+{%- enddoc -%}
+{%- comment -%}
+  Extracted from blocks/mionas-link.liquid so snippets/mionas-language-links.liquid can reuse the
+  same markup and tokens without duplicating them -- a block can't {% render %} another block.
+
+  The tag switch exists because language links must be real <button> elements to submit the native
+  'localization' form (see snippets/mionas-language-links.liquid); a plain <a> can't do that without
+  JavaScript, which this component deliberately avoids.
+{%- endcomment -%}
+{% liquid
+  assign resolved_variant = variant | default: 'primary'
+  assign resolved_size = size | default: 'md'
+  assign resolved_tag = tag | default: 'a'
+
+  assign classes = 'mionas-link mionas-link--' | append: resolved_variant
+  unless resolved_size == 'md'
+    assign classes = classes | append: ' mionas-link--' | append: resolved_size
+  endunless
+  if icon != blank and icon != 'none'
+    assign classes = classes | append: ' mionas-link--with-icon'
+  endif
+  if text_wrap == 'nowrap'
+    assign classes = classes | append: ' mionas-link--nowrap'
+  endif
+%}
+{%- capture link_icon -%}
+  {%- if icon != blank and icon != 'none' -%}
+    <svg class="mionas-link__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      {%- render 'icon', icon: icon -%}
+    </svg>
+  {%- endif -%}
+{%- endcapture -%}
+{%- comment -%}
+  The if/else tags below deliberately carry no whitespace-stripping hyphens -- the same shape as
+  snippets/button.liquid. A stripping hyphen on the opening tag eats the newline between the anchor
+  and its first attribute, emitting arole="link" as a single glued token: an unknown element rather
+  than an anchor, with no link semantics and no styling. Whitespace inside a tag is harmless;
+  removing it is not.
+{%- endcomment -%}
+{% if resolved_tag == 'button' %}
+<button
+  class="{{ classes }}"
+  {{ attributes }}
+  {{ shopify_attributes }}
+>
+  {{- link_icon -}}{{- content -}}
+</button>
+{% else %}
+<a
+  {% if link == blank %}
+    role="link"
+    aria-disabled="true"
+  {% else %}
+    href="{{ link }}"
+  {% endif %}
+  class="{{ classes }}"
+  {% if open_in_new_tab %}
+    target="_blank"
+    rel="noopener noreferrer"
+  {% endif %}
+  {{ shopify_attributes }}
+>
+  {{- link_icon -}}{{- content -}}
+</a>
+{% endif %}
+
+{% stylesheet %}
+  .mionas-link {
+    font-family: var(--link-base-font-family);
+    font-weight: var(--link-base-font-weight);
+    font-size: var(--link-size-md-font-size);
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .mionas-link--nowrap {
+    white-space: nowrap;
+  }
+
+  .mionas-link:hover {
+    text-decoration: underline;
+  }
+
+  .mionas-link[aria-disabled="true"] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-link--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .mionas-link__icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mionas-link--sm {
+    font-size: var(--link-size-sm-font-size);
+  }
+
+  .mionas-link--primary {
+    color: var(--link-base-foreground);
+  }
+
+  .mionas-link--inverse-primary {
+    color: var(--link-inverse-primary-foreground);
+  }
+
+  .mionas-link--inverse-primary-muted {
+    color: var(--link-inverse-primary-muted-foreground);
+  }
+{% endstylesheet %}

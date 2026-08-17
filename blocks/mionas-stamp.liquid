@@ -26,13 +26,17 @@
     block_settings.variant here is Stamp's own Color setting, not Text's band -- the id stayed
     `variant` to avoid re-migrating existing stored settings like footer-group.json's.
   {%- endcomment -%}
+  {%- capture stamp_style -%}
+    {%- render 'spacing-style', settings: block_settings -%}
+  {%- endcapture -%}
   {%- render 'mionas-text',
     content: content,
     variant: 'label',
     size: size,
     color: block_settings.variant,
     tag: block_settings.tag,
-    class: 'mionas-stamp',
+    class: 'mionas-stamp spacing-style',
+    style: stamp_style,
     shopify_attributes: block.shopify_attributes
   -%}
 {%- endif -%}
@@ -107,6 +111,50 @@
       ],
       "default": "p",
       "info": "Pick the semantic level; it doesn't have to match Size."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

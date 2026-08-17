@@ -1,0 +1,83 @@
+{%- doc -%}
+  A row of plain-text language links (e.g. "ES EN CA"), one per available store language.
+
+  @param {object} [settings] - Block settings: variant, size (see blocks/mionas-link.liquid)
+  @param {string} [shopify_attributes] - block.shopify_attributes, for editor selection
+
+  @example
+  {% render 'mionas-language-links', settings: block.settings, shopify_attributes: block.shopify_attributes %}
+{%- enddoc -%}
+{%- comment -%}
+  Plain <button type="submit" name="language_code" value="…"> elements submit the native
+  'localization' form on click -- no dependency on localization-form-component's JS (which only
+  reads a value from an HTMLSelectElement), so this works without touching assets/localization.js.
+
+  Each button renders through snippets/mionas-link.liquid (tag: 'button') so the label draws on
+  Link.tsx's own variant/size tokens instead of a free-form color/font-size pair -- the current
+  language still needs its own not-a-link opacity/underline state, kept in this file's stylesheet.
+{%- endcomment -%}
+{% liquid
+  assign languages = localization.available_languages
+%}
+{% if languages.size > 1 %}
+  <div class="mionas-language-links" {{ shopify_attributes }}>
+    {%- form 'localization', return_to: request.path, class: 'mionas-language-links__form' -%}
+      <ul class="mionas-language-links__list list-unstyled" role="list">
+        {%- for language in languages -%}
+          {%- assign is_current_language = false -%}
+          {%- if language.iso_code == localization.language.iso_code -%}
+            {%- assign is_current_language = true -%}
+          {%- endif -%}
+          {%- assign language_label = language.iso_code | upcase -%}
+          <li>
+            {%- capture button_attributes -%}
+              type="submit"
+              name="language_code"
+              value="{{ language.iso_code }}"
+              lang="{{ language.iso_code }}"
+              {% if is_current_language %}aria-current="true"{% endif %}
+            {%- endcapture -%}
+            {% render 'mionas-link',
+              content: language_label,
+              tag: 'button',
+              variant: settings.variant,
+              size: settings.size,
+              attributes: button_attributes
+            %}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endform -%}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .mionas-language-links__form {
+    display: contents;
+  }
+
+  .mionas-language-links__list {
+    display: flex;
+    gap: var(--space-xs, 8px);
+    margin: 0;
+  }
+
+  .mionas-language-links .mionas-link {
+    /* mionas-link's sm/md tokens are 15-16px, sized for body links -- too large next to the
+       12px footer-copyright/footer-policy-list text this row sits beside, so this overrides it. */
+    font-size: 0.75rem;
+    opacity: 0.65;
+  }
+
+  .mionas-language-links .mionas-link[aria-current='true'] {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-language-links .mionas-link:hover:not([aria-current='true']) {
+    opacity: 1;
+  }
+{% endstylesheet %}

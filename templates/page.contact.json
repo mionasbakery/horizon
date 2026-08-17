@@ -27,7 +27,7 @@
       "blocks": {
         "title": {
           "type": "text",
-          "name": "Text — Encabezado",
+          "name": "Text — Heading",
           "settings": {
             "text": "<h1>{{ closest.page.title }}</h1>",
             "width": "100%",

@@ -17,75 +17,18 @@
   reader to fall back on. `aria_label` is therefore effectively required, not decorative; it carries
   no schema default on purpose; an empty accessible name is worse than an obviously-blank editor
   field prompting a merchant to fill it in.
+
+  Markup and styles live in snippets/mionas-icon-button.liquid so blocks/mionas-social-link.liquid
+  can reuse them without duplication -- a block can't {% render %} another block.
 {%- endcomment -%}
-{% liquid
-  assign block_settings = block.settings
-  assign variant = block_settings.variant | default: 'default'
-
-  assign icon_button_classes = 'mionas-icon-button'
-  unless variant == 'default'
-    assign icon_button_classes = icon_button_classes | append: ' mionas-icon-button--' | append: variant
-  endunless
+{% render 'mionas-icon-button',
+  icon: block.settings.icon,
+  link: block.settings.link,
+  aria_label: block.settings.aria_label,
+  open_in_new_tab: block.settings.open_in_new_tab,
+  variant: block.settings.variant,
+  shopify_attributes: block.shopify_attributes
 %}
-<a
-  {% if block_settings.link == blank %}
-    role="link"
-    aria-disabled="true"
-  {% else %}
-    href="{{ block_settings.link }}"
-  {% endif %}
-  class="{{ icon_button_classes }}"
-  aria-label="{{ block_settings.aria_label }}"
-  {% if block_settings.open_in_new_tab %}
-    target="_blank"
-    rel="noopener noreferrer"
-  {% endif %}
-  {{ block.shopify_attributes }}
->
-  <svg class="mionas-icon-button__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-    {%- render 'icon', icon: block_settings.icon -%}
-  </svg>
-</a>
-
-{% stylesheet %}
-  .mionas-icon-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: none;
-    width: var(--icon-button-base-size);
-    height: var(--icon-button-base-size);
-    border-radius: var(--icon-button-base-radius);
-    border: 1px solid transparent;
-    background: var(--icon-button-base-background);
-    color: var(--icon-button-base-foreground);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .mionas-icon-button__icon {
-    width: var(--icon-button-base-icon-size);
-    height: var(--icon-button-base-icon-size);
-  }
-
-  /* Additive variant, not part of ../design-system's own token set -- see the file header comment. */
-  .mionas-icon-button--outline {
-    background: #fff;
-    border-color: var(--card-base-border-color);
-    border-width: var(--card-base-border-width);
-    color: var(--icon-button-base-foreground);
-  }
-
-  .mionas-icon-button[aria-disabled="true"] {
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .mionas-icon-button:active {
-    transform: scale(var(--button-state-pressed-scale));
-    opacity: var(--button-state-pressed-opacity);
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
@@ -126,7 +69,8 @@
       "label": "Variant",
       "options": [
         { "value": "default", "label": "Default" },
-        { "value": "outline", "label": "Outline" }
+        { "value": "outline", "label": "Outline" },
+        { "value": "outline-inverse", "label": "Outline — inverse" }
       ],
       "default": "default"
     }

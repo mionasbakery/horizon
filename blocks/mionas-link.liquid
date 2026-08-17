@@ -12,92 +12,23 @@
   --link-base-font-weight is 500, a weight none of the theme's font settings load on their own;
   design-system-bridge.liquid emits the Archivo 500 face so it renders medium instead of falling
   back to 400.
+
+  Markup lives in snippets/mionas-link.liquid so snippets/mionas-language-links.liquid can render
+  the same classes/tokens as a <button> -- a block can't {% render %} another block.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
-  assign variant = block_settings.variant | default: 'primary'
-  assign size = block_settings.size | default: 'md'
 %}
-
-{%- comment -%}
-  The if/else tags below deliberately carry no whitespace-stripping hyphens -- the same shape as
-  snippets/button.liquid. A stripping hyphen on the opening tag eats the newline between the anchor
-  and its first attribute, emitting arole="link" as a single glued token: an unknown element rather
-  than an anchor, with no link semantics and no styling. Whitespace inside a tag is harmless;
-  removing it is not.
-{%- endcomment -%}
-<a
-  {% if block_settings.link == blank %}
-    role="link"
-    aria-disabled="true"
-  {% else %}
-    href="{{ block_settings.link }}"
-  {% endif %}
-  class="mionas-link mionas-link--{{ variant }}{% unless size == 'md' %} mionas-link--{{ size }}{% endunless %}{% if block_settings.icon != blank and block_settings.icon != 'none' %} mionas-link--with-icon{% endif %}{% if block_settings.text_wrap == 'nowrap' %} mionas-link--nowrap{% endif %}"
-  {% if block_settings.open_in_new_tab %}
-    target="_blank"
-    rel="noopener noreferrer"
-  {% endif %}
-  {{ block.shopify_attributes }}
->
-  {%- if block_settings.icon != blank and block_settings.icon != 'none' -%}
-    <svg class="mionas-link__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      {%- render 'icon', icon: block_settings.icon -%}
-    </svg>
-  {%- endif -%}
-  {{- block_settings.label -}}
-</a>
-
-{% stylesheet %}
-  .mionas-link {
-    font-family: var(--link-base-font-family);
-    font-weight: var(--link-base-font-weight);
-    font-size: var(--link-size-md-font-size);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .mionas-link--nowrap {
-    white-space: nowrap;
-  }
-
-  .mionas-link:hover {
-    text-decoration: underline;
-  }
-
-  .mionas-link[aria-disabled="true"] {
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .mionas-link--with-icon {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  .mionas-link__icon {
-    flex: none;
-    width: 16px;
-    height: 16px;
-  }
-
-  .mionas-link--sm {
-    font-size: var(--link-size-sm-font-size);
-  }
-
-  .mionas-link--primary {
-    color: var(--link-base-foreground);
-  }
-
-  .mionas-link--inverse-primary {
-    color: var(--link-inverse-primary-foreground);
-  }
-
-  .mionas-link--inverse-primary-muted {
-    color: var(--link-inverse-primary-muted-foreground);
-  }
-{% endstylesheet %}
+{% render 'mionas-link',
+  content: block_settings.label,
+  link: block_settings.link,
+  open_in_new_tab: block_settings.open_in_new_tab,
+  variant: block_settings.variant,
+  size: block_settings.size,
+  icon: block_settings.icon,
+  text_wrap: block_settings.text_wrap,
+  shopify_attributes: block.shopify_attributes
+%}
 
 {% schema %}
 {

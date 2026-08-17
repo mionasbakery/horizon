@@ -1,0 +1,72 @@
+{%- doc -%}
+  A single social platform icon-button link, meant to be placed inside a group/mionas-group so the
+  merchant controls direction, gap, and order the same way as any other row of blocks.
+{%- enddoc -%}
+{%- comment -%}
+  No dedicated "social links" parent block -- a row of these is just a group with a fixed set of
+  children, which blocks/mionas-group.liquid and native blocks/group.liquid already do (direction,
+  gap, padding, reordering via the editor's own block list). One block per platform means "which
+  links show and in what order" is just "which blocks are here and how they're arranged", with no
+  settings of this file's own to duplicate that.
+{%- endcomment -%}
+{% liquid
+  assign block_settings = block.settings
+  assign platform_label = block_settings.platform | capitalize
+
+  assign icon_variant = 'outline'
+  if block_settings.variant == 'inverse'
+    assign icon_variant = 'outline-inverse'
+  endif
+%}
+{% render 'mionas-icon-button',
+  icon: block_settings.platform,
+  link: block_settings.link,
+  aria_label: platform_label,
+  open_in_new_tab: true,
+  variant: icon_variant,
+  shopify_attributes: block.shopify_attributes
+%}
+
+{% schema %}
+{
+  "name": "Mionas: Social link",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "platform",
+      "label": "Platform",
+      "options": [
+        { "value": "facebook", "label": "t:options.facebook" },
+        { "value": "instagram", "label": "t:options.instagram" },
+        { "value": "tiktok", "label": "t:options.tiktok" },
+        { "value": "whatsapp", "label": "WhatsApp" },
+        { "value": "youtube", "label": "t:options.youtube" }
+      ],
+      "default": "instagram"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:settings.link"
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" }
+      ],
+      "default": "default",
+      "info": "Inverse uses a light border and icon for dark backgrounds, like the footer."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Social link",
+      "category": "t:categories.footer"
+    }
+  ]
+}
+{% endschema %}

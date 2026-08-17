@@ -480,7 +480,7 @@
       "block_order": [
         "header_group"
       ],
-      "name": "Mionas: Lo más vendido",
+      "name": "Mionas: Collection — Best sellers",
       "settings": {
         "collection": "lo-mas-vendido",
         "max_products": 5,
@@ -578,7 +578,7 @@
         "group_8n3QFH",
         "custom_liquid_DwXFJd"
       ],
-      "name": "Mionas: Google reviews",
+      "name": "Section — Google reviews",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -767,7 +767,7 @@
             },
             "mionas_email_signup_AdjRU4": {
               "type": "mionas-email-signup",
-              "name": "Mionas: email signup",
+              "name": "Mionas: Email signup",
               "settings": {
                 "email_label": "Email",
                 "email_placeholder": "",

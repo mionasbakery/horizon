@@ -56,6 +56,7 @@
     },
     "course_list": {
       "type": "mionas-course-list",
+      "name": "Mionas: Course list",
       "blocks": {
         "kicker": {
           "type": "mionas-text",
@@ -105,6 +106,7 @@
     },
     "info_panel": {
       "type": "mionas-split-panel",
+      "name": "Mionas: Split panel — Course info",
       "blocks": {
         "static-media": {
           "type": "group",

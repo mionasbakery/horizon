@@ -1,0 +1,92 @@
+{%- doc -%}
+  Renders a circular icon-only link button.
+
+  @param {string} icon - Icon name, passed through to snippets/icon.liquid
+  @param {string} [link] - Destination URL; renders a disabled, non-interactive button when blank
+  @param {string} aria_label - Accessible name; required in practice, see the block header comment
+  @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer"
+  @param {string} [variant] - "default" (token-filled), "outline" (unfilled, dark border/icon) or
+    "outline-inverse" (unfilled, light border/icon, for dark backgrounds); default: "default"
+  @param {string} [shopify_attributes] - Raw block.shopify_attributes to forward, if editor-owned
+{%- enddoc -%}
+{%- comment -%}
+  Extracted from blocks/mionas-icon-button.liquid so blocks/mionas-social-link.liquid can reuse the
+  same markup and tokens without duplicating them -- a block can't {% render %} another block.
+{%- endcomment -%}
+{% liquid
+  assign icon_button_variant = variant | default: 'default'
+
+  assign icon_button_classes = 'mionas-icon-button'
+  unless icon_button_variant == 'default'
+    assign icon_button_classes = icon_button_classes | append: ' mionas-icon-button--' | append: icon_button_variant
+  endunless
+%}
+<a
+  {% if link == blank %}
+    role="link"
+    aria-disabled="true"
+  {% else %}
+    href="{{ link }}"
+  {% endif %}
+  class="{{ icon_button_classes }}"
+  aria-label="{{ aria_label }}"
+  {% if open_in_new_tab %}
+    target="_blank"
+    rel="noopener noreferrer"
+  {% endif %}
+  {{ shopify_attributes }}
+>
+  <svg class="mionas-icon-button__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    {%- render 'icon', icon: icon -%}
+  </svg>
+</a>
+
+{% stylesheet %}
+  .mionas-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--icon-button-base-size);
+    height: var(--icon-button-base-size);
+    border-radius: var(--icon-button-base-radius);
+    border: 1px solid transparent;
+    background: var(--icon-button-base-background);
+    color: var(--icon-button-base-foreground);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .mionas-icon-button__icon {
+    width: var(--icon-button-base-icon-size);
+    height: var(--icon-button-base-icon-size);
+  }
+
+  /* Additive variants, not part of ../design-system's own token set -- see the block header comment.
+     Both are unfilled (transparent background); border and icon always share one color, so the
+     variant is a single visible knob rather than two colors that could drift apart. */
+  .mionas-icon-button--outline,
+  .mionas-icon-button--outline-inverse {
+    background: transparent;
+    border-width: var(--card-base-border-width);
+    border-color: currentColor;
+  }
+
+  .mionas-icon-button--outline {
+    color: var(--icon-button-base-foreground);
+  }
+
+  .mionas-icon-button--outline-inverse {
+    color: var(--text-color-inverse-primary);
+  }
+
+  .mionas-icon-button[aria-disabled="true"] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-icon-button:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+{% endstylesheet %}

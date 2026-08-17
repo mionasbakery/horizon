@@ -1,0 +1,49 @@
+{%- doc -%}
+  Footer-utilities block: renders the store's available languages as plain text links.
+{%- enddoc -%}
+{% render 'mionas-language-links', settings: block.settings, shopify_attributes: block.shopify_attributes %}
+
+{% schema %}
+{
+  "name": "Mionas: Language links",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows one link per language published in Settings > Languages. Hidden automatically if only one language is published."
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" }
+      ],
+      "default": "inverse-primary-muted",
+      "info": "Inverse primary (muted) matches the footer's default text color."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "t:settings.size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" }
+      ],
+      "default": "sm"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Language links",
+      "category": "t:categories.footer"
+    }
+  ]
+}
+{% endschema %}
