@@ -13,6 +13,9 @@
   %}
 {% enddoc %}
 
+{% comment %}Include shared dialog styles for both trigger and dialog render passes.{% endcomment %}
+{% render 'dialog-styles' %}
+
 {%- liquid
   assign product = product | default: empty
   assign unique_id = unique_id | default: product.id

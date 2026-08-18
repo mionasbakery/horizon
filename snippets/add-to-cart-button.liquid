@@ -4,6 +4,7 @@
   @param {boolean} can_add_to_cart - Whether the product can be added to the cart.
   @param {string} add_to_cart_text - The text to display on the button.
   @param {object} product - The product object to be added to the cart.
+  @param {boolean} show_icon - Whether to render the cart icon.
   @param {string} [class] - Additional CSS classes to apply to the button.
   @param {string} [id] - The ID attribute for the button.
   @param {string} [data_testid] - The data-testid attribute for testing.
@@ -38,7 +39,7 @@
       disabled
     {% endunless %}
   >
-    {% if can_add_to_cart %}
+    {% if show_icon %}
       <span
         aria-hidden="true"
         class="svg-wrapper add-to-cart-icon"

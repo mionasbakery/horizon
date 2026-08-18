@@ -568,7 +568,7 @@
     "page_background_color": "Hintergrund",
     "page_text_color": "Text",
     "variant_button_style": "Variantenstil",
-    "selected_variant_button_style": "Stil für ausgewählte Variante",
+    "selected_variant_button_style": "Stil der ausgewählten Variante",
     "top_row": "Obere Zeile",
     "text_color": "Textfarbe",
     "text_color_transparent": "Transparenter Header-Text",
@@ -579,9 +579,9 @@
     "top_row_text": "Text der oberen Zeile",
     "bottom_row_background": "Hintergrund der unteren Zeile",
     "bottom_row_text": "Text der unteren Zeile",
-    "button_style": "Schaltflächenstil",
+    "button_style": "Button-Stil",
     "input_style": "Eingabestil",
-    "selected_button_style": "Stil für ausgewählte Schaltfläche",
+    "selected_button_style": "Ausgewählter Button-Stil",
     "open_by_default": "Standardmäßig geöffnet",
     "title_preset": "Titelvoreinstellung"
   },
@@ -906,7 +906,7 @@
     "media": "Medien",
     "media_1": "Medien 1",
     "media_2": "Medien 2",
-    "menu_appearance_paragraph": "Betrifft Untermenüs auf dem Desktop und das Hauptmenü auf Mobilgeräten.",
+    "menu_appearance_paragraph": "Wirkt sich auf Untermenüs auf dem Desktop und das Hauptmenü auf Mobilgeräten aus.",
     "menu": "Menü",
     "mobile_layout": "Mobiles Layout",
     "padding": "Padding",
@@ -981,13 +981,13 @@
     "button_colors": "Button-Farben",
     "cart_bubble": "Warenkorb-Bubble",
     "type": "Typ",
-    "cart_summary_mobile_colors": "Auf Mobilgeräten übernehmen die Zusammenfassungsfarben die Farben des Warenkorbbereichs.",
-    "local_pickup_description": "Zeige Abholstandorte in der Nähe an, wenn die lokale Abholung im Onlineshop eingerichtet ist. [Mehr erfahren](https://help.shopify.com/en/manual/fulfillment/setup/delivery-methods/pickup-in-store)",
+    "cart_summary_mobile_colors": "Auf Mobilgeräten werden die Farben der Übersicht aus dem Warenkorb-Abschnitt übernommen.",
+    "local_pickup_description": "Nahegelegene Abholorte anzeigen, wenn die lokale Abholung im Onlineshop eingerichtet ist. [Mehr erfahren](https://help.shopify.com/en/manual/fulfillment/setup/delivery-methods/pickup-in-store)",
     "local_pickup": "Lokale Abholung",
-    "gift_card_products": "Geschenkgutscheinprodukte",
+    "gift_card_products": "Gutscheinprodukte",
     "disclosures": "Pflichtangaben",
     "disclosures_metafield_content": "Erforderliche Sicherheitshinweise und gesetzliche Pflichtangaben für dieses Produkt.",
-    "page_text_color_contrast_info": "Abschnitte mit benutzerdefinierter Hintergrundfarbe verwenden diese Textfarbe nur bei ausreichendem Farbkontrast."
+    "page_text_color_contrast_info": "Abschnitte mit einer benutzerdefinierten Hintergrundfarbe verwenden diese Textfarbe nur bei ausreichendem Farbkontrast."
   },
   "html_defaults": {
     "share_information_about_your": "<p>Teile Informationen über deine Marke mit deinen Kunden. Beschreibe ein Produkt, mache Ankündigungen oder heiße Kunden in deinem Shop willkommen.</p>",
@@ -1093,7 +1093,7 @@
     "checkout_buttons": "Ermöglicht Käufern einen schnelleren Checkout und kann die Conversion verbessern. [Mehr erfahren](https://help.shopify.com/manual/online-store/dynamic-checkout)",
     "custom_heading": "Benutzerdefinierte Überschrift",
     "edit_presets_in_theme_settings": "Voreinstellungen in den [Theme-Einstellungen](/editor?context=theme&category=typography) bearbeiten",
-    "edit_button_style_in_theme_settings": "Stile primärer und sekundärer Schaltflächen in den [Theme-Einstellungen](/editor?context=theme&category=buttons) bearbeiten",
+    "edit_button_style_in_theme_settings": "Bearbeite die primären und sekundären Button-Stile in den [Theme-Einstellungen](/editor?context=theme&category=buttons).",
     "enable_filtering_info": "Filter mit der [Search & Discovery-App](https://help.shopify.com/manual/online-store/search-and-discovery/filters) anpassen",
     "grid_layout_on_mobile": "Auf Mobilgeräten wird ein Raster-Layout verwendet",
     "manage_countries_regions": "[Länder/Regionen verwalten](/admin/settings/markets)",
@@ -1111,7 +1111,7 @@
     "page_text_color_default_info": "Standard für Theme-Abschnitte",
     "actions_display_style": "Auf Mobilgeräten werden immer Symbole verwendet",
     "edit_input_field_in_theme_settings": "Eingabefeld in den [Theme-Einstellungen](/editor?context=theme&category=input%20fields) bearbeiten",
-    "edit_variants_in_theme_settings": "Varianten-Styling in den [Theme-Einstellungen](/editor?context=theme&category=variants) bearbeiten"
+    "edit_variants_in_theme_settings": "Bearbeite das Varianten-Styling in den [Theme-Einstellungen](/editor?context=theme&category=variant%20pickers)"
   },
   "categories": {
     "product_list": "Vorgestellte Kollektion",

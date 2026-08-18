@@ -74,7 +74,8 @@
     "search_suggestions_available": "可用於「{{ query }}」的搜尋建議",
     "price_filter_low": "低價",
     "price_filter_high": "高價",
-    "view_disclosure_information_for_product": "檢視 {{ product_title }} 的揭露資訊"
+    "view_disclosure_information_for_product": "檢視 {{ product_title }} 的揭露資訊",
+    "show_submenu": "顯示 {{ title }} 子選單"
   },
   "actions": {
     "add_to_cart": "加入購物車",
@@ -116,7 +117,8 @@
     "show_all_options": "顯示所有選項",
     "open": "開啟",
     "back_to": "返回「{{ title }}」",
-    "zoom_media": "Zoom 多媒體檔案 {{ index }}"
+    "zoom_media": "Zoom 多媒體檔案 {{ index }}",
+    "back_to_main_menu": "返回主選單"
   },
   "content": {
     "reviews": "評論數",

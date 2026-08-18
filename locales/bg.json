@@ -74,7 +74,8 @@
     "search_suggestions_available": "Налични са предложения за търсене за „{{ query }}“",
     "price_filter_low": "Ниска цена",
     "price_filter_high": "Висока цена",
-    "view_disclosure_information_for_product": "Преглед на оповестената информация за {{ product_title }}"
+    "view_disclosure_information_for_product": "Преглед на оповестената информация за {{ product_title }}",
+    "show_submenu": "Показване на подменю {{ title }}"
   },
   "actions": {
     "add_to_cart": "Добавяне към количката",
@@ -116,7 +117,8 @@
     "show_all_options": "Покажи всички опции",
     "open": "Отваряне",
     "back_to": "Назад към {{ title }}",
-    "zoom_media": "Увеличаване на мултимедия {{ index }}"
+    "zoom_media": "Увеличаване на мултимедия {{ index }}",
+    "back_to_main_menu": "Назад към главното меню"
   },
   "content": {
     "reviews": "мнения",

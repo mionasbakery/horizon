@@ -76,7 +76,8 @@
     "search_suggestions_available": "Galimi paieškos pasiūlymai pagal „{{ query }}“",
     "price_filter_low": "Žema kaina",
     "price_filter_high": "Aukšta kaina",
-    "view_disclosure_information_for_product": "Peržiūrėti atskleidžiamą informaciją apie {{ product_title }}"
+    "view_disclosure_information_for_product": "Peržiūrėti atskleidžiamą informaciją apie {{ product_title }}",
+    "show_submenu": "Rodyti {{ title }} submeniu"
   },
   "actions": {
     "add_to_cart": "Įdėti į krepšelį",
@@ -120,7 +121,8 @@
     "show_all_options": "Rodyti visas parinktis",
     "open": "Atidaryti",
     "back_to": "Grįžti į „{{ title }}“",
-    "zoom_media": "Padidinti mediją {{ index }}"
+    "zoom_media": "Padidinti mediją {{ index }}",
+    "back_to_main_menu": "Atgal į pagrindinį meniu"
   },
   "content": {
     "reviews": "apžvalgos (-ų; -a)",

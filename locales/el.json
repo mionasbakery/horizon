@@ -74,7 +74,8 @@
     "search_suggestions_available": "Διαθέσιμες προτάσεις αναζήτησης για «{{ query }}»",
     "price_filter_low": "Χαμηλή τιμή",
     "price_filter_high": "Υψηλή τιμή",
-    "view_disclosure_information_for_product": "Προβολή πληροφοριών γνωστοποίησης για {{ product_title }}"
+    "view_disclosure_information_for_product": "Προβολή πληροφοριών γνωστοποίησης για {{ product_title }}",
+    "show_submenu": "Εμφάνιση υπομενού {{ title }}"
   },
   "actions": {
     "add_to_cart": "Προσθήκη στο καλάθι",
@@ -116,7 +117,8 @@
     "show_all_options": "Εμφάνιση όλων των επιλογών",
     "open": "Σε εξέλιξη",
     "back_to": "Επιστροφή σε {{ title }}",
-    "zoom_media": "Μεγέθυνση πολυμέσου {{ index }}"
+    "zoom_media": "Μεγέθυνση πολυμέσου {{ index }}",
+    "back_to_main_menu": "Επιστροφή στο κύριο μενού"
   },
   "content": {
     "reviews": "κριτικές",

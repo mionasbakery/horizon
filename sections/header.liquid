@@ -545,7 +545,7 @@
     z-index: var(--layer-overlay);
 
     &[transparent='not-sticky'][data-sticky-state='active'],
-    &:has(.menu-list__link:not([aria-haspopup]):hover) {
+    &:has(.menu-list__list-item > .menu-list__link:not([aria-haspopup]):hover) {
       --header-logo-display: unset;
       --header-logo-inverse-display: unset;
       --color-foreground: inherit;
@@ -558,7 +558,8 @@
     }
 
     /** For transparent header, apply transparent text color to rows when menu is not hovered */
-    &:not([data-sticky-state='active']):not(:has(.menu-list__link:is(:hover, [aria-expanded='true']))) .header__row {
+    &:not([data-sticky-state='active']):not(:has(.menu-list__link:hover)):not(:has(header-menu[aria-expanded='true']))
+      .header__row {
       --color-foreground: var(--color-transparent-text);
       --color-foreground-rgb: var(--color-transparent-text-rgb);
       --color-border: var(--color-transparent-text);
@@ -569,8 +570,8 @@
 
     /* Swap the cart bubble in transparent state only when using the default
        style. Custom bubble colors apply unchanged across header states. */
-    &[data-bubble-style='default']:not([data-sticky-state='active']):not(
-        :has(.menu-list__link:is(:hover, [aria-expanded='true']))
+    &[data-bubble-style='default']:not([data-sticky-state='active']):not(:has(.menu-list__link:hover)):not(
+        :has(header-menu[aria-expanded='true'])
       )
       .header__row {
       --cart-bubble-background: var(--color-transparent-text, var(--cart-bubble-background-fallback));
@@ -579,8 +580,8 @@
 
     /* Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
     &:has(.mega-menu__list:hover),
-    &:has(.menu-list__link:is(:hover, [aria-expanded='true'])),
-    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+    &:has(.menu-list__link:hover),
+    &:has(header-menu[aria-expanded='true']) {
       --header-logo-display: unset;
       --header-logo-inverse-display: unset;
       --color-foreground: inherit;
@@ -746,8 +747,7 @@
     background-color: transparent !important;
 
     &:has(.mega-menu__list:hover),
-    &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'])),
-    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+    &:has(.menu-list__submenu:not([inert])) {
       /* Only elevate the row when the submenu is open to avoid overlapping other elevated content */
       z-index: var(--layer-heightened);
     }
@@ -1005,6 +1005,21 @@
     }
   }
 
+  /* Transparent header layout. Keep this in sync with snippets/section.liquid's first-section height compensation. */
+  body:has(#header-component[transparent]) .content-for-layout > .shopify-section:first-child {
+    margin-top: calc(var(--header-group-height) * -1);
+  }
+
+  body:has(#header-component[transparent]) #header-group > .header-section {
+    z-index: var(--layer-menu-drawer);
+  }
+
+  /* All other header group content should be beneath the floating header,
+  but above the rest of the page content */
+  body:has(#header-component[transparent]) #header-group > *:not(.header-section) {
+    z-index: calc(var(--layer-menu-drawer) - 1);
+  }
+
   /* When the header is transparent, add a margin to a potential header-section below it */
   .header-section:has(.header[transparent]) + .shopify-section {
     margin-top: var(--header-height);
@@ -1072,6 +1087,7 @@
     box-shadow: none;
     background-color: transparent;
     border-color: transparent;
+    border-radius: 0;
   }
 
   dropdown-localization-component .localization-form__list {

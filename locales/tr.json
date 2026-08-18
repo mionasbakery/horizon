@@ -71,6 +71,7 @@
     "featured_product": "Öne çıkan ürün",
     "product_details": "Ürün ayrıntıları",
     "show_product_details": "{{ product_name }} için ürün ayrıntılarını göster",
+    "show_submenu": "{{ title }} alt menüsünü göster",
     "search_suggestions_available": "\"{{ query }}\" için kullanılabilir arama önerileri",
     "price_filter_low": "Düşük fiyat",
     "price_filter_high": "Yüksek fiyat",
@@ -116,6 +117,7 @@
     "show_all_options": "Tüm seçenekleri göster",
     "open": "Açık",
     "back_to": "Geri dön: {{ title }}",
+    "back_to_main_menu": "Ana menüye dön",
     "zoom_media": "Medyayı yakınlaştır: {{ index }}"
   },
   "content": {

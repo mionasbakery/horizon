@@ -74,7 +74,8 @@
     "search_suggestions_available": "ค้นหาคำแนะนำสำหรับ \"{{ query }}\" ที่พร้อมใช้งาน",
     "price_filter_low": "ราคาประหยัด",
     "price_filter_high": "ราคาแพง",
-    "view_disclosure_information_for_product": "ดูข้อมูลชี้แจงสำหรับ{{ product_title }}"
+    "view_disclosure_information_for_product": "ดูข้อมูลชี้แจงสำหรับ{{ product_title }}",
+    "show_submenu": "แสดงเมนูย่อยของ{{ title }}"
   },
   "actions": {
     "add_to_cart": "เพิ่มลงในตะกร้าสินค้า",
@@ -116,7 +117,8 @@
     "show_all_options": "แสดงตัวเลือกทั้งหมด",
     "open": "เปิด",
     "back_to": "กลับไปที่ {{ title }}",
-    "zoom_media": "ซูมสื่อ {{ index }}"
+    "zoom_media": "ซูมสื่อ {{ index }}",
+    "back_to_main_menu": "กลับไปที่เมนูหลัก"
   },
   "content": {
     "reviews": "รีวิว",

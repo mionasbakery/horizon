@@ -74,7 +74,8 @@
     "search_suggestions_available": "Hakuehdotuksia saatavilla haulle {{ query }}",
     "price_filter_low": "Halpa hinta",
     "price_filter_high": "Kallis hinta",
-    "view_disclosure_information_for_product": "Näytä tuotteen {{ product_title }} ilmoitustiedot"
+    "view_disclosure_information_for_product": "Näytä tuotteen {{ product_title }} ilmoitustiedot",
+    "show_submenu": "Näytä kohteen {{ title }} alivalikko"
   },
   "actions": {
     "add_to_cart": "Lisää ostoskoriin",
@@ -116,7 +117,8 @@
     "show_all_options": "Näytä kaikki vaihtoehdot",
     "open": "Avaa",
     "back_to": "Takaisin kohteeseen {{ title }}",
-    "zoom_media": "Lähennä mediasisältö: {{ index }}"
+    "zoom_media": "Lähennä mediasisältö: {{ index }}",
+    "back_to_main_menu": "Takaisin päävalikkoon"
   },
   "content": {
     "reviews": "arvostelua",

@@ -71,6 +71,7 @@
     "active_filters": "Filtre active:",
     "product_details": "Detalii produs",
     "show_product_details": "Afișează detaliile produsului pentru {{ product_name }}",
+    "show_submenu": "Afișează submeniul {{ title }}",
     "featured_product": "Produs recomandat",
     "search_suggestions_available": "Sugestii de căutare disponibile pentru „{{ query }}”",
     "price_filter_low": "Preț mic",
@@ -118,6 +119,7 @@
     "show_all_options": "Afișați toate opțiunile",
     "open": "Deschidere",
     "back_to": "Înapoi la {{ title }}",
+    "back_to_main_menu": "Înapoi la meniul principal",
     "zoom_media": "Fă zoom pe elementul media {{ index }}"
   },
   "content": {

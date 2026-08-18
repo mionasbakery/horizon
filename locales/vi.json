@@ -74,7 +74,8 @@
     "search_suggestions_available": "Gợi ý tìm kiếm dành cho \"{{ query }}\"",
     "price_filter_low": "Giá thấp",
     "price_filter_high": "Giá cao",
-    "view_disclosure_information_for_product": "Xem thông tin công bố của {{ product_title }}"
+    "view_disclosure_information_for_product": "Xem thông tin công bố của {{ product_title }}",
+    "show_submenu": "Hiển thị menu phụ {{ title }}"
   },
   "actions": {
     "add_to_cart": "Thêm vào giỏ hàng",
@@ -116,7 +117,8 @@
     "show_all_options": "Hiển thị tất cả tùy chọn",
     "open": "Mở",
     "back_to": "Quay lại {{ title }}",
-    "zoom_media": "Thu phóng nội dung {{ index }}"
+    "zoom_media": "Thu phóng nội dung {{ index }}",
+    "back_to_main_menu": "Quay lại menu chính"
   },
   "content": {
     "reviews": "đánh giá",

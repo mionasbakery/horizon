@@ -76,7 +76,8 @@
     "search_suggestions_available": "Návrhy vyhľadávania dostupné pre „{{ query }}“",
     "price_filter_low": "Nízka cena",
     "price_filter_high": "Vysoká cena",
-    "view_disclosure_information_for_product": "Zobraziť zverejnené informácie o produkte {{ product_title }}"
+    "view_disclosure_information_for_product": "Zobraziť zverejnené informácie o produkte {{ product_title }}",
+    "show_submenu": "Zobraziť podponuku {{ title }}"
   },
   "actions": {
     "add_to_cart": "Pridať do košíka",
@@ -120,7 +121,8 @@
     "show_all_options": "Zobraziť všetky možnosti",
     "open": "Otvoriť",
     "back_to": "Späť na: {{ title }}",
-    "zoom_media": "Nástroj na priblíženie {{ index }}"
+    "zoom_media": "Nástroj na priblíženie {{ index }}",
+    "back_to_main_menu": "Späť do hlavnej ponuky"
   },
   "content": {
     "reviews": "recenz.",

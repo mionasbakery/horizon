@@ -74,7 +74,8 @@
     "search_suggestions_available": "Søgeforslag tilgængelige for \"{{ query }}\"",
     "price_filter_low": "Lav pris",
     "price_filter_high": "Høj pris",
-    "view_disclosure_information_for_product": "Se deklarationsoplysninger for {{ product_title }}"
+    "view_disclosure_information_for_product": "Se deklarationsoplysninger for {{ product_title }}",
+    "show_submenu": "Vis undermenu for {{ title }}"
   },
   "actions": {
     "add_to_cart": "Læg i indkøbskurven",
@@ -116,7 +117,8 @@
     "show_all_options": "Vis alle muligheder",
     "open": "Åbn",
     "back_to": "Tilbage til {{ title }}",
-    "zoom_media": "Zoom medie {{ index }}"
+    "zoom_media": "Zoom medie {{ index }}",
+    "back_to_main_menu": "Tilbage til hovedmenu"
   },
   "content": {
     "reviews": "anmeldelser",

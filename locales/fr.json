@@ -71,6 +71,7 @@
     "active_filters": "Activez des filtres :",
     "product_details": "Détails du produit",
     "show_product_details": "Afficher les détails du produit pour {{ product_name }}",
+    "show_submenu": "Afficher le sous-menu {{ title }}",
     "featured_product": "Produit en vedette",
     "search_suggestions_available": "Rechercher des suggestions disponibles pour « {{ query }} »",
     "price_filter_low": "Prix bas",
@@ -118,6 +119,7 @@
     "show_all_options": "Afficher toutes les options",
     "open": "Ouvrir",
     "back_to": "Retour à {{ title }}",
+    "back_to_main_menu": "Retour au menu principal",
     "zoom_media": "Zoom du support multimédia {{ index }}"
   },
   "content": {

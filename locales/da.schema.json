@@ -567,7 +567,7 @@
     "navigation_bar_text_color": "Tekstfarve for navigationslinje",
     "page_background_color": "Baggrund",
     "page_text_color": "Tekst",
-    "variant_button_style": "Stil for variant",
+    "variant_button_style": "Variantstil",
     "selected_variant_button_style": "Stil for valgt variant",
     "top_row": "Øverste række",
     "text_color": "Tekstfarve",
@@ -581,7 +581,7 @@
     "bottom_row_text": "Tekst for nederste række",
     "button_style": "Knapstil",
     "input_style": "Inputstil",
-    "selected_button_style": "Stil for valgt knap",
+    "selected_button_style": "Valgt knapstil",
     "open_by_default": "Åben som standard",
     "title_preset": "Forudindstilling for titel"
   },
@@ -981,13 +981,13 @@
     "button_colors": "Knapfarver",
     "cart_bubble": "Boble ved indkøbskurv",
     "type": "Type",
-    "cart_summary_mobile_colors": "På mobil arver oversigtsfarver fra kurvafsnittet.",
-    "local_pickup_description": "Vis afhentningssteder i nærheden, når lokal afhentning i webshoppen er konfigureret. [Få mere at vide](https://help.shopify.com/en/manual/fulfillment/setup/delivery-methods/pickup-in-store)",
+    "cart_summary_mobile_colors": "På mobilenheder arver farverne for resumeet fra afsnittet for indkøbskurven.",
+    "local_pickup_description": "Vis afhentningslokationer i nærheden, når lokal afhentning er konfigureret i webshoppen. [Læs mere](https://help.shopify.com/en/manual/fulfillment/setup/delivery-methods/pickup-in-store)",
     "local_pickup": "Lokal afhentning",
     "gift_card_products": "Gavekortprodukter",
     "disclosures": "Oplysninger",
     "disclosures_metafield_content": "Obligatoriske sikkerhedsadvarsler og lovpligtige oplysninger for dette produkt.",
-    "page_text_color_contrast_info": "Afsnit med en tilpasset baggrundsfarve bruger kun denne tekstfarve, når der er tilstrækkelig farvekontrast."
+    "page_text_color_contrast_info": "Afsnit med en brugerdefineret baggrundsfarve bruger kun denne tekstfarve, når der er tilstrækkelig farvekontrast."
   },
   "html_defaults": {
     "share_information_about_your": "<p>Del oplysninger om dit brand med dine kunder. Beskriv et produkt, kom med meddelelser, eller byd kunder velkommen i din butik.</p>",
@@ -1093,7 +1093,7 @@
     "checkout_buttons": "Giver købere mulighed for at betale hurtigere og kan forbedre konverteringen. [Få mere at vide](https://help.shopify.com/manual/online-store/dynamic-checkout)",
     "custom_heading": "Brugerdefineret overskrift",
     "edit_presets_in_theme_settings": "Rediger forudindstillinger i [temaindstillinger](/editor?context=theme&category=typography)",
-    "edit_button_style_in_theme_settings": "Rediger primære og sekundære knapstile i [temaindstillinger](/editor?context=theme&category=buttons)",
+    "edit_button_style_in_theme_settings": "Rediger stilarter for primære og sekundære knapper i [temaindstillinger](/editor?context=theme&category=buttons)",
     "enable_filtering_info": "Tilpas filtre med [appen Search & Discovery](https://help.shopify.com/manual/online-store/search-and-discovery/filters)",
     "grid_layout_on_mobile": "Gitterlayout bruges til mobil",
     "manage_countries_regions": "[Administrer lande/regioner](/admin/settings/markets)",
@@ -1111,7 +1111,7 @@
     "page_text_color_default_info": "Standard for temaafsnit",
     "actions_display_style": "Ikoner bruges altid på mobil",
     "edit_input_field_in_theme_settings": "Rediger indtastningsfelt i [temaindstillinger](/editor?context=theme&category=input%20fields)",
-    "edit_variants_in_theme_settings": "Rediger styling for varianter i [temaindstillinger](/editor?context=theme&category=variants)"
+    "edit_variants_in_theme_settings": "Rediger styling af varianter i [temaindstillinger](/editor?context=theme&category=variant%20pickers)"
   },
   "categories": {
     "basic": "Grundlæggende",

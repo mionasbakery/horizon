@@ -74,7 +74,8 @@
     "search_suggestions_available": "「{{ query }}」の検索候補が利用可能",
     "price_filter_low": "低価格",
     "price_filter_high": "高価格",
-    "view_disclosure_information_for_product": "{{ product_title }} の開示情報を表示"
+    "view_disclosure_information_for_product": "{{ product_title }} の開示情報を表示",
+    "show_submenu": "{{ title }} のサブメニューを表示"
   },
   "actions": {
     "add_to_cart": "カートに追加",
@@ -116,7 +117,8 @@
     "show_all_options": "すべてのオプションを表示",
     "open": "オープン",
     "back_to": "{{ title }} に戻る",
-    "zoom_media": "ズームメディア {{ index }}"
+    "zoom_media": "ズームメディア {{ index }}",
+    "back_to_main_menu": "メインメニューに戻る"
   },
   "content": {
     "reviews": "レビュー",

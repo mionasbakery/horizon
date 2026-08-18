@@ -76,7 +76,8 @@
     "search_suggestions_available": "Доступны поисковые подсказки для \"{{ query }}\"",
     "price_filter_low": "Низкая цена",
     "price_filter_high": "Высокая цена",
-    "view_disclosure_information_for_product": "Просмотреть дополнительную информацию о товаре {{ product_title }}"
+    "view_disclosure_information_for_product": "Просмотреть дополнительную информацию о товаре {{ product_title }}",
+    "show_submenu": "Показать подменю {{ title }}"
   },
   "actions": {
     "add_to_cart": "Добавить в корзину",
@@ -120,7 +121,8 @@
     "show_all_options": "Показать все варианты",
     "open": "Открыть",
     "back_to": "Вернуться к {{ title }}",
-    "zoom_media": "Увеличить медиафайл {{ index }}"
+    "zoom_media": "Увеличить медиафайл {{ index }}",
+    "back_to_main_menu": "Назад в главное меню"
   },
   "content": {
     "reviews": "отз.",

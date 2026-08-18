@@ -75,7 +75,8 @@
     "search_suggestions_available": "Suggerimenti di ricerca per \"{{ query }}\"",
     "price_filter_low": "Prezzo basso",
     "price_filter_high": "Prezzo alto",
-    "view_disclosure_information_for_product": "Visualizza le informative per {{ product_title }}"
+    "view_disclosure_information_for_product": "Visualizza le informative per {{ product_title }}",
+    "show_submenu": "Mostra sottomenu {{ title }}"
   },
   "actions": {
     "add_to_cart": "Aggiungi al carrello",
@@ -118,7 +119,8 @@
     "show_all_options": "Mostra tutte le opzioni",
     "open": "Apri",
     "back_to": "Torna a {{ title }}",
-    "zoom_media": "Zoom media {{ index }}"
+    "zoom_media": "Zoom media {{ index }}",
+    "back_to_main_menu": "Torna al menu principale"
   },
   "content": {
     "reviews": "recensioni",

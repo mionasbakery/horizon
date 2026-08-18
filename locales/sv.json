@@ -70,6 +70,7 @@
     "active_filters": "Aktiva filter:",
     "product_details": "Produktdetaljer",
     "show_product_details": "Visa produktdetaljer för {{ product_name }}",
+    "show_submenu": "Visa undermeny för {{ title }}",
     "featured_product": "Utvald produkt",
     "search_suggestions_available": "Sökförslag tillgängliga för \"{{ query }}\"",
     "price_filter_low": "Lågt pris",
@@ -116,6 +117,7 @@
     "show_all_options": "Visa alla alternativ",
     "open": "Öppna",
     "back_to": "Tillbaka till {{ title }}",
+    "back_to_main_menu": "Tillbaka till huvudmenyn",
     "zoom_media": "Zooma media {{ index }}"
   },
   "content": {

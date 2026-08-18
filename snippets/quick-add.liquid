@@ -39,7 +39,7 @@
     assign first_option = product.options_with_values | first
     assign swatch_count = first_option.values | map: 'swatch' | compact | size
     assign render_choose = true
-    if product.selected_variant
+    if product.selected_variant.available
       assign initial_button = 'add'
       assign render_add = true
     elsif swatch_count > 0
@@ -65,9 +65,9 @@
   Logic for Add vs. Choose buttons:
     Display "Add" button and add directly to cart if:
       - There is only one variant on the product
-      - There is only one product option, and it is displayed as swatches on the product card, and a swatch is selected
+      - There is only one product option, and it is displayed as swatches on the product card, and the selected variant is available
     Display "Choose" button and show the quick-add modal if:
-      - There is only one product option, and it is displayed as swatches on the product card, and no swatch is selected
+      - There is only one product option, and it is displayed as swatches on the product card, and no variant is selected, or the selected variant is unavailable
       - There is more than one product option
 
   Both buttons are only rendered together for a single-option product with interactive swatches, because
@@ -120,6 +120,7 @@
           add_to_cart_text: add_to_cart_text,
           class: 'quick-add__button quick-add__button--add add-to-cart-button',
           can_add_to_cart: can_add_to_cart,
+          show_icon: true,
           product: product
         %}
       {%- endform -%}
@@ -129,8 +130,6 @@
   {% if render_choose %}
     <button
       class="button quick-add__button quick-add__button--choose add-to-cart-button"
-      {% comment %} type="submit" is the default, so we explicitly set it to "button" to prevent the ProductFormComponent.handleSubmit from being triggered {% endcomment %}
-      type="button"
       name="add"
       on:click="quick-add-component/handleClick"
     >
@@ -147,6 +146,8 @@
 
 {% render 'add-to-cart-button-styles' %}
 {% render 'checkbox-styles' %}
+{% render 'text-block-styles' %}
+{% render 'price-styles' %}
 {% if render_choose %}
   {% render 'variant-picker-styles' %}
 {% endif %}

@@ -75,7 +75,8 @@
     "search_suggestions_available": "Pretraživanje dostupnih prijedloga za „{{ query }}”",
     "price_filter_low": "Niska cijena",
     "price_filter_high": "Visoka cijena",
-    "view_disclosure_information_for_product": "Prikaži obavijesti o proizvodu {{ product_title }}"
+    "view_disclosure_information_for_product": "Prikaži obavijesti o proizvodu {{ product_title }}",
+    "show_submenu": "Prikaži podizbornik {{ title }}"
   },
   "actions": {
     "add_to_cart": "Dodaj u košaricu",
@@ -118,7 +119,8 @@
     "show_all_options": "Prikaži sve opcije",
     "open": "Otvori",
     "back_to": "Natrag na {{ title }}",
-    "zoom_media": "Zoom medijskog sadržaja {{ index }}"
+    "zoom_media": "Zoom medijskog sadržaja {{ index }}",
+    "back_to_main_menu": "Natrag na glavni izbornik"
   },
   "content": {
     "reviews": "recenzije",

@@ -74,7 +74,8 @@
     "search_suggestions_available": "Keresési javaslatok a következőhöz: „{{ query }}”",
     "price_filter_low": "Ár szerint növekvő",
     "price_filter_high": "Ár szerint csökkenő",
-    "view_disclosure_information_for_product": "Tájékoztató adatok megtekintése a következőhöz: {{ product_title }}"
+    "view_disclosure_information_for_product": "Tájékoztató adatok megtekintése a következőhöz: {{ product_title }}",
+    "show_submenu": "{{ title }} almenü megjelenítése"
   },
   "actions": {
     "add_to_cart": "Hozzáadás a kosárhoz",
@@ -116,7 +117,8 @@
     "show_all_options": "Minden lehetőség megjelenítése",
     "open": "Megnyitás",
     "back_to": "Vissza ide: {{ title }}",
-    "zoom_media": "Médiaelem nagyítása ({{ index }})"
+    "zoom_media": "Médiaelem nagyítása ({{ index }})",
+    "back_to_main_menu": "Vissza a főmenübe"
   },
   "content": {
     "reviews": "összegzés",

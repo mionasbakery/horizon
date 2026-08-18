@@ -5,13 +5,6 @@
   {% render 'quick-add-styles' %}
 {%- enddoc -%}
 
-{% style %}
-  .custom-color-quick-add {
-    --quick-add-background: {{ settings.quick_add_background }};
-    --quick-add-foreground: {{ settings.quick_add_text }};
-  }
-{% endstyle %}
-
 {% stylesheet %}
   /* Quick Add */
   .quick-add {
@@ -53,6 +46,10 @@
 
   product-card:is(:hover, :focus-within) .quick-add__button {
     opacity: 1;
+
+    &:disabled {
+      opacity: var(--opacity-muted-text);
+    }
   }
 
   button.quick-add__button {
@@ -107,6 +104,11 @@
     @media screen and (min-width: 750px) {
       display: var(--quick-add-display, flex);
       opacity: 0;
+
+      /* Explicit "disabled" rule is needed to beat the `.button:disabled { opacity: 0.5 }` rule in base.css */
+      &:disabled {
+        opacity: 0;
+      }
     }
   }
 

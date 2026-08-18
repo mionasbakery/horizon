@@ -351,7 +351,7 @@
     "limit_media_to_screen_height": "Begränsa till skärmhöjd",
     "limit_product_details_width": "Begränsa produktinformationsbredd",
     "link_preset": "Förinställning för länk",
-    "link_text_color": "Textfärg för länk",
+    "link_text_color": "Länktextfärg",
     "links": "Länkar",
     "logo_font": "Teckensnitt för logotyp",
     "logo": "Logotyp",
@@ -567,7 +567,7 @@
     "navigation_bar_text_color": "Textfärg för navigeringsfält",
     "page_background_color": "Bakgrund",
     "page_text_color": "Text",
-    "variant_button_style": "Stil för variant",
+    "variant_button_style": "Variantstil",
     "selected_variant_button_style": "Stil för vald variant",
     "top_row": "Övre rad",
     "text_color": "Textfärg",
@@ -581,7 +581,7 @@
     "bottom_row_text": "Text för nedre rad",
     "button_style": "Knappstil",
     "input_style": "Inmatningsstil",
-    "selected_button_style": "Stil för vald knapp",
+    "selected_button_style": "Vald knappstil",
     "open_by_default": "Öppen som standard",
     "title_preset": "Förinställning för rubrik"
   },
@@ -916,7 +916,7 @@
     "paragraph": "Stycke",
     "policies": "Policyer",
     "popup": "Popup",
-    "search": "Sök",
+    "search": "Sökning",
     "section_layout": "Sektionslayout",
     "size": "Storlek",
     "social_media": "Sociala medier",
@@ -981,13 +981,13 @@
     "button_colors": "Knappfärger",
     "cart_bubble": "Varukorgsbubbla",
     "type": "Typ",
-    "cart_summary_mobile_colors": "På mobil ärver sammanfattningens färger från varukorgsavsnittet.",
-    "local_pickup_description": "Visa närliggande hämtningsplatser när lokal upphämtning i webbutiken har konfigurerats. [Mer information](https://help.shopify.com/en/manual/fulfillment/setup/delivery-methods/pickup-in-store)",
+    "cart_summary_mobile_colors": "På mobila enheter ärvs sammanfattningens färger från varukorgssektionen.",
+    "local_pickup_description": "Visa närliggande upphämtningsplatser när lokal upphämtning har konfigurerats för webbshoppen. [Mer information](https://help.shopify.com/en/manual/fulfillment/setup/delivery-methods/pickup-in-store)",
     "local_pickup": "Lokal upphämtning",
     "gift_card_products": "Presentkortsprodukter",
     "disclosures": "Upplysningar",
     "disclosures_metafield_content": "Obligatoriska säkerhetsvarningar och lagstadgad information för denna produkt.",
-    "page_text_color_contrast_info": "Sektioner med anpassad bakgrundsfärg använder endast den här textfärgen när färgkontrasten är tillräcklig."
+    "page_text_color_contrast_info": "Sektioner med anpassad bakgrundsfärg använder endast den här textfärgen om färgkontrasten är tillräcklig."
   },
   "html_defaults": {
     "share_information_about_your": "<p>Dela information om ditt varumärke med dina kunder. Beskriv en produkt, gör tillkännagivanden eller välkomna kunder till din butik.</p>",
@@ -1093,7 +1093,7 @@
     "checkout_buttons": "Gör det möjligt för köpare att betala snabbare och kan förbättra konverteringen. [Läs mer](https://help.shopify.com/manual/online-store/dynamic-checkout)",
     "custom_heading": "Anpassad rubrik",
     "edit_presets_in_theme_settings": "Redigera förinställningar i [temainställningar](/editor?context=theme&category=typography)",
-    "edit_button_style_in_theme_settings": "Redigera stilar för primära och sekundära knappar i [temainställningar](/editor?context=theme&category=buttons)",
+    "edit_button_style_in_theme_settings": "Redigera primära och sekundära knappstilar i [temainställningar](/editor?context=theme&category=buttons)",
     "enable_filtering_info": "Anpassa filter med [appen Sök och upptäck](https://help.shopify.com/manual/online-store/search-and-discovery/filters)",
     "grid_layout_on_mobile": "Rutnätslayout används för mobil",
     "logo_font": "Gäller endast när en logotyp inte är vald",
@@ -1111,7 +1111,7 @@
     "page_text_color_default_info": "Standard för temasektioner",
     "actions_display_style": "Ikoner används alltid på mobilen",
     "edit_input_field_in_theme_settings": "Redigera inmatningsfält i [temainställningar](/editor?context=theme&category=input%20fields)",
-    "edit_variants_in_theme_settings": "Redigera variantutformning i [temainställningar](/editor?context=theme&category=variant%20pickers)"
+    "edit_variants_in_theme_settings": "Redigera variantstil i [temainställningar](/editor?context=theme&category=variant%20pickers)"
   },
   "categories": {
     "basic": "Grundläggande",

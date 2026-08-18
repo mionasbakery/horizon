@@ -808,14 +808,14 @@ export function calculateHeaderGroupHeight(
   if (!headerGroup) return 0;
 
   let totalHeight = 0;
-  const children = headerGroup.children;
-  for (let i = 0; i < children.length; i++) {
-    const element = children[i];
-    if (element === header || !(element instanceof HTMLElement)) continue;
-    totalHeight += element.offsetHeight;
+  for (const element of headerGroup.children) {
+    if (element instanceof HTMLElement) totalHeight += element.offsetHeight;
   }
 
-  // If the header is transparent and has a sibling section, add the height of the header to the total height
+  // A transparent header is absolutely positioned, so the loop above counts its section
+  // wrapper as 0px. When a section follows it in the group, header.liquid pushes that
+  // section down by the header's height using a margin, which offsetHeight also
+  // excludes — so the header's height has to be added back manually.
   if (header instanceof HTMLElement && header.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
     return totalHeight + header.offsetHeight;
   }
@@ -830,13 +830,13 @@ export function calculateHeaderGroupHeight(
 function updateTransparentHeaderOffset() {
   const header = document.querySelector('#header-component');
   const headerGroup = document.querySelector('#header-group');
-  const hasHeaderSection = headerGroup?.querySelector('.header-section');
-  if (!hasHeaderSection || !header?.hasAttribute('transparent')) {
+  const headerSection = headerGroup?.querySelector('.header-section');
+  if (!headerSection || !header?.hasAttribute('transparent')) {
     document.body.style.setProperty('--transparent-header-offset-boolean', '0');
     return;
   }
 
-  const hasImmediateSection = hasHeaderSection.nextElementSibling?.classList.contains('shopify-section');
+  const hasImmediateSection = headerSection.nextElementSibling?.classList.contains('shopify-section');
 
   const shouldApplyOffset = !hasImmediateSection ? '1' : '0';
   document.body.style.setProperty('--transparent-header-offset-boolean', shouldApplyOffset);

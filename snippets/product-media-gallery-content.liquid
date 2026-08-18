@@ -182,6 +182,11 @@
   ></script>
 {%- endif -%}
 
+{%- if block_settings.constrain_to_viewport -%}
+  {% # `.constrain-height` consumes `--header-height` at first paint (product-media-container-styles.liquid) %}
+  {% render 'measure-header-heights', only_on_desktop: true %}
+{%- endif -%}
+
 {% style %}
   {% unless block_settings.aspect_ratio == 'adapt' %}
     .product-media-container {

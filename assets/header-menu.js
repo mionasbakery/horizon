@@ -34,12 +34,14 @@ class HeaderMenu extends Component {
 
     onDocumentLoaded(this.#preloadImages);
     window.addEventListener('resize', this.#resizeListener);
+    this.addEventListener('keydown', this.#onKeydown);
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('resize', this.#resizeListener);
+    this.removeEventListener('keydown', this.#onKeydown);
     document.body.removeEventListener('pointermove', this.#onPointerMove);
     if (this.#state.activeItem) {
       this.#stopPointerTracking(this.#state.activeItem);
@@ -60,6 +62,75 @@ class HeaderMenu extends Component {
   #overflowSubmenuListener = () => {
     this.#deactivate();
   };
+
+  /**
+   * Close the open submenu on Escape and restore focus to its disclosure control.
+   * @param {KeyboardEvent} event
+   */
+  #onKeydown = (event) => {
+    if (event.key !== 'Escape') return;
+    const item = this.#state.activeItem;
+    if (!item) return;
+
+    const control = this.#focusTargetAfterClose(item);
+    this.#deactivate(item, { force: true });
+    control.focus();
+  };
+
+  /**
+   * Toggle a submenu from its dedicated disclosure button (click / Enter / Space).
+   * @param {PointerEvent | MouseEvent} event
+   */
+  toggle = (event) => {
+    const button = event.target;
+    if (!(button instanceof HTMLElement)) return;
+
+    const item = findMenuItem(button);
+    if (!item) return;
+
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    if (isExpanded) {
+      // Close whatever is currently active. In the overflow panel the initially
+      // selected item is tracked as `activeOverflowItem` while the More trigger is
+      // the `activeItem`, so deactivating `item` directly would no-op; deactivate
+      // the active item instead.
+      this.#deactivate(this.#state.activeItem ?? item, { force: true });
+      // Closing the overflow panel hides the focused disclosure, so return focus
+      // to the visible More trigger; a top-level disclosure stays put.
+      const focusTarget = this.#focusTargetAfterClose(item);
+      if (focusTarget !== button) focusTarget.focus();
+    } else {
+      this.activate(event);
+    }
+  };
+
+  /**
+   * The control that should receive focus after a submenu closes. Overflow items
+   * live in a panel that is hidden on close, so focus returns to the always-visible
+   * More trigger instead of a now-inert control inside the panel.
+   * @param {HTMLElement} item
+   * @returns {HTMLElement}
+   */
+  #focusTargetAfterClose(item) {
+    const listItem = item.closest('.menu-list__list-item');
+    const slot = listItem instanceof HTMLElement ? listItem.slot : '';
+    if (slot === 'overflow' || slot === 'more') {
+      const moreButton = this.querySelector('[slot="more"] [ref="menuitem"]');
+      if (moreButton instanceof HTMLElement) return moreButton;
+    }
+    return this.#expandableFor(item);
+  }
+
+  /**
+   * Return the element that carries the `aria-expanded` state for a menu item.
+   * @param {HTMLElement} item
+   * @returns {HTMLElement}
+   */
+  #expandableFor(item) {
+    const listItem = item.closest('.menu-list__list-item');
+    const disclosure = listItem?.querySelector('[ref="disclosure[]"]');
+    return disclosure instanceof HTMLElement ? disclosure : item;
+  }
 
   /**
    * @type {State}
@@ -187,13 +258,16 @@ class HeaderMenu extends Component {
   activate = (event) => {
     if (!(event.target instanceof Element) || !this.headerComponent) return;
 
-    const isMoreTrigger = event.target.slot === 'more';
     const item = findMenuItem(event.target);
-    const overflowItem = isMoreTrigger ? this.#getFirstOverflowMenuItem() : null;
 
     if (!item || item == this.#state.activeItem) return;
 
-    const isDefaultSlot = event.target.slot === '';
+    // Derive the slot context from the list item rather than `event.target`.
+    const listItem = item.closest('.menu-list__list-item');
+    const slot = listItem instanceof HTMLElement ? listItem.slot : '';
+    const isMoreTrigger = slot === 'more';
+    const isDefaultSlot = slot === '';
+    const overflowItem = isMoreTrigger ? this.#getFirstOverflowMenuItem() : null;
 
     this.dataset.overflowExpanded = (!isDefaultSlot).toString();
 
@@ -201,18 +275,25 @@ class HeaderMenu extends Component {
     const previouslyActiveOverflowItem = this.#state.activeOverflowItem;
 
     if (previouslyActiveItem) {
-      previouslyActiveItem.ariaExpanded = 'false';
+      this.#expandableFor(previouslyActiveItem).ariaExpanded = 'false';
+      const previousSubmenu = findSubmenu(previouslyActiveItem);
+      if (previousSubmenu) previousSubmenu.inert = true;
     }
     if (previouslyActiveOverflowItem && previouslyActiveOverflowItem !== previouslyActiveItem) {
-      previouslyActiveOverflowItem.ariaExpanded = 'false';
+      this.#expandableFor(previouslyActiveOverflowItem).ariaExpanded = 'false';
+      const previousOverflowSubmenu = findSubmenu(previouslyActiveOverflowItem);
+      if (previousOverflowSubmenu) previousOverflowSubmenu.inert = true;
     }
 
     this.#state.activeItem = item;
     this.#state.activeOverflowItem = overflowItem;
     this.ariaExpanded = 'true';
-    item.ariaExpanded = 'true';
+    this.#expandableFor(item).ariaExpanded = 'true';
     if (overflowItem && overflowItem !== item) {
-      overflowItem.ariaExpanded = 'true';
+      this.#expandableFor(overflowItem).ariaExpanded = 'true';
+      // The More trigger auto-opens the first overflow item's submenu, so expose it.
+      const activeOverflowSubmenu = findSubmenu(overflowItem);
+      if (activeOverflowSubmenu) activeOverflowSubmenu.inert = false;
     }
 
     const overflowItemSubmenu = isMoreTrigger ? findSubmenu(overflowItem) : null;
@@ -240,6 +321,11 @@ class HeaderMenu extends Component {
 
       // Mark submenu as active for content-visibility optimization
       submenu.dataset.active = '';
+
+      // Expose the open submenu to focus and assistive tech. Collapsed submenus stay
+      // inert so their contents cannot be reached (visibility:hidden alone can be
+      // overridden by descendants that re-assert visibility).
+      submenu.inert = false;
 
       // Cleanup any existing mutation observer from previous menu activations
       this.#cleanupMutationObserver();
@@ -300,13 +386,19 @@ class HeaderMenu extends Component {
     if (!(event.target instanceof Element)) return;
 
     const menu = findSubmenu(this.#state.activeItem);
+    // Keep the submenu open while focus moves between the link, its disclosure
+    // button, and the submenu contents — i.e. anywhere inside the same list item.
+    const isMovingWithinItem =
+      event.relatedTarget instanceof Node &&
+      event.target instanceof Element &&
+      event.target.contains(event.relatedTarget);
     const isMovingWithinMenu = event.relatedTarget instanceof Node && menu?.contains(document.activeElement);
     const isMovingToSubmenu =
       event.relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(event.relatedTarget);
     const isMovingToOverflowMenu =
       event.relatedTarget instanceof Element && Boolean(event.relatedTarget.closest('[slot="overflow"]'));
 
-    if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) {
+    if (isMovingWithinItem || isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) {
       if (this.#state.activeItem) {
         this.#stopPointerTracking(this.#state.activeItem);
       }
@@ -320,11 +412,13 @@ class HeaderMenu extends Component {
    * Deactivate the active item immediately
    * @param {HTMLElement | null} [item]
    */
-  #deactivate = (item = this.#state.activeItem) => {
+  #deactivate = (item = this.#state.activeItem, { force = false } = {}) => {
     if (!item || item != this.#state.activeItem) return;
 
-    // Don't deactivate if the overflow menu or overflow list is still being hovered
-    if (this.overflowListHovered || this.overflowMenu?.matches(':hover')) return;
+    // Don't deactivate if the overflow menu or overflow list is still being hovered,
+    // unless the close was explicitly requested (Escape or the disclosure toggle),
+    // which must close regardless of pointer position.
+    if (!force && (this.overflowListHovered || this.overflowMenu?.matches(':hover'))) return;
 
     clearTimeout(this.#hoverDispatchTimer);
     this.#hoverDispatchTimer = undefined;
@@ -343,14 +437,17 @@ class HeaderMenu extends Component {
     this.#state.activeItem = null;
     this.#state.activeOverflowItem = null;
     this.ariaExpanded = 'false';
-    item.ariaExpanded = 'false';
+    this.#expandableFor(item).ariaExpanded = 'false';
     if (activeOverflowItem && activeOverflowItem !== item) {
-      activeOverflowItem.ariaExpanded = 'false';
+      this.#expandableFor(activeOverflowItem).ariaExpanded = 'false';
+      const activeOverflowSubmenu = findSubmenu(activeOverflowItem);
+      if (activeOverflowSubmenu) activeOverflowSubmenu.inert = true;
     }
 
     // Remove active state from submenu after animation completes
     if (submenu) {
       delete submenu.dataset.active;
+      submenu.inert = true;
     }
   };
 
@@ -434,7 +531,10 @@ if (!customElements.get('header-menu')) {
 function findMenuItem(element) {
   if (!(element instanceof Element)) return null;
 
-  return element?.querySelector('[ref="menuitem"]');
+  // `element` may be the list item itself (hover/focus routed via the `<li>`) or a
+  // descendant such as the disclosure button (click routed via the button).
+  const listItem = element.closest('.menu-list__list-item') ?? element;
+  return listItem.querySelector('[ref="menuitem"]');
 }
 
 /**
@@ -443,6 +543,7 @@ function findMenuItem(element) {
  * @returns {HTMLElement | null}
  */
 function findSubmenu(element) {
-  const submenu = element?.parentElement?.querySelector('[ref="submenu[]"]');
+  const listItem = element?.closest?.('.menu-list__list-item');
+  const submenu = listItem?.querySelector(':scope > [ref="submenu[]"]');
   return submenu instanceof HTMLElement ? submenu : null;
 }

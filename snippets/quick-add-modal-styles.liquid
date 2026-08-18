@@ -5,6 +5,9 @@
   {% render 'quick-add-modal-styles' %}
 {%- enddoc -%}
 
+{% comment %}Include shared dialog styles for Quick Add render paths.{% endcomment %}
+{% render 'dialog-styles' %}
+
 {% stylesheet %}
   #quick-add-dialog {
     display: contents;

@@ -74,7 +74,8 @@
     "search_suggestions_available": "Zoek naar beschikbare suggesties voor '{{ query }}'",
     "price_filter_low": "Lage prijs",
     "price_filter_high": "Hoge prijs",
-    "view_disclosure_information_for_product": "Informatie over productvermeldingen bekijken voor {{ product_title }}"
+    "view_disclosure_information_for_product": "Informatie over productvermeldingen bekijken voor {{ product_title }}",
+    "show_submenu": "Submenu {{ title }} weergeven"
   },
   "actions": {
     "add_to_cart": "Aan winkelwagen toevoegen",
@@ -116,7 +117,8 @@
     "show_all_options": "Alle opties weergeven",
     "open": "Openen",
     "back_to": "Terug naar {{ title }}",
-    "zoom_media": "In-/uitzoomen op media {{ index }}"
+    "zoom_media": "In-/uitzoomen op media {{ index }}",
+    "back_to_main_menu": "Terug naar hoofdmenu"
   },
   "content": {
     "reviews": "recensies",

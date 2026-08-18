@@ -22,7 +22,7 @@
   "accessibility": {
     "play_model": "3D-Modell abspielen",
     "play_video": "Video abspielen",
-    "unit_price": "Grundpreis",
+    "unit_price": "Stückpreis",
     "country_results_count": "{{ count }} Ergebnisse",
     "slideshow_pause": "Slideshow pausieren",
     "slideshow_play": "Slideshow abspielen",
@@ -74,7 +74,8 @@
     "search_suggestions_available": "Nach Vorschlägen für „{{ query }}“ suchen",
     "price_filter_low": "Niedriger Preis",
     "price_filter_high": "Hoher Preis",
-    "view_disclosure_information_for_product": "Offenlegungsinformationen für {{ product_title }} anzeigen"
+    "view_disclosure_information_for_product": "Offenlegungsinformationen für {{ product_title }} anzeigen",
+    "show_submenu": "Untermenü {{ title }} anzeigen"
   },
   "actions": {
     "add_to_cart": "In den Warenkorb legen",
@@ -116,7 +117,8 @@
     "show_all_options": "Alle Optionen anzeigen",
     "open": "Öffnen",
     "back_to": "Zurück zu {{ title }}",
-    "zoom_media": "Medien {{ index }} zoomen"
+    "zoom_media": "Medien {{ index }} zoomen",
+    "back_to_main_menu": "Zurück zum Hauptmenü"
   },
   "content": {
     "reviews": "Reviews",

@@ -417,19 +417,15 @@
   .hotspot-dialog {
     .quick-add {
       display: flex;
-      flex-direction: column;
       justify-content: flex-end;
-      width: auto;
-      height: auto;
       position: relative;
       z-index: var(--layer-flat);
     }
 
     .quick-add__button.add-to-cart-button {
-      width: calc(var(--button-size-md) - 8px);
+      width: calc(var(--button-size-md) - 4px);
       position: relative;
-      padding-block: 0;
-      padding-inline-end: var(--padding-sm);
+      transform: translateX(2px);
       justify-self: flex-end;
       height: fit-content;
       border: none;
@@ -442,7 +438,8 @@
 
       @media (prefers-reduced-motion: no-preference) {
         transition: width var(--animation-speed) var(--ease-out-cubic),
-          outline-color var(--animation-speed) var(--ease-out-cubic) var(--animation-speed-slow);
+          outline-color var(--animation-speed) var(--ease-out-cubic) var(--animation-speed-slow),
+          transform var(--animation-speed) var(--ease-out-cubic);
       }
 
       &:is(:hover, :active) {
@@ -464,6 +461,7 @@
     .hotspot-dialog {
       .quick-add__button:is(:hover, :focus-visible) {
         width: max-content;
+        transform: translateX(0);
       }
     }
   }

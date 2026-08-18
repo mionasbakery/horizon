@@ -13,16 +13,9 @@ body {
 }
 
 :root {
-  --hover-lift-amount: 4px;
-  --hover-scale-amount: 1.03;
-  --hover-subtle-zoom-amount: 1.015;
-  --hover-shadow-color: var(--color-shadow);
   --hover-transition-duration: 0.25s;
   --hover-transition-timing: ease-out;
-  --surface-transition-duration: 0.3s;
-  --surface-transition-timing: var(--ease-out-quad);
   --submenu-animation-speed: 360ms;
-  --submenu-animation-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 html {
@@ -115,38 +108,7 @@ select {
 
 .product-card__content {
   position: relative;
-}
-
-.product-card__content {
   cursor: pointer;
-}
-
-@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .card-hover-effect-lift .product-card:hover,
-  .card-hover-effect-lift .collection-card:hover,
-  .card-hover-effect-lift .predictive-search-results__card:hover {
-    transform: translateY(calc(-1 * var(--hover-lift-amount)));
-  }
-
-  .card-hover-effect-scale .product-card:hover,
-  .card-hover-effect-scale .collection-card:hover,
-  .card-hover-effect-scale .predictive-search-results__card:hover {
-    transform: scale(var(--hover-scale-amount));
-  }
-
-  .card-hover-effect-subtle-zoom .card-gallery,
-  .card-hover-effect-subtle-zoom .collection-card__image,
-  .card-hover-effect-subtle-zoom .product-card__image {
-    overflow: hidden;
-    transition: transform var(--hover-transition-duration) var(--hover-transition-timing);
-  }
-
-  .card-hover-effect-subtle-zoom .product-card:hover .card-gallery,
-  .card-hover-effect-subtle-zoom .collection-card:hover .collection-card__image,
-  .card-hover-effect-subtle-zoom .product-card:hover .product-card__image,
-  .card-hover-effect-subtle-zoom .predictive-search-results__card:hover {
-    transform: scale(var(--hover-subtle-zoom-amount));
-  }
 }
 
 dialog {
@@ -320,8 +282,7 @@ p:empty {
   --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
 }
 
-.page-width-narrow,
-.page-width-content {
+.page-width-narrow {
   /* NOTE: This results in a page width of 1400px because of how we set up margins with grid */
   --page-content-width: var(--narrow-page-width);
   --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
@@ -402,11 +363,6 @@ p:empty {
   .section--mobile-full-width > * {
     grid-column: 1 / -1;
   }
-}
-
-/* Some page-width sections should still extend all the way to the right edge of the page, e.g. collection carousel */
-.section--page-width.section--full-width-right > * {
-  grid-column: 2 / 4;
 }
 
 /* For full-width sections with margin, content still spans full width but with space on the sides */
@@ -528,17 +484,8 @@ p:empty {
   }
 }
 
-.flex {
-  display: flex;
-  gap: var(--gap-md);
-}
-
 .flip-x {
   scale: -1 1;
-}
-
-.flip-y {
-  scale: 1 -1;
 }
 
 .list-unstyled {
@@ -583,31 +530,6 @@ p:empty {
 
 .justify-right {
   justify-content: right;
-}
-
-.title--aligned-center {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.background-image-container {
-  overflow: hidden;
-  position: absolute;
-  inset: 0;
-  opacity: var(--image-opacity);
-}
-
-.background-image-container img,
-.background-image-container svg {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-}
-
-.background-image-fit img,
-.background-image-fit svg {
-  object-fit: contain;
 }
 
 .svg-wrapper {
@@ -866,140 +788,9 @@ p:not(.h1, .h2, .h3, .h4, .h5, .h6) a:where(:not(.button, .button-secondary)),
   background-position: center center;
 }
 
-details[open] .summary-closed {
-  display: none;
-}
-
-details:not([open]) .summary-open {
-  display: none;
-}
-
-details[open] > summary .icon-animated > svg {
-  transform: rotate(180deg);
-}
-
 /* iOS fix: hide the default arrow on the summary */
 summary::-webkit-details-marker {
   display: none;
-}
-
-/* When header is transparent, pull the first main content section up to sit under the floating header */
-body:has(.header[transparent]) .content-for-layout > .shopify-section:first-child {
-  margin-top: calc(var(--header-group-height) * -1);
-}
-
-body:has(.header[transparent]) #header-group > .header-section {
-  z-index: var(--layer-menu-drawer);
-}
-
-/* All other header group content should be beneath the floating header,
-but above the rest of the page content */
-body:has(.header[transparent]) #header-group > *:not(.header-section) {
-  z-index: calc(var(--layer-menu-drawer) - 1);
-}
-
-.text-block {
-  width: 100%;
-}
-
-.text-block > *:first-child,
-.text-block > *:first-child:empty + * {
-  margin-block-start: 0;
-}
-
-.text-block > *:last-child,
-.text-block > *:has(+ *:last-child:empty) {
-  margin-block-end: 0;
-}
-
-/* This is to deal with the margin applied to the p when custom styles are enabled. The p isn't the first child anymore due to the style tag */
-.text-block > style + * {
-  margin-block-start: 0;
-}
-
-/* Dialog */
-.dialog-modal {
-  border: none;
-  box-shadow: var(--shadow-popover);
-
-  @media screen and (min-width: 750px) {
-    border-radius: var(--style-border-radius-popover);
-    max-width: var(--normal-content-width);
-  }
-
-  @media screen and (max-width: 749px) {
-    max-width: 100%;
-    max-height: 100%;
-    height: 100dvh;
-    width: 100dvw;
-    padding: var(--padding-md);
-  }
-}
-
-.dialog-modal::backdrop {
-  transition: backdrop-filter var(--animation-speed) var(--animation-easing);
-  backdrop-filter: brightness(1);
-  background: rgb(var(--backdrop-color-rgb) / var(--backdrop-opacity));
-}
-
-.dialog-modal[open] {
-  animation: elementSlideInTop var(--animation-speed) var(--animation-easing) forwards;
-
-  &::backdrop {
-    animation: backdropFilter var(--animation-speed) var(--animation-easing) forwards;
-    transition: opacity var(--animation-speed) var(--animation-easing);
-  }
-}
-
-.dialog-modal.dialog-closing {
-  animation: elementSlideOutTop var(--animation-speed) var(--animation-easing) forwards;
-
-  &::backdrop {
-    opacity: 0;
-  }
-}
-
-/* stylelint-disable value-keyword-case */
-.dialog-drawer {
-  --dialog-drawer-opening-animation: move-and-fade;
-  --dialog-drawer-closing-animation: move-and-fade;
-}
-
-.dialog-drawer--right {
-  --dialog-drawer-opening-animation: move-and-fade;
-  --dialog-drawer-closing-animation: move-and-fade;
-}
-/* stylelint-enable value-keyword-case */
-
-.dialog-drawer[open] {
-  --start-x: var(--custom-transform-from, 100%);
-  --end-x: var(--custom-transform-to, 0px);
-  --start-opacity: 1;
-
-  animation: var(--dialog-drawer-opening-animation) var(--animation-speed) var(--animation-easing) forwards;
-}
-
-.dialog-drawer[open].dialog-closing {
-  --start-x: 0px;
-  --end-x: 100%;
-  --start-opacity: 1;
-  --end-opacity: 1;
-
-  animation: var(--dialog-drawer-closing-animation) var(--animation-speed) var(--animation-easing);
-}
-
-.dialog-drawer--right[open] {
-  --start-x: -100%;
-  --start-opacity: 1;
-}
-
-.dialog-drawer--right[open].dialog-closing {
-  --start-x: 0px;
-  --end-x: -100%;
-  --start-opacity: 1;
-  --end-opacity: 1;
-
-  animation: var(--dialog-drawer-closing-animation) var(--animation-speed) var(--animation-easing);
 }
 
 /* Buttons */
@@ -1173,18 +964,9 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   box-shadow: none;
 }
 
-/* Collapsible row */
-
+/* Caret icon transition */
 .icon-caret svg {
   transition: transform var(--animation-speed) var(--animation-easing);
-}
-
-.icon-caret--forward svg {
-  transform: rotate(-90deg);
-}
-
-.icon-caret--backward svg {
-  transform: rotate(90deg);
 }
 
 summary {
@@ -1197,30 +979,6 @@ summary {
 
 summary:hover {
   color: rgb(var(--color-foreground-rgb) / var(--opacity-80));
-}
-
-summary .svg-wrapper {
-  margin-inline-start: auto;
-  height: var(--icon-size-xs);
-  width: var(--icon-size-xs);
-  transition: transform var(--animation-speed) var(--animation-easing);
-}
-
-/* Shared plus/minus icon animations */
-summary .icon-plus :is(.horizontal, .vertical) {
-  transition: transform var(--animation-speed) var(--animation-easing);
-  transform: rotate(0deg);
-  transform-origin: 50% 50%;
-  opacity: 1;
-}
-
-details[open] > summary .icon-plus .horizontal {
-  transform: rotate(90deg);
-}
-
-details[open] > summary .icon-plus .vertical {
-  transform: rotate(90deg);
-  opacity: 0;
 }
 
 /* Animate the UI elements in only after the view transition is complete */
@@ -1298,56 +1056,6 @@ details[open] > summary .icon-plus .vertical {
   }
 }
 
-.price,
-.compare-at-price,
-.unit-price {
-  white-space: nowrap;
-}
-
-.unit-price {
-  display: block;
-  font-size: min(0.85em, var(--font-paragraph--size));
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
-}
-
-.tax-note.tax-note.tax-note {
-  font-size: min(0.85em, var(--font-paragraph--size));
-  font-weight: var(--font-paragraph--weight);
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
-}
-
-.tax-note:empty {
-  display: none;
-}
-
-product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
-  margin-block: 0;
-}
-
-/* Volume pricing note should match unit-price styling (small, grey text) */
-product-price .volume-pricing-note,
-product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) .volume-pricing-note {
-  display: block;
-  font-family: var(--font-body--family);
-  font-weight: normal;
-  font-size: var(--font-size--xs);
-  line-height: normal;
-  letter-spacing: normal;
-  text-transform: none;
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
-}
-
-.compare-at-price {
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
-  text-decoration-line: line-through;
-  text-decoration-thickness: 1.5px;
-  text-decoration-color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-30));
-}
-
-.price-item__group {
-  display: inline-block;
-}
-
 /* Spacing style */
 .spacing-style {
   --spacing-scale: var(--spacing-scale-md);
@@ -1370,10 +1078,7 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) .volume-pricing-note {
   --margin-inline: 0px;
   --margin-inline-start: var(--margin-inline, 0px);
   --margin-inline-end: var(--margin-inline, 0px);
-}
 
-.spacing-style,
-.inherit-spacing {
   padding-block: calc(var(--padding-block-start) + var(--section-top-offset, 0px)) var(--padding-block-end);
   padding-inline: var(--padding-inline-start) var(--padding-inline-end);
   margin-block: var(--margin-block-start) var(--margin-block-end);
@@ -1750,24 +1455,6 @@ input[type='radio'] {
   cursor: not-allowed;
 }
 
-/* Flexbox for labels wrapping radio buttons or checkboxes */
-label:has(input[type='radio']),
-label:has(input[type='checkbox']) {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--padding-2xs);
-  cursor: pointer;
-}
-
-label:has(input[type='radio']:disabled),
-label:has(input[type='checkbox']:disabled) {
-  cursor: not-allowed;
-}
-
-/* ------------------------------------------------------------------------------ */
-
-/* ------------------------------------------------------------------------------ */
-
 /* Animation declarations - to be kept at the bottom of the file for ease of find */
 @keyframes grow {
   0% {
@@ -1822,18 +1509,6 @@ label:has(input[type='checkbox']:disabled) {
   to {
     transform: translateY(var(--padding-sm));
     opacity: 0;
-  }
-}
-
-@keyframes elementSlideInBottom {
-  from {
-    transform: translateY(calc(-1 * var(--padding-sm)));
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
 
@@ -1918,31 +1593,6 @@ label:has(input[type='checkbox']:disabled) {
   100% {
     transform: translateY(20px);
     opacity: 0;
-  }
-}
-
-@keyframes dialogZoom {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: scale(0.95) translateY(1em);
-  }
-}
-
-@keyframes thumbnail-selected {
-  0%,
-  100% {
-    box-shadow: 0 0 0 2px transparent;
-    scale: 0.9;
-  }
-
-  50% {
-    box-shadow: 0 0 0 2px #000;
-    scale: 1;
   }
 }
 
@@ -2034,10 +1684,6 @@ label:has(input[type='checkbox']:disabled) {
   width: 100%;
 }
 
-.section-resource-list__content:empty {
-  display: none;
-}
-
 .section-resource-list__header:is(:empty, :has(.group-block-content:empty)),
 .section-resource-list__content:empty {
   display: none;
@@ -2057,8 +1703,7 @@ label:has(input[type='checkbox']:disabled) {
   position: relative;
 }
 
-.group-block:has(> video-background-component),
-.group-block:has(> .background-image-container) {
+.group-block:has(> video-background-component) {
   overflow: hidden;
 }
 
@@ -2108,19 +1753,6 @@ label:has(input[type='checkbox']:disabled) {
   flex-basis: var(--size-style-height);
 }
 
-/* Animation transitions */
-.transition-background-color {
-  transition: background-color var(--animation-speed-medium) ease-in-out;
-}
-
-.transition-transform {
-  transition: transform var(--animation-speed-medium) var(--animation-timing-bounce);
-}
-
-.transition-border-color {
-  transition: border-color var(--animation-speed-medium) var(--animation-timing-hover);
-}
-
 /* Global scrollbar styles */
 
 /* Webkit browsers */
@@ -2142,22 +1774,6 @@ label:has(input[type='checkbox']:disabled) {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgb(var(--color-foreground-rgb) / var(--opacity-60));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-.product-card:hover,
-.collection-card:hover,
-.predictive-search-results__card--product:hover,
-.predictive-search-results__card:hover {
-  position: relative;
-  z-index: var(--layer-raised);
-  transition: transform var(--hover-transition-duration) var(--hover-transition-timing),
-    box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
 }
 
 /* Prevent iOS zoom on input focus by ensuring minimum 16px font size on mobile */
@@ -2200,7 +1816,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
 
     /* Any nested sections should not be offset */
-    :is(.spacing-style, .inherit-spacing) {
+    .spacing-style {
       --section-top-offset: 0px;
     }
   }

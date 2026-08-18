@@ -70,6 +70,7 @@
     "active_filters": "활성 필터:",
     "product_details": "제품 세부 정보",
     "show_product_details": "{{ product_name }} 제품 세부 정보 표시",
+    "show_submenu": "{{ title }} 하위 메뉴 표시",
     "featured_product": "추천 제품",
     "search_suggestions_available": "\"{{ query }}\"에 대한 검색 제안이 있습니다",
     "price_filter_low": "낮은 가격",
@@ -116,6 +117,7 @@
     "show_all_options": "모든 옵션 표시",
     "open": "열기",
     "back_to": "{{ title }}(으)로 돌아가기",
+    "back_to_main_menu": "메인 메뉴로 돌아가기",
     "zoom_media": "{{ index }} 미디어 확대/축소"
   },
   "content": {
