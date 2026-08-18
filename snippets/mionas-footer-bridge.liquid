@@ -5,15 +5,19 @@
 {%- enddoc -%}
 {%- comment -%}
   Same scoped-marker pattern as snippets/contacto-page-bridge.liquid. This lives in CSS rather
-  than group settings because the three layouts skip flex-wrap's natural 2-per-row state (logo
-  alone on tablet, three columns on desktop), which no wrap/min-width combination can express.
-  Children are matched by position, so the group's block order must stay: logo, tienda, más,
-  visitarnos, horario, this bridge last.
+  than group settings because the layouts skip flex-wrap's natural 2-per-row state, which no
+  wrap/min-width combination can express. Children are matched by position, so the group's block
+  order must stay: logo, tienda, más, visitarnos, horario, this bridge last. The `of .group-block`
+  form is required: contrast-override emits inline <style> siblings when a block has a background
+  color, which would shift a plain :nth-child.
 {%- endcomment -%}
 <div class="mionas-footer-scope" hidden></div>
 {% style %}
-  .group-block-content:has(.mionas-footer-scope) {
+  /* minmax(0, 1fr), not an implicit auto track: the native flex vars leave justify-content:
+     flex-start here, and under that an auto track sizes to its content, not the container. */
+  .group-block-content:has(> div > .mionas-footer-scope) {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       'logo'
       'tienda'
@@ -23,32 +27,32 @@
   }
 
   /* The custom-liquid block's own wrapper div must not occupy a grid cell. */
-  .group-block-content:has(.mionas-footer-scope) > :has(.mionas-footer-scope) {
+  .group-block-content:has(> div > .mionas-footer-scope) > :has(> .mionas-footer-scope) {
     display: none;
   }
 
-  .group-block-content:has(.mionas-footer-scope) > :nth-child(1) {
+  .group-block-content:has(> div > .mionas-footer-scope) > :nth-child(1 of .group-block) {
     grid-area: logo;
   }
 
-  .group-block-content:has(.mionas-footer-scope) > :nth-child(2) {
+  .group-block-content:has(> div > .mionas-footer-scope) > :nth-child(2 of .group-block) {
     grid-area: tienda;
   }
 
-  .group-block-content:has(.mionas-footer-scope) > :nth-child(3) {
+  .group-block-content:has(> div > .mionas-footer-scope) > :nth-child(3 of .group-block) {
     grid-area: mas;
   }
 
-  .group-block-content:has(.mionas-footer-scope) > :nth-child(4) {
+  .group-block-content:has(> div > .mionas-footer-scope) > :nth-child(4 of .group-block) {
     grid-area: visitanos;
   }
 
-  .group-block-content:has(.mionas-footer-scope) > :nth-child(5) {
+  .group-block-content:has(> div > .mionas-footer-scope) > :nth-child(5 of .group-block) {
     grid-area: horario;
   }
 
   @media screen and (min-width: 750px) {
-    .group-block-content:has(.mionas-footer-scope) {
+    .group-block-content:has(> div > .mionas-footer-scope) {
       grid-template-columns: 1fr 1fr;
       grid-template-areas:
         'logo logo'
@@ -57,8 +61,11 @@
     }
   }
 
+  /* The columns' min_width settings plus gaps (currently 200 + 160 + 160 + 260 + 120 = 900) must
+     stay under the ~910px available here, or the grid overflows -- min-width doesn't shrink, and
+     nowrap content (logo image, address, schedule) also floors the auto columns. */
   @media screen and (min-width: 990px) {
-    .group-block-content:has(.mionas-footer-scope) {
+    .group-block-content:has(> div > .mionas-footer-scope) {
       grid-template-columns: auto 1fr 1fr auto;
       grid-template-areas:
         'logo tienda mas visitanos'

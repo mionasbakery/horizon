@@ -1,34 +1,57 @@
 {%- doc -%}
-  CSS-only layout patch for templates/page.contacto.json, rendered there via a "Custom Liquid"
-  block (`{% render 'contacto-page-bridge' %}`). Takes no params. `{% style %}` output isn't
-  scoped to the block or section it's rendered from, so every rule is scoped through the marker
-  div below instead: `:has(.contacto-layout-scope)` stands in for "the section this bridge was
-  placed in". `.mionas-card` and `.mionas-contact-form` get the same scoping even though they're
-  page-unique today, since both are generic Mionas components rather than page-specific classes.
+  CSS-only layout for templates/page.contacto.json, rendered there via a "Custom Liquid" block
+  (`{% render 'contacto-page-bridge' %}`). Takes no params. Declares the page's responsive layout
+  as named grid areas, plus the contact-form height chaining. `{% style %}` output isn't scoped to
+  the block or section it's rendered from, so every rule is scoped through the marker div below
+  instead: `:has(.contacto-layout-scope)` stands in for "the section this bridge was placed in".
 {%- enddoc -%}
 {%- comment -%}
-  The row/column wrapping, per-column minimum widths, and the card row's 1300px breakpoint used to
-  live here too, but they're now native mionas-group/mionas-card settings (wrap_children,
-  min_width) set directly on the relevant blocks in page.contacto.json -- organic wrap based on
-  available space, not a hardcoded viewport number. The address/day/hours nowrap rules moved the
-  same way, onto each mionas-text block's own `text_wrap` setting. What's left below -- the
-  align-items: stretch override and the form height chaining -- doesn't map to any block's
-  settings.
+  Same named-areas pattern and breakpoints as snippets/mionas-footer-bridge.liquid. Children are
+  matched by position, so the block order in page.contacto.json must stay: form column then info
+  inside "columns"; the visit card then the hours card inside the info group's first child. The
+  `of .group-block` form is required: contrast-override emits inline <style> siblings when a
+  block has a background color, which would shift a plain :nth-child.
 {%- endcomment -%}
 <div class="contacto-layout-scope" hidden></div>
 {% style %}
-  /* Native `vertical_alignment: center` visibly centers the two columns once they're different
-     heights; `stretch` top-aligns them and grows the shorter one to match. Not expressible as a
-     mionas-group setting -- the native vertical_alignment select has no "stretch" option. */
+  /* minmax(0, 1fr), not auto: the native flex vars leave justify-content: flex-start here, and
+     under that an auto track sizes to its content, leaving the form column narrow. Equal column
+     height comes from both blocks' height "fill" resolving against the shared grid row, not from
+     item stretch (the native align-items: center prevents it). */
   [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content {
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'form'
+      'info';
   }
 
-  /* Contact form grows to the column's full height (align-items: stretch above); this chain
-     passes that height down through each wrapper so it lands in the message field instead of
-     as blank space below the submit button. :has(textarea), not :last-child, so it still
-     targets the message row if fields are ever reordered. resize: none since a manually
-     resized textarea would fight the auto-grow. */
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > :nth-child(1 of .group-block) {
+    grid-area: form;
+  }
+
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > :nth-child(2 of .group-block) {
+    grid-area: info;
+  }
+
+  @media screen and (min-width: 990px) {
+    [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas: 'form info';
+    }
+  }
+
+  /* Visit/hours cards: space-based, not breakpoint-based, since the info block is full-width
+     below 990 but half-width above -- no fixed viewport number can express "two 320px columns fit". */
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > :nth-child(2 of .group-block) > .group-block-content > :nth-child(1 of .group-block) > .group-block-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  }
+
+  /* This chain passes the column height down through each form wrapper so it lands in the
+     message field instead of as blank space below the submit button. :has(textarea), not
+     :last-child, so it survives field reordering; resize: none since a manually resized textarea
+     would fight the auto-grow. */
   [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form > form {
     height: 100%;
   }
@@ -47,10 +70,8 @@
     flex-direction: column;
   }
 
-  /* field-sizing: content grows the box with typed input past the flex-filled baseline above,
-     no JS. Chromium-only for now -- Safari/Firefox just keep the static baseline height, no
-     breakage. min-height keeps its own rows="5" floor even when the flex-filled baseline would
-     otherwise be shorter (e.g. once the form column is short on mobile). */
+  /* field-sizing: content grows the box with typed input, no JS; Chromium-only, other browsers
+     keep the static height. min-height keeps the rows="5" floor when the flex baseline is shorter. */
   [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form__surface .mionas-form-field:has(textarea) textarea {
     flex: 1;
     height: 100%;

@@ -16,12 +16,10 @@
 
 {%- comment -%}
   Forked instead of editing snippets/group.liquid directly, since that's a native theme file --
-  see CLAUDE.md. `wrap_children` overrides the `--flex-wrap` custom property inline, not by adding
-  a `flex-wrap` class rule: snippets/layout-panel-style.liquid (also native) already sets
-  `--flex-wrap: nowrap` inline on the content div, and base.css's `.layout-panel-flex--row` reads
-  it via `flex-flow: row var(--flex-wrap)`. A same-specificity class-based override is a coin flip
-  against that rule depending on stylesheet source order; redeclaring the inline custom property
-  after Horizon's own render call always wins, since it's the same style attribute.
+  see CLAUDE.md. `wrap_children` redeclares the `--flex-wrap` custom property inline rather than
+  via a class rule: native layout-panel-style.liquid already sets it inline, so a same-specificity
+  class rule is a source-order coin flip, while a later declaration in the same style attribute
+  always wins.
 {%- endcomment -%}
 
 {% liquid
@@ -47,8 +45,12 @@
     {% render 'border-override', settings: settings %}
     {% render 'spacing-style', settings: settings %}
     {% render 'size-style', settings: settings %}
+    {%- comment -%}
+      A plain px value, not min(px, 100%): inside a grid (mionas-footer-bridge) the percentage is
+      cyclic during track sizing and resolves to zero, silently disabling the minimum.
+    {%- endcomment -%}
     {%- if settings.min_width > 0 -%}
-      min-width: min({{ settings.min_width }}px, 100%);
+      min-width: {{ settings.min_width }}px;
     {%- endif -%}
     {{ style }}
   "

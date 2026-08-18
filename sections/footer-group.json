@@ -57,11 +57,12 @@
           },
           "blocks": {
             "group_GbLjqM": {
-              "type": "group",
-              "name": "Group — Logo",
+              "type": "mionas-group",
+              "name": "Mionas: Group — Logo",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": false,
+                "wrap_children": false,
                 "horizontal_alignment": "flex-start",
                 "vertical_alignment": "center",
                 "align_baseline": false,
@@ -72,6 +73,7 @@
                 "custom_width": 100,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
+                "min_width": 200,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
