@@ -1,0 +1,74 @@
+{%- doc -%}
+  Renders one day (or day range) for mionas-schedule: a day-label cell and an hours cell, placed
+  on the parent grid's shared columns via subgrid.
+{%- enddoc -%}
+
+{%- comment -%}
+  The text-role classes (defined in blocks/mionas-text.liquid, shipped globally) go on the day
+  box, not on each cell, so both cells inherit one size/color pair.
+{%- endcomment -%}
+{% # theme-check-disable ValidScopedCSSClass %}
+<div
+  class="mionas-schedule__day text-role text-role--body-{{ block.settings.size }} text-role--{{ block.settings.color }}"
+  {{ block.shopify_attributes }}
+>
+  {% # theme-check-enable ValidScopedCSSClass %}
+  <span class="mionas-schedule__cell">{% render 'mionas-inline-richtext', value: block.settings.day %}</span>
+  <span class="mionas-schedule__cell">{% render 'mionas-inline-richtext', value: block.settings.hours %}</span>
+</div>
+
+{% schema %}
+{
+  "name": "Mionas: Schedule day",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "day",
+      "label": "Day",
+      "default": "<p>Lunes</p>",
+      "info": "One day or a range, e.g. Martes - Sábado."
+    },
+    {
+      "type": "richtext",
+      "id": "hours",
+      "label": "Hours",
+      "default": "<p>Cerrado</p>",
+      "info": "Press Enter for a second line, e.g. a split morning and afternoon schedule."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
+      ],
+      "default": "md",
+      "info": "The step within the Body band."
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "default"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Schedule day",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

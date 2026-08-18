@@ -1,0 +1,58 @@
+{%- doc -%}
+  Renders opening-hours days (_mionas-schedule-day children) as a two-column grid: day labels on
+  the left, times one character after the longest label, vertically aligned across all days.
+{%- enddoc -%}
+
+{%- comment -%}
+  No design-system equivalent yet: Footer.tsx renders hours as flat text lines. The grid exists
+  because flex rows can't share a column width -- max-content sizing across rows needs one grid.
+{%- endcomment -%}
+<div class="mionas-schedule" {{ block.shopify_attributes }}>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .mionas-schedule {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 1ch;
+    row-gap: 0;
+    justify-content: start;
+  }
+
+  /* Subgrid instead of display: contents so each day stays a real box the theme editor can
+     outline, while its two cells still align to the parent's shared columns. */
+  .mionas-schedule__day {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+
+  /* Explicit <br> line breaks still apply. */
+  .mionas-schedule__cell {
+    white-space: nowrap;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Schedule",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "_mionas-schedule-day"
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Mionas: Schedule",
+      "category": "t:categories.basic",
+      "blocks": [
+        { "type": "_mionas-schedule-day" },
+        { "type": "_mionas-schedule-day" }
+      ]
+    }
+  ]
+}
+{% endschema %}

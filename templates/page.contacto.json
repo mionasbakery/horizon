@@ -547,291 +547,49 @@
                           },
                           "blocks": {}
                         },
-                        "group_6cXPXh": {
-                          "type": "group",
-                          "name": "Group — Hours",
-                          "settings": {
-                            "content_direction": "column",
-                            "vertical_on_mobile": true,
-                            "horizontal_alignment": "flex-start",
-                            "vertical_alignment": "center",
-                            "align_baseline": false,
-                            "horizontal_alignment_flex_direction_column": "flex-start",
-                            "vertical_alignment_flex_direction_column": "center",
-                            "gap": 0,
-                            "width": "fill",
-                            "custom_width": 100,
-                            "width_mobile": "fill",
-                            "custom_width_mobile": 100,
-                            "height": "fit",
-                            "custom_height": 100,
-                            "background_media": "none",
-                            "background_color": "",
-                            "video_position": "cover",
-                            "background_image_position": "cover",
-                            "toggle_overlay": false,
-                            "overlay_color": "#00000026",
-                            "overlay_style": "solid",
-                            "gradient_direction": "to top",
-                            "border": "none",
-                            "border_width": 1,
-                            "border_opacity": 100,
-                            "border_color": "",
-                            "border_radius": 0,
-                            "link": "",
-                            "open_in_new_tab": false,
-                            "placeholder": "",
-                            "padding-block-start": 0,
-                            "padding-block-end": 0,
-                            "padding-inline-start": 0,
-                            "padding-inline-end": 0
-                          },
+                        "mionas_schedule_hours": {
+                          "type": "mionas-schedule",
+                          "name": "Mionas: Schedule — Opening hours",
+                          "settings": {},
                           "blocks": {
-                            "group_MBzcMN": {
-                              "type": "group",
-                              "name": "Tuesday",
+                            "schedule_day_tuesday": {
+                              "type": "_mionas-schedule-day",
+                              "name": "Mionas: Schedule day — Tuesday to Saturday",
                               "settings": {
-                                "content_direction": "row",
-                                "vertical_on_mobile": false,
-                                "horizontal_alignment": "space-between",
-                                "vertical_alignment": "flex-start",
-                                "align_baseline": false,
-                                "horizontal_alignment_flex_direction_column": "flex-start",
-                                "vertical_alignment_flex_direction_column": "center",
-                                "gap": 10,
-                                "width": "fill",
-                                "custom_width": 100,
-                                "width_mobile": "fill",
-                                "custom_width_mobile": 100,
-                                "height": "fit",
-                                "custom_height": 100,
-                                "background_media": "none",
-                                "background_color": "",
-                                "video_position": "cover",
-                                "background_image_position": "cover",
-                                "toggle_overlay": false,
-                                "overlay_color": "#00000026",
-                                "overlay_style": "solid",
-                                "gradient_direction": "to top",
-                                "border": "none",
-                                "border_width": 1,
-                                "border_opacity": 100,
-                                "border_color": "",
-                                "border_radius": 0,
-                                "link": "",
-                                "open_in_new_tab": false,
-                                "placeholder": "",
-                                "padding-block-start": 0,
-                                "padding-block-end": 0,
-                                "padding-inline-start": 0,
-                                "padding-inline-end": 0
+                                "day": "<p>Martes - Sábado</p>",
+                                "hours": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
+                                "size": "md",
+                                "color": "default"
                               },
-                              "blocks": {
-                                "mionas_text_gPEBPb": {
-                                  "type": "mionas-text",
-                                  "name": "Mionas: Text — Day",
-                                  "settings": {
-                                    "text": "<p>Martes - Sábado</p>",
-                                    "variant": "body",
-                                    "size": "md",
-                                    "color": "default",
-                                    "tag": "span",
-                                    "text_wrap": "nowrap",
-                                    "padding-block-start": 0,
-                                    "padding-block-end": 0,
-                                    "padding-inline-start": 0,
-                                    "padding-inline-end": 0
-                                  },
-                                  "blocks": {}
-                                },
-                                "mionas_text_QLENAP": {
-                                  "type": "mionas-text",
-                                  "name": "Mionas: Text — Hours",
-                                  "settings": {
-                                    "text": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
-                                    "variant": "body",
-                                    "size": "md",
-                                    "color": "default",
-                                    "tag": "span",
-                                    "text_wrap": "nowrap",
-                                    "padding-block-start": 0,
-                                    "padding-block-end": 0,
-                                    "padding-inline-start": 0,
-                                    "padding-inline-end": 0
-                                  },
-                                  "blocks": {}
-                                }
-                              },
-                              "block_order": [
-                                "mionas_text_gPEBPb",
-                                "mionas_text_QLENAP"
-                              ]
+                              "blocks": {}
                             },
-                            "group_PiF8pN": {
-                              "type": "group",
-                              "name": "Sunday",
+                            "schedule_day_sunday": {
+                              "type": "_mionas-schedule-day",
+                              "name": "Mionas: Schedule day — Sunday",
                               "settings": {
-                                "content_direction": "row",
-                                "vertical_on_mobile": false,
-                                "horizontal_alignment": "space-between",
-                                "vertical_alignment": "center",
-                                "align_baseline": false,
-                                "horizontal_alignment_flex_direction_column": "flex-start",
-                                "vertical_alignment_flex_direction_column": "center",
-                                "gap": 10,
-                                "width": "fill",
-                                "custom_width": 100,
-                                "width_mobile": "fill",
-                                "custom_width_mobile": 100,
-                                "height": "fit",
-                                "custom_height": 100,
-                                "background_media": "none",
-                                "background_color": "",
-                                "video_position": "cover",
-                                "background_image_position": "cover",
-                                "toggle_overlay": false,
-                                "overlay_color": "#00000026",
-                                "overlay_style": "solid",
-                                "gradient_direction": "to top",
-                                "border": "none",
-                                "border_width": 1,
-                                "border_opacity": 100,
-                                "border_color": "",
-                                "border_radius": 0,
-                                "link": "",
-                                "open_in_new_tab": false,
-                                "placeholder": "",
-                                "padding-block-start": 0,
-                                "padding-block-end": 0,
-                                "padding-inline-start": 0,
-                                "padding-inline-end": 0
+                                "day": "<p>Domingo</p>",
+                                "hours": "<p>10:00 - 14:00</p>",
+                                "size": "md",
+                                "color": "default"
                               },
-                              "blocks": {
-                                "mionas_text_R9mGbj": {
-                                  "type": "mionas-text",
-                                  "name": "Mionas: Text — Day",
-                                  "settings": {
-                                    "text": "<p>Domingo</p>",
-                                    "variant": "body",
-                                    "size": "md",
-                                    "color": "default",
-                                    "tag": "span",
-                                    "text_wrap": "nowrap",
-                                    "padding-block-start": 0,
-                                    "padding-block-end": 0,
-                                    "padding-inline-start": 0,
-                                    "padding-inline-end": 0
-                                  },
-                                  "blocks": {}
-                                },
-                                "mionas_text_jYEPTy": {
-                                  "type": "mionas-text",
-                                  "name": "Mionas: Text — Hours",
-                                  "settings": {
-                                    "text": "<p>10:00 - 14:00</p>",
-                                    "variant": "body",
-                                    "size": "md",
-                                    "color": "default",
-                                    "tag": "span",
-                                    "text_wrap": "nowrap",
-                                    "padding-block-start": 0,
-                                    "padding-block-end": 0,
-                                    "padding-inline-start": 0,
-                                    "padding-inline-end": 0
-                                  },
-                                  "blocks": {}
-                                }
-                              },
-                              "block_order": [
-                                "mionas_text_R9mGbj",
-                                "mionas_text_jYEPTy"
-                              ]
+                              "blocks": {}
                             },
-                            "group_nfqbCq": {
-                              "type": "group",
-                              "name": "Monday",
+                            "schedule_day_monday": {
+                              "type": "_mionas-schedule-day",
+                              "name": "Mionas: Schedule day — Monday",
                               "settings": {
-                                "content_direction": "row",
-                                "vertical_on_mobile": false,
-                                "horizontal_alignment": "space-between",
-                                "vertical_alignment": "flex-start",
-                                "align_baseline": false,
-                                "horizontal_alignment_flex_direction_column": "flex-start",
-                                "vertical_alignment_flex_direction_column": "center",
-                                "gap": 10,
-                                "width": "fill",
-                                "custom_width": 100,
-                                "width_mobile": "fill",
-                                "custom_width_mobile": 100,
-                                "height": "fit",
-                                "custom_height": 100,
-                                "background_media": "none",
-                                "background_color": "",
-                                "video_position": "cover",
-                                "background_image_position": "cover",
-                                "toggle_overlay": false,
-                                "overlay_color": "#00000026",
-                                "overlay_style": "solid",
-                                "gradient_direction": "to top",
-                                "border": "none",
-                                "border_width": 1,
-                                "border_opacity": 100,
-                                "border_color": "",
-                                "border_radius": 0,
-                                "link": "",
-                                "open_in_new_tab": false,
-                                "placeholder": "",
-                                "padding-block-start": 0,
-                                "padding-block-end": 0,
-                                "padding-inline-start": 0,
-                                "padding-inline-end": 0
+                                "day": "<p>Lunes</p>",
+                                "hours": "<p>Cerrado</p>",
+                                "size": "md",
+                                "color": "default"
                               },
-                              "blocks": {
-                                "mionas_text_YpY9Vw": {
-                                  "type": "mionas-text",
-                                  "name": "Mionas: Text — Day",
-                                  "settings": {
-                                    "text": "<p>Lunes</p>",
-                                    "variant": "body",
-                                    "size": "md",
-                                    "color": "default",
-                                    "tag": "span",
-                                    "text_wrap": "nowrap",
-                                    "padding-block-start": 0,
-                                    "padding-block-end": 0,
-                                    "padding-inline-start": 0,
-                                    "padding-inline-end": 0
-                                  },
-                                  "blocks": {}
-                                },
-                                "mionas_text_Lk8Vee": {
-                                  "type": "mionas-text",
-                                  "name": "Mionas: Text — Hours",
-                                  "settings": {
-                                    "text": "<p>Cerrado</p>",
-                                    "variant": "body",
-                                    "size": "md",
-                                    "color": "default",
-                                    "tag": "span",
-                                    "text_wrap": "nowrap",
-                                    "padding-block-start": 0,
-                                    "padding-block-end": 0,
-                                    "padding-inline-start": 0,
-                                    "padding-inline-end": 0
-                                  },
-                                  "blocks": {}
-                                }
-                              },
-                              "block_order": [
-                                "mionas_text_YpY9Vw",
-                                "mionas_text_Lk8Vee"
-                              ]
+                              "blocks": {}
                             }
                           },
                           "block_order": [
-                            "group_MBzcMN",
-                            "group_PiF8pN",
-                            "group_nfqbCq"
+                            "schedule_day_tuesday",
+                            "schedule_day_sunday",
+                            "schedule_day_monday"
                           ]
                         },
                         "mionas_text_LyVtXm": {
@@ -853,7 +611,7 @@
                       },
                       "block_order": [
                         "mionas_text_nzHxRc",
-                        "group_6cXPXh",
+                        "mionas_schedule_hours",
                         "mionas_text_LyVtXm"
                       ]
                     }
