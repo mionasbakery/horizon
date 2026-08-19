@@ -93,7 +93,7 @@
           "blocks": {
             "product_card_gallery_cFExAi": {
               "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
+              "name": "Product card gallery",
               "settings": {
                 "image_ratio": "square",
                 "border": "none",
@@ -109,7 +109,7 @@
             },
             "product_title_j7qXTx": {
               "type": "product-title",
-              "name": "t:names.product_title",
+              "name": "Product title",
               "settings": {
                 "width": "fit-content",
                 "max_width": "normal",
@@ -134,7 +134,7 @@
             },
             "price_fYkUgG": {
               "type": "price",
-              "name": "t:names.product_price",
+              "name": "Price",
               "settings": {
                 "show_sale_price_first": true,
                 "show_installments": false,

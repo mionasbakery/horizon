@@ -14,7 +14,7 @@
       "blocks": {
         "group_4FtiAg": {
           "type": "group",
-          "name": "t:names.header",
+          "name": "Group - Header",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -51,7 +51,7 @@
           "blocks": {
             "text_fRMQMR": {
               "type": "text",
-              "name": "t:names.text",
+              "name": "Text - Heading",
               "settings": {
                 "text": "<h1>Shop by collection</h1>",
                 "width": "100%",
@@ -81,7 +81,7 @@
         },
         "static-collection-card": {
           "type": "_collection-card",
-          "name": "t:names.collection_card",
+          "name": "Collection card",
           "static": true,
           "settings": {
             "placement": "below_image",
@@ -96,7 +96,7 @@
           "blocks": {
             "collection_title_7YgBPU": {
               "type": "collection-title",
-              "name": "t:names.collection_title",
+              "name": "Collection title",
               "settings": {
                 "width": "fit-content",
                 "max_width": "normal",
@@ -120,7 +120,7 @@
             },
             "collection-card-image": {
               "type": "_collection-card-image",
-              "name": "t:names.collection_card_image",
+              "name": "Collection card image",
               "static": true,
               "settings": {
                 "image_ratio": "adapt",
@@ -144,7 +144,7 @@
       "block_order": [
         "group_4FtiAg"
       ],
-      "name": "t:names.collection_list",
+      "name": "Collection list",
       "settings": {
         "layout_type": "grid",
         "carousel_on_mobile": false,

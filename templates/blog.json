@@ -17,8 +17,6 @@
           "name": "Mionas: Breadcrumbs",
           "settings": {
             "menu": "",
-            "home_label": "Home",
-            "label": "Breadcrumb",
             "padding-block-start": 0,
             "padding-block-end": 0
           },
@@ -41,7 +39,7 @@
         "mionas_breadcrumbs_4LE8mm",
         "mionas_text_CiJDq6"
       ],
-      "name": "t:names.heading",
+      "name": "Section - Heading",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -97,7 +95,7 @@
             },
             "heading": {
               "type": "_heading",
-              "name": "t:names.title",
+              "name": "Blog post card title",
               "static": true,
               "settings": {
                 "type_preset": "h4",
@@ -121,7 +119,7 @@
             },
             "blog-post-details": {
               "type": "_blog-post-info-text",
-              "name": "t:names.details",
+              "name": "Blog post card details",
               "static": true,
               "settings": {
                 "show_date": true,

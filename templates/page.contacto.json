@@ -14,7 +14,7 @@
       "blocks": {
         "heading": {
           "type": "mionas-text",
-          "name": "Mionas: Text — Heading",
+          "name": "Mionas: Text - Heading",
           "settings": {
             "text": "<p>Contacto</p>",
             "variant": "display",
@@ -30,7 +30,7 @@
         },
         "subtitle": {
           "type": "mionas-text",
-          "name": "Mionas: Text — Subtitle",
+          "name": "Mionas: Text - Subtitle",
           "settings": {
             "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
             "variant": "body",
@@ -46,7 +46,7 @@
         },
         "columns": {
           "type": "mionas-group",
-          "name": "Mionas: Group — Columns",
+          "name": "Mionas: Group - Columns",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -87,7 +87,7 @@
           "blocks": {
             "group_pV83HJ": {
               "type": "mionas-group",
-              "name": "Mionas: Group — Contact form",
+              "name": "Mionas: Group - Contact form",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -128,7 +128,7 @@
               "blocks": {
                 "mionas_button_fWdrxR": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button — CTA",
+                  "name": "Mionas: Button - CTA",
                   "settings": {
                     "label": "Escríbenos por WhatsApp",
                     "link": "https://wa.me/34933348246",
@@ -153,7 +153,7 @@
                 },
                 "mionas_card_BebNXD": {
                   "type": "group",
-                  "name": "Group — Contact form",
+                  "name": "Group - Contact form",
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
@@ -237,7 +237,7 @@
             },
             "info": {
               "type": "mionas-group",
-              "name": "Mionas: Group — Store info",
+              "name": "Mionas: Group - Store info",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -278,7 +278,7 @@
               "blocks": {
                 "group_UFhtwm": {
                   "type": "mionas-group",
-                  "name": "Mionas: Group — Columns",
+                  "name": "Mionas: Group - Columns",
                   "settings": {
                     "content_direction": "row",
                     "vertical_on_mobile": true,
@@ -319,7 +319,7 @@
                   "blocks": {
                     "mionas_card_Cb3XYY": {
                       "type": "mionas-card",
-                      "name": "Mionas: Card — Visit us",
+                      "name": "Mionas: Card - Visit us",
                       "settings": {
                         "variant": "default",
                         "content_direction": "column",
@@ -347,7 +347,7 @@
                       "blocks": {
                         "mionas_text_dwCwCH": {
                           "type": "mionas-text",
-                          "name": "Mionas: Text — Heading",
+                          "name": "Mionas: Text - Heading",
                           "settings": {
                             "text": "<p>Ven a visitarnos</p>",
                             "variant": "title",
@@ -363,7 +363,7 @@
                         },
                         "mionas_text_WUpHUe": {
                           "type": "mionas-text",
-                          "name": "Mionas: Text — Address",
+                          "name": "Mionas: Text - Address",
                           "settings": {
                             "text": "<p>Carrer de Sant Bonaventura, 16<br/>08870 Sitges, Barcelona<br/>España</p>",
                             "variant": "body",
@@ -380,7 +380,7 @@
                         },
                         "mionas_link_y8gUya": {
                           "type": "mionas-link",
-                          "name": "Mionas: Link — Email",
+                          "name": "Mionas: Link - Email",
                           "settings": {
                             "label": "hola@mionasbakery.com",
                             "link": "mailto:hola@mionasbakery.com",
@@ -393,7 +393,7 @@
                         },
                         "mionas_link_Lpj6bQ": {
                           "type": "mionas-link",
-                          "name": "Mionas: Link — Phone",
+                          "name": "Mionas: Link - Phone",
                           "settings": {
                             "label": "93 334 82 46",
                             "link": "",
@@ -406,7 +406,7 @@
                         },
                         "group_social_p2XKvT": {
                           "type": "mionas-group",
-                          "name": "Mionas: Group — Social links",
+                          "name": "Mionas: Group - Social links",
                           "settings": {
                             "content_direction": "row",
                             "vertical_on_mobile": false,
@@ -448,7 +448,7 @@
                           "blocks": {
                             "mionas_social_link_whatsapp": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link — WhatsApp",
+                              "name": "Mionas: Social link - WhatsApp",
                               "settings": {
                                 "platform": "whatsapp",
                                 "link": "https://wa.me/34933348246",
@@ -458,7 +458,7 @@
                             },
                             "mionas_social_link_instagram": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link — Instagram",
+                              "name": "Mionas: Social link - Instagram",
                               "settings": {
                                 "platform": "instagram",
                                 "link": "https://instagram.com/mionasbakery_sitges",
@@ -468,7 +468,7 @@
                             },
                             "mionas_social_link_tiktok": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link — TikTok",
+                              "name": "Mionas: Social link - TikTok",
                               "settings": {
                                 "platform": "tiktok",
                                 "link": "https://tiktok.com/@mionasbakery_sitges",
@@ -478,7 +478,7 @@
                             },
                             "mionas_social_link_youtube": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link — YouTube",
+                              "name": "Mionas: Social link - YouTube",
                               "settings": {
                                 "platform": "youtube",
                                 "link": "https://www.youtube.com/@mionasbakery_sitges",
@@ -505,7 +505,7 @@
                     },
                     "mionas_card_GBQLYT": {
                       "type": "mionas-card",
-                      "name": "Mionas: Card — Hours",
+                      "name": "Mionas: Card - Hours",
                       "settings": {
                         "variant": "default",
                         "content_direction": "column",
@@ -533,7 +533,7 @@
                       "blocks": {
                         "mionas_text_nzHxRc": {
                           "type": "mionas-text",
-                          "name": "Mionas: Text — Heading",
+                          "name": "Mionas: Text - Heading",
                           "settings": {
                             "text": "<p>Horario</p>",
                             "variant": "title",
@@ -549,12 +549,12 @@
                         },
                         "mionas_schedule_hours": {
                           "type": "mionas-schedule",
-                          "name": "Mionas: Schedule — Opening hours",
+                          "name": "Mionas: Schedule - Opening hours",
                           "settings": {},
                           "blocks": {
                             "schedule_day_tuesday": {
                               "type": "_mionas-schedule-day",
-                              "name": "Mionas: Schedule day — Tuesday to Saturday",
+                              "name": "Mionas: Schedule day - Tuesday to Saturday",
                               "settings": {
                                 "day": "<p>Martes - Sábado</p>",
                                 "hours": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
@@ -565,7 +565,7 @@
                             },
                             "schedule_day_sunday": {
                               "type": "_mionas-schedule-day",
-                              "name": "Mionas: Schedule day — Sunday",
+                              "name": "Mionas: Schedule day - Sunday",
                               "settings": {
                                 "day": "<p>Domingo</p>",
                                 "hours": "<p>10:00 - 14:00</p>",
@@ -576,7 +576,7 @@
                             },
                             "schedule_day_monday": {
                               "type": "_mionas-schedule-day",
-                              "name": "Mionas: Schedule day — Monday",
+                              "name": "Mionas: Schedule day - Monday",
                               "settings": {
                                 "day": "<p>Lunes</p>",
                                 "hours": "<p>Cerrado</p>",
@@ -594,7 +594,7 @@
                         },
                         "mionas_text_LyVtXm": {
                           "type": "mionas-text",
-                          "name": "Mionas: Text — Note",
+                          "name": "Mionas: Text - Note",
                           "settings": {
                             "text": "<p>Los horarios pueden variar en días festivos. Consúltanos por WhatsApp o redes sociales para confirmar.</p>",
                             "variant": "body",
@@ -648,7 +648,7 @@
         },
         "responsive_css": {
           "type": "custom-liquid",
-          "name": "Custom liquid — Responsive CSS",
+          "name": "Custom liquid - Responsive CSS",
           "settings": {
             "custom_liquid": "{% render 'contacto-page-bridge' %}"
           },
@@ -661,7 +661,7 @@
         "columns",
         "responsive_css"
       ],
-      "name": "Section — Contact",
+      "name": "Section - Contact",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,

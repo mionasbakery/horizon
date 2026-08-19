@@ -259,7 +259,7 @@
       "blocks": {
         "header_group": {
           "type": "group",
-          "name": "t:names.group",
+          "name": "Group - Header",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -337,7 +337,7 @@
         },
         "static-product-card": {
           "type": "_product-card",
-          "name": "t:names.product_card",
+          "name": "Product card",
           "static": true,
           "settings": {
             "product_card_gap": 16,
@@ -493,7 +493,7 @@
       "block_order": [
         "header_group"
       ],
-      "name": "Mionas: Collection — Best sellers",
+      "name": "Mionas: Collection - Best sellers",
       "settings": {
         "collection": "lo-mas-vendido",
         "max_products": 4,
@@ -581,7 +581,7 @@
         },
         "custom_liquid_DwXFJd": {
           "type": "custom-liquid",
-          "name": "t:names.custom_liquid",
+          "name": "Custom liquid - Google reviews",
           "settings": {
             "custom_liquid": "<script defer async src='https://cdn.trustindex.io/loader.js?e10e64877f0b7480fd46da287ff'></script>"
           },
@@ -592,7 +592,7 @@
         "group_8n3QFH",
         "custom_liquid_DwXFJd"
       ],
-      "name": "Section — Google reviews",
+      "name": "Section - Google reviews",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -791,7 +791,6 @@
               "settings": {
                 "email_label": "Email",
                 "email_placeholder": "",
-                "button_label": "Suscribirme",
                 "button_width": "fit",
                 "submit_variant": "primary",
                 "submit_size": "md",

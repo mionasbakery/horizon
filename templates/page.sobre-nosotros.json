@@ -17,8 +17,6 @@
           "name": "Mionas: Breadcrumbs",
           "settings": {
             "menu": "",
-            "home_label": "Home",
-            "label": "Breadcrumb",
             "padding-block-start": 0,
             "padding-block-end": 0
           },
@@ -26,7 +24,7 @@
         },
         "mionas_text_ygndnJ": {
           "type": "mionas-text",
-          "name": "Mionas: Text — Heading",
+          "name": "Mionas: Text - Heading",
           "settings": {
             "text": "<p>Sobre nosotros</p>",
             "variant": "display",
@@ -42,7 +40,7 @@
         },
         "mionas_text_k97Ddj": {
           "type": "mionas-text",
-          "name": "Mionas: Text — Description",
+          "name": "Mionas: Text - Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
             "variant": "body",
@@ -62,7 +60,7 @@
         "mionas_text_ygndnJ",
         "mionas_text_k97Ddj"
       ],
-      "name": "Section — Heading",
+      "name": "Section - Heading",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -94,7 +92,7 @@
     },
     "section_photo": {
       "type": "section",
-      "name": "Section — Image",
+      "name": "Section - Image",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -180,7 +178,7 @@
             },
             "text_heading": {
               "type": "mionas-text",
-              "name": "Mionas: Text — Heading",
+              "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>Nuestra historia</p>",
                 "variant": "display",
@@ -196,7 +194,7 @@
             },
             "text_para_1": {
               "type": "mionas-text",
-              "name": "Mionas: Text — Paragraph 1",
+              "name": "Mionas: Text - Paragraph 1",
               "settings": {
                 "text": "<p>Hola! Soy Maria, la fundadora de Mionas Bakery. Ingeniera informática de profesión y pastelera (y empresaria) por vocación.</p>",
                 "variant": "body",
@@ -212,7 +210,7 @@
             },
             "text_para_2": {
               "type": "mionas-text",
-              "name": "Mionas: Text — Paragraph 2",
+              "name": "Mionas: Text - Paragraph 2",
               "settings": {
                 "text": "<p>Enamorada de mi carrera, de mis estudios, lo que un día fue mi pasión poco a poco se convirtió en mi losa. Y lo que un día fue una idea tonta —«oye, deberíamos abrir un obrador aquí en Sitges»— de repente (bueno, nada es tan de repente: pasaron 5 años hasta materializarlo) se convirtió en realidad. Y apostamos por ello, y nos dejamos llevar.</p>",
                 "variant": "body",
@@ -228,7 +226,7 @@
             },
             "text_para_3": {
               "type": "mionas-text",
-              "name": "Mionas: Text — Paragraph 3",
+              "name": "Mionas: Text - Paragraph 3",
               "settings": {
                 "text": "<p>Inauguramos el 31 de mayo de 2025 en Sitges, en una callecita del centro, un obrador especializado en cookies americanas. Cada día tenemos una vitrina llena de cookies. De vez en cuando también puedes encontrar otras de nuestras especialidades: el brookie de la casa, cinnamon rolls o cheesecakes. También elaboramos mini cookies, mega cookies y pasteles (layer cakes) por encargo.</p>",
                 "variant": "body",
@@ -244,7 +242,7 @@
             },
             "group_salto": {
               "type": "group",
-              "name": "Group — Leap of faith",
+              "name": "Group - Leap of faith",
               "settings": {
                 "content_direction": "row",
                 "vertical_on_mobile": true,
@@ -308,7 +306,7 @@
                 },
                 "group_salto_copy": {
                   "type": "group",
-                  "name": "Group — Copy",
+                  "name": "Group - Copy",
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
@@ -348,7 +346,7 @@
                   "blocks": {
                     "text_salto_heading": {
                       "type": "mionas-text",
-                      "name": "Mionas: Text — Heading",
+                      "name": "Mionas: Text - Heading",
                       "settings": {
                         "text": "<p>El salto al vacío</p>",
                         "variant": "title",
@@ -364,7 +362,7 @@
                     },
                     "text_salto_body": {
                       "type": "mionas-text",
-                      "name": "Mionas: Text — Description",
+                      "name": "Mionas: Text - Description",
                       "settings": {
                         "text": "<p>Este proyecto es lo más ambicioso y el salto al vacío más grande que he hecho nunca. Si quieres seguir nuestro día a día, te invito a seguirnos en Instagram — y si quieres probar nuestras cookies, pásate por la sección de cookies y cajas y déjate llevar.</p>",
                         "variant": "body",
@@ -392,7 +390,7 @@
             },
             "group_cta": {
               "type": "group",
-              "name": "Group — CTA",
+              "name": "Group - CTA",
               "settings": {
                 "content_direction": "row",
                 "vertical_on_mobile": true,
@@ -432,7 +430,7 @@
               "blocks": {
                 "button_buy": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button — Buy",
+                  "name": "Mionas: Button - Buy",
                   "settings": {
                     "label": "Comprar cookies",
                     "link": "shopify://collections/comprar-cookies",
@@ -445,7 +443,7 @@
                 },
                 "button_visit": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button — Visit",
+                  "name": "Mionas: Button - Visit",
                   "settings": {
                     "label": "Visita la tienda",
                     "link": "/pages/contacto",
@@ -477,7 +475,7 @@
       "block_order": [
         "group_container"
       ],
-      "name": "Section — Our story",
+      "name": "Section - Our story",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,

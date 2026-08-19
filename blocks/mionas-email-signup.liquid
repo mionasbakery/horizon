@@ -48,7 +48,10 @@
 
   # mionas-submit-button has no fallback of its own -- a merchant who clears "Button label" would
   # otherwise ship a button with no accessible name, announced by screen readers as just "button".
-  assign button_label = block_settings.button_label | default: 'Suscribirme'
+  assign button_label = block_settings.button_label
+  if button_label == blank
+    assign button_label = 'blocks.email_signup.button' | t
+  endif
 %}
 
 <div
@@ -282,7 +285,7 @@
       "type": "text",
       "id": "button_label",
       "label": "Button label",
-      "default": "Suscribirme"
+      "info": "Leave empty to use the theme's own wording, which stays translated per language."
     },
     {
       "type": "select",

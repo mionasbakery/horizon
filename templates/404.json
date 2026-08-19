@@ -14,7 +14,7 @@
       "blocks": {
         "text_GqmVFf": {
           "type": "text",
-          "name": "t:names.text",
+          "name": "Text - Heading",
           "settings": {
             "text": "<h1>Page not found</h1>",
             "width": "100%",
@@ -39,7 +39,7 @@
         },
         "text_Ua9XAW": {
           "type": "text",
-          "name": "t:names.text",
+          "name": "Text - Description",
           "settings": {
             "text": "<p>The link may be incorrect, or the page has been removed. </p>",
             "width": "100%",
@@ -64,7 +64,7 @@
         },
         "button_PAQMwR": {
           "type": "button",
-          "name": "t:names.button",
+          "name": "Button - Continue shopping",
           "settings": {
             "label": "Continue shopping",
             "link": "shopify://collections/all",
@@ -130,7 +130,7 @@
           "blocks": {
             "text_WJEa9Q": {
               "type": "text",
-              "name": "t:names.text",
+              "name": "Text - Recommendations heading",
               "settings": {
                 "text": "<p>Discover something new</p>",
                 "width": "fit-content",
@@ -160,7 +160,7 @@
         },
         "static-product-card": {
           "type": "_product-card",
-          "name": "t:names.product_card",
+          "name": "Product card",
           "static": true,
           "settings": {
             "product_card_gap": 16,
@@ -178,7 +178,7 @@
           "blocks": {
             "product_card_gallery_wxYqE3": {
               "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
+              "name": "Product card gallery",
               "settings": {
                 "image_ratio": "square",
                 "border": "none",
@@ -194,7 +194,7 @@
             },
             "product_title_83YMDL": {
               "type": "product-title",
-              "name": "t:names.product_title",
+              "name": "Product title",
               "settings": {
                 "width": "100%",
                 "max_width": "normal",
@@ -219,7 +219,7 @@
             },
             "price_A6DYPt": {
               "type": "price",
-              "name": "t:names.product_price",
+              "name": "Price",
               "settings": {
                 "show_sale_price_first": true,
                 "show_installments": false,
@@ -248,7 +248,7 @@
           ]
         }
       },
-      "name": "t:names.featured_collection",
+      "name": "Product list - Recommendations",
       "settings": {
         "collection": "all",
         "layout_type": "grid",

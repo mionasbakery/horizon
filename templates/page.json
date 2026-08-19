@@ -13,8 +13,6 @@
       "type": "mionas-breadcrumbs",
       "name": "Mionas: Breadcrumbs",
       "settings": {
-        "home_label": "Home",
-        "label": "Breadcrumb",
         "section_width": "page-width",
         "background_color": "",
         "padding-block-start": 12,
@@ -27,7 +25,7 @@
       "blocks": {
         "heading": {
           "type": "text",
-          "name": "Text — Heading",
+          "name": "Text - Heading",
           "settings": {
             "text": "<h1>{{ closest.page.title }}</h1>",
             "width": "100%",

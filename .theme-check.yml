@@ -33,3 +33,43 @@ ValidScopedCSSClass:
   ignore:
     - 'snippets/header-drawer.liquid'
     - 'snippets/mega-menu-list.liquid'
+
+# These locales aren't published on this store, so their translations are allowed to lag behind
+# en.default.json. If one is published later, remove it from this list and backfill whatever
+# keys it's missing, or that storefront will show "Translation missing". The ignore is
+# file-scoped, not key-scoped, so every key added to en.default.json from now on goes unchecked
+# against these files too.
+MatchingTranslations:
+  ignore:
+    - 'locales/ar.json'
+    - 'locales/bg.json'
+    - 'locales/cs.json'
+    - 'locales/da.json'
+    - 'locales/de.json'
+    - 'locales/el.json'
+    - 'locales/fi.json'
+    - 'locales/fr.json'
+    - 'locales/he.json'
+    - 'locales/hr.json'
+    - 'locales/hu.json'
+    - 'locales/id.json'
+    - 'locales/it.json'
+    - 'locales/ja.json'
+    - 'locales/ko.json'
+    - 'locales/lt.json'
+    - 'locales/nb.json'
+    - 'locales/nl.json'
+    - 'locales/pl.json'
+    - 'locales/pt-BR.json'
+    - 'locales/pt-PT.json'
+    - 'locales/ro.json'
+    - 'locales/ru.json'
+    - 'locales/sk.json'
+    - 'locales/sl.json'
+    - 'locales/sv.json'
+    - 'locales/th.json'
+    - 'locales/tr.json'
+    - 'locales/ur.json'
+    - 'locales/vi.json'
+    - 'locales/zh-CN.json'
+    - 'locales/zh-TW.json'

@@ -20,7 +20,7 @@
 
   `| date:` accepts the `custom.course_date` metafield value directly, so no string-parsing
   fallback is needed. But `| date: '%b'` renders the English abbreviation regardless of storefront
-  locale, so the Spanish month label below is looked up from a fixed list keyed by the
+  locale, so the month label below is looked up from a locale key keyed by the
   locale-independent `%m` instead.
 {%- endcomment -%}
 
@@ -35,15 +35,14 @@
 
   assign course_date = product.metafields.custom.course_date.value
 
-  # Spanish month label lookup -- see the header comment above on why `%b` is not trusted. '%m' is
-  # numeric and locale-independent, so indexing into a fixed Spanish list with it is safe where
-  # `%b` is not.
+  # '%m' is numeric and locale-independent, unlike `%b` (see the header comment above), so it's
+  # safe to index month_names with.
   #
   # If course_date were blank, '%m' | plus: 0 is 0 and `minus: 1` makes month_index -1. Liquid's
-  # array indexing follows Ruby semantics, so a negative index counts from the end -- month_names[-1]
-  # is 'DIC', a confidently wrong month rather than an error. The render guard below requires
-  # course_date to be present specifically to keep this branch unreachable.
-  assign month_names = 'ENE,FEB,MAR,ABR,MAY,JUN,JUL,AGO,SEP,OCT,NOV,DIC' | split: ','
+  # array indexing follows Ruby semantics, so a negative index counts from the end instead of
+  # erroring, silently yielding the wrong month rather than a visible failure. The render guard
+  # below requires course_date to be present specifically to keep this branch unreachable.
+  assign month_names = 'content.month_abbreviations' | t | split: ','
   assign month_index = course_date | date: '%m' | plus: 0 | minus: 1
   assign month_label = month_names[month_index]
 

@@ -15,8 +15,15 @@
   parent Section, since the parent's `horizontal_alignment` already shrink-wraps this block.
 {%- endcomment -%}
 {% liquid
-  assign home_label = block.settings.home_label | default: 'Home'
-  assign landmark_label = block.settings.label | default: 'Breadcrumb'
+  assign home_label = block.settings.home_label
+  if home_label == blank
+    assign home_label = 'content.breadcrumbs_home' | t
+  endif
+
+  assign landmark_label = block.settings.label
+  if landmark_label == blank
+    assign landmark_label = 'accessibility.breadcrumbs' | t
+  endif
 %}
 
 <div
@@ -46,14 +53,13 @@
       "type": "text",
       "id": "home_label",
       "label": "Home label",
-      "default": "Home"
+      "info": "Leave empty to use the theme's own wording, which stays translated per language."
     },
     {
       "type": "text",
       "id": "label",
       "label": "Accessible name",
-      "default": "Breadcrumb",
-      "info": "Announced by screen readers to describe the trail. Not shown visually."
+      "info": "Announced by screen readers to describe the trail. Not shown visually. Leave empty to use the theme's own wording, which stays translated per language."
     },
     {
       "type": "header",

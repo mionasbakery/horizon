@@ -13,8 +13,6 @@
       "type": "mionas-breadcrumbs",
       "name": "Mionas: Breadcrumbs",
       "settings": {
-        "home_label": "Home",
-        "label": "Breadcrumb",
         "section_width": "page-width",
         "background_color": "",
         "padding-block-start": 12,
@@ -26,7 +24,7 @@
       "blocks": {
         "blog-post-title": {
           "type": "text",
-          "name": "t:names.title",
+          "name": "Text - Post title",
           "settings": {
             "text": "<h1>{{ article.title }}</h1>",
             "width": "100%",
@@ -51,7 +49,7 @@
         },
         "blog-post-details": {
           "type": "_blog-post-info-text",
-          "name": "t:names.details",
+          "name": "Blog post details",
           "settings": {
             "show_date": true,
             "show_author": false,
@@ -65,7 +63,7 @@
         },
         "blog-post-image": {
           "type": "_blog-post-featured-image",
-          "name": "t:names.featured_image",
+          "name": "Blog post featured image",
           "settings": {
             "image_ratio": "landscape",
             "width": "fill",

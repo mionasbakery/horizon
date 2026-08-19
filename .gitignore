@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.log
 .superpowers/
-docs/superpowers
+docs/
+docs/superpowers/
 .env
 .env.local

@@ -11,6 +11,7 @@
   "accessibility": {
     "account": "Account",
     "active_filters": "Active filters:",
+    "breadcrumbs": "Breadcrumb",
     "cart": "Cart",
     "cart_count": "Total items in cart",
     "close_dialog": "Close dialog",
@@ -132,6 +133,7 @@
       "error_heading": "Please adjust the following:"
     },
     "email_signup": {
+      "button": "Subscribe",
       "label": "Email",
       "placeholder": "Email address",
       "success": "Thanks for subscribing!"
@@ -171,6 +173,7 @@
     "account_orders": "Orders",
     "account_profile": "Profile",
     "blog_details_separator": "|",
+    "breadcrumbs_home": "Home",
     "cart_estimated_total": "Estimated total",
     "cart_title": "Cart",
     "cart_subtotal": "Subtotal",
@@ -213,6 +216,7 @@
     "item_count_cutoff": "More than {{ count }} items",
     "language": "Language",
     "localization_region_and_language": "Region and language",
+    "month_abbreviations": "JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC",
     "no_products_found": "No products found.",
     "no_results_found": "No results found",
     "page_placeholder_title": "Page title",

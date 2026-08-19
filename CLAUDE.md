@@ -49,9 +49,9 @@ decisions.
 
 Every section/block instance in `templates/*.json` needs an explicit `"name"` naming its role on
 that page, in English — not left as the component's generic default or a `t:names.*` locale key.
-Format is `"Mionas: {Component} — {Role}"` (custom `mionas-*` components) or `"{Component} —
+Format is `"Mionas: {Component} - {Role}"` (custom `mionas-*` components) or `"{Component} -
 {Role}"` (native components); the role is omitted when it'd just restate the component name (e.g.
-`"Mionas: Card"` with no role, not `"Mionas: Card — Card"`). Presence of "Mionas:" is the only
+`"Mionas: Card"` with no role, not `"Mionas: Card - Card"`). Presence of "Mionas:" is the only
 signal for custom vs. native in the editor tree, so don't drop it.
 
 ## Native files
