@@ -54,7 +54,8 @@
     "view_disclosure_information_for_product": "Mostra la informació de divulgació per a {{ product_title }}",
     "view_pricing_info": "Mostra la informació de preus",
     "price_filter_low": "Preu mínim",
-    "price_filter_high": "Preu màxim"
+    "price_filter_high": "Preu màxim",
+    "show_submenu": "Mostra el submenú de {{ title }}"
   },
   "actions": {
     "add": "Afegeix",
@@ -63,6 +64,7 @@
     "apply": "Aplica",
     "back": "Enrere",
     "back_to": "Torna a {{ title }}",
+    "back_to_main_menu": "Torna al menú principal",
     "choose": "Tria",
     "clear": "Neteja",
     "clear_all": "Neteja-ho tot",

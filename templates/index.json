@@ -130,7 +130,11 @@
                 "text": "<p>ESPECIALIDAD EN COOKIES</p>",
                 "size": "lg",
                 "variant": "accent",
-                "tag": "div"
+                "tag": "div",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             },
@@ -143,6 +147,7 @@
                 "size": "lg",
                 "color": "default",
                 "tag": "h1",
+                "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -159,6 +164,7 @@
                 "size": "lg",
                 "color": "default",
                 "tag": "p",
+                "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -215,7 +221,9 @@
                     "open_in_new_tab": false,
                     "variant": "primary",
                     "size": "md",
-                    "full_width": false
+                    "full_width": false,
+                    "icon": "none",
+                    "icon_position": "leading"
                   },
                   "blocks": {}
                 }
@@ -298,6 +306,7 @@
                 "size": "md",
                 "color": "primary",
                 "tag": "h2",
+                "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -314,7 +323,9 @@
                 "open_in_new_tab": false,
                 "variant": "primary",
                 "size": "md",
-                "full_width": false
+                "full_width": false,
+                "icon": "none",
+                "icon_position": "leading"
               },
               "blocks": {}
             }
@@ -345,7 +356,7 @@
             "card-gallery": {
               "type": "_product-card-gallery",
               "settings": {
-                "image_ratio": "square",
+                "image_ratio": "landscape",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
@@ -369,7 +380,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
+                "gap": 8,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -420,7 +431,8 @@
                     "variant": "title",
                     "size": "sm",
                     "color": "default",
-                    "tag": "div",
+                    "tag": "h3",
+                    "text_wrap": "normal",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -436,6 +448,7 @@
                     "size": "sm",
                     "color": "default",
                     "show_compare_at_price": false,
+                    "show_tax_info": false,
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -483,11 +496,11 @@
       "name": "Mionas: Collection — Best sellers",
       "settings": {
         "collection": "lo-mas-vendido",
-        "max_products": 5,
+        "max_products": 4,
         "layout_type": "grid",
         "carousel_on_mobile": false,
-        "columns": 5,
-        "mobile_columns": "2",
+        "columns": 4,
+        "mobile_columns": "1",
         "mobile_card_size": "60cqw",
         "columns_gap": 16,
         "rows_gap": 24,
@@ -553,6 +566,7 @@
                 "size": "md",
                 "color": "primary",
                 "tag": "h2",
+                "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -729,7 +743,11 @@
                 "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
                 "size": "lg",
                 "variant": "accent",
-                "tag": "div"
+                "tag": "div",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             },
@@ -742,6 +760,7 @@
                 "size": "md",
                 "color": "primary",
                 "tag": "h2",
+                "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -758,6 +777,7 @@
                 "size": "lg",
                 "color": "default",
                 "tag": "p",
+                "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -773,8 +793,13 @@
                 "email_placeholder": "",
                 "button_label": "Suscribirme",
                 "button_width": "fit",
+                "submit_variant": "primary",
+                "submit_size": "md",
+                "field_surface": true,
                 "success_text": "¡Gracias! Ya estás suscrito.",
                 "customer_tag": "",
+                "consent_text": "",
+                "field_gap": 16,
                 "layout": "stacked",
                 "width": "fill",
                 "custom_width": 100,

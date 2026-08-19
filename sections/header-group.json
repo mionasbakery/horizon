@@ -45,7 +45,10 @@
             "text_color_navigation_bar": "",
             "drawer_accordion": false,
             "drawer_accordion_expand_first": true,
-            "drawer_dividers": false
+            "drawer_dividers": false,
+            "panel_max_width": 1240,
+            "panel_gap": 16,
+            "panel_columns": 6
           },
           "blocks": {}
         }

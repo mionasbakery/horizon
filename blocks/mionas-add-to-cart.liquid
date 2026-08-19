@@ -37,9 +37,9 @@
   id -- a second instance per card would collide with it. settings.quick_add is off in this store
   today, but the fallback still needs to work if a merchant re-enables it.
 
-  The Variant setting offers four of mionas-button.liquid's seven variants: danger and the two
-  inverse variants exist for destructive actions and dark grounds, neither of which applies to a
-  white product card.
+  The Variant setting offers all seven of mionas-button.liquid's variants. The two inverse variants
+  only read correctly on dark grounds, and danger exists for destructive actions -- the schema
+  leaves that judgement to the merchant rather than restricting the list.
 
   Known cosmetic overlap: pressing this button also dims the whole card, because
   snippets/product-card-bridge.liquid's `.product-card:active .product-card__content` rule matches
@@ -219,6 +219,7 @@
               add_to_cart_text: add_to_cart_text,
               class: button_classes,
               can_add_to_cart: can_add_to_cart,
+              show_icon: can_add_to_cart,
               product: product
             %}
           {%- endif -%}
@@ -402,7 +403,10 @@
         { "value": "primary", "label": "Primary" },
         { "value": "secondary", "label": "Secondary" },
         { "value": "outline", "label": "Outline" },
-        { "value": "ghost", "label": "Ghost" }
+        { "value": "ghost", "label": "Ghost" },
+        { "value": "danger", "label": "Danger" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-ghost", "label": "Inverse ghost" }
       ],
       "default": "primary"
     },
