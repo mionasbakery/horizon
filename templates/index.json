@@ -57,7 +57,7 @@
               "type": "image",
               "name": "Image",
               "settings": {
-                "image": "shopify://shop_images/split-hero-maria-cookies.png",
+                "image": "shopify://shop_images/portada-split-hero.png",
                 "link": "",
                 "image_ratio": "landscape",
                 "width": "fill",
