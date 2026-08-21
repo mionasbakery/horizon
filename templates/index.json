@@ -57,7 +57,7 @@
               "type": "image",
               "name": "Image",
               "settings": {
-                "image": "shopify://shop_images/DSC0380.jpg",
+                "image": "shopify://shop_images/split-hero-maria-cookies.png",
                 "link": "",
                 "image_ratio": "landscape",
                 "width": "fill",
@@ -226,10 +226,26 @@
                     "icon_position": "leading"
                   },
                   "blocks": {}
+                },
+                "mionas_button_aQjVMK": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button",
+                  "settings": {
+                    "label": "Nuestra historia →",
+                    "link": "shopify://collections/comprar-cookies",
+                    "open_in_new_tab": false,
+                    "variant": "ghost",
+                    "size": "md",
+                    "full_width": false,
+                    "icon": "none",
+                    "icon_position": "leading"
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
-                "mionas_button_c3HrXt"
+                "mionas_button_c3HrXt",
+                "mionas_button_aQjVMK"
               ]
             }
           },
@@ -791,6 +807,7 @@
               "settings": {
                 "email_label": "Email",
                 "email_placeholder": "",
+                "button_label": "",
                 "button_width": "fit",
                 "submit_variant": "primary",
                 "submit_size": "md",
