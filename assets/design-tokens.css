@@ -13,6 +13,7 @@
   --button-state-disabled-opacity: 0.5;
   --card-state-pressed-opacity: 0.92;
   --checkbox-state-disabled-opacity: 0.5;
+  --faq-question-header-icon-size: 16px;
   --feature-card-base-aspect-ratio: 1.6;
   --feature-card-subtitle-opacity: 0.9;
   --footer-tagline-foreground: #e0a06a;
@@ -132,6 +133,12 @@
   --checkbox-base-padding: 4px;
   --checkbox-row-padding: 8px;
   --checkbox-start-padding: 16px;
+  --faq-base-divider-color: #ece8e2;
+  --faq-base-divider-width: 1px;
+  --faq-question-header-font-weight: 600;
+  --faq-question-header-padding-block: 16px;
+  --faq-question-header-gap: 12px;
+  --faq-question-content-padding-block-end: 16px;
   --feature-card-base-background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.82) 100%);
   --feature-card-overlay-padding: 16px;
   --footer-base-background: #101413;

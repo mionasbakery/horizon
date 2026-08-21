@@ -248,6 +248,19 @@ export const EXPECTED_TOKENS = {
   "--mega-menu-item-state-hover-foreground": "#0b078c",
   "--mega-menu-item-state-hover-scale": "1.05",
   "--mega-menu-item-state-pressed-opacity": "0.92",
+  // FAQ accordion, spent by blocks/mionas-faq.liquid (dividers) and
+  // blocks/_mionas-faq-question.liquid (layout + caret). Mirrors
+  // ../design-system/src/components/Faq + FaqQuestion. Question and answer both render
+  // at the body-md role (pinned above); the header's only own type token is the
+  // question's semibold weight, and the caret centering spends
+  // --text-role-body-md-line-height directly.
+  "--faq-base-divider-color": "#ece8e2",
+  "--faq-base-divider-width": "1px",
+  "--faq-question-header-font-weight": "600",
+  "--faq-question-header-padding-block": "16px",
+  "--faq-question-header-gap": "12px",
+  "--faq-question-header-icon-size": "16px",
+  "--faq-question-content-padding-block-end": "16px",
 };
 
 export const REQUIRED_TOKENS = Object.keys(EXPECTED_TOKENS);

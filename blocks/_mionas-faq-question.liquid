@@ -1,0 +1,128 @@
+{%- doc -%}
+  Renders one FAQ question with its collapsible richtext answer: a <details> row whose
+  summary is the question, via the native accordion-custom-component snippet.
+{%- enddoc -%}
+
+{%- comment -%}
+  Mirrors ../design-system/src/components/Faq/FaqQuestion.tsx: question and answer both
+  render at the body-md role (via mionas-text); the only type this block owns is the
+  question's semibold weight, which the role can't carry. Private (underscore)
+  because a lone row has no divider context -- only mionas-faq accepts it, the same
+  parent/child shape as mionas-schedule and _mionas-schedule-day. Rendering through the
+  native accordion-custom-component snippet (consumption, not an edit) keeps Horizon's
+  open/close animation and keyboard behavior without duplicating them.
+
+  The caret carries the native `icon-caret icon-animated` classes instead of a block-owned
+  transform/transition: accordion-custom-component renders summary-icon-styles, whose
+  `details[open] > summary .icon-animated > svg` rule and `.svg-wrapper` transition already
+  do the rotation (same pattern as blocks/disclosures.liquid and blocks/_accordion-row.liquid).
+  A second rotation rule here would just race that one.
+
+  `details`, `icon-animated` and `details-content` are defined in accordion-custom-component.liquid
+  and summary-icon-styles.liquid, not here -- ValidScopedCSSClass can't see across that render
+  boundary, same reason mionas-schedule-day.liquid disables it for text-role classes.
+{%- endcomment -%}
+{% assign block_settings = block.settings %}
+
+{% # theme-check-disable ValidScopedCSSClass %}
+{% capture faq_question_children %}
+  <details
+    class="details mionas-faq-question"
+    {% if block_settings.open_by_default %}
+      open
+    {% endif %}
+    {{ block.shopify_attributes }}
+  >
+    <summary class="mionas-faq-question__header">
+      {%- capture faq_question_label -%}{{ block_settings.question | escape }}{%- endcapture -%}
+      {%- render 'mionas-text',
+        content: faq_question_label,
+        variant: 'body',
+        size: 'md',
+        tag: 'span',
+        class: 'mionas-faq-question__label'
+      -%}
+      <span class="svg-wrapper icon-caret icon-animated mionas-faq-question__caret">
+        {{- 'icon-caret.svg' | inline_asset_content -}}
+      </span>
+    </summary>
+    <div class="details-content mionas-faq-question__content">
+      {% render 'mionas-text', content: block_settings.answer, variant: 'body', size: 'md', tag: 'div' %}
+    </div>
+  </details>
+{% endcapture %}
+{% # theme-check-enable ValidScopedCSSClass %}
+{% render 'accordion-custom-component',
+  children: faq_question_children,
+  open_by_default_on_desktop: block_settings.open_by_default,
+  open_by_default_on_mobile: block_settings.open_by_default
+%}
+
+{% stylesheet %}
+  .mionas-faq-question__header {
+    display: flex;
+    /* flex-start, not center: on a wrapped question the caret must sit on the
+       first line, not float mid-block. The caret rules below re-center it
+       within that first line box. */
+    align-items: flex-start;
+    gap: var(--faq-question-header-gap);
+    padding-block: var(--faq-question-header-padding-block);
+    min-height: var(--minimum-touch-target);
+    cursor: pointer;
+  }
+
+  /* Two selectors deep on purpose: a single class would tie with the text-role
+     class and leave the winner to bundle order (the .text-role.mionas-stamp pattern). */
+  .mionas-faq-question__header .mionas-faq-question__label {
+    flex: 1;
+    font-weight: var(--faq-question-header-font-weight);
+  }
+
+  .mionas-faq-question__header .mionas-faq-question__caret {
+    flex-shrink: 0;
+    width: var(--faq-question-header-icon-size);
+    height: var(--faq-question-header-icon-size);
+    /* Centers the caret in the label's first line box -- the body-md role the
+       label renders at, hence the role-token spend. */
+    margin-block-start: calc(
+      (var(--text-role-body-md-line-height) - var(--faq-question-header-icon-size)) / 2
+    );
+  }
+
+  .mionas-faq-question__content {
+    padding-block-end: var(--faq-question-content-padding-block-end);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: FAQ question",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "question",
+      "label": "Question",
+      "default": "¿Puedo recoger mi pedido en la tienda?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer",
+      "label": "Answer",
+      "default": "<p>Sí. Puedes recoger tu pedido en la tienda dentro del horario de apertura.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "Open by default",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: FAQ question",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,51 @@
+{%- doc -%}
+  Renders _mionas-faq-question children as a divided stack: one divider between each pair
+  of questions, none above the first or below the last.
+{%- enddoc -%}
+
+{%- comment -%}
+  Mirrors ../design-system/src/components/Faq/Faq.tsx. Dividers live on this parent, not
+  on the rows, and only between neighbors — each child renders as an <accordion-custom>
+  element, which is what the sibling selector targets. With no group border, an empty or
+  single-question group renders rule-free with no extra guard.
+{%- endcomment -%}
+<div class="mionas-faq" {{ block.shopify_attributes }}>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .mionas-faq {
+    width: 100%;
+  }
+
+  .mionas-faq > accordion-custom {
+    display: block;
+  }
+
+  .mionas-faq > accordion-custom + accordion-custom {
+    border-block-start: var(--faq-base-divider-width) solid var(--faq-base-divider-color);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: FAQ",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "_mionas-faq-question"
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Mionas: FAQ",
+      "category": "t:categories.basic",
+      "blocks": [
+        { "type": "_mionas-faq-question" },
+        { "type": "_mionas-faq-question" }
+      ]
+    }
+  ]
+}
+{% endschema %}

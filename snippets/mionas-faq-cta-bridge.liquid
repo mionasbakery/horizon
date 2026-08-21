@@ -1,0 +1,28 @@
+{%- doc -%}
+  CSS-only mobile layout for the FAQ page's contact-card buttons, rendered from a
+  "Custom Liquid" block inside that card's buttons group ({% render 'mionas-faq-cta-bridge' %}).
+  Takes no params. Makes each button full width on mobile; from 750px up they return to
+  their natural pill width.
+{%- enddoc -%}
+{%- comment -%}
+  Same scoped-marker pattern as snippets/mionas-footer-bridge.liquid. This lives in CSS
+  rather than a button setting because mionas-button's full_width applies at every
+  breakpoint, and the design wants full width on mobile only.
+{%- endcomment -%}
+<div class="mionas-faq-cta-scope" hidden></div>
+{% style %}
+  /* The custom-liquid block's own wrapper div must not occupy a flex slot. */
+  .group-block-content:has(> div > .mionas-faq-cta-scope) > :has(> .mionas-faq-cta-scope) {
+    display: none;
+  }
+
+  .group-block-content:has(> div > .mionas-faq-cta-scope) .mionas-button {
+    width: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .group-block-content:has(> div > .mionas-faq-cta-scope) .mionas-button {
+      width: fit-content;
+    }
+  }
+{% endstyle %}
