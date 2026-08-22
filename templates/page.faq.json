@@ -1,62 +1,39 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "mionas_breadcrumbs_PGF001": {
-      "type": "mionas-breadcrumbs",
-      "name": "Mionas: Breadcrumbs",
-      "settings": {
-        "section_width": "page-width",
-        "background_color": "",
-        "padding-block-start": 12,
-        "padding-block-end": 12
-      }
-    },
-    "main": {
-      "type": "main-page",
-      "name": "Page",
+    "section_GaY4XH": {
+      "type": "section",
       "blocks": {
-        "title": {
-          "type": "text",
-          "name": "Text - Heading",
+        "mionas_breadcrumbs_jtFzXr": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "center",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
+            "menu": "",
+            "home_label": "",
+            "label": "",
             "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-block-end": 0
           },
           "blocks": {}
         },
-        "content": {
-          "type": "text",
-          "name": "Text - Description",
+        "mionas_text_tN9DKL": {
+          "type": "mionas-text",
+          "name": "Mionas: Title",
           "settings": {
-            "text": "{{ closest.page.content }}",
-            "width": "100%",
-            "max_width": "narrow",
-            "alignment": "center",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
+            "text": "<p>{{ closest.page.title }}</p>",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
+            "tag": "h1",
+            "text_wrap": "normal",
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
@@ -66,21 +43,43 @@
         }
       },
       "block_order": [
-        "title",
-        "content"
+        "mionas_breadcrumbs_jtFzXr",
+        "mionas_text_tN9DKL"
       ],
+      "name": "Section - Heading",
       "settings": {
         "content_direction": "column",
-        "gap": 32,
-        "padding-block-start": 40,
-        "padding-block-end": 0
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 48
       }
     },
-    "faq": {
-      "type": "section",
-      "name": "Section - FAQ",
+    "main": {
+      "type": "main-page",
       "blocks": {
-        "faq_column": {
+        "mionas_group_maPVrw": {
           "type": "mionas-group",
           "name": "Mionas: Group - FAQ column",
           "settings": {
@@ -93,8 +92,8 @@
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
             "gap": 24,
-            "width": "custom",
-            "custom_width": 60,
+            "width": "fill",
+            "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "min_width": 0,
@@ -122,7 +121,7 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "group_title_pedidos": {
+            "mionas_text_tNWNpC": {
               "type": "mionas-text",
               "name": "Mionas: Text - Pedidos title",
               "settings": {
@@ -139,12 +138,12 @@
               },
               "blocks": {}
             },
-            "faq_pedidos": {
+            "mionas_faq_wgRgmT": {
               "type": "mionas-faq",
               "name": "Mionas: FAQ - Pedidos",
               "settings": {},
               "blocks": {
-                "faq_pedidos_recogida": {
+                "mionas_faq_question_HEgmRY": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Recogida",
                   "settings": {
@@ -154,7 +153,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_pedidos_antelacion": {
+                "mionas_faq_question_PyVEyW": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Antelación",
                   "settings": {
@@ -164,7 +163,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_pedidos_personalizados": {
+                "mionas_faq_question_tTy7dA": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Pedidos personalizados",
                   "settings": {
@@ -174,7 +173,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_pedidos_modificar": {
+                "mionas_faq_question_GptDTY": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Modificar o cancelar",
                   "settings": {
@@ -184,7 +183,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_pedidos_horario": {
+                "mionas_faq_question_mj6yjK": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Horario",
                   "settings": {
@@ -196,14 +195,14 @@
                 }
               },
               "block_order": [
-                "faq_pedidos_recogida",
-                "faq_pedidos_antelacion",
-                "faq_pedidos_personalizados",
-                "faq_pedidos_modificar",
-                "faq_pedidos_horario"
+                "mionas_faq_question_HEgmRY",
+                "mionas_faq_question_PyVEyW",
+                "mionas_faq_question_tTy7dA",
+                "mionas_faq_question_GptDTY",
+                "mionas_faq_question_mj6yjK"
               ]
             },
-            "group_title_envios": {
+            "mionas_text_9tLkyP": {
               "type": "mionas-text",
               "name": "Mionas: Text - Envíos title",
               "settings": {
@@ -220,12 +219,12 @@
               },
               "blocks": {}
             },
-            "faq_envios": {
+            "mionas_faq_Q7HcBx": {
               "type": "mionas-faq",
               "name": "Mionas: FAQ - Envíos",
               "settings": {},
               "blocks": {
-                "faq_envios_domicilio": {
+                "mionas_faq_question_dDXLnr": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Envíos a domicilio",
                   "settings": {
@@ -235,7 +234,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_envios_coste": {
+                "mionas_faq_question_HLKLw4": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Coste y plazo",
                   "settings": {
@@ -247,11 +246,11 @@
                 }
               },
               "block_order": [
-                "faq_envios_domicilio",
-                "faq_envios_coste"
+                "mionas_faq_question_dDXLnr",
+                "mionas_faq_question_HLKLw4"
               ]
             },
-            "group_title_productos": {
+            "mionas_text_Mk34mB": {
               "type": "mionas-text",
               "name": "Mionas: Text - Productos title",
               "settings": {
@@ -268,12 +267,12 @@
               },
               "blocks": {}
             },
-            "faq_productos": {
+            "mionas_faq_bq3pQr": {
               "type": "mionas-faq",
               "name": "Mionas: FAQ - Productos",
               "settings": {},
               "blocks": {
-                "faq_productos_otros": {
+                "mionas_faq_question_YHxwJY": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Otros productos",
                   "settings": {
@@ -283,7 +282,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_productos_veganas": {
+                "mionas_faq_question_jjXMPi": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Veganas",
                   "settings": {
@@ -293,7 +292,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_productos_sin_gluten": {
+                "mionas_faq_question_bPhUeq": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Sin gluten",
                   "settings": {
@@ -303,7 +302,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_productos_pan": {
+                "mionas_faq_question_eMi33k": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Pan",
                   "settings": {
@@ -313,7 +312,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_productos_cafe": {
+                "mionas_faq_question_tfxAx3": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Café",
                   "settings": {
@@ -323,7 +322,7 @@
                   },
                   "blocks": {}
                 },
-                "faq_productos_cursos": {
+                "mionas_faq_question_a8M7kY": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Cursos",
                   "settings": {
@@ -335,58 +334,39 @@
                 }
               },
               "block_order": [
-                "faq_productos_otros",
-                "faq_productos_veganas",
-                "faq_productos_sin_gluten",
-                "faq_productos_pan",
-                "faq_productos_cafe",
-                "faq_productos_cursos"
+                "mionas_faq_question_YHxwJY",
+                "mionas_faq_question_jjXMPi",
+                "mionas_faq_question_bPhUeq",
+                "mionas_faq_question_eMi33k",
+                "mionas_faq_question_tfxAx3",
+                "mionas_faq_question_a8M7kY"
               ]
             }
           },
           "block_order": [
-            "group_title_pedidos",
-            "faq_pedidos",
-            "group_title_envios",
-            "faq_envios",
-            "group_title_productos",
-            "faq_productos"
+            "mionas_text_tNWNpC",
+            "mionas_faq_wgRgmT",
+            "mionas_text_9tLkyP",
+            "mionas_faq_Q7HcBx",
+            "mionas_text_Mk34mB",
+            "mionas_faq_bq3pQr"
           ]
         }
       },
       "block_order": [
-        "faq_column"
+        "mionas_group_maPVrw"
       ],
+      "name": "Page",
       "settings": {
         "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "padding-block-start": 48,
-        "padding-block-end": 64
+        "background_color": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "contact_cta": {
       "type": "section",
-      "name": "Section - Contact CTA",
       "blocks": {
         "cta_card": {
           "type": "mionas-group",
@@ -401,7 +381,7 @@
             "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "center",
             "gap": 16,
-            "width": "custom",
+            "width": "fill",
             "custom_width": 60,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
@@ -562,6 +542,7 @@
       "block_order": [
         "cta_card"
       ],
+      "name": "Section - Contact CTA",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -575,6 +556,7 @@
         "section_height": "",
         "section_height_custom": 50,
         "background_media": "none",
+        "background_color": "",
         "video_position": "cover",
         "background_image_position": "cover",
         "toggle_overlay": false,
@@ -584,6 +566,7 @@
         "border": "none",
         "border_width": 1,
         "border_opacity": 100,
+        "border_color": "",
         "border_radius": 0,
         "padding-block-start": 0,
         "padding-block-end": 84
@@ -591,9 +574,8 @@
     }
   },
   "order": [
-    "mionas_breadcrumbs_PGF001",
+    "section_GaY4XH",
     "main",
-    "faq",
     "contact_cta"
   ]
 }

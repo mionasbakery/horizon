@@ -231,8 +231,8 @@
                   "type": "mionas-button",
                   "name": "Mionas: Button",
                   "settings": {
-                    "label": "Nuestra historia →",
-                    "link": "shopify://collections/comprar-cookies",
+                    "label": "Sobre nosotros →",
+                    "link": "shopify://pages/sobre-nosotros",
                     "open_in_new_tab": false,
                     "variant": "ghost",
                     "size": "md",

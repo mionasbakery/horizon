@@ -169,21 +169,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "stamp_eyebrow": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp",
-              "settings": {
-                "text": "",
-                "size": "sm",
-                "variant": "accent",
-                "tag": "p",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "text_heading": {
               "type": "mionas-text",
               "name": "Mionas: Text - Heading",
@@ -301,7 +286,7 @@
                     "image_ratio": "landscape",
                     "width": "fit-content",
                     "custom_width": 100,
-                    "width_mobile": "fit-content",
+                    "width_mobile": "fill",
                     "custom_width_mobile": 100,
                     "height": "fill",
                     "border": "none",
@@ -318,7 +303,7 @@
                 },
                 "group_salto_copy": {
                   "type": "group",
-                  "name": "Group - Copy",
+                  "name": "Group - Text",
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
@@ -377,7 +362,7 @@
                       "type": "mionas-text",
                       "name": "Mionas: Text - Description",
                       "settings": {
-                        "text": "<p>Este proyecto es lo más ambicioso y el salto al vacío más grande que he hecho nunca. Si quieres seguir nuestro día a día, te invito a seguirnos en Instagram — y si quieres probar nuestras cookies, pásate por la sección de cookies y cajas y déjate llevar.</p>",
+                        "text": "<p>Este proyecto es lo más ambicioso y el salto al vacío más grande que he hecho nunca. Si quieres seguir nuestro día a día, te invito a seguirnos en Instagram. Y si quieres probar nuestras cookies, pásate por la sección de cookies y cajas y déjate llevar.</p>",
                         "variant": "body",
                         "size": "sm",
                         "color": "default",
@@ -461,7 +446,7 @@
                   "type": "mionas-button",
                   "name": "Mionas: Button - Visit",
                   "settings": {
-                    "label": "Ven a visitarnos",
+                    "label": "Contactar",
                     "link": "shopify://pages/contact",
                     "open_in_new_tab": false,
                     "variant": "outline",
@@ -480,7 +465,6 @@
             }
           },
           "block_order": [
-            "stamp_eyebrow",
             "text_heading",
             "text_para_1",
             "text_para_2",
