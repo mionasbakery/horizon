@@ -12,39 +12,87 @@
     "section_GaY4XH": {
       "type": "section",
       "blocks": {
-        "mionas_breadcrumbs_jtFzXr": {
-          "type": "mionas-breadcrumbs",
-          "name": "Mionas: Breadcrumbs",
+        "group_container": {
+          "type": "mionas-group",
+          "name": "Mionas: Group - Container",
           "settings": {
-            "menu": "",
-            "home_label": "",
-            "label": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0
-          },
-          "blocks": {}
-        },
-        "mionas_text_tN9DKL": {
-          "type": "mionas-text",
-          "name": "Mionas: Title",
-          "settings": {
-            "text": "<p>{{ closest.page.title }}</p>",
-            "variant": "display",
-            "size": "lg",
-            "color": "default",
-            "tag": "h1",
-            "text_wrap": "normal",
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "wrap_children": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 672,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {}
+          "blocks": {
+            "mionas_breadcrumbs_jtFzXr": {
+              "type": "mionas-breadcrumbs",
+              "name": "Mionas: Breadcrumbs",
+              "settings": {
+                "menu": "",
+                "home_label": "",
+                "label": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_text_tN9DKL": {
+              "type": "mionas-text",
+              "name": "Mionas: Title",
+              "settings": {
+                "text": "<p>{{ closest.page.title }}</p>",
+                "variant": "display",
+                "size": "lg",
+                "color": "default",
+                "tag": "h1",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "mionas_breadcrumbs_jtFzXr",
+            "mionas_text_tN9DKL"
+          ]
         }
       },
       "block_order": [
-        "mionas_breadcrumbs_jtFzXr",
-        "mionas_text_tN9DKL"
+        "group_container"
       ],
       "name": "Section - Heading",
       "settings": {
@@ -53,7 +101,7 @@
         "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
+        "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 12,
         "section_width": "page-width",
@@ -77,11 +125,11 @@
       }
     },
     "main": {
-      "type": "main-page",
+      "type": "section",
       "blocks": {
         "mionas_group_maPVrw": {
           "type": "mionas-group",
-          "name": "Mionas: Group - FAQ column",
+          "name": "Mionas: Group - FAQs",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -97,6 +145,7 @@
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "min_width": 0,
+            "max_width": 672,
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
@@ -356,11 +405,32 @@
       "block_order": [
         "mionas_group_maPVrw"
       ],
-      "name": "Page",
+      "name": "Section - Content",
       "settings": {
         "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
         "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 0,
         "padding-block-end": 0
       }
@@ -382,10 +452,10 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 16,
             "width": "fill",
-            "custom_width": 60,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "min_width": 0,
+            "max_width": 672,
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
@@ -462,6 +532,7 @@
                 "width_mobile": "fill",
                 "custom_width_mobile": 100,
                 "min_width": 0,
+                "max_width": 0,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
@@ -542,7 +613,7 @@
       "block_order": [
         "cta_card"
       ],
-      "name": "Section - Contact CTA",
+      "name": "Section - CTA",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,

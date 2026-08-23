@@ -8,7 +8,8 @@
   layout panel on Horizon's own tokens rather than the design system's --card-* ones.
 
   Renders through snippets/mionas-group.liquid (a fork of the native group block's renderer that
-  adds `wrap_children`/`min_width`), borrowing its layout/size/link schema, but deliberately omits
+  adds `wrap_children`/`min_width`/`max_width`), borrowing its layout/size/link schema, but
+  deliberately omits
   Group's Appearance/Borders sections and Card.module.css's max-width cap: the `variant` setting
   below owns the surface entirely, and the Size settings are the single answer to width, so a
   hidden cap silently contradicting a merchant's choice would be worse than losing that bit of

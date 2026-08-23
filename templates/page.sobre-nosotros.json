@@ -12,139 +12,25 @@
     "section_ebAgwU": {
       "type": "section",
       "blocks": {
-        "mionas_breadcrumbs_4MYrVd": {
-          "type": "mionas-breadcrumbs",
-          "name": "Mionas: Breadcrumbs",
-          "settings": {
-            "menu": "",
-            "home_label": "",
-            "label": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0
-          },
-          "blocks": {}
-        },
-        "mionas_text_ygndnJ": {
-          "type": "mionas-text",
-          "name": "Mionas: Text - Heading",
-          "settings": {
-            "text": "<p>Sobre nosotros</p>",
-            "variant": "display",
-            "size": "lg",
-            "color": "default",
-            "tag": "h1",
-            "text_wrap": "normal",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "mionas_text_k97Ddj": {
-          "type": "mionas-text",
-          "name": "Mionas: Text - Description",
-          "settings": {
-            "text": "{{ closest.collection.description }}",
-            "variant": "body",
-            "size": "lg",
-            "color": "default",
-            "tag": "p",
-            "text_wrap": "normal",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "mionas_breadcrumbs_4MYrVd",
-        "mionas_text_ygndnJ",
-        "mionas_text_k97Ddj"
-      ],
-      "name": "Section - Heading",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "background_media": "none",
-        "background_color": "",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_color": "",
-        "border_radius": 0,
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "section_photo": {
-      "type": "section",
-      "name": "Section - Image",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "full-width",
-        "section_height": "small",
-        "section_height_custom": 33,
-        "background_media": "image",
-        "background_color": "",
-        "video_position": "cover",
-        "background_image": "shopify://shop_images/sobre-nosotros-hero.jpg",
-        "background_image_position": "cover",
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_color": "",
-        "border_radius": 0,
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-    "section_story": {
-      "type": "section",
-      "blocks": {
         "group_container": {
-          "type": "group",
+          "type": "mionas-group",
+          "name": "Mionas: Group",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
+            "wrap_children": false,
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 20,
-            "width": "custom",
-            "custom_width": 65,
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 720,
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
@@ -169,15 +55,27 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "text_heading": {
+            "mionas_breadcrumbs_4MYrVd": {
+              "type": "mionas-breadcrumbs",
+              "name": "Mionas: Breadcrumbs",
+              "settings": {
+                "menu": "",
+                "home_label": "",
+                "label": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_text_ygndnJ": {
               "type": "mionas-text",
               "name": "Mionas: Text - Heading",
               "settings": {
-                "text": "<p>Nuestra historia</p>",
-                "variant": "headline",
+                "text": "<p>Sobre nosotros</p>",
+                "variant": "display",
                 "size": "lg",
                 "color": "default",
-                "tag": "h2",
+                "tag": "h1",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -186,6 +84,219 @@
               },
               "blocks": {}
             },
+            "mionas_text_k97Ddj": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Description",
+              "settings": {
+                "text": "{{ closest.collection.description }}",
+                "variant": "body",
+                "size": "lg",
+                "color": "default",
+                "tag": "p",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "mionas_breadcrumbs_4MYrVd",
+            "mionas_text_ygndnJ",
+            "mionas_text_k97Ddj"
+          ]
+        }
+      },
+      "block_order": [
+        "group_container"
+      ],
+      "name": "Section - Heading",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "section_photo": {
+      "type": "section",
+      "blocks": {
+        "group_hero": {
+          "type": "mionas-group",
+          "name": "Mionas: Group - Hero image",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "wrap_children": false,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 720,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "image_hero": {
+              "type": "image",
+              "name": "Image",
+              "settings": {
+                "image": "shopify://shop_images/sobre-nosotros-hero.jpg",
+                "link": "",
+                "image_ratio": "landscape",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 16,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "image_hero"
+          ]
+        }
+      },
+      "block_order": [
+        "group_hero"
+      ],
+      "name": "Section - Hero image",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 33,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 48
+      }
+    },
+    "section_story": {
+      "type": "section",
+      "blocks": {
+        "group_container": {
+          "type": "mionas-group",
+          "name": "Mionas: Group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "wrap_children": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 24,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 720,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
             "text_para_1": {
               "type": "mionas-text",
               "name": "Mionas: Text - Paragraph 1",
@@ -271,7 +382,7 @@
                 "link": "",
                 "open_in_new_tab": false,
                 "placeholder": "",
-                "padding-block-start": 0,
+                "padding-block-start": 24,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -386,98 +497,20 @@
                 "image_salto",
                 "group_salto_copy"
               ]
-            },
-            "group_cta": {
-              "type": "group",
-              "name": "Group - CTA",
-              "settings": {
-                "content_direction": "row",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "center",
-                "vertical_alignment": "center",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "center",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "background_media": "none",
-                "background_color": "",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_color": "",
-                "border_radius": 0,
-                "link": "",
-                "open_in_new_tab": false,
-                "placeholder": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {
-                "button_buy": {
-                  "type": "mionas-button",
-                  "name": "Mionas: Button - Buy",
-                  "settings": {
-                    "label": "Comprar cookies",
-                    "link": "shopify://collections/comprar-cookies",
-                    "open_in_new_tab": false,
-                    "variant": "primary",
-                    "size": "md",
-                    "full_width": false,
-                    "icon": "none",
-                    "icon_position": "leading"
-                  },
-                  "blocks": {}
-                },
-                "button_visit": {
-                  "type": "mionas-button",
-                  "name": "Mionas: Button - Visit",
-                  "settings": {
-                    "label": "Contactar",
-                    "link": "shopify://pages/contact",
-                    "open_in_new_tab": false,
-                    "variant": "outline",
-                    "size": "md",
-                    "full_width": false,
-                    "icon": "none",
-                    "icon_position": "leading"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "button_buy",
-                "button_visit"
-              ]
             }
           },
           "block_order": [
-            "text_heading",
             "text_para_1",
             "text_para_2",
             "text_para_3",
-            "group_salto",
-            "group_cta"
+            "group_salto"
           ]
         }
       },
       "block_order": [
         "group_container"
       ],
-      "name": "Section - Our story",
+      "name": "Section - Article",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -503,14 +536,128 @@
         "border_opacity": 100,
         "border_color": "",
         "border_radius": 12,
-        "padding-block-start": 44,
-        "padding-block-end": 60
+        "padding-block-start": 0,
+        "padding-block-end": 48
+      }
+    },
+    "section_dtMkUL": {
+      "type": "section",
+      "blocks": {
+        "group_BdLa7x": {
+          "type": "group",
+          "name": "Mionas: Group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "mionas_button_GYURBy": {
+              "type": "mionas-button",
+              "name": "Mionas: Button - Buy",
+              "settings": {
+                "label": "Comprar cookies",
+                "link": "shopify://collections/comprar-cookies",
+                "open_in_new_tab": false,
+                "variant": "primary",
+                "size": "lg",
+                "full_width": false,
+                "icon": "none",
+                "icon_position": "leading"
+              },
+              "blocks": {}
+            },
+            "mionas_button_7zwity": {
+              "type": "mionas-button",
+              "name": "Mionas: Button - Visit",
+              "settings": {
+                "label": "Contáctanos",
+                "link": "shopify://pages/contact",
+                "open_in_new_tab": false,
+                "variant": "outline",
+                "size": "lg",
+                "full_width": false,
+                "icon": "none",
+                "icon_position": "leading"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "mionas_button_GYURBy",
+            "mionas_button_7zwity"
+          ]
+        }
+      },
+      "block_order": [
+        "group_BdLa7x"
+      ],
+      "name": "Section - CTA",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 48
       }
     }
   },
   "order": [
     "section_ebAgwU",
     "section_photo",
-    "section_story"
+    "section_story",
+    "section_dtMkUL"
   ]
 }

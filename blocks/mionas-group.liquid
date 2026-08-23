@@ -3,10 +3,12 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Forked from blocks/group.liquid: identical settings and rendering, plus `wrap_children` and
-  `min_width` (handled by snippets/mionas-group.liquid, a fork of the native group renderer) so a
-  group can wrap its own children onto a new line instead of squeezing them -- Horizon's native
-  group hardcodes `flex-wrap: nowrap` above 749px and has no per-child minimum width.
+  Forked from blocks/group.liquid: identical settings and rendering, plus `wrap_children`,
+  `min_width` and `max_width` (handled by snippets/mionas-group.liquid, a fork of the native group
+  renderer) so a group can wrap its own children onto a new line instead of squeezing them --
+  Horizon's native group hardcodes `flex-wrap: nowrap` above 749px and has no per-child minimum
+  width. `max_width` caps a text column: the native width setting is a percentage, which drifts
+  with the viewport instead of holding a fixed measure.
 {%- endcomment -%}
 {%- capture children %}
   {% content_for 'blocks' %}
@@ -256,6 +258,17 @@
       "default": 0,
       "unit": "px",
       "info": "Hard minimum: the block never shrinks below this. In a wrapping parent it wraps onto its own line instead; elsewhere a large value can overflow narrow screens. 0 means no minimum."
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 0,
+      "max": 1408,
+      "step": 16,
+      "default": 0,
+      "unit": "px",
+      "info": "Caps the block's width, to hold text to a readable column. Scales with the visitor's text size. The parent's alignment decides where the capped block sits. 0 means no maximum."
     },
     {
       "type": "select",

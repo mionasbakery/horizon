@@ -1,6 +1,7 @@
 {%- doc -%}
   Renders block content for mionas-group and mionas-card: a fork of snippets/group.liquid (the
-  native group block's own renderer) that additionally supports `wrap_children` and `min_width`.
+  native group block's own renderer) that additionally supports `wrap_children`, `min_width` and
+  `max_width`.
 
   @param {string} children - The DOM content of the group block.
   @param {object} settings - The settings of the group block.
@@ -51,6 +52,13 @@
     {%- endcomment -%}
     {%- if settings.min_width > 0 -%}
       min-width: {{ settings.min_width }}px;
+    {%- endif -%}
+    {%- comment -%}
+      Emitted in rem though the setting is px, so a reading column keeps its line length when the
+      visitor enlarges text -- the same px-label/rem-value split Horizon uses for font sizes.
+    {%- endcomment -%}
+    {%- if settings.max_width > 0 -%}
+      max-width: {{ settings.max_width | divided_by: 16.0 }}rem;
     {%- endif -%}
     {{ style }}
   "
