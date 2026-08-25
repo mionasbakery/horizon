@@ -4,7 +4,7 @@
   Shared by the desktop mega menu (blocks/mionas-header-menu.liquid) and the mobile drawer
   (snippets/mionas-header-drawer.liquid). `variant: 'drawer'` switches the cards from the
   desktop's stacked layout to horizontal thumbnail rows with a forward caret. Everything
-  else - the data, the tagline lookup, the card's anatomy - is common to both.
+  else - the data and the card's anatomy - is common to both.
 
   NAME MAP TO ../design-system. The theme names these by their slot in the header, the design
   system names them as components, so the two vocabularies do not line up and the token prefixes
@@ -30,11 +30,12 @@
   grid-template-columns in blocks/mionas-header-menu.liquid rather than trusting the width
   media queries there.
 
-  The tagline has no equivalent in a Shopify link list, which is why it is read from the
-  linked collection rather than from the menu. A link that is not a collection, or a
-  collection without the metafield, renders a label-only card on purpose - alignment is held
-  by the fixed media height (desktop) or the fixed 56px thumbnail (drawer), never by text
-  length.
+  The card is image plus label, nothing else. It carried a tagline read from the linked
+  collection's mionas.menu_tagline metafield until MegaMenuItem dropped its description slot;
+  that metafield definition and its seven values were deleted from the store with it, so
+  bringing the line back means re-entering the copy, not just re-adding the markup.
+  Alignment is held by the square media (desktop, one column width per row) or the fixed
+  thumbnail (drawer), never by text length.
 
   Column counts apply to the DESKTOP variant only: 1 below 750px, 3 from 750px, and
   grid_columns_count from 990px. The drawer variant is always a single column.
@@ -48,6 +49,9 @@
     Overrides settings.panel_columns.
   @param {string} [id] - Optional id for the grid element
   @param {string} [variant] - 'drawer' for the mobile row layout. Omit for desktop.
+  @param {boolean} [indented] - true to draw MegaMenu's category rail beside the cards. Pass it
+    only where an inert group heading sits directly above the panel, since the rail's job is to
+    say "these are that heading's contents". Drawer variant only.
   @param {string} [labelled_by] - Id of the element naming this group; becomes
     aria-labelledby on the grid. The drawer passes its section heading's id, because that
     heading is not a link and the group would otherwise be unnamed to a screen reader.
@@ -63,11 +67,12 @@
     assign is_drawer = true
   endif
 
-  # The drawer's thumbnail is a fixed 56px square. Asking for a 45vw candidate there makes
-  # the browser download several times the pixels it can display.
+  # The drawer's thumbnail is a fixed 44px square (--mega-menu-item-base-media-size, applied in
+  # blocks/mionas-header-menu.liquid). Asking for a 45vw candidate there makes the browser
+  # download several times the pixels it can display, so this tracks that size by hand.
   assign image_sizes = '(min-width: 990px) 200px, 45vw'
   if is_drawer
-    assign image_sizes = '56px'
+    assign image_sizes = '44px'
   endif
 
   assign columns = grid_columns_count | default: settings.panel_columns | default: 6
@@ -98,7 +103,7 @@
   and centring switched off; on desktop the panel paints nothing, so the outer element has no rule
   of its own. Both live in blocks/mionas-header-menu.liquid's --drawer rules.
 {%- endcomment -%}
-<div class="mionas-header-menu-panel{% if is_drawer %} mionas-header-menu-panel--drawer{% endif %}" style="{{ panel_style }}">
+<div class="mionas-header-menu-panel{% if is_drawer %} mionas-header-menu-panel--drawer{% endif %}{% if indented %} mionas-header-menu-panel--indented{% endif %}" style="{{ panel_style }}">
  <div class="mionas-header-menu-panel__inner">
   <ul
     class="mionas-header-menu-panel__grid list-unstyled"
@@ -107,12 +112,6 @@
     {% if labelled_by != blank %}aria-labelledby="{{ labelled_by }}"{% endif %}
   >
     {%- for link in parent_link.links -%}
-      {%- liquid
-        assign tagline = ''
-        if link.type == 'collection_link'
-          assign tagline = link.object.metafields.mionas.menu_tagline.value
-        endif
-      -%}
       <li class="mionas-header-menu-panel__item">
         <a class="mionas-header-menu-panel__card" href="{{ link.url }}">
           <span class="mionas-header-menu-panel__media">
@@ -122,18 +121,7 @@
               sizes: image_sizes
             -%}
           </span>
-          {%- comment -%}
-            The __text wrapper exists for the drawer's three-column grid (thumb | text | caret):
-            without it, label and tagline are separate grid items and can't share a column. Gap
-            differs by variant (flush on desktop, matching MegaMenuItem) -- see
-            .mionas-header-menu-panel__text in blocks/mionas-header-menu.liquid.
-          {%- endcomment -%}
-          <span class="mionas-header-menu-panel__text">
-            <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>
-            {%- if tagline != blank -%}
-              <span class="mionas-header-menu-panel__tagline">{{ tagline | escape }}</span>
-            {%- endif -%}
-          </span>
+          <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>
           {%- if is_drawer -%}
             <span class="svg-wrapper icon-caret mionas-header-menu-panel__caret" aria-hidden="true">
               {{- 'icon-caret.svg' | inline_asset_content -}}

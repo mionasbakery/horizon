@@ -13,10 +13,12 @@
   derives no variable for it and sets no competing rule, so it is set as a property.
 
   WHY ONLY THE -desktop SIZE VARIABLE:
-  --menu-top-level-font-size is shared with the mobile drawer, which deliberately renders at
-  --menu-font-2xl--size (snippets/menu-font-styles.liquid:17). Overriding it would shrink the
-  drawer's nav to 15px. Desktop links read --menu-top-level-font-size-desktop instead, inside a
-  min-width:750px query (blocks/_header-menu.liquid:323).
+  --menu-top-level-font-size is shared with the mobile drawer, which Horizon renders at
+  --menu-font-2xl--size (snippets/menu-font-styles.liquid:17), and Horizon declares it inline on
+  the drawer's nav, so a declaration here would lose to inheritance anyway. Desktop links read
+  --menu-top-level-font-size-desktop instead, inside a min-width:750px query
+  (blocks/_header-menu.liquid:323). The drawer's own size is set as a property, not a variable, in
+  blocks/mionas-header-menu.liquid -- see the --mainlist rule there.
 
   The two are otherwise cleanly separated: .menu-list__link does not appear in
   header-drawer.liquid at all (the drawer uses .menu-drawer__menu-item--mainlist), so the
@@ -45,9 +47,10 @@
     --menu-top-level-font-color: var(--color-blau-sitges);
   }
 
-  /* Drawer main-list items share the nav's tracking. Size is deliberately untouched: the
-     drawer renders at --menu-font-2xl--size by Horizon's design and the prototype has no
-     mobile reference to match. */
+  /* Drawer main-list items share the nav's tracking. Size lives in
+     blocks/mionas-header-menu.liquid instead, where the rest of the drawer's typography is: the
+     reworked MegaMenu puts every row in the drawer on one band, which is the mobile reference
+     this rule once had none of. */
   .menu-drawer__menu-item--mainlist {
     letter-spacing: var(--text-role-label-md-letter-spacing);
   }

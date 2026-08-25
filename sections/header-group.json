@@ -36,7 +36,7 @@
             "menu_font_style": "inverse_large",
             "type_font_primary_link": "heading",
             "type_case_primary_link": "uppercase",
-            "menu_style": "featured_collections",
+            "menu_style": "text",
             "featured_products_aspect_ratio": "4 / 5",
             "featured_collections_aspect_ratio": "16 / 9",
             "image_border_radius": 24,

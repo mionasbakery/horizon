@@ -182,11 +182,17 @@
                     <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
                   </span>
                   {% assign panel_label_id = 'HeaderDrawer-' | append: link.handle %}
+                  {%- comment -%}
+                    Indented only here. The rail marks the panel as the expanded contents of the
+                    inert heading above it, and this is the only branch that renders one - the
+                    accordion branch opens from a <summary> you click instead.
+                  {%- endcomment -%}
                   {% render 'mionas-header-menu-panel',
                     parent_link: link,
                     settings: block_settings,
                     variant: 'drawer',
-                    labelled_by: panel_label_id
+                    labelled_by: panel_label_id,
+                    indented: true
                   %}
                 {% else %}
                   <a
@@ -620,25 +626,31 @@
     }
   }
 
+  /* Full-bleed below 750px instead of the native 95vw/500px, so nothing of the page shows
+     beside it. `contain` keeps a scroll that reaches the drawer's end from chaining to the
+     page underneath, which the html[scroll-lock] rule alone does not stop on iOS. */
   .menu-drawer {
     position: fixed;
     transform: translateX(-100%);
     visibility: hidden;
     height: var(--drawer-height);
-    width: var(--drawer-width);
-    max-width: var(--drawer-max-width);
+    width: 100%;
+    max-width: none;
     z-index: var(--layer-menu-drawer);
     left: 0;
     top: 0;
     padding: 0;
     background-color: var(--color-background);
     overflow: auto;
+    overscroll-behavior: contain;
     display: flex;
-    border-right: var(--style-border-drawer);
+    border-right: none;
     flex-direction: column;
 
     @media screen and (min-width: 750px) {
       width: 25rem;
+      max-width: var(--drawer-max-width);
+      border-right: var(--style-border-drawer);
     }
   }
 

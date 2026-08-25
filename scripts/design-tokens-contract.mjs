@@ -109,6 +109,9 @@ export const EXPECTED_TOKENS = {
   // blocks/mionas-map.liquid's empty state. Card's own token rather than a borrowed --form-label-*
   // one, since neither is a form label.
   "--card-description-foreground": "#687076",
+  // The foundation secondary-text colour, spent directly by blocks/mionas-price.liquid and
+  // snippets/mionas-breadcrumbs.liquid.
+  "--text-color-secondary": "#687076",
   // Form surface, spent by the snippets/mionas-form*.liquid, mionas-text-field.liquid and
   // mionas-checkbox.liquid family (blocks/mionas-contact-form.liquid composes them and no longer
   // spends these directly). Every one of Form, FormField, FormLabel, FormError, FormActions,
@@ -207,9 +210,8 @@ export const EXPECTED_TOKENS = {
   // keeping them would make the sync fail over a token no block reads. --mega-menu-base-background
   // was never here for a related reason.
   //
-  // Also absent: --mega-menu-item-base-media-size (the drawer keeps its own 56px thumbnail -- see
-  // the comment on that rule) and every --mega-menu-link-*, which the theme does not spend because
-  // the mobile overflow list runs on Horizon's own --menu-* settings.
+  // Also absent: every --mega-menu-link-*, which the theme does not spend because the mobile
+  // overflow list runs on Horizon's own --menu-* settings.
   //
   // NO --navbar-* ENTRY, though the theme now does take the top-level bar's SIZE and WEIGHT from
   // the design system -- via Link's tokens below, not Navbar's. That is not a workaround: since the
@@ -226,16 +228,28 @@ export const EXPECTED_TOKENS = {
   // ever ships its own gap token, check it against the real nav before adopting it -- this is a case
   // where the design system's value and this theme's icon asset disagree about who owns the spacing.
   "--mega-menu-base-gap": "16px",
-  // Pinned by value because both are load-bearing past their own rule: the item gap is what the
-  // desktop card's media-to-text rhythm now depends on (it was 8px before this sync, and the
-  // __text wrapper still carries its own 8px between label and tagline, so the two are no longer
-  // the same number and a revalue here changes only one of them), and the media radius is
-  // deliberately radius.md against the card's radius.lg -- collapsing them back to one value is
-  // the mistake this entry exists to catch.
+  // The drawer's group heading and the category rail beneath it, spent by
+  // blocks/mionas-header-menu.liquid. No --mega-menu-base-padding-inline: MegaMenu insets both the
+  // heading and the rail by it, but every row in this drawer sits at the list edge, so the theme
+  // zeroes the pair rather than adopting the 8px on one side only.
+  "--mega-menu-heading-height": "44px",
+  "--mega-menu-heading-font-weight": "700",
+  "--mega-menu-heading-foreground": "#101413",
+  "--mega-menu-categories-border-width": "2px",
+  "--mega-menu-categories-border-color": "#ece8e2",
+  "--mega-menu-categories-padding": "12px",
+  // Pinned by value because both are load-bearing past their own rule: the item gap is the only
+  // thing setting the card's media-to-label rhythm now that the tagline is gone, and the media
+  // radius is deliberately radius.md against the card's radius.lg -- collapsing them back to one
+  // value is the mistake this entry exists to catch.
   "--mega-menu-item-base-gap": "12px",
   "--mega-menu-item-base-padding": "8px",
   "--mega-menu-item-base-radius": "12px",
   "--mega-menu-item-base-media-height": "110px",
+  // The drawer thumbnail. Pinned by value because snippets/mionas-header-menu-panel.liquid asks
+  // the browser for this exact width in its `sizes` attribute and cannot read the token, so a
+  // revalue here silently leaves that request wrong.
+  "--mega-menu-item-base-media-size": "44px",
   "--mega-menu-item-base-media-radius": "8px",
   "--mega-menu-item-base-media-background": "#ece8e2",
   // 700, where label-lg -- the role MegaMenuItem renders this label at -- is 500. Pinned for the font-face
@@ -244,7 +258,8 @@ export const EXPECTED_TOKENS = {
   // about which faces the bridge emits, not just a number to retype.
   "--mega-menu-item-label-font-weight": "700",
   "--mega-menu-item-label-foreground": "#101413",
-  "--mega-menu-item-description-foreground": "#687076",
+  // No --mega-menu-item-description-foreground: MegaMenuItem dropped its description slot and the
+  // theme's card dropped its tagline with it, so nothing spends a secondary colour here now.
   "--mega-menu-item-state-hover-foreground": "#0b078c",
   "--mega-menu-item-state-hover-scale": "1.05",
   "--mega-menu-item-state-pressed-opacity": "0.92",

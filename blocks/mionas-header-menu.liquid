@@ -910,14 +910,16 @@
     }
   }
 
-  /* Fixed media height keeps rows aligned when some cards have no tagline; 110px is single-sourced
-     from the design system's own value.
+  /* A square is the floor, not the shape: aspect-ratio drives the height off the column width and
+     the token caps it, so a narrow column crops to 1:1 instead of going portrait. Every card in a
+     row shares a column width, so every card's media lands on the same height.
 
      The radius is a real change: MegaMenuItem splits card radius (lg, 12px) from media radius
      (md, 8px), rather than reusing one radius for both as before. */
   .mionas-header-menu-panel__media {
     display: block;
-    height: var(--mega-menu-item-base-media-height);
+    aspect-ratio: 1 / 1;
+    max-height: var(--mega-menu-item-base-media-height);
     border-radius: var(--mega-menu-item-base-media-radius);
     overflow: hidden;
   }
@@ -936,33 +938,12 @@
      one of the four Archivo weights already loaded (per snippets/design-system-bridge.liquid), so
      it renders on a real face rather than a synthesised faux-bold. */
   .mionas-header-menu-panel__label {
+    min-width: 0;
     font-size: var(--text-role-label-lg-font-size);
     line-height: var(--text-role-label-lg-line-height);
     font-weight: var(--mega-menu-item-label-font-weight);
     letter-spacing: var(--text-role-label-lg-letter-spacing);
     color: var(--mega-menu-item-label-foreground);
-  }
-
-  .mionas-header-menu-panel__tagline {
-    font-size: var(--text-role-label-md-font-size);
-    line-height: var(--text-role-label-md-line-height);
-    font-weight: var(--text-role-label-md-font-weight);
-    letter-spacing: var(--text-role-label-md-letter-spacing);
-    color: var(--mega-menu-item-description-foreground);
-  }
-
-  /* The card's label and tagline live in this wrapper for the drawer's row grid (thumb | text |
-     caret) -- without it they're separate grid items and can't share a column.
-
-     No gap on desktop: MegaMenuItem's .text declares no gap and Text sets margin: 0, so label and
-     description sit flush as one block.
-
-     The drawer variant re-adds --space-3xs below since its rows are taller and touch-targeted,
-     unlike the dense desktop grid. */
-  .mionas-header-menu-panel__text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
   }
 
   /* ── Drawer variant ── */
@@ -985,15 +966,31 @@
      block in snippets/mionas-header-menu-panel.liquid), so those rules would otherwise fire inside
      the drawer at tablet width. Pinning one column here at specificity (0,2,0) wins regardless of
      source order -- don't replace with a max-width media query, since width isn't what selects the
-     drawer. */
+     drawer.
+
+     No gap, matching MegaMenu's own mobile grid. The rows are already separated by each card's
+     8px padding-block, so a gap on top of that double-counts the spacing. */
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-2xs);
+    gap: 0;
+  }
+
+  /* MegaMenu's category rail, marking these cards as the expanded contents of the group heading
+     above them. The rail sits at the list edge because the heading does too (see the heading rule
+     below) -- MegaMenu offsets both by 8px, and what matters is that the two match.
+
+     This is what deliberately breaks the card/top-level row alignment that the padding-inline: 0
+     rule above preserves for unindented panels. */
+  .mionas-header-menu-panel--drawer.mionas-header-menu-panel--indented
+    .mionas-header-menu-panel__grid {
+    border-inline-start: var(--mega-menu-categories-border-width) solid
+      var(--mega-menu-categories-border-color);
+    padding-inline-start: var(--mega-menu-categories-padding);
   }
 
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__card {
     display: grid;
-    grid-template-columns: 56px minmax(0, 1fr) auto;
+    grid-template-columns: var(--mega-menu-item-base-media-size) minmax(0, 1fr) auto;
     align-items: center;
 
     /* Same token the desktop card spends, so the drawer row tracks the design system too --
@@ -1002,36 +999,29 @@
 
     /* Zeroed so the thumbnail's left edge lines up with the section heading and the childless
        top-level rows (.menu-drawer__menu-item, no inline padding). Nothing paints behind the card,
-       so inline padding here would only misalign. */
+       so inline padding here would only misalign. An indented panel offsets the whole group
+       instead, via the rail rule above -- that offset is the point of the rail. */
     padding-inline: 0;
-  }
-
-  .mionas-header-menu-panel--drawer .mionas-header-menu-panel__text {
-    gap: var(--space-3xs);
   }
 
   /* A fixed square, not the desktop card's full-width 110px band. The warm background shows
      through for links with no image (page/blog links, imageless collections), so rows stay aligned.
 
-     Stays 56px rather than MegaMenuItem's --mega-menu-item-base-media-size (40px): that token sizes
-     a viewport breakpoint, while this drawer is selected by touch or nav overflow at any width (see
-     the doc block in snippets/mionas-header-menu-panel.liquid). 56px is also load-bearing beyond
-     the CSS -- the snippet requests `sizes: 56px` and it's a 44px-plus touch target.
+     Spends MegaMenuItem's own size now. This was pinned at 56px while the token was 40px and the
+     argument was that 56px cleared the touch-target floor; the rework moved the token to 44px for
+     that same reason, which retired the argument. 44px + the card's 8px padding-block gives a 60px
+     row, matching MegaMenu's drawer instead of standing 12px taller than it.
+
+     Keep snippets/mionas-header-menu-panel.liquid's `sizes` in step -- it requests the rendered
+     width, so a change here without a change there over-downloads.
 
      The background fill is swapped for MegaMenuItem's warm-200 (#ece8e2), replacing an eyeballed
      --color-warm-100. */
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__media {
-    width: 56px;
-    height: 56px;
+    width: var(--mega-menu-item-base-media-size);
+    height: var(--mega-menu-item-base-media-size);
     border-radius: var(--mega-menu-item-base-media-radius);
     background: var(--mega-menu-item-base-media-background);
-  }
-
-  .mionas-header-menu-panel--drawer .mionas-header-menu-panel__label {
-    font-size: var(--text-role-title-sm-font-size);
-    line-height: var(--text-role-title-sm-line-height);
-    font-weight: var(--text-role-title-sm-font-weight);
-    letter-spacing: var(--text-role-title-sm-letter-spacing);
   }
 
   .mionas-header-menu-panel--drawer .mionas-header-menu-panel__caret {
@@ -1055,19 +1045,23 @@
   /* Four classes deliberately: snippets/mionas-header-drawer.liquid's divider rule is (0,3,0) and
      re-imposes a ~48px min-height on this inert heading when drawer_dividers is on. A (0,3,0)
      selector here would only tie and fall back to unguaranteed source order; (0,4,0) wins outright. */
-  /* A Stamp mirror: weight, tracking and transform from Stamp's component tokens, size from the
-     label-lg band Stamp renders Text at. No --stamp-base-font-family on purpose -- this row
-     inherits --mainlist's --menu-top-level-font-* family (see just above), and switching it to
-     Oswald would be a new design decision rather than part of the design-system sync. */
+  /* MegaMenu's own heading, no longer a Stamp mirror: the design system moved this row off Stamp
+     to plain label-lg at MegaMenu's heading weight and colour, so it shares one band with the card
+     labels the rail ties it to. The family still comes from --mainlist's --menu-top-level-font-*
+     (see just above), because that keeps Shopify hosting the face.
+
+     No inline padding, where MegaMenu takes 8px. The rail must start under this heading's first
+     letter, and every other row here sits at the list edge (.menu-drawer__menu-item is
+     `padding: var(--padding-2xs) 0`), so the pair is zero on both. */
   .menu-drawer__menu .menu-drawer__menu-item.menu-drawer__menu-item--mainlist.menu-drawer__menu-item--mionas-heading {
-    min-height: 0;
-    padding-block: var(--space-sm) var(--space-xs);
+    min-height: var(--mega-menu-heading-height);
+    padding-block: 0;
     font-size: var(--text-role-label-lg-font-size);
     line-height: var(--text-role-label-lg-line-height);
-    font-weight: var(--stamp-base-font-weight);
-    letter-spacing: var(--stamp-base-letter-spacing);
-    text-transform: var(--stamp-base-text-transform);
-    color: var(--color-vermell-segell);
+    letter-spacing: var(--text-role-label-lg-letter-spacing);
+    font-weight: var(--mega-menu-heading-font-weight);
+    color: var(--mega-menu-heading-foreground);
+    align-items: center;
     justify-content: flex-start;
     cursor: default;
   }
@@ -1076,23 +1070,35 @@
      &:hover at (0,2,0). Kept as a forward guard in case that specificity relationship changes;
      don't delete it for "doing nothing today". */
   .menu-drawer__menu .menu-drawer__menu-item--mionas-heading:hover {
-    color: var(--color-vermell-segell);
+    color: var(--mega-menu-heading-foreground);
   }
 
-  /* The drawer's top-level rows are sentence case while the section heading stays uppercase.
-     Overridden here rather than flipping type_case_primary_link, which would also affect the
-     desktop nav. :not() excludes the heading, which sets its own uppercase above. */
-  .menu-drawer__menu .menu-drawer__menu-item--mainlist:not(.menu-drawer__menu-item--mionas-heading) {
+  /* Every top-level row in the drawer is sentence case, the group heading included since it
+     stopped being a Stamp. Overridden here rather than by flipping type_case_primary_link, which
+     would also affect the desktop nav.
+
+     Size and line-height too, because MegaMenu puts every row in the drawer on one band: its
+     heading and MegaMenuItem's label are both label-lg, and MegaMenuLink composes Link size="sm",
+     which is the same 15px. Horizon instead renders these rows at --menu-font-2xl--size
+     (snippets/menu-font-styles.liquid:16-18), which left the childless rows visibly larger than
+     the cards beside them. Set as properties, not by re-pointing --menu-top-level-font-size:
+     Horizon declares that variable inline on the drawer's nav, so a declaration here would lose
+     to inheritance.
+
+     (0,2,0) so it beats the drawer snippet's own (0,1,0) rule outright -- source order between
+     two stylesheet tags isn't guaranteed. */
+  .menu-drawer__menu .menu-drawer__menu-item--mainlist {
     text-transform: none;
+    font-size: var(--text-role-label-lg-font-size);
+    line-height: var(--text-role-label-lg-line-height);
   }
 
-  /* One hairline after each card group, separating it from the plain rows beneath. Independent of
-     the block's drawer_dividers setting, which applies to every item. :not(:last-child) so a group
-     that's the menu's final item doesn't draw a rule with nothing under it. */
+  /* A gap after each card group, not a hairline: MegaMenu dropped its divider here because the
+     category rail already separates the group from the plain rows beneath it. Independent of the
+     block's drawer_dividers setting, which applies to every item. :not(:last-child) so a group
+     that's the menu's final item doesn't add a trailing gap. */
   .menu-drawer__list-item--flat:has(.mionas-header-menu-panel):not(:last-child) {
-    border-block-end: 1px solid var(--color-warm-200);
-    padding-block-end: var(--space-md);
-    margin-block-end: var(--space-2xs);
+    margin-block-end: var(--mega-menu-base-gap);
   }
 
 {% endstylesheet %}
