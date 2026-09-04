@@ -186,10 +186,9 @@
               "blocks": {}
             },
             "mionas_text_rVqiGU": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Product description",
+              "type": "mionas-variant-description",
+              "name": "Mionas: Variant description",
               "settings": {
-                "text": "{{ closest.product.description }}",
                 "variant": "body",
                 "size": "lg",
                 "color": "default",

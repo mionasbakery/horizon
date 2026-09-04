@@ -197,7 +197,7 @@
                   "name": "Mionas: FAQ question - Recogida",
                   "settings": {
                     "question": "¿Puedo recoger mi pedido en la tienda?",
-                    "answer": "<p>Sí. Puedes recoger tu pedido en nuestra tienda de Carrer de Sant Bonaventura, 16 (Sitges) dentro del horario de apertura. Indica la recogida en tienda al finalizar tu compra.</p>",
+                    "answer": "<p>Sí. Puedes recoger tu pedido en nuestra tienda a partir del día siguiente a tu compra.</p><p>Estamos en <a href=\"https://www.google.com/maps/search/?api=1&amp;query=Mionas+Bakery%2C+Carrer+de+Sant+Bonaventura%2C+16%2C+08870+Sitges%2C+Barcelona\" target=\"_blank\">Carrer de Sant Bonaventura, 16, 08870 Sitges (Barcelona)</a>. Selecciona la opción de recogida en tienda al finalizar la compra y espera a que te avisemos cuando el pedido esté listo.</p><p>Si necesitas recogerlo otro día, escríbenos por <a href=\"https://wa.me/34933348246\" target=\"_blank\">WhatsApp</a> o <a href=\"mailto:hola@mionasbakery.com\">email</a> al hacer el pedido.</p>",
                     "open_by_default": true
                   },
                   "blocks": {}
@@ -207,7 +207,7 @@
                   "name": "Mionas: FAQ question - Antelación",
                   "settings": {
                     "question": "¿Con cuánta antelación debo hacer mi pedido?",
-                    "answer": "<p>Horneamos cada día en pequeñas cantidades. Para pedidos grandes o packs personalizados, te recomendamos pedir con la máxima antelación posible.</p>",
+                    "answer": "<p>La antelación depende del tipo de pedido:</p><ul><li>Para cookies y megacookies con recogida en tienda, haz el pedido como mínimo el día anterior.</li><li>Para envíos, haz el pedido como máximo el martes para que salga esa misma semana.</li><li>Para tartas personalizadas, necesitamos un mínimo de 5 días.</li></ul><p>Para pedidos grandes o packs personalizados, te recomendamos hacer el pedido lo antes posible.</p>",
                     "open_by_default": false
                   },
                   "blocks": {}
@@ -217,7 +217,7 @@
                   "name": "Mionas: FAQ question - Pedidos personalizados",
                   "settings": {
                     "question": "¿Hacéis pedidos personalizados para cumpleaños, bodas o eventos?",
-                    "answer": "<p>Sí. Las megacookies y los packs a medida son de lo que más disfrutamos. Cuéntanos la ocasión y lo preparamos contigo.</p>",
+                    "answer": "<p>Sí. Hacemos <a href=\"/collections/tartas\">tartas personalizadas tipo layer cake</a>, cajas de 28 minicookies y galletas decoradas.</p><p>Necesitamos un mínimo de 5 días de antelación. Para pedidos grandes o muy personalizados, te recomendamos hacer el pedido lo antes posible.</p>",
                     "open_by_default": false
                   },
                   "blocks": {}
@@ -227,17 +227,17 @@
                   "name": "Mionas: FAQ question - Modificar o cancelar",
                   "settings": {
                     "question": "¿Puedo modificar o cancelar mi pedido?",
-                    "answer": "<p>Escríbenos cuanto antes por WhatsApp o email y buscamos la mejor solución. Si el pedido ya está en el horno, puede que no lleguemos a tiempo, pero siempre lo intentamos.</p>",
+                    "answer": "<p>Escríbenos lo antes posible por <a href=\"https://wa.me/34933348246\" target=\"_blank\">WhatsApp</a> o <a href=\"mailto:hola@mionasbakery.com\">email</a> y buscaremos la mejor solución.</p><p>Puedes modificar o cancelar las cookies y megacookies hasta el día anterior a la fecha prevista. Si quieres modificar una tarta, las opciones dependerán del punto en el que se encuentre el pedido.</p>",
                     "open_by_default": false
                   },
                   "blocks": {}
                 },
-                "mionas_faq_question_mj6yjK": {
+                "mionas_faq_question_cake_cancel": {
                   "type": "_mionas-faq-question",
-                  "name": "Mionas: FAQ question - Horario",
+                  "name": "Mionas: FAQ question - Cancelación tarta",
                   "settings": {
-                    "question": "¿Cuál es vuestro horario de apertura?",
-                    "answer": "<p>De martes a sábado abrimos de 10:00 a 14:00 y de 16:30 a 20:30. Los domingos, de 10:00 a 14:00. Los lunes permanecemos cerrados.</p>",
+                    "question": "¿Cuáles son las condiciones de cancelación de una tarta?",
+                    "answer": "<ul><li>Si cancelas con 7 días o más de antelación, te devolveremos el importe íntegro.</li><li>Si faltan menos de 7 días, pero todavía quedan al menos 72 horas, te devolveremos el 80 %. El 20 % restante se retendrá en concepto de reserva y planificación de la producción.</li><li>Si faltan menos de 72 horas, no podremos aceptar la cancelación, ya que la elaboración puede haber comenzado o podemos haber adquirido y preparado los ingredientes necesarios.</li></ul>",
                     "open_by_default": false
                   },
                   "blocks": {}
@@ -248,7 +248,7 @@
                 "mionas_faq_question_PyVEyW",
                 "mionas_faq_question_tTy7dA",
                 "mionas_faq_question_GptDTY",
-                "mionas_faq_question_mj6yjK"
+                "mionas_faq_question_cake_cancel"
               ]
             },
             "mionas_text_9tLkyP": {
@@ -278,7 +278,17 @@
                   "name": "Mionas: FAQ question - Envíos a domicilio",
                   "settings": {
                     "question": "¿Hacéis envíos a domicilio?",
-                    "answer": "<p>Sí, enviamos a toda la Península. De momento no llegamos a Baleares ni Canarias. Preparamos los envíos para que las cookies lleguen en perfecto estado.</p>",
+                    "answer": "<p>Sí, enviamos a toda la Península. De momento no llegamos a Baleares ni Canarias.</p><p>Los pedidos que recibimos hasta el martes salen del obrador el miércoles para que las cookies lleguen entre jueves y viernes en perfecto estado.</p>",
+                    "open_by_default": false
+                  },
+                  "blocks": {}
+                },
+                "mionas_faq_question_delivery_apps": {
+                  "type": "_mionas-faq-question",
+                  "name": "Mionas: FAQ question - Uber Eats y Glovo",
+                  "settings": {
+                    "question": "¿Puedo pedir a través de Uber Eats o Glovo?",
+                    "answer": "<p>Sí. También puedes hacer tu pedido a través de <a href=\"https://www.ubereats.com/es/store/mionas-bakery/RCYxyD4SXZGnRE6BDziGxw\" target=\"_blank\">Uber Eats</a> o <a href=\"https://glovoapp.com/es/es/sitges/stores/mionas-bakery-sitges\" target=\"_blank\">Glovo</a>. Consulta la disponibilidad directamente en cada plataforma.</p>",
                     "open_by_default": false
                   },
                   "blocks": {}
@@ -288,7 +298,7 @@
                   "name": "Mionas: FAQ question - Coste y plazo",
                   "settings": {
                     "question": "¿Cuánto cuesta el envío y cuánto tarda?",
-                    "answer": "<p>El coste es de [TARIFA DE ENVÍO] y el plazo habitual de entrega es de [PLAZO DE ENTREGA]. Verás el importe exacto al finalizar tu compra.</p>",
+                    "answer": "<p>El envío cuesta entre 3,99 € y 5,99 €, y el plazo habitual de entrega es de 24 a 48 horas desde que el pedido sale del obrador.</p><p>Verás el importe exacto al finalizar tu compra.</p>",
                     "open_by_default": false
                   },
                   "blocks": {}
@@ -296,6 +306,7 @@
               },
               "block_order": [
                 "mionas_faq_question_dDXLnr",
+                "mionas_faq_question_delivery_apps",
                 "mionas_faq_question_HLKLw4"
               ]
             },
@@ -303,7 +314,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text - Productos title",
               "settings": {
-                "text": "<p>Productos e ingredientes</p>",
+                "text": "<p>Productos y alérgenos</p>",
                 "variant": "title",
                 "size": "lg",
                 "color": "default",
@@ -326,7 +337,7 @@
                   "name": "Mionas: FAQ question - Otros productos",
                   "settings": {
                     "question": "¿Qué otros productos tenéis, además de cookies?",
-                    "answer": "<p>En el obrador también hacemos <a href=\"/products/brookie\">brookies</a>, <a href=\"/collections/mega-cookies\">megacookies</a>, mini cheesecakes y <a href=\"/collections/encargos\">tartas personalizadas</a> para tus celebraciones.</p>",
+                    "answer": "<p>En el obrador también hacemos brookies, <a href=\"/collections/megacookies\">megacookies</a>, cheesecakes, galletas decoradas y <a href=\"/collections/tartas\">tartas personalizadas</a> para tus celebraciones.</p>",
                     "open_by_default": false
                   },
                   "blocks": {}
@@ -351,6 +362,104 @@
                   },
                   "blocks": {}
                 },
+                "mionas_faq_question_allergens": {
+                  "type": "_mionas-faq-question",
+                  "name": "Mionas: FAQ question - Alérgenos",
+                  "settings": {
+                    "question": "¿Dónde puedo consultar los alérgenos?",
+                    "answer": "<p>Puedes consultar toda la información en nuestra <a href=\"/pages/alergenos\">página de alérgenos</a>.</p>",
+                    "open_by_default": false
+                  },
+                  "blocks": {}
+                },
+                "mionas_faq_question_storage": {
+                  "type": "_mionas-faq-question",
+                  "name": "Mionas: FAQ question - Conservación",
+                  "settings": {
+                    "question": "¿Cómo conservo y caliento las cookies?",
+                    "answer": "<p>Las cookies se mantienen frescas hasta una semana si las guardas en un recipiente hermético.</p><p>Si no las vas a consumir durante los primeros días, puedes congelarlas. Para calentarlas, déjalas entre 3 y 5 minutos en el horno a 180 °C o entre 5 y 10 segundos en el microondas.</p><p>Si estaban congeladas, caliéntalas durante 5 minutos en el horno a 180 °C.</p>",
+                    "open_by_default": false
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "mionas_faq_question_YHxwJY",
+                "mionas_faq_question_jjXMPi",
+                "mionas_faq_question_bPhUeq",
+                "mionas_faq_question_allergens",
+                "mionas_faq_question_storage"
+              ]
+            },
+            "mionas_text_courses_title": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Cursos title",
+              "settings": {
+                "text": "<p>Cursos</p>",
+                "variant": "title",
+                "size": "lg",
+                "color": "default",
+                "tag": "h2",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_faq_courses": {
+              "type": "mionas-faq",
+              "name": "Mionas: FAQ - Cursos",
+              "settings": {},
+              "blocks": {
+                "mionas_faq_question_a8M7kY": {
+                  "type": "_mionas-faq-question",
+                  "name": "Mionas: FAQ question - Cursos",
+                  "settings": {
+                    "question": "¿Ofrecéis cursos de repostería?",
+                    "answer": "<p>Sí. Organizamos <a href=\"/collections/cursos\">cursos de cookies americanas</a> en nuestro obrador de Sitges.</p><p>Consulta las próximas fechas y reserva tu plaza en la tienda online.</p>",
+                    "open_by_default": false
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "mionas_faq_question_a8M7kY"
+              ]
+            },
+            "mionas_text_store_title": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Tienda title",
+              "settings": {
+                "text": "<p>Tienda</p>",
+                "variant": "title",
+                "size": "lg",
+                "color": "default",
+                "tag": "h2",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_faq_store": {
+              "type": "mionas-faq",
+              "name": "Mionas: FAQ - Tienda",
+              "settings": {},
+              "blocks": {
+                "mionas_faq_question_mj6yjK": {
+                  "type": "_mionas-faq-question",
+                  "name": "Mionas: FAQ question - Horario",
+                  "settings": {
+                    "question": "¿Cuál es vuestro horario de apertura?",
+                    "answer": "<p>De martes a sábado abrimos de 10:00 a 14:00 y de 16:30 a 20:30. Los domingos, de 10:00 a 14:00. Los lunes permanecemos cerrados.</p><p>Antes de venir, te recomendamos consultar <a href=\"https://www.google.com/maps/search/?api=1&amp;query=Mionas+Bakery%2C+Carrer+de+Sant+Bonaventura%2C+16%2C+08870+Sitges%2C+Barcelona\" target=\"_blank\">Google Maps</a>, donde mantenemos actualizados los horarios especiales y los días festivos.</p>",
+                    "open_by_default": false
+                  },
+                  "blocks": {}
+                },
                 "mionas_faq_question_eMi33k": {
                   "type": "_mionas-faq-question",
                   "name": "Mionas: FAQ question - Pan",
@@ -370,25 +479,12 @@
                     "open_by_default": false
                   },
                   "blocks": {}
-                },
-                "mionas_faq_question_a8M7kY": {
-                  "type": "_mionas-faq-question",
-                  "name": "Mionas: FAQ question - Cursos",
-                  "settings": {
-                    "question": "¿Ofrecéis cursos de repostería?",
-                    "answer": "<p>Sí. Organizamos <a href=\"/collections/cursos\">cursos</a> en nuestro obrador de Sitges. Consulta las próximas fechas y reserva tu plaza en la tienda online.</p>",
-                    "open_by_default": false
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
-                "mionas_faq_question_YHxwJY",
-                "mionas_faq_question_jjXMPi",
-                "mionas_faq_question_bPhUeq",
+                "mionas_faq_question_mj6yjK",
                 "mionas_faq_question_eMi33k",
-                "mionas_faq_question_tfxAx3",
-                "mionas_faq_question_a8M7kY"
+                "mionas_faq_question_tfxAx3"
               ]
             }
           },
@@ -398,7 +494,11 @@
             "mionas_text_9tLkyP",
             "mionas_faq_Q7HcBx",
             "mionas_text_Mk34mB",
-            "mionas_faq_bq3pQr"
+            "mionas_faq_bq3pQr",
+            "mionas_text_courses_title",
+            "mionas_faq_courses",
+            "mionas_text_store_title",
+            "mionas_faq_store"
           ]
         }
       },

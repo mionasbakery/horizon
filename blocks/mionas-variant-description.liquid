@@ -1,0 +1,184 @@
+{%- doc -%}
+  Renders the selected variant's custom.variant_description metafield as a Mionas text role,
+  falling back to the product description when the variant metafield is blank.
+
+  @param {product} [closest.product] - The product whose selected variant provides the description.
+{%- enddoc -%}
+
+{%- liquid
+  assign product = closest.product
+  assign block_settings = block.settings
+  assign tag = block_settings.tag | default: 'p'
+  assign description = product.description
+  assign variant_description = product.selected_or_first_available_variant.metafields.custom.variant_description
+
+  if variant_description != blank
+    capture description
+      echo variant_description | metafield_tag
+    endcapture
+  endif
+-%}
+
+{%- capture content -%}
+  {%- render 'mionas-inline-richtext', value: description -%}
+{%- endcapture -%}
+{%- liquid
+  assign content = content | strip
+  assign visible_text = content | strip_html | strip
+-%}
+
+{%- if product != blank -%}
+  {%- capture text_style -%}
+    {%- render 'spacing-style', settings: block_settings -%}
+    {%- if block_settings.text_wrap == 'nowrap' -%}
+      white-space: nowrap;
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <mionas-variant-description
+    data-product-id="{{ product.id }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- if visible_text != blank -%}
+      {%- render 'mionas-text',
+        content: content,
+        variant: block_settings.variant,
+        size: block_settings.size,
+        color: block_settings.color,
+        tag: tag,
+        class: 'spacing-style',
+        style: text_style
+      -%}
+    {%- endif -%}
+  </mionas-variant-description>
+  <script src="{{ 'mionas-variant-description.js' | asset_url }}" type="module"></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mionas: Variant details",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        { "value": "display", "label": "Display" },
+        { "value": "headline", "label": "Headline" },
+        { "value": "title", "label": "Title" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
+      ],
+      "default": "body",
+      "info": "The typography band, same as Text.tsx's `variant` prop."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
+      ],
+      "default": "md",
+      "info": "The step within the Variant band."
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "tag",
+      "label": "HTML tag",
+      "options": [
+        { "value": "p", "label": "p" },
+        { "value": "span", "label": "span" },
+        { "value": "div", "label": "div" },
+        { "value": "h1", "label": "h1" },
+        { "value": "h2", "label": "h2" },
+        { "value": "h3", "label": "h3" },
+        { "value": "h4", "label": "h4" },
+        { "value": "h5", "label": "h5" },
+        { "value": "h6", "label": "h6" }
+      ],
+      "default": "p",
+      "info": "Pick the semantic level; it doesn't have to match Variant."
+    },
+    {
+      "type": "select",
+      "id": "text_wrap",
+      "label": "Text wrapping",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "nowrap", "label": "No wrap" }
+      ],
+      "default": "normal",
+      "info": "No wrap keeps the text on one line (still breaks at an explicit line break)."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Variant details",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}
