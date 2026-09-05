@@ -519,6 +519,20 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
+                    "mionas_link_4RHMz8": {
+                      "type": "mionas-link",
+                      "name": "Mionas: Link",
+                      "settings": {
+                        "label": "Alérgenos",
+                        "link": "shopify://pages/alergenos",
+                        "open_in_new_tab": false,
+                        "variant": "inverse-primary-muted",
+                        "size": "md",
+                        "icon": "none",
+                        "text_wrap": "normal"
+                      },
+                      "blocks": {}
+                    },
                     "mionas_link_7NKyLY": {
                       "type": "mionas-link",
                       "name": "Mionas: Link - About us",
@@ -547,20 +561,6 @@
                       },
                       "blocks": {}
                     },
-                    "mionas_link_4RHMz8": {
-                      "type": "mionas-link",
-                      "name": "Mionas: Link",
-                      "settings": {
-                        "label": "Alérgenos",
-                        "link": "shopify://pages/alergenos",
-                        "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "md",
-                        "icon": "none",
-                        "text_wrap": "normal"
-                      },
-                      "blocks": {}
-                    },
                     "mionas_link_J9PJjF": {
                       "type": "mionas-link",
                       "name": "Mionas: Link - FAQ",
@@ -577,9 +577,9 @@
                     }
                   },
                   "block_order": [
+                    "mionas_link_4RHMz8",
                     "mionas_link_7NKyLY",
                     "mionas_link_pq6RUL",
-                    "mionas_link_4RHMz8",
                     "mionas_link_J9PJjF"
                   ]
                 }
