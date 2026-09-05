@@ -603,7 +603,7 @@
               "name": "Mionas: Button - Visit",
               "settings": {
                 "label": "Contáctanos",
-                "link": "shopify://pages/contact",
+                "link": "shopify://pages/contacto",
                 "open_in_new_tab": false,
                 "variant": "outline",
                 "size": "lg",

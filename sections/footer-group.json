@@ -552,7 +552,7 @@
                       "name": "Mionas: Link - FAQ",
                       "settings": {
                         "label": "FAQ",
-                        "link": "shopify://pages/preguntas-frecuentes",
+                        "link": "shopify://pages/faq",
                         "open_in_new_tab": false,
                         "variant": "inverse-primary-muted",
                         "size": "sm",
