@@ -194,7 +194,6 @@
                 "variant": "body",
                 "size": "lg",
                 "color": "default",
-                "tag": "p",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -287,41 +286,6 @@
                 "quantity_8BfTFG"
               ]
             },
-            "calla_delivery_pickup_date_product_pickup_date_picker_bcgCkN": {
-              "type": "shopify://apps/calla-delivery-pickup-date/blocks/product_pickup_date_picker/3613d08c-d180-43c4-8f66-9aca9e0d28fc",
-              "settings": {
-                "style_autoserve_date_picker": "black-circle",
-                "calendar-border-radius": 16,
-                "aut-delivery-cal-display-style": "on-input",
-                "aut-delivery-cal-alignment": "center",
-                "aut-delivery-date-required": true,
-                "padding_top": 0,
-                "padding_bottom": 20,
-                "aut-delivery-date-heading-text": "¿Qué día lo recogerás?",
-                "aut-delivery-date-heading-color": "#000000",
-                "aut-delivery-date-subheading-text": "Selecciona una fecha de recogida entre las opciones disponibles.",
-                "aut-delivery-date-description-text": "Si tu fecha de recogida cae en festivo, llámanos o escríbenos antes para asegurarte de que estaremos abiertos.",
-                "aut-delivery-date-full-width": true,
-                "aut-delivery-date-alignment": "left",
-                "aut-delivery-date-info-message-style": "info",
-                "aut-delivery-date-info-message-title": "",
-                "aut-delivery-date-info-message-content": "",
-                "aut-delivery-date-disable-mon": true,
-                "aut-delivery-date-disable-tues": false,
-                "aut-delivery-date-disable-wed": false,
-                "aut-delivery-date-disable-thu": false,
-                "aut-delivery-date-disable-fri": false,
-                "aut-delivery-date-disable-sat": false,
-                "aut-delivery-date-disable-sun": false
-              }
-            },
-            "delivery_date": {
-              "type": "delivery-date",
-              "name": "Delivery date",
-              "disabled": true,
-              "settings": {},
-              "blocks": {}
-            },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
               "name": "Buy buttons",
@@ -391,8 +355,6 @@
             "mionas_text_rVqiGU",
             "variant_picker_R3rGDr",
             "mionas_group_AwePCE",
-            "calla_delivery_pickup_date_product_pickup_date_picker_bcgCkN",
-            "delivery_date",
             "buy_buttons_eYQEYi"
           ]
         }

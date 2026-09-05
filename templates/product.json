@@ -17,6 +17,8 @@
           "name": "Mionas: Breadcrumbs",
           "settings": {
             "menu": "",
+            "home_label": "",
+            "label": "",
             "padding-block-start": 0,
             "padding-block-end": 0
           },
@@ -192,7 +194,6 @@
                 "variant": "body",
                 "size": "lg",
                 "color": "default",
-                "tag": "p",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -222,12 +223,6 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
-            },
-            "delivery_date": {
-              "type": "delivery-date",
-              "name": "Delivery date",
-              "settings": {},
               "blocks": {}
             },
             "buy_buttons_eYQEYi": {
@@ -297,7 +292,6 @@
             "mionas_price_4CMDxj",
             "mionas_text_rVqiGU",
             "variant_picker_R3rGDr",
-            "delivery_date",
             "buy_buttons_eYQEYi"
           ]
         }
