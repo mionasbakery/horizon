@@ -220,7 +220,7 @@
                     "link": "shopify://collections/comprar-cookies",
                     "open_in_new_tab": false,
                     "variant": "primary",
-                    "size": "md",
+                    "size": "lg",
                     "full_width": false,
                     "icon": "none",
                     "icon_position": "leading"
@@ -235,7 +235,7 @@
                     "link": "shopify://pages/sobre-nosotros",
                     "open_in_new_tab": false,
                     "variant": "ghost",
-                    "size": "md",
+                    "size": "lg",
                     "full_width": false,
                     "icon": "none",
                     "icon_position": "leading"
