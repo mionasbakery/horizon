@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+
+const blockSource = await readFile(
+  new URL('../blocks/mionas-variant-description.liquid', import.meta.url),
+  'utf8'
+);
 
 class FakeHTMLElement {
   dataset = {};
@@ -23,6 +29,12 @@ globalThis.customElements = {
 };
 
 await import('../assets/mionas-variant-description.js');
+
+test('renders variant rich text in a block container without flattening its HTML', () => {
+  assert.doesNotMatch(blockSource, /render 'mionas-inline-richtext'/);
+  assert.match(blockSource, /content: description,/);
+  assert.match(blockSource, /tag: 'div',/);
+});
 
 test('updates the dedicated Mionas variant description from the selected variant response', async () => {
   const listeners = new Map();

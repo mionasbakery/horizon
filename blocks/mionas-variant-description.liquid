@@ -1,5 +1,5 @@
 {%- doc -%}
-  Renders the selected variant's custom.variant_description metafield as a Mionas text role,
+  Renders the selected variant's custom.variant_description metafield with its rich-text structure,
   falling back to the product description when the variant metafield is blank.
 
   @param {product} [closest.product] - The product whose selected variant provides the description.
@@ -8,7 +8,6 @@
 {%- liquid
   assign product = closest.product
   assign block_settings = block.settings
-  assign tag = block_settings.tag | default: 'p'
   assign description = product.description
   assign variant_description = product.selected_or_first_available_variant.metafields.custom.variant_description
 
@@ -19,12 +18,8 @@
   endif
 -%}
 
-{%- capture content -%}
-  {%- render 'mionas-inline-richtext', value: description -%}
-{%- endcapture -%}
 {%- liquid
-  assign content = content | strip
-  assign visible_text = content | strip_html | strip
+  assign visible_text = description | strip_html | strip
 -%}
 
 {%- if product != blank -%}
@@ -41,12 +36,12 @@
   >
     {%- if visible_text != blank -%}
       {%- render 'mionas-text',
-        content: content,
+        content: description,
         variant: block_settings.variant,
         size: block_settings.size,
         color: block_settings.color,
-        tag: tag,
-        class: 'spacing-style',
+        tag: 'div',
+        class: 'spacing-style rte',
         style: text_style
       -%}
     {%- endif -%}
@@ -99,24 +94,6 @@
         { "value": "tint", "label": "Tint" }
       ],
       "default": "default"
-    },
-    {
-      "type": "select",
-      "id": "tag",
-      "label": "HTML tag",
-      "options": [
-        { "value": "p", "label": "p" },
-        { "value": "span", "label": "span" },
-        { "value": "div", "label": "div" },
-        { "value": "h1", "label": "h1" },
-        { "value": "h2", "label": "h2" },
-        { "value": "h3", "label": "h3" },
-        { "value": "h4", "label": "h4" },
-        { "value": "h5", "label": "h5" },
-        { "value": "h6", "label": "h6" }
-      ],
-      "default": "p",
-      "info": "Pick the semantic level; it doesn't have to match Variant."
     },
     {
       "type": "select",
