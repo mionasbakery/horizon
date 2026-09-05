@@ -30,9 +30,10 @@
 {%- liquid
   assign product = closest.product
   assign block_settings = block.settings
+  assign selected_variant = product.selected_or_first_available_variant
 
   assign on_sale = false
-  if product.compare_at_price > product.price
+  if selected_variant.compare_at_price > selected_variant.price
     assign on_sale = true
   endif
 -%}
@@ -70,7 +71,7 @@
     endcomment
     capture price_content
       echo '<span class="mionas-price__current">'
-      echo product.price | money
+      echo selected_variant.price | money
       echo '</span>'
 
       if block_settings.show_compare_at_price and on_sale
@@ -78,7 +79,7 @@
         echo '<span class="visually-hidden">'
         echo 'content.price_regular' | t
         echo '&nbsp;</span>'
-        echo product.compare_at_price | money
+        echo selected_variant.compare_at_price | money
         echo '</s>'
       endif
 
@@ -99,16 +100,23 @@
     {%- render 'spacing-style', settings: block_settings -%}
   {%- endcapture -%}
 
-  {%- render 'mionas-text',
-    content: price_content,
-    variant: block_settings.variant,
-    size: block_settings.size,
-    color: block_settings.color,
-    tag: 'p',
-    class: 'mionas-price spacing-style',
-    style: price_style,
-    shopify_attributes: block.shopify_attributes
-  -%}
+  <product-price
+    data-block-id="{{ block.id }}"
+    data-product-id="{{ product.id }}"
+    {{ block.shopify_attributes }}
+  >
+    <div ref="priceContainer">
+      {%- render 'mionas-text',
+        content: price_content,
+        variant: block_settings.variant,
+        size: block_settings.size,
+        color: block_settings.color,
+        tag: 'p',
+        class: 'mionas-price spacing-style',
+        style: price_style
+      -%}
+    </div>
+  </product-price>
 {%- endif -%}
 
 {% stylesheet %}
