@@ -135,7 +135,7 @@
             "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
-            "height": "fit",
+            "height": "fill",
             "details_position": "flex-start",
             "gap": 16,
             "sticky_details_desktop": true,
@@ -227,7 +227,7 @@
             },
             "mionas_group_AwePCE": {
               "type": "mionas-group",
-              "name": "Mionas: Group",
+              "name": "Mionas: Quantity",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -244,7 +244,7 @@
                 "custom_width_mobile": 100,
                 "min_width": 0,
                 "max_width": 0,
-                "height": "fit",
+                "height": "fill",
                 "custom_height": 100,
                 "background_media": "none",
                 "background_color": "",
@@ -262,7 +262,7 @@
                 "link": "",
                 "open_in_new_tab": false,
                 "placeholder": "",
-                "padding-block-start": 0,
+                "padding-block-start": 8,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -286,6 +286,34 @@
                 "quantity_8BfTFG"
               ]
             },
+            "calla_delivery_pickup_date_product_pickup_date_picker_aCN333": {
+              "type": "shopify://apps/calla-delivery-pickup-date/blocks/product_pickup_date_picker/3613d08c-d180-43c4-8f66-9aca9e0d28fc",
+              "settings": {
+                "style_autoserve_date_picker": "black-circle",
+                "calendar-border-radius": 16,
+                "aut-delivery-cal-display-style": "on-input",
+                "aut-delivery-cal-alignment": "left",
+                "aut-delivery-date-required": true,
+                "padding_top": 0,
+                "padding_bottom": 16,
+                "aut-delivery-date-heading-text": "¿Qué día lo recogerás?",
+                "aut-delivery-date-heading-color": "#000000",
+                "aut-delivery-date-subheading-text": "Selecciona una fecha de recogida entre las opciones disponibles.",
+                "aut-delivery-date-description-text": "Si tu fecha de recogida cae en festivo, llámanos o escríbenos antes para asegurarte de que estaremos abiertos.",
+                "aut-delivery-date-full-width": true,
+                "aut-delivery-date-alignment": "left",
+                "aut-delivery-date-info-message-style": "info",
+                "aut-delivery-date-info-message-title": "",
+                "aut-delivery-date-info-message-content": "",
+                "aut-delivery-date-disable-mon": true,
+                "aut-delivery-date-disable-tues": false,
+                "aut-delivery-date-disable-wed": false,
+                "aut-delivery-date-disable-thu": false,
+                "aut-delivery-date-disable-fri": false,
+                "aut-delivery-date-disable-sat": false,
+                "aut-delivery-date-disable-sun": false
+              }
+            },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
               "name": "Buy buttons",
@@ -308,7 +336,7 @@
                 "input_border_color": "{{ settings.color_palette.foreground }}",
                 "border_width": 1,
                 "border_radius": 0,
-                "padding-block-start": 0,
+                "padding-block-start": 16,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -355,6 +383,7 @@
             "mionas_text_rVqiGU",
             "variant_picker_R3rGDr",
             "mionas_group_AwePCE",
+            "calla_delivery_pickup_date_product_pickup_date_picker_aCN333",
             "buy_buttons_eYQEYi"
           ]
         }

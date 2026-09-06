@@ -1,14 +1,17 @@
 extends:
   - theme-check:recommended
 
-# The date-picker block below is provided by an installed app (cx-elevate-date-time-picker) and
-# only exists on the store, not in this repo, so Theme Check can never resolve it locally.
+# Date-picker templates. Their block comes from an installed app (now calla-delivery-pickup-date,
+# before that cx-elevate-date-time-picker) and only exists on the store, not in this repo, so Theme
+# Check can never resolve it locally. Only product.default-product-with-date.json carries such a
+# block today; the other two are listed so a re-added picker doesn't break the lint again.
 JSONMissingBlock:
   enabled: true
   severity: error
   ignore:
     - 'templates/product.product-with-date.json'
     - 'templates/product.producto-personalizado.json'
+    - 'templates/product.default-product-with-date.json'
 
 # Three groups of false positives / unfixable files:
 # - The bridge snippets render via "custom_liquid" settings in JSON (sections/footer-group.json,
