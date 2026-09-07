@@ -1,4 +1,20 @@
 {
+  "mionas": {
+    "form": {
+      "email_required": "Escribe tu email.",
+      "email_invalid": "Escribe un email válido.",
+      "field_required": "Completa este campo.",
+      "field_invalid": "Revisa este campo.",
+      "optional": "opcional"
+    },
+    "policy": {
+      "privacy": "Política de privacidad",
+      "refund": "Política de reembolso",
+      "terms": "Términos del servicio",
+      "contact": "Información de contacto",
+      "shipping": "Política de envío"
+    }
+  },
   "blocks": {
     "load_video": "Cargar vídeo: {{ description }}",
     "sold_out": "Agotado",

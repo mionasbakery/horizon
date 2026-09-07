@@ -56,9 +56,12 @@ signal for custom vs. native in the editor tree, so don't drop it.
 
 ## Native files
 
-Never edit a native (non-`mionas-`prefixed) file — hard rule, no exceptions for convenience. If
-native structure/schema can't express what's needed, ask the user before forking it into a
-`mionas-`prefixed copy (per mionas-design-component); don't fork silently.
+Never edit a native (non-`mionas-`prefixed) file — hard rule, no exceptions for convenience.
+The only exception is adding or updating namespaced `mionas.*` translation keys in the three
+storefront locale files (`locales/es.json`, `locales/ca.json`, and `locales/en.default.json`) when
+Mionas components need localized customer-facing text. If native structure/schema can't express
+what's needed, ask the user before forking it into a `mionas-`prefixed copy (per
+mionas-design-component); don't fork silently.
 
 ## Git
 

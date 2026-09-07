@@ -21,11 +21,6 @@
 const FIELD_SELECTOR = '.mionas-form-field';
 const LABEL_SELECTOR = '.mionas-form-label';
 
-const DEFAULT_MESSAGES = {
-  required: 'Completa este campo.',
-  invalid: 'Revisa este campo.',
-};
-
 class MionasFormValidation extends HTMLElement {
   /** @type {HTMLFormElement | null} */
   #form = null;
@@ -164,17 +159,17 @@ class MionasFormValidation extends HTMLElement {
 
     if (validity.valueMissing) {
       return (
-        control.dataset.messageRequired || this.dataset.messageRequired || DEFAULT_MESSAGES.required
+        control.dataset.messageRequired || this.dataset.messageRequired || this.dataset.messageRequiredFallback
       );
     }
 
     if (validity.typeMismatch || validity.patternMismatch) {
       return (
-        control.dataset.messageInvalid || this.dataset.messageInvalid || DEFAULT_MESSAGES.invalid
+        control.dataset.messageInvalid || this.dataset.messageInvalid || this.dataset.messageInvalidFallback
       );
     }
 
-    return control.validationMessage || this.dataset.messageInvalid || DEFAULT_MESSAGES.invalid;
+    return control.validationMessage || this.dataset.messageInvalid || this.dataset.messageInvalidFallback;
   }
 
   /**

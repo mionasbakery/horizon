@@ -21,10 +21,6 @@
   `required` uses an explicit `== false` check because Liquid's `default` filter treats false as
   empty and would flip it back to true.
 
-  There's no locale key for `optional_text`'s default -- nothing under `general.form.*` exists in
-  locales/en.default.json, and `| t` on a missing key renders "translation missing: ..." rather than
-  falling through -- so it stays a plain parameter; Spanish callers pass `optional_text: 'opcional'`.
-
   Focus colour is not set here: FormLabel.module.css's `.root` reads
   `var(--form-label-focus-color, var(--form-label-base-foreground))`, and
   FormField.module.css's `.root:focus-within` assigns that variable -- the indirection that lets
@@ -46,12 +42,13 @@
   if class
     assign label_classes = label_classes | append: ' ' | append: class
   endif
+  assign default_optional_text = 'mionas.form.optional' | t
 %}
 {%- if text != blank -%}
   <label class="{{ label_classes }}"{% if for != blank %} for="{{ for }}"{% endif %}>
     {{- text -}}
     {%- unless label_is_required -%}
-      <span class="mionas-form-label__optional"> ({{ optional_text | default: 'optional' }})</span>
+      <span class="mionas-form-label__optional"> ({{ optional_text | default: default_optional_text }})</span>
     {%- endunless -%}
   </label>
 {%- else -%}

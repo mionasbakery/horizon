@@ -18,7 +18,17 @@
   <ul class="mionas-policy-links list-unstyled" role="list" {{ shopify_attributes }}>
     {%- for policy in shop.policies -%}
       {%- if policy != blank -%}
-        {%- assign policy_title = policy.title | escape -%}
+        {%- capture policy_title -%}
+          {%- case policy.title -%}
+            {%- when 'Política de privacidad' -%}{{ 'mionas.policy.privacy' | t }}
+            {%- when 'Política de reembolso' -%}{{ 'mionas.policy.refund' | t }}
+            {%- when 'Términos del servicio' -%}{{ 'mionas.policy.terms' | t }}
+            {%- when 'Información de contacto' -%}{{ 'mionas.policy.contact' | t }}
+            {%- when 'Política de envío' -%}{{ 'mionas.policy.shipping' | t }}
+            {%- else -%}{{ policy.title }}
+          {%- endcase -%}
+        {%- endcapture -%}
+        {%- assign policy_title = policy_title | strip | escape -%}
         <li>
           {% render 'mionas-link',
             content: policy_title,

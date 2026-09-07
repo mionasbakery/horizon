@@ -8,6 +8,22 @@
  * ------------------------------------------------------------
  */
 {
+  "mionas": {
+    "form": {
+      "email_required": "Enter your email.",
+      "email_invalid": "Enter a valid email address.",
+      "field_required": "Complete this field.",
+      "field_invalid": "Check this field.",
+      "optional": "optional"
+    },
+    "policy": {
+      "privacy": "Privacy policy",
+      "refund": "Refund policy",
+      "terms": "Terms of service",
+      "contact": "Contact information",
+      "shipping": "Shipping policy"
+    }
+  },
   "accessibility": {
     "account": "Account",
     "active_filters": "Active filters:",

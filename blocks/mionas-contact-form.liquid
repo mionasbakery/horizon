@@ -41,6 +41,7 @@
   assign email_field_id = form_id | append: '-email'
   assign phone_field_id = form_id | append: '-phone'
   assign body_field_id = form_id | append: '-body'
+  assign optional_text = 'mionas.form.optional' | t
 %}
 
 <div
@@ -102,7 +103,7 @@
           placeholder: block_settings.placeholder_name,
           autocomplete: 'name',
           required: block_settings.require_name,
-          optional_text: 'opcional'
+          optional_text: optional_text
         -%}
       {%- endif -%}
 
@@ -130,7 +131,7 @@
           autocomplete: 'tel',
           inputmode: 'tel',
           required: block_settings.require_phone,
-          optional_text: 'opcional'
+          optional_text: optional_text
         -%}
       {%- endif -%}
 
@@ -143,7 +144,7 @@
           placeholder: block_settings.placeholder_message,
           rows: 5,
           required: block_settings.require_message,
-          optional_text: 'opcional'
+          optional_text: optional_text
         -%}
       {%- endif -%}
     {%- endcapture -%}

@@ -1,4 +1,20 @@
 {
+  "mionas": {
+    "form": {
+      "email_required": "Escriu el teu correu electrònic.",
+      "email_invalid": "Escriu una adreça de correu electrònic vàlida.",
+      "field_required": "Omple aquest camp.",
+      "field_invalid": "Revisa aquest camp.",
+      "optional": "opcional"
+    },
+    "policy": {
+      "privacy": "Política de privacitat",
+      "refund": "Política de reemborsament",
+      "terms": "Condicions del servei",
+      "contact": "Informació de contacte",
+      "shipping": "Política d'enviament"
+    }
+  },
   "accessibility": {
     "account": "Compte",
     "active_filters": "Filtres actius:",
