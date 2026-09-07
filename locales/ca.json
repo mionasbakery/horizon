@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "mionas": {
     "form": {
@@ -362,6 +371,45 @@
       "in_cart": "a la cistella",
       "default_title": "Títol predeterminat",
       "sticky_add_to_cart": "Barra d'afegir ràpidament a la cistella"
+    }
+  },
+  "customer_accounts": {
+    "account_menu": {
+      "signed_out_state": {
+        "sheet_title": "Iniciar sessió o crear un compte",
+        "section_divider": "Més maneres d'iniciar sessió",
+        "email_field_label": "Correu electrònic",
+        "orders_button": "Comandes",
+        "shop_login_button": "Iniciar sessió amb Shop",
+        "continue_with_google": "Continuar amb Google",
+        "continue_with_facebook": "Continuar amb Facebook",
+        "use_email_button": "Fer servir el correu electrònic"
+      },
+      "signed_in_state": {
+        "greeting_without_name": "Compte",
+        "orders_button": "Comandes"
+      },
+      "location_picker": {
+        "sheet_title": "Ubicacions",
+        "search_field_placeholder": "Cerca"
+      },
+      "aria_labels": {
+        "close_menu": "Tancar el menú",
+        "back_to_main_menu": "Tornar al menú principal des de {{title}}",
+        "open_submenu": "{{title}} obre un submenú",
+        "loading_menu": "Carregant el menú",
+        "account": "Compte",
+        "sign_in_with_email": "Iniciar sessió amb correu electrònic",
+        "sign_in": "Iniciar sessió"
+      }
+    },
+    "privacy_banner": {
+      "cookie_preferences_link": "Preferències de cookies"
+    }
+  },
+  "shopify": {
+    "links": {
+      "powered_by_shopify": "Amb la tecnologia de Shopify"
     }
   }
 }
