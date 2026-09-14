@@ -127,7 +127,7 @@
               "type": "mionas-stamp",
               "name": "Eyebrow",
               "settings": {
-                "text": "<p>ESPECIALIDAD EN COOKIES</p>",
+                "text": "<p>ESPECIALITAT EN COOKIES</p>",
                 "size": "lg",
                 "variant": "accent",
                 "tag": "div",

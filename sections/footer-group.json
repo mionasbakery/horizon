@@ -125,7 +125,7 @@
                   "type": "mionas-stamp",
                   "name": "Mionas: Stamp",
                   "settings": {
-                    "text": "<p>Especialidad en cookies</p>",
+                    "text": "<p>Especialitat en cookies</p>",
                     "size": "lg",
                     "variant": "accent-inverse",
                     "tag": "p",
