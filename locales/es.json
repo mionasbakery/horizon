@@ -22,6 +22,9 @@
       "terms": "Términos del servicio",
       "contact": "Información de contacto",
       "shipping": "Política de envío"
+    },
+    "product": {
+      "quantity": "Cantidad"
     }
   },
   "blocks": {

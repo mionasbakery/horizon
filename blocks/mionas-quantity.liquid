@@ -13,6 +13,12 @@
 -%}
 
 {%- if closest.product != blank -%}
+  {%- liquid
+    assign quantity_label = block.settings.label
+    if quantity_label == blank or quantity_label == 'Quantity'
+      assign quantity_label = 'mionas.product.quantity' | t
+    endif
+  -%}
   {%- if wrapper_class -%}
     {% style %}
       .{{ wrapper_class }} {
@@ -25,7 +31,7 @@
     {% endstyle %}
   {%- endif -%}
   <mionas-quantity class="mionas-quantity">
-    <p class="mionas-quantity__label">{{ block.settings.label | escape }}</p>
+    <p class="mionas-quantity__label">{{ quantity_label | escape }}</p>
     {% render 'quantity-selector', product: closest.product, block: block, wrapper_class: wrapper_class %}
   </mionas-quantity>
 {%- endif -%}

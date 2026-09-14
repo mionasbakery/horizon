@@ -22,6 +22,9 @@
       "terms": "Condicions del servei",
       "contact": "Informació de contacte",
       "shipping": "Política d'enviament"
+    },
+    "product": {
+      "quantity": "Quantitat"
     }
   },
   "accessibility": {
