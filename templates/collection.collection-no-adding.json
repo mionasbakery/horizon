@@ -1,0 +1,279 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section": {
+      "type": "section",
+      "blocks": {
+        "mionas_breadcrumbs_epMpxN": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {
+            "menu": "",
+            "home_label": "",
+            "label": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        },
+        "mionas_text_D4mU8G": {
+          "type": "mionas-text",
+          "name": "Mionas: Title",
+          "settings": {
+            "text": "<p>{{ closest.collection.title }}</p>",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
+            "tag": "h1",
+            "text_wrap": "normal",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "mionas_text_dc3cmy": {
+          "type": "mionas-text",
+          "name": "Mionas: Description",
+          "settings": {
+            "text": "{{ closest.collection.description }}",
+            "variant": "body",
+            "size": "lg",
+            "color": "default",
+            "tag": "p",
+            "text_wrap": "normal",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "mionas_breadcrumbs_epMpxN",
+        "mionas_text_D4mU8G",
+        "mionas_text_dc3cmy"
+      ],
+      "name": "Section - Heading",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filters": {
+          "type": "filters",
+          "static": true,
+          "settings": {
+            "enable_filtering": true,
+            "filter_style": "horizontal",
+            "filter_width": "centered",
+            "text_label_case": "default",
+            "show_swatch_label": false,
+            "show_filter_label": false,
+            "enable_sorting": true,
+            "enable_grid_density": false,
+            "background_color": "",
+            "text_color": "",
+            "padding-block-start": 8,
+            "padding-block-end": 8,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "facets_margin_bottom": 8,
+            "facets_margin_right": 20
+          },
+          "blocks": {}
+        },
+        "product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 16,
+            "background_color": "#ffffff",
+            "border": "solid",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "#ece8e2",
+            "border_radius": 16,
+            "padding-block-start": 0,
+            "padding-block-end": 16,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "landscape",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_card_group_MVYq3W": {
+              "type": "_product-card-group",
+              "name": "Product info",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 8,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
+              },
+              "blocks": {
+                "mionas_product_badges_inline": {
+                  "type": "mionas-product-badges",
+                  "name": "Mionas: Product info badges",
+                  "settings": {
+                    "kind": "information",
+                    "placement": "inline",
+                    "corner": "top-left",
+                    "size": "label-sm",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "mionas_text_aYPqUG": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Title",
+                  "settings": {
+                    "text": "<p>{{ closest.product.title }}</p>",
+                    "variant": "title",
+                    "size": "sm",
+                    "color": "default",
+                    "tag": "div",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "mionas_price_x7cMcF": {
+                  "type": "mionas-price",
+                  "name": "Mionas: Price",
+                  "settings": {
+                    "variant": "title",
+                    "size": "sm",
+                    "color": "default",
+                    "show_compare_at_price": false,
+                    "show_tax_info": false,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "mionas_product_badges_inline",
+                "mionas_text_aYPqUG",
+                "mionas_price_x7cMcF"
+              ]
+            }
+          },
+          "block_order": [
+            "card-gallery",
+            "product_card_group_MVYq3W"
+          ]
+        }
+      },
+      "settings": {
+        "layout_type": "grid",
+        "product_card_size": "large",
+        "mobile_product_card_size": "large",
+        "enable_infinite_scroll": true,
+        "products_per_page": 24,
+        "product_grid_width": "centered",
+        "full_width_on_mobile": false,
+        "columns_gap_horizontal": 16,
+        "columns_gap_vertical": 24,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0,
+        "background_color": "",
+        "padding-block-start": 0,
+        "padding-block-end": 32
+      }
+    }
+  },
+  "order": [
+    "section",
+    "main"
+  ]
+}

@@ -1,0 +1,207 @@
+{%- doc -%}
+  Renders an externally positioned quantity selector that submits through its product form.
+
+  @param {product} [closest.product] - The product whose quantity is selected.
+{%- enddoc -%}
+
+{%- liquid
+  if block.settings.input_style == 'custom'
+    capture wrapper_class
+      echo 'quantity-selector-wrapper--block-' | append: block.id
+    endcapture
+  endif
+-%}
+
+{%- if closest.product != blank -%}
+  {%- if wrapper_class -%}
+    {% style %}
+      .{{ wrapper_class }} {
+        {%- render 'input-custom-styles', block_settings: block.settings -%}
+        --style-border-width-inputs: {{ block.settings.border_width }}px;
+        --style-border-radius-inputs: {{ block.settings.border_radius }}px;
+        --style-border-radius-buttons-primary: {{ block.settings.border_radius }}px;
+        --style-border-radius-buttons-secondary: {{ block.settings.border_radius }}px;
+      }
+    {% endstyle %}
+  {%- endif -%}
+  <mionas-quantity class="mionas-quantity">
+    <p class="mionas-quantity__label">{{ block.settings.label | escape }}</p>
+    {% render 'quantity-selector', product: closest.product, block: block, wrapper_class: wrapper_class %}
+  </mionas-quantity>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-quantity {
+    display: grid;
+    gap: var(--space-2, 8px);
+  }
+
+  .mionas-quantity__label {
+    margin: 0;
+    color: var(--text-color-default);
+    font-family: var(--font-family-archivo);
+    font-size: var(--text-role-title-sm-font-size);
+    font-weight: var(--text-role-title-sm-font-weight);
+    letter-spacing: var(--text-role-title-sm-letter-spacing);
+    line-height: var(--text-role-title-sm-line-height);
+    text-transform: uppercase;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('mionas-quantity')) {
+    class MionasQuantity extends HTMLElement {
+      #abortController;
+      #form;
+      #quantityInput;
+      #formQuantityInput;
+
+      connectedCallback() {
+        this.#abortController = new AbortController();
+
+        const section = this.closest('.shopify-section');
+        this.#form = section?.querySelector('product-form-component form[data-type="add-to-cart-form"]');
+        this.#quantityInput = this.querySelector('input[name="quantity"]');
+
+        if (!this.#form || !this.#quantityInput) return;
+
+        this.#formQuantityInput = this.#form.querySelector('[data-mionas-quantity-form-value]');
+        if (!(this.#formQuantityInput instanceof HTMLInputElement)) {
+          this.#formQuantityInput = document.createElement('input');
+          this.#formQuantityInput.type = 'hidden';
+          this.#formQuantityInput.name = 'quantity';
+          this.#formQuantityInput.dataset.mionasQuantityFormValue = '';
+          this.#form.append(this.#formQuantityInput);
+        }
+
+        const { signal } = this.#abortController;
+        this.#quantityInput.addEventListener('input', this.#syncQuantity, { signal });
+        this.#quantityInput.addEventListener('change', this.#syncQuantity, { signal });
+        this.addEventListener('quantity-selector:update', this.#syncQuantity, { signal });
+        this.#form.addEventListener('submit', this.#syncBeforeSubmit, { capture: true, signal });
+        document.addEventListener('shopify:cart:lines-update', this.#updateCartQuantity, { signal });
+
+        this.#syncQuantity();
+      }
+
+      disconnectedCallback() {
+        this.#abortController?.abort();
+        this.#formQuantityInput?.remove();
+      }
+
+      #syncQuantity = () => {
+        if (this.#formQuantityInput && this.#quantityInput) {
+          this.#formQuantityInput.value = this.#quantityInput.value;
+        }
+      };
+
+      #syncBeforeSubmit = (event) => {
+        if (!this.#quantityInput?.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.#quantityInput?.reportValidity();
+          return;
+        }
+
+        this.#syncQuantity();
+      };
+
+      #updateCartQuantity = (event) => {
+        event.promise
+          ?.then(({ detail }) => {
+            const variantId = this.#form?.querySelector('input[name="id"]')?.value;
+            const cartItem = detail?.items?.find((item) => item.variant_id.toString() === variantId);
+            const selector = this.querySelector('quantity-selector-component');
+
+            if (selector?.setCartQuantity && variantId) {
+              selector.setCartQuantity(cartItem?.quantity || 0);
+            }
+          })
+          .catch((error) => {
+            if (error?.name !== 'AbortError') console.warn('[mionas-quantity] Cart update failed:', error);
+          });
+      };
+    }
+
+    customElements.define('mionas-quantity', MionasQuantity);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Mionas: Quantity",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Quantity"
+    },
+    {
+      "type": "select",
+      "id": "input_style",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "color",
+      "id": "input_background_color",
+      "label": "t:settings.background",
+      "default": "{{ settings.color_palette.background }}",
+      "visible_if": "{{ block.settings.input_style == \"custom\" }}"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "t:settings.text",
+      "default": "{{ settings.color_palette.foreground }}",
+      "visible_if": "{{ block.settings.input_style == \"custom\" }}"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "t:settings.borders",
+      "default": "{{ settings.color_palette.foreground }}",
+      "visible_if": "{{ block.settings.input_style == \"custom\" }}"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "t:settings.border_width",
+      "min": 0,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.input_style == \"custom\" }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0,
+      "visible_if": "{{ block.settings.input_style == \"custom\" }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Quantity",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

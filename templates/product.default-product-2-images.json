@@ -271,9 +271,10 @@
               },
               "blocks": {
                 "quantity_ekRr44": {
-                  "type": "quantity",
-                  "name": "t:names.quantity",
+                  "type": "mionas-quantity",
+                  "name": "Mionas: Quantity",
                   "settings": {
+                    "label": "Quantity",
                     "input_style": "default",
                     "input_background_color": "{{ settings.color_palette.background }}",
                     "input_text_color": "{{ settings.color_palette.foreground }}",
