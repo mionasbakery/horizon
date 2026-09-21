@@ -1,0 +1,892 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "heading": {
+      "type": "section",
+      "blocks": {
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {
+            "menu": "",
+            "home_label": "",
+            "label": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        },
+        "title": {
+          "type": "mionas-text",
+          "name": "Mionas: Title",
+          "settings": {
+            "text": "<p>Cumpleaños</p>",
+            "variant": "display",
+            "size": "lg",
+            "color": "default",
+            "tag": "h1",
+            "text_wrap": "normal",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "blurb": {
+          "type": "mionas-text",
+          "name": "Mionas: Text - Blurb",
+          "settings": {
+            "text": "<p>Number cakes, tartas personalizadas y cajas de cookies con dedicatoria.</p>",
+            "variant": "body",
+            "size": "lg",
+            "color": "default",
+            "tag": "p",
+            "text_wrap": "normal",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "breadcrumbs",
+        "title",
+        "blurb"
+      ],
+      "name": "Section - Heading",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 24
+      }
+    },
+    "products": {
+      "type": "mionas-collection",
+      "name": "Mionas: Collection - Occasion selection",
+      "blocks": {
+        "selection_row": {
+          "type": "mionas-group",
+          "name": "Mionas: Group - Selection note row",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "wrap_children": true,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 0,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "note": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Selection note",
+              "settings": {
+                "text": "<p>Nuestra selección para cumpleaños. Horneamos cada pedido el mismo día del envío y te llega a casa en 24-48h.</p>",
+                "variant": "body",
+                "size": "md",
+                "color": "default",
+                "tag": "p",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "see_all": {
+              "type": "mionas-link",
+              "name": "Mionas: Link - All packs",
+              "settings": {
+                "label": "Ver todos los packs →",
+                "link": "/collections/packs",
+                "open_in_new_tab": false,
+                "variant": "primary",
+                "size": "md",
+                "icon": "none",
+                "text_wrap": "normal"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "note",
+            "see_all"
+          ]
+        }
+      },
+      "block_order": [
+        "selection_row"
+      ],
+      "settings": {
+        "collection": "ocasiones-cumpleanos",
+        "max_products": 4,
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 8,
+        "rows_gap": 24,
+        "icons_style": "none",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "horizontal_alignment": "center",
+        "gap": 28,
+        "background_color": "",
+        "padding-block-start": 24,
+        "padding-block-end": 48
+      }
+    },
+    "detail": {
+      "type": "section",
+      "blocks": {
+        "columns": {
+          "type": "mionas-group",
+          "name": "Mionas: Group - Columns",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "wrap_children": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 44,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 0,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "body": {
+              "type": "mionas-group",
+              "name": "Mionas: Group - Custom orders",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "wrap_children": false,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 24,
+                "width": "custom",
+                "custom_width": 52,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "min_width": 0,
+                "max_width": 0,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "heading": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Heading",
+                  "settings": {
+                    "text": "<p>¿Prefieres algo más especial?</p>",
+                    "variant": "title",
+                    "size": "lg",
+                    "color": "default",
+                    "tag": "h2",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "intro": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Intro",
+                  "settings": {
+                    "text": "<p>Si buscas algo que no está en la tienda, lo horneamos para tu cumpleaños: cuéntanos la edad, el diseño y cuántos invitados hay, y lo tenemos listo a tiempo para la fiesta.</p>",
+                    "variant": "body",
+                    "size": "md",
+                    "color": "default",
+                    "tag": "p",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "from": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Price from",
+                  "settings": {
+                    "text": "<p>Desde [XX €]</p>",
+                    "variant": "label",
+                    "size": "md",
+                    "color": "default",
+                    "tag": "p",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "includes_label": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Options label",
+                  "settings": {
+                    "text": "<p>Opciones que ofrecemos</p>",
+                    "variant": "label",
+                    "size": "md",
+                    "color": "default",
+                    "tag": "p",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "includes": {
+                  "type": "mionas-list",
+                  "name": "Mionas: List - Options",
+                  "settings": {
+                    "separator": false,
+                    "marker": "check"
+                  },
+                  "blocks": {
+                    "inc_1": {
+                      "type": "mionas-list-item",
+                      "name": "Mionas: List item - Number cake",
+                      "settings": {
+                        "content": "<p><strong>Number cake</strong><br>Con la cifra que quieras, en el sabor que elijas.</p>",
+                        "link": "",
+                        "open_in_new_tab": false
+                      },
+                      "blocks": {}
+                    },
+                    "inc_2": {
+                      "type": "mionas-list-item",
+                      "name": "Mionas: List item - Custom cake",
+                      "settings": {
+                        "content": "<p><strong>Tarta personalizada</strong><br>Tu diseño o temática, hecha a mano en el obrador.</p>",
+                        "link": "",
+                        "open_in_new_tab": false
+                      },
+                      "blocks": {}
+                    },
+                    "inc_3": {
+                      "type": "mionas-list-item",
+                      "name": "Mionas: List item - Guest boxes",
+                      "settings": {
+                        "content": "<p><strong>Cajas para invitados</strong><br>Cookies en cajas individuales para toda la fiesta.</p>",
+                        "link": "",
+                        "open_in_new_tab": false
+                      },
+                      "blocks": {}
+                    },
+                    "inc_4": {
+                      "type": "mionas-list-item",
+                      "name": "Mionas: List item - Dedication and packaging",
+                      "settings": {
+                        "content": "<p><strong>Dedicatoria y packaging</strong><br>Mensaje escrito a mano y packaging a juego.</p>",
+                        "link": "",
+                        "open_in_new_tab": false
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "inc_1",
+                    "inc_2",
+                    "inc_3",
+                    "inc_4"
+                  ]
+                },
+                "works_label": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Past work label",
+                  "settings": {
+                    "text": "<p>Trabajos anteriores</p>",
+                    "variant": "label",
+                    "size": "md",
+                    "color": "default",
+                    "tag": "p",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "works": {
+                  "type": "mionas-group",
+                  "name": "Mionas: Group - Past work",
+                  "settings": {
+                    "content_direction": "row",
+                    "vertical_on_mobile": false,
+                    "wrap_children": false,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 12,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "min_width": 0,
+                    "max_width": 0,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "image_1": {
+                      "type": "image",
+                      "name": "Image - Past work 1",
+                      "settings": {
+                        "image": "",
+                        "link": "",
+                        "image_ratio": "square",
+                        "width": "custom",
+                        "custom_width": 33,
+                        "width_mobile": "custom",
+                        "custom_width_mobile": 33,
+                        "height": "fit",
+                        "border": "none",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_color": "",
+                        "border_radius": 8,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "image_2": {
+                      "type": "image",
+                      "name": "Image - Past work 2",
+                      "settings": {
+                        "image": "",
+                        "link": "",
+                        "image_ratio": "square",
+                        "width": "custom",
+                        "custom_width": 33,
+                        "width_mobile": "custom",
+                        "custom_width_mobile": 33,
+                        "height": "fit",
+                        "border": "none",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_color": "",
+                        "border_radius": 8,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "image_3": {
+                      "type": "image",
+                      "name": "Image - Past work 3",
+                      "settings": {
+                        "image": "",
+                        "link": "",
+                        "image_ratio": "square",
+                        "width": "custom",
+                        "custom_width": 33,
+                        "width_mobile": "custom",
+                        "custom_width_mobile": 33,
+                        "height": "fit",
+                        "border": "none",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_color": "",
+                        "border_radius": 8,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "image_1",
+                    "image_2",
+                    "image_3"
+                  ]
+                },
+                "testimonial": {
+                  "type": "mionas-card",
+                  "name": "Mionas: Card - Testimonial",
+                  "settings": {
+                    "variant": "outline",
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "flex-start",
+                    "gap": 8,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "min_width": 0,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "padding-block-start": 20,
+                    "padding-block-end": 20,
+                    "padding-inline-start": 20,
+                    "padding-inline-end": 20
+                  },
+                  "blocks": {
+                    "quote": {
+                      "type": "mionas-text",
+                      "name": "Mionas: Text - Quote",
+                      "settings": {
+                        "text": "<p>\"La number cake del cumple de mi hija fue el centro de la fiesta.\"</p>",
+                        "variant": "body",
+                        "size": "md",
+                        "color": "default",
+                        "tag": "p",
+                        "text_wrap": "normal",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "attribution": {
+                      "type": "mionas-text",
+                      "name": "Mionas: Text - Attribution",
+                      "settings": {
+                        "text": "<p>— Nuria B.</p>",
+                        "variant": "label",
+                        "size": "sm",
+                        "color": "default",
+                        "tag": "p",
+                        "text_wrap": "normal",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "quote",
+                    "attribution"
+                  ]
+                },
+                "related": {
+                  "type": "mionas-group",
+                  "name": "Mionas: Group - Related occasion",
+                  "settings": {
+                    "content_direction": "row",
+                    "vertical_on_mobile": false,
+                    "wrap_children": true,
+                    "horizontal_alignment": "space-between",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 12,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "min_width": 0,
+                    "max_width": 0,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "dashed",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 12,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 16,
+                    "padding-block-end": 16,
+                    "padding-inline-start": 20,
+                    "padding-inline-end": 20
+                  },
+                  "blocks": {
+                    "related_label": {
+                      "type": "mionas-text",
+                      "name": "Mionas: Text - Related occasion",
+                      "settings": {
+                        "text": "<p>También te puede interesar:</p>",
+                        "variant": "body",
+                        "size": "md",
+                        "color": "default",
+                        "tag": "p",
+                        "text_wrap": "normal",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "related_link": {
+                      "type": "mionas-link",
+                      "name": "Mionas: Link - Related occasion",
+                      "settings": {
+                        "label": "Aniversarios →",
+                        "link": "/pages/aniversarios",
+                        "open_in_new_tab": false,
+                        "variant": "primary",
+                        "size": "md",
+                        "icon": "none",
+                        "text_wrap": "normal"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "related_label",
+                    "related_link"
+                  ]
+                }
+              },
+              "block_order": [
+                "heading",
+                "intro",
+                "from",
+                "includes_label",
+                "includes",
+                "works_label",
+                "works",
+                "testimonial",
+                "related"
+              ]
+            },
+            "form_column": {
+              "type": "mionas-group",
+              "name": "Mionas: Group - Quote form",
+              "settings": {
+                "sticky": true,
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 16,
+                "width": "custom",
+                "custom_width": 48,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "min_width": 0,
+                "height": "fit",
+                "custom_height": 100,
+                "link": "",
+                "open_in_new_tab": false,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "form_heading": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Form heading",
+                  "settings": {
+                    "text": "<p>Pedir presupuesto</p>",
+                    "variant": "title",
+                    "size": "sm",
+                    "color": "default",
+                    "tag": "h2",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "occasion": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text - Occasion",
+                  "settings": {
+                    "text": "<p>Ocasión: Cumpleaños</p>",
+                    "variant": "label",
+                    "size": "sm",
+                    "color": "default",
+                    "tag": "p",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "whatsapp": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button - WhatsApp",
+                  "settings": {
+                    "label": "Escríbenos por WhatsApp",
+                    "link": "https://wa.me/34933348246",
+                    "open_in_new_tab": true,
+                    "variant": "primary",
+                    "size": "lg",
+                    "full_width": true,
+                    "icon": "whatsapp",
+                    "icon_position": "leading"
+                  },
+                  "blocks": {}
+                },
+                "divider": {
+                  "type": "mionas-divider",
+                  "name": "Mionas: Divider",
+                  "settings": {
+                    "text": "o envíanos un mensaje",
+                    "variant": "label",
+                    "size": "md"
+                  },
+                  "blocks": {}
+                },
+                "form": {
+                  "type": "mionas-contact-form",
+                  "name": "Mionas: Contact form - Quote",
+                  "settings": {
+                    "show_name": true,
+                    "label_name": "Nombre",
+                    "placeholder_name": "",
+                    "require_name": true,
+                    "label_email": "Email",
+                    "placeholder_email": "",
+                    "show_phone": true,
+                    "label_phone": "Teléfono",
+                    "placeholder_phone": "",
+                    "require_phone": false,
+                    "show_message": true,
+                    "label_message": "Cuéntanos tu idea",
+                    "placeholder_message": "Fecha, nº de invitados, estilo, colores…",
+                    "require_message": true,
+                    "field_gap": 16,
+                    "button_gap": 24,
+                    "submit_variant": "primary",
+                    "submit_size": "lg",
+                    "submit_label": "Pedir presupuesto",
+                    "success_title": "¡Recibido!",
+                    "success_text": "Te respondemos en 24h laborables con una propuesta.",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "form_heading",
+                "occasion",
+                "whatsapp",
+                "divider",
+                "form"
+              ]
+            }
+          },
+          "block_order": [
+            "body",
+            "form_column"
+          ]
+        }
+      },
+      "block_order": [
+        "columns"
+      ],
+      "name": "Section - Occasion detail",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 8,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "heading",
+    "products",
+    "detail"
+  ]
+}
