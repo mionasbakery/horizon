@@ -8,8 +8,9 @@ description: >
   or removed tokens or components (Button, SplitHero, Footer, text roles, colors, spacing) and the
   theme must follow; and whenever editing files that spend design tokens — assets/design-tokens.css,
   snippets/design-system-bridge.liquid, scripts/design-tokens-contract.mjs, or blocks that use
-  var(--text-role-*), var(--space-*), var(--color-*), var(--button-*). Also use it when adding a
-  new theme block that mirrors a design-system component.
+  var(--text-role-*), var(--space-*), var(--color-*), var(--button-*). Also use it when a theme block that
+  mirrors a design-system component needs its tokens updated; `mionas-implement-design` owns
+  building that block in the first place.
 ---
 
 # Syncing the Horizon theme with the design system
@@ -87,7 +88,7 @@ is load-bearing enough to add to `EXPECTED_TOKENS` so future renames fail loudly
 
 ## Mirroring a design-system component in the theme
 
-Design-system React components (`../design-system/src/react/`) define the look; theme blocks
+Design-system React components (`../design-system/src/components/`) define the look; theme blocks
 reproduce it in Liquid + CSS. `blocks/mionas-feature-card.liquid` (mirroring `FeatureCard`) is the
 reference example, with its design doc in `docs/superpowers/specs/`. When creating or updating a
 mirror:

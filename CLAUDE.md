@@ -58,7 +58,7 @@ signal for custom vs. native in the editor tree, so don't drop it.
 
 Never edit a native (non-`mionas-`prefixed) file — hard rule, no exceptions for convenience. If
 native structure/schema can't express what's needed, ask the user before forking it into a
-`mionas-`prefixed copy (per mionas-design-component); don't fork silently.
+`mionas-`prefixed copy (per mionas-implement-design); don't fork silently.
 
 ## Git
 
