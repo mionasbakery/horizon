@@ -23,48 +23,12 @@
             "padding-block-end": 0
           },
           "blocks": {}
-        },
-        "title": {
-          "type": "mionas-text",
-          "name": "Mionas: Title",
-          "settings": {
-            "text": "<p>Baby showers</p>",
-            "variant": "display",
-            "size": "lg",
-            "color": "default",
-            "tag": "h1",
-            "text_wrap": "normal",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "blurb": {
-          "type": "mionas-text",
-          "name": "Mionas: Text - Blurb",
-          "settings": {
-            "text": "<p>Cookies decoradas, mini cajas y toppers para dar la bienvenida.</p>",
-            "variant": "body",
-            "size": "lg",
-            "color": "default",
-            "tag": "p",
-            "text_wrap": "normal",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "breadcrumbs",
-        "title",
-        "blurb"
+        "breadcrumbs"
       ],
-      "name": "Section - Heading",
+      "name": "Section - Breadcrumbs",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -145,7 +109,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text - Selection note",
               "settings": {
-                "text": "<p>Nuestra selección para baby showers. Horneamos cada pedido el mismo día del envío y te llega a casa en 24-48h.</p>",
+                "text": "<p>Nuestra selección para bautizos. Horneamos cada pedido el mismo día del envío y te llega a casa en 24-48h.</p>",
                 "variant": "body",
                 "size": "md",
                 "color": "default",
@@ -183,7 +147,7 @@
         "selection_row"
       ],
       "settings": {
-        "collection": "ocasiones-baby-showers",
+        "collection": "",
         "max_products": 4,
         "layout_type": "grid",
         "carousel_on_mobile": false,
@@ -312,7 +276,7 @@
                   "type": "mionas-text",
                   "name": "Mionas: Text - Intro",
                   "settings": {
-                    "text": "<p>Montamos la mesa del baby shower lista para el gran día: nos dices la fecha y dónde quieres montarla, y nos encargamos del resto.</p>",
+                    "text": "<p>Vemos juntos cantidades, colores y packaging para el bautizo. Con dos semanas de antelación, hay tiempo de sobra para dejarlo a tu gusto.</p>",
                     "variant": "body",
                     "size": "md",
                     "color": "default",
@@ -369,9 +333,9 @@
                   "blocks": {
                     "inc_1": {
                       "type": "mionas-list-item",
-                      "name": "Mionas: List item - Decorated cookies",
+                      "name": "Mionas: List item - Guest favor",
                       "settings": {
-                        "content": "<p><strong>Cookies decoradas</strong><br>A juego con la temática y los colores.</p>",
+                        "content": "<p><strong>Detalle para invitados</strong><br>Cookie o mini caja con tarjeta personalizada.</p>",
                         "link": "",
                         "open_in_new_tab": false
                       },
@@ -379,9 +343,9 @@
                     },
                     "inc_2": {
                       "type": "mionas-list-item",
-                      "name": "Mionas: List item - Mini boxes",
+                      "name": "Mionas: List item - Cookie table",
                       "settings": {
-                        "content": "<p><strong>Mini cajas</strong><br>Un detalle para cada invitado.</p>",
+                        "content": "<p><strong>Mesa de cookies</strong><br>Cookies y minis montados y decorados por nuestro equipo.</p>",
                         "link": "",
                         "open_in_new_tab": false
                       },
@@ -389,9 +353,9 @@
                     },
                     "inc_3": {
                       "type": "mionas-list-item",
-                      "name": "Mionas: List item - Toppers and signage",
+                      "name": "Mionas: List item - Christening cake",
                       "settings": {
-                        "content": "<p><strong>Toppers y cartelería</strong><br>Para vestir la mesa de la celebración.</p>",
+                        "content": "<p><strong>Tarta de bautizo</strong><br>Con el diseño y el nombre del pequeño.</p>",
                         "link": "",
                         "open_in_new_tab": false
                       },
@@ -399,9 +363,9 @@
                     },
                     "inc_4": {
                       "type": "mionas-list-item",
-                      "name": "Mionas: List item - Dairy-free and vegan options",
+                      "name": "Mionas: List item - Matching packaging",
                       "settings": {
-                        "content": "<p><strong>Opciones sin lactosa y veganas</strong><br>Para que puedan probarlo todos.</p>",
+                        "content": "<p><strong>Packaging a juego</strong><br>Colores y tarjetas a juego con la celebración.</p>",
                         "link": "",
                         "open_in_new_tab": false
                       },
@@ -586,7 +550,7 @@
                       "type": "mionas-text",
                       "name": "Mionas: Text - Quote",
                       "settings": {
-                        "text": "<p>\"Las cookies decoradas hicieron la mesa del baby shower.\"</p>",
+                        "text": "<p>\"Los detalles para los invitados llegaron perfectos y a tiempo.\"</p>",
                         "variant": "body",
                         "size": "md",
                         "color": "default",
@@ -603,7 +567,7 @@
                       "type": "mionas-text",
                       "name": "Mionas: Text - Attribution",
                       "settings": {
-                        "text": "<p>— Aisha R.</p>",
+                        "text": "<p>— Marta y Joan</p>",
                         "variant": "label",
                         "size": "sm",
                         "color": "default",
@@ -686,8 +650,8 @@
                       "type": "mionas-link",
                       "name": "Mionas: Link - Related occasion",
                       "settings": {
-                        "label": "Bautizos →",
-                        "link": "/pages/bautizos",
+                        "label": "Bodas →",
+                        "link": "/collections/ocasiones-bodas",
                         "open_in_new_tab": false,
                         "variant": "primary",
                         "size": "md",
@@ -764,7 +728,7 @@
                   "type": "mionas-text",
                   "name": "Mionas: Text - Occasion",
                   "settings": {
-                    "text": "<p>Ocasión: Baby showers</p>",
+                    "text": "<p>Ocasión: Bautizos</p>",
                     "variant": "label",
                     "size": "sm",
                     "color": "default",
@@ -882,10 +846,272 @@
         "padding-block-start": 0,
         "padding-block-end": 64
       }
+    },
+    "hero": {
+      "type": "mionas-split-panel",
+      "name": "Mionas: Split hero - Occasion",
+      "blocks": {
+        "static-media": {
+          "type": "group",
+          "name": "Mionas: Group - Hero media",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fill",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "image": {
+              "type": "image",
+              "name": "Image - Hero",
+              "settings": {
+                "image": "",
+                "link": "",
+                "image_ratio": "landscape",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fill",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "image"
+          ]
+        },
+        "static-copy": {
+          "type": "group",
+          "name": "Mionas: Group - Hero copy",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "eyebrow": {
+              "type": "mionas-stamp",
+              "name": "Mionas: Stamp - Hero eyebrow",
+              "settings": {
+                "text": "<p>Bautizos</p>",
+                "size": "lg",
+                "variant": "accent",
+                "tag": "div",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "heading": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Hero heading",
+              "settings": {
+                "text": "<p>Detalles dulces para el día del bautizo</p>",
+                "variant": "display",
+                "size": "lg",
+                "color": "default",
+                "tag": "h1",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "lead": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Hero lead",
+              "settings": {
+                "text": "<p>Tarta con el nombre del peque, mesa de cookies y un detalle para cada invitado.</p>",
+                "variant": "body",
+                "size": "lg",
+                "color": "default",
+                "tag": "p",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "actions": {
+              "type": "group",
+              "name": "Mionas: Group - Hero actions",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "quote": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button - Hero quote",
+                  "settings": {
+                    "label": "Pedir presupuesto",
+                    "link": "https://wa.me/34933348246",
+                    "open_in_new_tab": false,
+                    "variant": "primary",
+                    "size": "lg",
+                    "full_width": false,
+                    "icon": "none",
+                    "icon_position": "leading"
+                  },
+                  "blocks": {}
+                },
+                "packs": {
+                  "type": "mionas-button",
+                  "name": "Mionas: Button - Hero packs",
+                  "settings": {
+                    "label": "Ver los packs",
+                    "link": "/collections/packs",
+                    "open_in_new_tab": false,
+                    "variant": "ghost",
+                    "size": "lg",
+                    "full_width": false,
+                    "icon": "none",
+                    "icon_position": "leading"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "quote",
+                "packs"
+              ]
+            }
+          },
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "lead",
+            "actions"
+          ]
+        }
+      },
+      "settings": {
+        "variant": "secondary",
+        "media_position": "left",
+        "panel_edge": "flush",
+        "media_treatment": "bleed",
+        "section_width": "full-width",
+        "section_height": "medium",
+        "section_height_custom": 50,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "heading",
+    "hero",
     "products",
     "detail"
   ]
