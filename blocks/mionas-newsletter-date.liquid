@@ -1,0 +1,187 @@
+{%- doc -%}
+  Renders a newsletter's publish date as a stamp, e.g. "8 SEP" or "8 SEP 2026", with the same settings as Mionas: Stamp.
+
+  @param {article} [closest.article] - The newsletter whose date to show. Renders nothing without it.
+{%- enddoc -%}
+{%- assign newsletter = closest.article -%}
+{%- if newsletter != blank -%}
+  {%- liquid
+    assign date_format = 'day_month'
+    if block.settings.show_year
+      assign date_format = 'full'
+    endif
+  -%}
+  {%- capture date_content -%}
+    <time datetime="{{ newsletter.published_at | date: '%Y-%m-%d' }}">
+      {%- render 'mionas-date', date: newsletter.published_at, format: date_format -%}
+    </time>
+  {%- endcapture -%}
+  {%- render 'mionas-stamp', content: date_content, settings: block.settings, shopify_attributes: block.shopify_attributes -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mionas: Newsletter Date",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_year",
+      "label": "Show year",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        {
+          "value": "lg",
+          "label": "Large"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "sm",
+          "label": "Small"
+        }
+      ],
+      "default": "lg",
+      "info": "The label-band size the stamp renders at, the same ladder as Mionas: Text."
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Color",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "inverse-primary",
+          "label": "Inverse primary"
+        },
+        {
+          "value": "inverse-primary-muted",
+          "label": "Inverse primary (muted)"
+        },
+        {
+          "value": "accent",
+          "label": "Accent"
+        },
+        {
+          "value": "accent-inverse",
+          "label": "Accent (inverse)"
+        },
+        {
+          "value": "tint",
+          "label": "Tint"
+        }
+      ],
+      "default": "accent"
+    },
+    {
+      "type": "select",
+      "id": "tag",
+      "label": "HTML tag",
+      "options": [
+        {
+          "value": "p",
+          "label": "p"
+        },
+        {
+          "value": "span",
+          "label": "span"
+        },
+        {
+          "value": "div",
+          "label": "div"
+        },
+        {
+          "value": "h1",
+          "label": "h1"
+        },
+        {
+          "value": "h2",
+          "label": "h2"
+        },
+        {
+          "value": "h3",
+          "label": "h3"
+        },
+        {
+          "value": "h4",
+          "label": "h4"
+        },
+        {
+          "value": "h5",
+          "label": "h5"
+        },
+        {
+          "value": "h6",
+          "label": "h6"
+        }
+      ],
+      "default": "p",
+      "info": "Pick the semantic level; it doesn't have to match Size."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Newsletter Date",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}
