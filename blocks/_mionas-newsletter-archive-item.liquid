@@ -1,0 +1,105 @@
+{%- doc -%}
+  Renders a link to one past newsletter; its date, subject and arrow are child blocks.
+
+  @param {article} [closest.article] - The newsletter this link opens, passed by _mionas-newsletter-archive-year. Renders nothing without it.
+{%- enddoc -%}
+{%- assign newsletter = closest.article -%}
+{%- if newsletter != blank -%}
+  <li id="e-{{ newsletter.handle }}" class="mionas-newsletter-archive-item" {{ block.shopify_attributes }}>
+    <a class="mionas-newsletter-archive-item__link" href="{{ newsletter.url }}">
+      {%- content_for 'blocks', closest.article: newsletter -%}
+    </a>
+  </li>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-newsletter-archive-item {
+    padding-block: var(--mionas-newsletter-archive-row-gap);
+  }
+
+  .mionas-newsletter-archive-item + .mionas-newsletter-archive-item {
+    border-top: var(--list-base-border-width) solid var(--list-base-border-color);
+  }
+
+  /* The children are merchant blocks, so the layout goes by position: date, subject, then the arrow. */
+  .mionas-newsletter-archive-item__link {
+    --mionas-newsletter-archive-item-date-column: 112px; /* Placeholder layout width. */
+    display: grid;
+    grid-template-columns: var(--mionas-newsletter-archive-item-date-column) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--mionas-newsletter-archive-row-padding-block) var(--mionas-newsletter-archive-row-padding-inline);
+    border-radius: var(--radius-md);
+    color: var(--text-color-default);
+    text-decoration: none;
+  }
+
+  .mionas-newsletter-archive-item__link:hover,
+  .mionas-newsletter-archive-item__link:focus-visible {
+    background: var(--surface-accent);
+  }
+
+  .mionas-newsletter-archive-item__link:focus-visible {
+    outline: var(--border-width-thick) solid var(--border-focus);
+    outline-offset: calc(var(--border-width-thick) * -1);
+  }
+
+  .mionas-newsletter-archive-item__link > :nth-child(2) {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mionas-newsletter-archive-item__link:is(:hover, :focus-visible) > :nth-child(2),
+  .mionas-newsletter-archive-item__link > :nth-child(3) {
+    color: var(--brand-primary);
+  }
+
+  @media screen and (max-width: 749px) {
+    /* Date above subject, arrow at the end. */
+    .mionas-newsletter-archive-item__link {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: 'date arrow' 'subject arrow';
+      row-gap: var(--space-3xs);
+      padding-inline: 0;
+      border-radius: 0;
+    }
+
+    .mionas-newsletter-archive-item__link > :nth-child(1) {
+      grid-area: date;
+    }
+
+    .mionas-newsletter-archive-item__link > :nth-child(2) {
+      grid-area: subject;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .mionas-newsletter-archive-item__link > :nth-child(3) {
+      grid-area: arrow;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Archive Item",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "mionas-newsletter-date"
+    },
+    {
+      "type": "mionas-text"
+    },
+    {
+      "type": "mionas-group"
+    },
+    {
+      "type": "icon"
+    }
+  ],
+  "settings": []
+}
+{% endschema %}

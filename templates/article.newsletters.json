@@ -1,0 +1,115 @@
+{
+  "sections": {
+    "main": {
+      "type": "mionas-newsletter-detail",
+      "name": "Mionas: Newsletter Detail",
+      "settings": {
+        "show_pagination": true,
+        "section_width": "page-width",
+        "padding-block-start": 24,
+        "padding-block-end": 48
+      },
+      "blocks": {
+        "date": {
+          "type": "mionas-newsletter-date",
+          "name": "Mionas: Newsletter Date",
+          "static": true,
+          "settings": {
+            "show_year": true,
+            "size": "lg",
+            "variant": "accent",
+            "tag": "p",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          }
+        }
+      }
+    },
+    "signup": {
+      "type": "section",
+      "name": "Section - Forwarded signup",
+      "blocks": {
+        "heading": {
+          "type": "mionas-text",
+          "name": "Mionas: Text role - Heading",
+          "settings": {
+            "text": "<p>¿Te han reenviado esta newsletter?</p>",
+            "variant": "headline",
+            "size": "md",
+            "color": "inverse-primary",
+            "tag": "h2"
+          }
+        },
+        "lead": {
+          "type": "mionas-text",
+          "name": "Mionas: Text role - Lead",
+          "settings": {
+            "text": "<p>Suscríbete para recibir la próxima. Y llévate un 10% de descuento en tu primera compra.</p>",
+            "variant": "body",
+            "size": "md",
+            "color": "inverse-primary",
+            "tag": "p"
+          }
+        },
+        "signup": {
+          "type": "mionas-email-signup",
+          "name": "Mionas: Email signup",
+          "settings": {
+            "email_label": "Email",
+            "button_width": "fill",
+            "submit_variant": "inverse-primary",
+            "submit_size": "md",
+            "field_surface": true,
+            "success_text": "¡Gracias! Ya estás suscrito.",
+            "customer_tag": "newsletter",
+            "consent_text": "<p>Al suscribirte aceptas nuestra <a href=\"/policies/privacy-policy\">política de privacidad</a>.</p>",
+            "field_gap": 12,
+            "layout": "stacked",
+            "width": "custom",
+            "custom_width": 50,
+            "width_mobile": "fill"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "lead",
+        "signup"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#0b078c",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    }
+  },
+  "order": [
+    "main",
+    "signup"
+  ]
+}

@@ -1,0 +1,197 @@
+{%- comment -%}
+  Renders one newsletter: a link back to the archive, the send date and the subject, the body, and links to the older and newer newsletter.
+{%- endcomment -%}
+{%- assign newsletter_title = article.title | escape -%}
+<div
+  class="section section--{{ section.settings.section_width }} spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="mionas-newsletter-detail">
+    <header class="mionas-newsletter-detail__header">
+      {%- capture back_label -%}
+        <svg class="mionas-newsletter-detail__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        {{- 'mionas.newsletter.back' | t -}}
+      {%- endcapture -%}
+      <div class="mionas-newsletter-detail__back">
+        {%- render 'mionas-link', content: back_label, link: blog.url, variant: 'primary' -%}
+      </div>
+      {% content_for 'block', type: 'mionas-newsletter-date', id: 'date', closest.article: article %}
+      {%- render 'mionas-text',
+        content: newsletter_title,
+        variant: 'headline',
+        size: 'lg',
+        color: 'primary',
+        tag: 'h1',
+        class: 'mionas-newsletter-detail__title'
+      -%}
+    </header>
+
+    <div class="mionas-newsletter-detail__content rte">
+      <rte-formatter>
+        {{ article.content }}
+      </rte-formatter>
+    </div>
+
+    {%- if section.settings.show_pagination -%}
+      {%- render 'mionas-newsletter-detail-pagination', blog: blog -%}
+    {%- endif -%}
+  </div>
+</div>
+
+<script type="application/ld+json">
+  {{ article | structured_data }}
+</script>
+
+{% stylesheet %}
+  .mionas-newsletter-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .mionas-newsletter-detail__content {
+    width: 100%;
+    max-width: var(--normal-content-width);
+    margin-inline: auto;
+  }
+
+  .mionas-newsletter-detail__content a {
+    color: currentcolor;
+  }
+
+  .mionas-newsletter-detail-pagination {
+    margin-block-start: var(--space-lg);
+  }
+
+  .mionas-newsletter-detail__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+    width: 100%;
+    max-width: var(--normal-content-width);
+    margin-inline: auto;
+  }
+
+  /* snippets/mionas-link.liquid's icon slot only takes icons from the native icon snippet, which
+     has no left chevron, so the chevron rides in the content and this lays it out. */
+  .mionas-newsletter-detail__back .mionas-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: 44px;
+  }
+
+  .mionas-newsletter-detail__chevron {
+    flex: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mionas-newsletter-detail__title {
+    margin: 0;
+  }
+
+  .text-role.mionas-newsletter-detail__title {
+    overflow-wrap: anywhere;
+  }
+
+  .mionas-newsletter-detail-pagination {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    border-block: var(--list-base-border-width) solid var(--list-base-border-color);
+  }
+
+  .mionas-newsletter-detail-pagination__cell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-md);
+    text-decoration: none;
+  }
+
+  .mionas-newsletter-detail-pagination__cell--newer {
+    align-items: flex-end;
+    text-align: end;
+    border-inline-start: var(--list-base-border-width) solid var(--list-base-border-color);
+  }
+
+  .text-role.mionas-newsletter-detail-pagination__label {
+    color: var(--text-color-secondary);
+  }
+
+  .mionas-newsletter-detail-pagination__cell:hover .mionas-newsletter-detail-pagination__subject {
+    color: var(--brand-primary);
+  }
+
+  .text-role.mionas-newsletter-detail-pagination__subject {
+    overflow-wrap: anywhere;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Newsletter Detail",
+  "tag": "section",
+  "class": "section-wrapper",
+  "enabled_on": {
+    "templates": [
+      "article"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show links to the previous and next newsletter",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Newsletter Detail"
+    }
+  ]
+}
+{% endschema %}

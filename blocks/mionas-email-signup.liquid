@@ -156,11 +156,18 @@
     {%- capture consent_content -%}{% render 'mionas-inline-richtext', value: block_settings.consent_text %}{%- endcapture -%}
     {%- assign consent_visible_text = consent_content | strip_html | strip -%}
     {%- if consent_visible_text != blank -%}
+      {%- liquid
+        # The inverse button only sits on a primary surface, where default text is unreadable.
+        assign consent_color = 'default'
+        if block_settings.submit_variant == 'inverse-primary'
+          assign consent_color = 'inverse-primary'
+        endif
+      -%}
       {%- render 'mionas-text',
         content: consent_content,
         variant: 'label',
         size: 'sm',
-        color: 'default',
+        color: consent_color,
         tag: 'p',
         class: 'mionas-email-signup__consent'
       -%}
@@ -304,7 +311,8 @@
       "label": "Button style",
       "options": [
         { "value": "primary", "label": "Primary (filled)" },
-        { "value": "outline", "label": "Outline" }
+        { "value": "outline", "label": "Outline" },
+        { "value": "inverse-primary", "label": "Inverse primary (on a blue background)" }
       ],
       "default": "primary"
     },
