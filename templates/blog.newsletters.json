@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "newsletter_signup": {
@@ -214,95 +223,7 @@
     },
     "newsletter_archive": {
       "type": "mionas-newsletter-archive",
-      "name": "Mionas: Newsletters",
       "blocks": {
-        "year": {
-          "type": "_mionas-newsletter-archive-year",
-          "name": "Mionas: Archive Year",
-          "settings": {
-            "sticky_year": true,
-            "row_padding_block": 16,
-            "row_padding_inline": 16
-          },
-          "blocks": {
-            "year": {
-              "type": "mionas-newsletter-year",
-              "name": "Mionas: Newsletter Year",
-              "settings": {
-                "variant": "headline",
-                "size": "lg",
-                "color": "primary",
-                "tag": "h3",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "static-item": {
-              "type": "_mionas-newsletter-archive-item",
-              "name": "Mionas: Archive Item",
-              "static": true,
-              "settings": {},
-              "blocks": {
-                "date": {
-                  "type": "mionas-newsletter-date",
-                  "name": "Mionas: Newsletter Date",
-                  "settings": {
-                    "size": "lg",
-                    "variant": "accent",
-                    "tag": "span",
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0,
-                    "show_year": false
-                  },
-                  "blocks": {}
-                },
-                "subject": {
-                  "type": "mionas-text",
-                  "name": "Mionas: Text role - Subject",
-                  "settings": {
-                    "text": "<p>{{ closest.article.title }}</p>",
-                    "variant": "body",
-                    "size": "lg",
-                    "color": "default",
-                    "tag": "span",
-                    "text_wrap": "normal",
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "arrow": {
-                  "type": "icon",
-                  "name": "Icon - Arrow",
-                  "settings": {
-                    "icon": "arrow",
-                    "width": 24,
-                    "link": "",
-                    "open_in_new_tab": false,
-                    "icon_color": ""
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "date",
-                "subject",
-                "arrow"
-              ]
-            }
-          },
-          "block_order": [
-            "year"
-          ]
-        },
         "featured": {
           "type": "_mionas-newsletter-archive-featured",
           "name": "Mionas: Archive Featured",
@@ -314,6 +235,7 @@
               "settings": {
                 "content_direction": "row",
                 "vertical_on_mobile": true,
+                "wrap_children": false,
                 "horizontal_alignment": "space-between",
                 "vertical_alignment": "center",
                 "align_baseline": false,
@@ -324,6 +246,8 @@
                 "custom_width": 100,
                 "width_mobile": "fill",
                 "custom_width_mobile": 100,
+                "min_width": 0,
+                "max_width": 0,
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
@@ -354,6 +278,7 @@
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
+                    "wrap_children": false,
                     "horizontal_alignment": "flex-start",
                     "vertical_alignment": "center",
                     "align_baseline": false,
@@ -364,6 +289,8 @@
                     "custom_width": 100,
                     "width_mobile": "fill",
                     "custom_width_mobile": 100,
+                    "min_width": 0,
+                    "max_width": 0,
                     "height": "fit",
                     "custom_height": 100,
                     "background_media": "none",
@@ -394,6 +321,7 @@
                       "settings": {
                         "content_direction": "row",
                         "vertical_on_mobile": false,
+                        "wrap_children": false,
                         "horizontal_alignment": "flex-start",
                         "vertical_alignment": "center",
                         "align_baseline": false,
@@ -404,6 +332,8 @@
                         "custom_width": 100,
                         "width_mobile": "fit-content",
                         "custom_width_mobile": 100,
+                        "min_width": 0,
+                        "max_width": 0,
                         "height": "fit",
                         "custom_height": 100,
                         "background_media": "none",
@@ -447,14 +377,14 @@
                           "type": "mionas-newsletter-date",
                           "name": "Mionas: Newsletter Date",
                           "settings": {
+                            "show_year": true,
                             "size": "lg",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
                             "padding-block-end": 0,
                             "padding-inline-start": 0,
-                            "padding-inline-end": 0,
-                            "show_year": true
+                            "padding-inline-end": 0
                           },
                           "blocks": {}
                         }
@@ -519,6 +449,7 @@
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
+            "wrap_children": false,
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "align_baseline": false,
@@ -529,6 +460,8 @@
             "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 0,
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
@@ -592,6 +525,93 @@
             "heading",
             "intro"
           ]
+        },
+        "year": {
+          "type": "_mionas-newsletter-archive-year",
+          "name": "Mionas: Archive Year",
+          "settings": {
+            "sticky_year": true,
+            "row_padding_block": 16,
+            "row_padding_inline": 16
+          },
+          "blocks": {
+            "year": {
+              "type": "mionas-newsletter-year",
+              "name": "Mionas: Newsletter Year",
+              "settings": {
+                "variant": "headline",
+                "size": "lg",
+                "color": "primary",
+                "tag": "h3",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "static-item": {
+              "type": "_mionas-newsletter-archive-item",
+              "name": "Mionas: Archive Item",
+              "static": true,
+              "settings": {},
+              "blocks": {
+                "date": {
+                  "type": "mionas-newsletter-date",
+                  "name": "Mionas: Newsletter Date",
+                  "settings": {
+                    "show_year": false,
+                    "size": "lg",
+                    "variant": "accent",
+                    "tag": "span",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "subject": {
+                  "type": "mionas-text",
+                  "name": "Mionas: Text role - Subject",
+                  "settings": {
+                    "text": "<p>{{ closest.article.title }}</p>",
+                    "variant": "body",
+                    "size": "lg",
+                    "color": "default",
+                    "tag": "span",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "arrow": {
+                  "type": "icon",
+                  "name": "Icon - Arrow",
+                  "settings": {
+                    "icon": "arrow",
+                    "width": 24,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "icon_color": ""
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "date",
+                "subject",
+                "arrow"
+              ]
+            }
+          },
+          "block_order": [
+            "year"
+          ]
         }
       },
       "block_order": [
@@ -599,11 +619,13 @@
         "heading_intro",
         "year"
       ],
+      "name": "Mionas: Newsletters",
       "settings": {
+        "blog": "",
         "section_width": "page-width",
         "gap": 48,
-        "padding-block-start": 64,
-        "padding-block-end": 96
+        "padding-block-start": 48,
+        "padding-block-end": 48
       }
     }
   },
