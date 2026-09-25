@@ -129,7 +129,7 @@
                 "variant": "accent",
                 "tag": "p",
                 "padding-block-start": 0,
-                "padding-block-end": 0,
+                "padding-block-end": 16,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               }
@@ -156,12 +156,20 @@
               "settings": {
                 "custom_liquid": "<script type=\"application/ld+json\">{{ article | structured_data }}</script>"
               }
+            },
+            "image_css": {
+              "type": "custom-liquid",
+              "name": "Custom liquid - Image CSS",
+              "settings": {
+                "custom_liquid": "<style>#MainContent .rte img { border-radius: var(--radius-xl); }</style>"
+              }
             }
           },
           "block_order": [
             "date",
             "body",
-            "structured_data"
+            "structured_data",
+            "image_css"
           ]
         }
       },
@@ -198,13 +206,13 @@
         "padding-block-end": 96
       }
     },
-    "pager": {
-      "type": "mionas-newsletter-pager",
-      "name": "Mionas: Newsletter pager",
+    "pagination": {
+      "type": "mionas-newsletter-pagination",
+      "name": "Mionas: Pagination",
       "blocks": {
         "older": {
-          "type": "_mionas-newsletter-pager-link",
-          "name": "Mionas: Pager link - Older",
+          "type": "_mionas-newsletter-pagination-link",
+          "name": "Mionas: Pagination link - Older",
           "settings": {
             "direction": "older",
             "label": ""
@@ -215,8 +223,8 @@
               "name": "Mionas: Text role - Subject",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
-                "variant": "headline",
-                "size": "sm",
+                "variant": "title",
+                "size": "md",
                 "color": "default",
                 "tag": "span",
                 "text_wrap": "normal",
@@ -232,8 +240,8 @@
           ]
         },
         "newer": {
-          "type": "_mionas-newsletter-pager-link",
-          "name": "Mionas: Pager link - Newer",
+          "type": "_mionas-newsletter-pagination-link",
+          "name": "Mionas: Pagination link - Newer",
           "settings": {
             "direction": "newer",
             "label": ""
@@ -244,8 +252,8 @@
               "name": "Mionas: Text role - Subject",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
-                "variant": "headline",
-                "size": "sm",
+                "variant": "title",
+                "size": "md",
                 "color": "default",
                 "tag": "span",
                 "text_wrap": "normal",
@@ -272,6 +280,6 @@
   },
   "order": [
     "main",
-    "pager"
+    "pagination"
   ]
 }
