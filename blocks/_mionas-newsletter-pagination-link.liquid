@@ -52,7 +52,7 @@
     text-decoration: none;
   }
 
-  .mionas-newsletter-pagination-link:is(:hover, :focus-visible) .mionas-newsletter-pagination-link__title .text-role {
+  .mionas-newsletter-pagination-link:is(:hover, :focus-visible) :is(.mionas-newsletter-pagination-link__title .text-role, .mionas-newsletter-pagination-link__chevron) {
     color: var(--brand-primary);
   }
 
@@ -79,7 +79,6 @@
     grid-area: chevron;
     width: 24px;
     height: 24px;
-    color: var(--brand-primary);
   }
 
   @media screen and (max-width: 749px) {

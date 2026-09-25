@@ -4,85 +4,45 @@ Shopify Horizon theme (Liquid, theme blocks) for the `mionasbakery` store.
 
 ## Development
 
-Use the [Shopify CLI](https://shopify.dev/docs/storefronts/themes/tools/cli) for all theme work — there is no npm/webpack build step. Files under `assets/`, `blocks/`, `sections/`, `snippets/`, and `templates/` are served to the store as-is.
+Use the Shopify CLI; there is no build step, and files under `assets/`, `blocks/`, `sections/`,
+`snippets/` and `templates/` are served as-is.
 
-- `shopify theme dev` — local dev server with hot reload against the store. This is how changes are previewed.
-- `shopify theme check` — lint and validate Liquid. Run before considering a change done.
-- `shopify theme pull` — sync local files down from the store.
-- `shopify theme push` — publish local files to the store. Only run when explicitly asked; it changes the live store's theme.
+- Preview with `shopify theme dev`. A change is done when `shopify theme check` passes.
+- `shopify theme push` changes the live store: run it only when explicitly asked.
 
-See the [Developer tools](README.md#developer-tools) section of the README for more.
+## Verification
 
-## Tests
-
-This theme has no test suite, deliberately. Never write test files — not for Mionas components
-(`mionas-*.liquid`), not for the scripts under `scripts/`, not anywhere else. Verify changes with
-`shopify theme check` and a `shopify theme dev` preview instead. If something has a non-obvious
-invariant, record it as a comment in the file rather than as a test.
+Verify every change with `shopify theme check` and a `shopify theme dev` preview; the theme has no
+test suite by design. Record a non-obvious invariant as a comment in the file it governs.
 
 ## Comments
 
-Keep comments minimal. Only write one when the WHY isn't obvious from the code — a platform
-quirk, a deliberate tradeoff, a constraint that would otherwise look like an oversight. Skip
-comments that restate what the code already says, narrate file history, or read like a design
-doc. One or two plain sentences, no jargon — if it takes a paragraph to explain, the code likely
-needs to be simpler, not the comment longer.
+Write a comment only for a WHY the code can't show: a platform quirk, a deliberate tradeoff, a
+constraint that would otherwise look like an oversight. One or two plain sentences stating the
+conclusion, about code that exists. If it needs a paragraph, simplify the code instead.
 
-## Documentation
+## Design
 
-Every `mionas-*.liquid` block and snippet must start with a LiquidDoc `{% doc %}` block: a one-line
-description of what it renders, plus `@param` entries. Shopify's `doc` tag is only valid in blocks
-and snippets — **not** sections (`theme check` raises `UnsupportedDocTag` there) — so for
-`mionas-*.liquid` sections, put the one-line description as the first line of the existing
-`{% comment %}` block instead.
-
-- **Snippets**: document the explicit params accepted via `{% render %}` calls.
-- **Blocks**: document only variables consumed from the surrounding Liquid context
-  (e.g. `closest.product`, `block`) — not schema settings, which are already
-  self-describing in the theme editor schema.
-
-The `{% doc %}` block (or, for sections, the description line) is additive to, not a replacement
-for, existing explanatory `{% comment %}` blocks that record the *why* behind non-obvious
-decisions.
-
-## Editor labels
-
-Every section/block instance in `templates/*.json` needs an explicit `"name"` naming its role on
-that page, in English — not left as the component's generic default or a `t:names.*` locale key.
-Format is `"Mionas: {Component} - {Role}"` (custom `mionas-*` components) or `"{Component} -
-{Role}"` (native components); the role is omitted when it'd just restate the component name (e.g.
-`"Mionas: Card"` with no role, not `"Mionas: Card - Card"`). Presence of "Mionas:" is the only
-signal for custom vs. native in the editor tree, so don't drop it.
+`../design-system/DESIGN.md` is the Mionas design system: tokens, text roles and component specs.
+Read it before you change any block, snippet, section, template or asset.
 
 ## Native files
 
-Never edit a native (non-`mionas-`prefixed) file — hard rule, no exceptions for convenience. If
-native structure/schema can't express what's needed, ask the user before forking it into a
-`mionas-`prefixed copy (per mionas-implement-design); don't fork silently.
+Edit only `mionas-`prefixed files; native files stay untouched, no exceptions for convenience. If
+native structure or schema can't express what's needed, ask the user before forking it into a
+`mionas-`prefixed copy (per mionas-implement-design).
 
 ## Git
 
-`origin` is `mionasbakery/horizon`. `upstream` is `Shopify/horizon` — fetch and merge from it to pull in upstream theme changes.
+`origin` is `mionasbakery/horizon`. `upstream` is `Shopify/horizon`: fetch and merge from it to pull
+in upstream theme changes.
 
 ## Tools
 
-Two JetBrains tools cover code navigation; prefer both over Bash. They answer different questions:
-
-- **`mcp__jbcontext__*` — semantic search, for when you don't know the name.** Natural-language
-  queries, and the only tool that reaches _other_ repos (`find_repositories`), so it is the only way
-  to answer "who else consumes this?" across repo boundaries. Works without the IDE. **It indexes
-  committed revisions, not your working tree** — during an in-flight rename it returns paths that no
-  longer exist, so confirm a hit still exists before acting on it.
-- **`mcp__idea__*` — the live project model, for when you do know the name, and for everything
-  search can't do.** Exact, resolution-aware lookups (`search_symbol`, `get_symbol_info`,
-  `analyze_calls` for call graphs, `include_external` for library symbols) plus diagnostics and
-  edits: `get_file_problems`, `lint_files`, `reformat_file`, `rename_refactoring`, `build_project`.
-  Reads the working tree, so it sees uncommitted edits. **Requires the IDE open on the project.**
-
-**jbcontext to locate, `idea` to verify and change.** Note the jbcontext `PreToolUse` hook runs in
-`--mode enforce` and blocks Bash discovery (`find`, `grep`, `git log`) until a semantic search has
-run this session — so a jbcontext search comes first even when the exact lookup you want is an
-`idea` call.
+Use `mcp__jbcontext__*` semantic search to locate code when you don't know the name (it also
+searches other repos, but indexes committed code, so confirm a hit still exists). Use `mcp__idea__*`
+to verify and change code you can name; it reads the working tree and needs the IDE open. A hook
+blocks Bash discovery (`find`, `grep`, `git log`) until a jbcontext search has run this session.
 
 ## Superpowers skills
 
