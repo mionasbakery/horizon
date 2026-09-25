@@ -10,12 +10,24 @@
   bold/italic/link support -- the tradeoff is that the editor re-renders the section on every
   keystroke instead of live-previewing, since Shopify only live-previews a setting output raw and
   alone in its own element.
+
+  A div is the one tag allowed to hold paragraphs, so it keeps them as rte content instead.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
   assign tag = block_settings.tag | default: 'p'
+  assign text_class = 'spacing-style'
+  if tag == 'div'
+    assign text_class = 'spacing-style rte'
+  endif
 %}
-{%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
+{%- capture content -%}
+  {%- if tag == 'div' -%}
+    {{- block_settings.text -}}
+  {%- else -%}
+    {%- render 'mionas-inline-richtext', value: block_settings.text -%}
+  {%- endif -%}
+{%- endcapture -%}
 {% liquid
   assign content = content | strip
 
@@ -49,7 +61,7 @@
     size: block_settings.size,
     color: block_settings.color,
     tag: tag,
-    class: 'spacing-style',
+    class: text_class,
     style: text_style,
     shopify_attributes: block.shopify_attributes
   -%}
@@ -211,7 +223,7 @@
       "id": "text",
       "label": "Text",
       "default": "<p>Text</p>",
-      "info": "Press Enter for a line break; it renders inside the same element, not as a new paragraph."
+      "info": "Press Enter for a line break; it renders inside the same element. With the div tag, paragraphs, lists and images stay as written."
     },
     {
       "type": "select",
@@ -270,7 +282,7 @@
         { "value": "h6", "label": "h6" }
       ],
       "default": "p",
-      "info": "Pick the semantic level; it doesn't have to match Variant."
+      "info": "Pick the semantic level; it doesn't have to match Variant. Use div for text with several paragraphs."
     },
     {
       "type": "select",
