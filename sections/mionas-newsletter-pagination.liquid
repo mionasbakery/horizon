@@ -1,11 +1,11 @@
 {%- comment -%}
   Renders a full-width band with links to the older and newer newsletter; each link is an editor block.
 {%- endcomment -%}
-{%- if blog.previous_article != blank or blog.next_article != blank or request.design_mode -%}
-  <div class="mionas-newsletter-pager">
+{%- if blog.previous_article != blank or blog.next_article != blank -%}
+  <div class="mionas-newsletter-pagination">
     <div class="section section--{{ section.settings.section_width }}">
       <nav
-        class="mionas-newsletter-pager__row"
+        class="mionas-newsletter-pagination__row"
         aria-label="{{ 'mionas.newsletter.pagination_label' | t | escape }}"
       >
         {%- content_for 'blocks' -%}
@@ -15,18 +15,18 @@
 {%- endif -%}
 
 {% stylesheet %}
-  .mionas-newsletter-pager {
+  .mionas-newsletter-pagination {
     background: var(--surface-default);
     border-block: var(--list-base-border-width) solid var(--list-base-border-color);
   }
 
-  .mionas-newsletter-pager__row {
+  .mionas-newsletter-pagination__row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   @media screen and (max-width: 749px) {
-    .section > .mionas-newsletter-pager__row {
+    .section > .mionas-newsletter-pagination__row {
       grid-column: 1 / -1;
     }
   }
@@ -34,7 +34,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: Newsletter pager",
+  "name": "Mionas: Pagination",
   "tag": "section",
   "class": "section-wrapper",
   "enabled_on": {
@@ -44,7 +44,7 @@
   },
   "blocks": [
     {
-      "type": "_mionas-newsletter-pager-link"
+      "type": "_mionas-newsletter-pagination-link"
     }
   ],
   "max_blocks": 2,
@@ -68,10 +68,10 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Newsletter pager",
+      "name": "Mionas: Pagination",
       "blocks": {
         "older": {
-          "type": "_mionas-newsletter-pager-link",
+          "type": "_mionas-newsletter-pagination-link",
           "settings": {
             "direction": "older"
           },
@@ -80,8 +80,8 @@
               "type": "mionas-text",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
-                "variant": "headline",
-                "size": "sm",
+                "variant": "title",
+                "size": "md",
                 "tag": "span"
               }
             }
@@ -91,7 +91,7 @@
           ]
         },
         "newer": {
-          "type": "_mionas-newsletter-pager-link",
+          "type": "_mionas-newsletter-pagination-link",
           "settings": {
             "direction": "newer"
           },
@@ -100,8 +100,8 @@
               "type": "mionas-text",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
-                "variant": "headline",
-                "size": "sm",
+                "variant": "title",
+                "size": "md",
                 "tag": "span"
               }
             }
