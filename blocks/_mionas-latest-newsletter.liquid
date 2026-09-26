@@ -12,7 +12,7 @@
 {%- paginate newsletter_blog.articles by 250 -%}
   {%- if newsletter_blog.articles.size > 0 -%}
     {%- assign latest = newsletter_blog.articles.first -%}
-    <div class="mionas-newsletter-archive-featured" {{ block.shopify_attributes }}>
+    <div class="mionas-latest-newsletter" {{ block.shopify_attributes }}>
       {%- content_for 'blocks', closest.article: latest -%}
     </div>
   {%- endif -%}
@@ -20,7 +20,7 @@
 
 {% stylesheet %}
   /* A connected title can't be retyped in capitals, and the design sets the latest title in uppercase. */
-  .mionas-newsletter-archive-featured .text-role--headline-lg {
+  .mionas-latest-newsletter .text-role--headline-lg {
     text-transform: uppercase;
     overflow-wrap: anywhere;
   }
@@ -28,7 +28,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: Archive Featured",
+  "name": "Mionas: Latest Newsletter",
   "tag": null,
   "blocks": [
     {
@@ -50,10 +50,11 @@
   "settings": [],
   "presets": [
     {
-      "name": "Mionas: Archive Featured",
+      "name": "Mionas: Latest Newsletter",
       "blocks": {
         "card": {
           "type": "mionas-group",
+          "name": "Mionas: Group - Latest Newsletter",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": true,
@@ -93,6 +94,7 @@
           "blocks": {
             "text": {
               "type": "mionas-group",
+              "name": "Mionas: Group - Text",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -132,6 +134,7 @@
               "blocks": {
                 "eyebrow": {
                   "type": "mionas-group",
+                  "name": "Mionas: Group - Label and Date",
                   "settings": {
                     "content_direction": "row",
                     "vertical_on_mobile": false,

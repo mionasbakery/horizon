@@ -147,7 +147,7 @@
       "blocks": {
         "group_hero": {
           "type": "mionas-group",
-          "name": "Mionas: Group - Hero image",
+          "name": "Mionas: Group - Hero Image",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -221,7 +221,7 @@
       "block_order": [
         "group_hero"
       ],
-      "name": "Section - Hero image",
+      "name": "Section - Hero Image",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -350,7 +350,7 @@
             },
             "group_salto": {
               "type": "group",
-              "name": "Group - Leap of faith",
+              "name": "Group - Leap of Faith",
               "settings": {
                 "content_direction": "row",
                 "vertical_on_mobile": true,
@@ -508,7 +508,7 @@
         },
         "group_BdLa7x": {
           "type": "group",
-          "name": "Group - CTA",
+          "name": "Group - Buttons",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": true,

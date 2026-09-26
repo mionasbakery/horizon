@@ -26,7 +26,7 @@
         },
         "mionas_text_D4mU8G": {
           "type": "mionas-text",
-          "name": "Mionas: Title",
+          "name": "Mionas: Text - Title",
           "settings": {
             "text": "<p>{{ closest.collection.title }}</p>",
             "variant": "display",
@@ -43,7 +43,7 @@
         },
         "mionas_text_dc3cmy": {
           "type": "mionas-text",
-          "name": "Mionas: Description",
+          "name": "Mionas: Text - Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
             "variant": "body",
@@ -155,7 +155,7 @@
             },
             "product_card_group_MVYq3W": {
               "type": "_product-card-group",
-              "name": "Product info",
+              "name": "Group - Product Details",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -194,7 +194,7 @@
               "blocks": {
                 "mionas_product_badges_inline": {
                   "type": "mionas-product-badges",
-                  "name": "Mionas: Product info badges",
+                  "name": "Mionas: Product Badges",
                   "settings": {
                     "kind": "information",
                     "placement": "inline",
@@ -209,7 +209,7 @@
                 },
                 "mionas_text_aYPqUG": {
                   "type": "mionas-text",
-                  "name": "Mionas: Title",
+                  "name": "Mionas: Text",
                   "settings": {
                     "text": "<p>{{ closest.product.title }}</p>",
                     "variant": "title",

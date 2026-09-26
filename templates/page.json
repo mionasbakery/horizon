@@ -66,7 +66,7 @@
             },
             "title": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Title",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "<p>{{ closest.page.title }}</p>",
                 "variant": "display",
@@ -131,7 +131,7 @@
           "blocks": {
             "body": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Body",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "{{ closest.page.content }}",
                 "variant": "body",
@@ -147,7 +147,7 @@
             },
             "image_css": {
               "type": "custom-liquid",
-              "name": "Custom liquid - Image CSS",
+              "name": "Custom Liquid - Image Styles",
               "settings": {
                 "custom_liquid": "<style>#MainContent .rte img { border-radius: var(--radius-xl); }</style>"
               }

@@ -1,7 +1,7 @@
 /**
  * Replaces the rendered description with the selected variant's server-rendered content.
  */
-class MionasVariantDescription extends HTMLElement {
+class MionasVariantDetails extends HTMLElement {
   connectedCallback() {
     this.section = this.closest('[id*="ProductInformation-"], featured-product-information');
     this.section?.addEventListener('shopify:product:select', this.handleProductSelect);
@@ -18,7 +18,7 @@ class MionasVariantDescription extends HTMLElement {
         if (detail.productId && detail.productId !== this.dataset.productId) return;
 
         const updatedDescription = detail.html.querySelector(
-          `mionas-variant-description[data-product-id="${this.dataset.productId}"]`
+          `mionas-variant-details[data-product-id="${this.dataset.productId}"]`
         );
         if (!updatedDescription) return;
 
@@ -26,12 +26,12 @@ class MionasVariantDescription extends HTMLElement {
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') {
-          console.warn('[mionas-variant-description] Event promise rejected:', error);
+          console.warn('[mionas-variant-details] Event promise rejected:', error);
         }
       });
   };
 }
 
-if (!customElements.get('mionas-variant-description')) {
-  customElements.define('mionas-variant-description', MionasVariantDescription);
+if (!customElements.get('mionas-variant-details')) {
+  customElements.define('mionas-variant-details', MionasVariantDetails);
 }

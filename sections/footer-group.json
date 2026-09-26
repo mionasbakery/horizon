@@ -16,7 +16,7 @@
       "blocks": {
         "group_footer_columns": {
           "type": "mionas-group",
-          "name": "Mionas: Group - Footer columns",
+          "name": "Mionas: Group - Footer Columns",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -102,7 +102,7 @@
               "blocks": {
                 "logo_CxJhqh": {
                   "type": "logo",
-                  "name": "t:names.logo",
+                  "name": "Logo",
                   "settings": {
                     "inverse": true,
                     "font": "heading",
@@ -138,7 +138,7 @@
                 },
                 "group_social_wgQFat": {
                   "type": "mionas-group",
-                  "name": "Mionas: Group - Social links",
+                  "name": "Mionas: Group - Social Links",
                   "settings": {
                     "content_direction": "row",
                     "vertical_on_mobile": false,
@@ -181,7 +181,7 @@
                   "blocks": {
                     "mionas_social_link_whatsapp": {
                       "type": "mionas-social-link",
-                      "name": "Mionas: Social link - WhatsApp",
+                      "name": "Mionas: Social Link - WhatsApp",
                       "settings": {
                         "platform": "whatsapp",
                         "link": "https://wa.me/34933348246",
@@ -191,7 +191,7 @@
                     },
                     "mionas_social_link_instagram": {
                       "type": "mionas-social-link",
-                      "name": "Mionas: Social link - Instagram",
+                      "name": "Mionas: Social Link - Instagram",
                       "settings": {
                         "platform": "instagram",
                         "link": "https://instagram.com/mionasbakery_sitges",
@@ -201,7 +201,7 @@
                     },
                     "mionas_social_link_tiktok": {
                       "type": "mionas-social-link",
-                      "name": "Mionas: Social link - TikTok",
+                      "name": "Mionas: Social Link - TikTok",
                       "settings": {
                         "platform": "tiktok",
                         "link": "https://tiktok.com/@mionasbakery_sitges",
@@ -211,7 +211,7 @@
                     },
                     "mionas_social_link_youtube": {
                       "type": "mionas-social-link",
-                      "name": "Mionas: Social link - YouTube",
+                      "name": "Mionas: Social Link - YouTube",
                       "settings": {
                         "platform": "youtube",
                         "link": "https://www.youtube.com/@mionasbakery_sitges",
@@ -279,7 +279,7 @@
               "blocks": {
                 "mionas_text_rftGfJ": {
                   "type": "mionas-text",
-                  "name": "Mionas: Text - Store heading",
+                  "name": "Mionas: Text",
                   "settings": {
                     "text": "<p><strong>TIENDA</strong></p>",
                     "variant": "label",
@@ -350,7 +350,7 @@
                     },
                     "mionas_link_CkVngZ": {
                       "type": "mionas-link",
-                      "name": "Mionas: Link - Vegan cookies",
+                      "name": "Mionas: Link - Vegan Cookies",
                       "settings": {
                         "label": "Cookies veganas",
                         "link": "shopify://collections/cookies-veganas",
@@ -378,7 +378,7 @@
                     },
                     "mionas_link_CnStFQ": {
                       "type": "mionas-link",
-                      "name": "Mionas: Link - Concept store",
+                      "name": "Mionas: Link - Concept Store",
                       "settings": {
                         "label": "Concept store",
                         "link": "shopify://collections/concept-store",
@@ -464,7 +464,7 @@
               "blocks": {
                 "mionas_text_JNcgWF": {
                   "type": "mionas-text",
-                  "name": "Mionas: Text - More heading",
+                  "name": "Mionas: Text",
                   "settings": {
                     "text": "<p><strong>MÁS</strong></p>",
                     "variant": "label",
@@ -521,7 +521,7 @@
                   "blocks": {
                     "mionas_link_4RHMz8": {
                       "type": "mionas-link",
-                      "name": "Mionas: Link",
+                      "name": "Mionas: Link - Allergens",
                       "settings": {
                         "label": "Alérgenos",
                         "link": "shopify://pages/alergenos",
@@ -535,7 +535,7 @@
                     },
                     "mionas_link_7NKyLY": {
                       "type": "mionas-link",
-                      "name": "Mionas: Link - About us",
+                      "name": "Mionas: Link - About Us",
                       "settings": {
                         "label": "Sobre nosotros",
                         "link": "shopify://pages/sobre-nosotros",
@@ -577,7 +577,7 @@
                     },
                     "mionas_link_J9PJjF": {
                       "type": "mionas-link",
-                      "name": "Mionas: Link - FAQ",
+                      "name": "Mionas: Link - Frequently Asked Questions",
                       "settings": {
                         "label": "FAQ",
                         "link": "shopify://pages/faq",
@@ -606,7 +606,7 @@
             },
             "group_Vmn3tw": {
               "type": "mionas-group",
-              "name": "Mionas: Group - Visit us",
+              "name": "Mionas: Group - Visit Us",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -649,7 +649,7 @@
               "blocks": {
                 "mionas_text_kdDVbD": {
                   "type": "mionas-text",
-                  "name": "Mionas: Text - Visit us heading",
+                  "name": "Mionas: Text - Visit Us Heading",
                   "settings": {
                     "text": "<p><strong>VEN A VISITARNOS</strong></p>",
                     "variant": "label",
@@ -732,7 +732,7 @@
               "blocks": {
                 "mionas_text_rPH4Y3": {
                   "type": "mionas-text",
-                  "name": "Mionas: Text - Hours heading",
+                  "name": "Mionas: Text",
                   "settings": {
                     "text": "<p><strong>Horario</strong></p>",
                     "variant": "label",
@@ -749,12 +749,12 @@
                 },
                 "mionas_schedule_hours": {
                   "type": "mionas-schedule",
-                  "name": "Mionas: Schedule - Opening hours",
+                  "name": "Mionas: Schedule",
                   "settings": {},
                   "blocks": {
                     "schedule_day_tuesday": {
                       "type": "_mionas-schedule-day",
-                      "name": "Mionas: Schedule day - Tuesday to Saturday",
+                      "name": "Mionas: Schedule Day - Tuesday to Saturday",
                       "settings": {
                         "day": "<p>Martes - Sábado</p>",
                         "hours": "<p>10:00 – 14:00<br/>16:30 – 20:30</p>",
@@ -765,7 +765,7 @@
                     },
                     "schedule_day_sunday": {
                       "type": "_mionas-schedule-day",
-                      "name": "Mionas: Schedule day - Sunday",
+                      "name": "Mionas: Schedule Day - Sunday",
                       "settings": {
                         "day": "<p>Domingo</p>",
                         "hours": "<p>10:00 – 14:00</p>",
@@ -776,7 +776,7 @@
                     },
                     "schedule_day_monday": {
                       "type": "_mionas-schedule-day",
-                      "name": "Mionas: Schedule day - Monday",
+                      "name": "Mionas: Schedule Day - Monday",
                       "settings": {
                         "day": "<p>Lunes</p>",
                         "hours": "<p>Cerrado</p>",
@@ -800,7 +800,7 @@
             },
             "footer_responsive_css": {
               "type": "custom-liquid",
-              "name": "Custom liquid - Responsive CSS",
+              "name": "Custom Liquid - Responsive Styles",
               "settings": {
                 "custom_liquid": "{% render 'mionas-footer-bridge' %}"
               },
@@ -820,7 +820,7 @@
       "block_order": [
         "group_footer_columns"
       ],
-      "name": "t:names.footer",
+      "name": "Footer",
       "settings": {
         "section_width": "page-width",
         "gap": 40,
@@ -844,7 +844,7 @@
         },
         "policy_list": {
           "type": "mionas-policy-links",
-          "name": "Mionas: Policy links",
+          "name": "Mionas: Policy Links",
           "settings": {
             "variant": "inverse-primary-muted",
             "size": "sm"
@@ -853,7 +853,7 @@
         },
         "language_links": {
           "type": "mionas-language-links",
-          "name": "Mionas: Language links",
+          "name": "Mionas: Language Links",
           "settings": {
             "variant": "inverse-primary-muted",
             "size": "sm"

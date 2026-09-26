@@ -66,7 +66,7 @@
       "blocks": {
         "static-header": {
           "type": "_product-list-content",
-          "name": "Product list header",
+          "name": "Header",
           "static": true,
           "settings": {
             "content_direction": "row",
@@ -98,7 +98,7 @@
           "blocks": {
             "product_list_text_fifeh4": {
               "type": "_product-list-text",
-              "name": "Product list text - Heading",
+              "name": "Collection Title",
               "settings": {
                 "text": "<h2>You may also like</h2>",
                 "width": "fit-content",
@@ -123,7 +123,7 @@
             },
             "product_list_button_eibbma": {
               "type": "_product-list-button",
-              "name": "Product list button - View all",
+              "name": "View All Button",
               "settings": {
                 "label": "View all",
                 "open_in_new_tab": false,
@@ -143,7 +143,7 @@
         },
         "static-product-card": {
           "type": "_product-card",
-          "name": "Product card",
+          "name": "Product Card",
           "static": true,
           "settings": {
             "product_card_gap": 16,
@@ -161,7 +161,7 @@
           "blocks": {
             "product_card_gallery_PEPpfq": {
               "type": "_product-card-gallery",
-              "name": "Product card gallery",
+              "name": "Product Image",
               "settings": {
                 "image_ratio": "square",
                 "border": "none",
@@ -177,7 +177,7 @@
             },
             "product_title_WNMpHe": {
               "type": "product-title",
-              "name": "Product title",
+              "name": "Product Title",
               "settings": {
                 "width": "100%",
                 "max_width": "normal",
@@ -231,7 +231,7 @@
           ]
         }
       },
-      "name": "Product list - You may also like",
+      "name": "Featured Collection - You May Also Like",
       "settings": {
         "collection": "all",
         "layout_type": "grid",

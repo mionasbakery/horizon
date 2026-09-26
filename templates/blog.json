@@ -24,7 +24,7 @@
         },
         "mionas_text_CiJDq6": {
           "type": "mionas-text",
-          "name": "Mionas: Title",
+          "name": "Mionas: Text",
           "settings": {
             "text": "<p>{{ closest.blog.title }}</p>",
             "variant": "display",
@@ -95,7 +95,7 @@
             },
             "heading": {
               "type": "_heading",
-              "name": "Blog post card title",
+              "name": "Heading",
               "static": true,
               "settings": {
                 "type_preset": "h4",
@@ -119,7 +119,7 @@
             },
             "blog-post-details": {
               "type": "_blog-post-info-text",
-              "name": "Blog post card details",
+              "name": "Details",
               "static": true,
               "settings": {
                 "show_date": true,

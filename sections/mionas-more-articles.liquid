@@ -1,12 +1,12 @@
 {%- comment -%}
-  Renders a full-width band with links to the older and newer newsletter; each link is an editor block.
+  Renders a full-width band with links to the older and newer article; each link is an editor block.
 {%- endcomment -%}
 {%- if blog.previous_article != blank or blog.next_article != blank -%}
-  <div class="mionas-newsletter-pagination">
+  <div class="mionas-more-articles">
     <div class="section section--{{ section.settings.section_width }}">
       <nav
-        class="mionas-newsletter-pagination__row"
-        aria-label="{{ 'mionas.newsletter.pagination_label' | t | escape }}"
+        class="mionas-more-articles__row"
+        aria-label="{{ 'mionas.more_articles.label' | t | escape }}"
       >
         {%- content_for 'blocks' -%}
       </nav>
@@ -15,18 +15,18 @@
 {%- endif -%}
 
 {% stylesheet %}
-  .mionas-newsletter-pagination {
+  .mionas-more-articles {
     background: var(--surface-default);
     border-block: var(--list-base-border-width) solid var(--list-base-border-color);
   }
 
-  .mionas-newsletter-pagination__row {
+  .mionas-more-articles__row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   @media screen and (max-width: 749px) {
-    .section > .mionas-newsletter-pagination__row {
+    .section > .mionas-more-articles__row {
       grid-column: 1 / -1;
     }
   }
@@ -34,7 +34,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: Pagination",
+  "name": "Mionas: More Articles",
   "tag": "section",
   "class": "section-wrapper",
   "enabled_on": {
@@ -44,7 +44,7 @@
   },
   "blocks": [
     {
-      "type": "_mionas-newsletter-pagination-link"
+      "type": "_mionas-article-link"
     }
   ],
   "max_blocks": 2,
@@ -68,10 +68,11 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Pagination",
+      "name": "Mionas: More Articles",
       "blocks": {
         "older": {
-          "type": "_mionas-newsletter-pagination-link",
+          "type": "_mionas-article-link",
+          "name": "Mionas: Article Link - Older",
           "settings": {
             "direction": "older"
           },
@@ -91,7 +92,8 @@
           ]
         },
         "newer": {
-          "type": "_mionas-newsletter-pagination-link",
+          "type": "_mionas-article-link",
+          "name": "Mionas: Article Link - Newer",
           "settings": {
             "direction": "newer"
           },

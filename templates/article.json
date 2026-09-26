@@ -24,7 +24,7 @@
       "blocks": {
         "blog-post-title": {
           "type": "text",
-          "name": "Text - Post title",
+          "name": "Text",
           "settings": {
             "text": "<h1>{{ article.title }}</h1>",
             "width": "100%",
@@ -49,7 +49,7 @@
         },
         "blog-post-details": {
           "type": "_blog-post-info-text",
-          "name": "Blog post details",
+          "name": "Details",
           "settings": {
             "show_date": true,
             "show_author": false,
@@ -63,7 +63,7 @@
         },
         "blog-post-image": {
           "type": "_blog-post-featured-image",
-          "name": "Blog post featured image",
+          "name": "Featured Image",
           "settings": {
             "image_ratio": "landscape",
             "width": "fill",

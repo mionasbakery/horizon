@@ -11,6 +11,7 @@
   "sections": {
     "heading": {
       "type": "section",
+      "name": "Section - Heading",
       "blocks": {
         "breadcrumbs": {
           "type": "mionas-breadcrumbs",
@@ -23,7 +24,7 @@
         },
         "title": {
           "type": "mionas-text",
-          "name": "Mionas: Title",
+          "name": "Mionas: Text - Title",
           "settings": {
             "text": "<p>{{ closest.collection.title }}</p>",
             "variant": "display",
@@ -34,7 +35,7 @@
         },
         "description": {
           "type": "mionas-text",
-          "name": "Mionas: Description",
+          "name": "Mionas: Text - Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
             "variant": "body",
@@ -63,11 +64,11 @@
     },
     "course_list": {
       "type": "mionas-course-list",
-      "name": "Mionas: Course list",
+      "name": "Mionas: Course List",
       "blocks": {
         "kicker": {
           "type": "mionas-text",
-          "name": "Kicker",
+          "name": "Mionas: Text",
           "settings": {
             "text": "<p>PRÓXIMAS FECHAS</p>",
             "variant": "label",
@@ -78,7 +79,7 @@
         },
         "static-course-row": {
           "type": "_mionas-course-row",
-          "name": "Mionas: Course row",
+          "name": "Mionas: Course Row",
           "static": true,
           "settings": {
             "book_label": "Reservar",
@@ -113,11 +114,11 @@
     },
     "info_panel": {
       "type": "mionas-split-panel",
-      "name": "Mionas: Split panel - Course info",
+      "name": "Mionas: Split Panel - About the Course",
       "blocks": {
         "static-media": {
           "type": "group",
-          "name": "Media",
+          "name": "Group - Image",
           "static": true,
           "settings": {
             "content_direction": "column",
@@ -165,7 +166,7 @@
         },
         "static-copy": {
           "type": "group",
-          "name": "Copy",
+          "name": "Group - Text",
           "static": true,
           "settings": {
             "content_direction": "column",
@@ -192,7 +193,7 @@
           "blocks": {
             "heading": {
               "type": "mionas-text",
-              "name": "Heading",
+              "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>CÓMO ES EL CURSO</p>",
                 "variant": "title",
@@ -203,7 +204,7 @@
             },
             "lead": {
               "type": "mionas-text",
-              "name": "Lead",
+              "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>En nuestro obrador de Sitges · 2–3h · grupos de 8–10 · incluye ingredientes, delantal y tus cookies para llevar. Nivel: todos.</p>",
                 "variant": "body",

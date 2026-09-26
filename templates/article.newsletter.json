@@ -57,7 +57,7 @@
             },
             "title": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Title",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
                 "variant": "display",
@@ -136,7 +136,7 @@
             },
             "body": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Body",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "{{ closest.article.content }}",
                 "variant": "body",
@@ -152,14 +152,14 @@
             },
             "structured_data": {
               "type": "custom-liquid",
-              "name": "Custom liquid - Article data for search engines",
+              "name": "Custom Liquid - Article Data for Search Engines",
               "settings": {
                 "custom_liquid": "<script type=\"application/ld+json\">{{ article | structured_data }}</script>"
               }
             },
             "image_css": {
               "type": "custom-liquid",
-              "name": "Custom liquid - Image CSS",
+              "name": "Custom Liquid - Image Styles",
               "settings": {
                 "custom_liquid": "<style>#MainContent .rte img { border-radius: var(--radius-xl); }</style>"
               }
@@ -207,12 +207,12 @@
       }
     },
     "pagination": {
-      "type": "mionas-newsletter-pagination",
-      "name": "Mionas: Pagination",
+      "type": "mionas-more-articles",
+      "name": "Mionas: More Articles",
       "blocks": {
         "older": {
-          "type": "_mionas-newsletter-pagination-link",
-          "name": "Mionas: Pagination link - Older",
+          "type": "_mionas-article-link",
+          "name": "Mionas: Article Link - Older",
           "settings": {
             "direction": "older",
             "label": ""
@@ -220,7 +220,7 @@
           "blocks": {
             "subject": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Subject",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
                 "variant": "title",
@@ -240,8 +240,8 @@
           ]
         },
         "newer": {
-          "type": "_mionas-newsletter-pagination-link",
-          "name": "Mionas: Pagination link - Newer",
+          "type": "_mionas-article-link",
+          "name": "Mionas: Article Link - Newer",
           "settings": {
             "direction": "newer",
             "label": ""
@@ -249,7 +249,7 @@
           "blocks": {
             "subject": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Subject",
+              "name": "Mionas: Text",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
                 "variant": "title",

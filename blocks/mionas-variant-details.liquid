@@ -30,7 +30,7 @@
     {%- endif -%}
   {%- endcapture -%}
 
-  <mionas-variant-description
+  <mionas-variant-details
     data-product-id="{{ product.id }}"
     {{ block.shopify_attributes }}
   >
@@ -45,13 +45,13 @@
         style: text_style
       -%}
     {%- endif -%}
-  </mionas-variant-description>
-  <script src="{{ 'mionas-variant-description.js' | asset_url }}" type="module"></script>
+  </mionas-variant-details>
+  <script src="{{ 'mionas-variant-details.js' | asset_url }}" type="module"></script>
 {%- endif -%}
 
 {% schema %}
 {
-  "name": "Mionas: Variant details",
+  "name": "Mionas: Variant Details",
   "tag": null,
   "settings": [
     {
@@ -153,7 +153,7 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Variant details",
+      "name": "Mionas: Variant Details",
       "category": "t:categories.basic"
     }
   ]

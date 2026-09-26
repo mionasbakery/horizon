@@ -1,47 +1,47 @@
 {%- doc -%}
-  Renders a link to the older or the newer newsletter; its child blocks read that newsletter as closest.article.
+  Renders a link to the older or the newer article; its child blocks read that article as closest.article.
 
-  @param {blog} blog - The global blog of the newsletter being read.
+  @param {blog} blog - The global blog of the article being read.
 {%- enddoc -%}
 {%- liquid
-  # blog.previous_article is the older email and blog.next_article the newer one (checked in the theme dev preview).
+  # blog.previous_article is the older article and blog.next_article the newer one (checked in the theme dev preview).
   assign is_newer = false
   if block.settings.direction == 'newer'
     assign is_newer = true
     assign target = blog.next_article
-    assign fallback_label = 'mionas.newsletter.next' | t
+    assign fallback_label = 'mionas.more_articles.next' | t
   else
     assign target = blog.previous_article
-    assign fallback_label = 'mionas.newsletter.previous' | t
+    assign fallback_label = 'mionas.more_articles.previous' | t
   endif
   assign label = block.settings.label | default: fallback_label | escape
 -%}
 {%- comment -%} An empty cell keeps the other link on its own side. {%- endcomment -%}
 {%- if target != blank -%}
   <a
-    class="mionas-newsletter-pagination-link{% if is_newer %} mionas-newsletter-pagination-link--newer{% endif %}"
+    class="mionas-article-link{% if is_newer %} mionas-article-link--newer{% endif %}"
     href="{{ target.url }}"
     {{ block.shopify_attributes }}
   >
-    <span class="mionas-newsletter-pagination-link__label">
+    <span class="mionas-article-link__label">
       {%- render 'mionas-text', content: label, variant: 'label', size: 'md', color: 'default', tag: 'span' -%}
     </span>
-    <svg class="mionas-newsletter-pagination-link__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg class="mionas-article-link__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       {%- if is_newer -%}<path d="M9 6l6 6-6 6"/>{%- else -%}<path d="M15 6l-6 6 6 6"/>{%- endif -%}
     </svg>
-    <span class="mionas-newsletter-pagination-link__title">
+    <span class="mionas-article-link__title">
       {%- content_for 'blocks', closest.article: target -%}
     </span>
   </a>
 {%- else -%}
   <span
-    class="mionas-newsletter-pagination-link{% if is_newer %} mionas-newsletter-pagination-link--newer{% endif %}"
+    class="mionas-article-link{% if is_newer %} mionas-article-link--newer{% endif %}"
     {{ block.shopify_attributes }}
   ></span>
 {%- endif -%}
 
 {% stylesheet %}
-  .mionas-newsletter-pagination-link {
+  .mionas-article-link {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas: '. label' 'chevron title';
@@ -52,22 +52,22 @@
     text-decoration: none;
   }
 
-  .mionas-newsletter-pagination-link:is(:hover, :focus-visible) :is(.mionas-newsletter-pagination-link__title .text-role, .mionas-newsletter-pagination-link__chevron) {
+  .mionas-article-link:is(:hover, :focus-visible) :is(.mionas-article-link__title .text-role, .mionas-article-link__chevron) {
     color: var(--brand-primary);
   }
 
-  .mionas-newsletter-pagination-link--newer {
+  .mionas-article-link--newer {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'label .' 'title chevron';
     text-align: end;
     border-inline-start: var(--list-base-border-width) solid var(--list-base-border-color);
   }
 
-  .mionas-newsletter-pagination-link__label {
+  .mionas-article-link__label {
     grid-area: label;
   }
 
-  .mionas-newsletter-pagination-link__title {
+  .mionas-article-link__title {
     grid-area: title;
     display: flex;
     flex-direction: column;
@@ -75,19 +75,19 @@
     overflow-wrap: anywhere;
   }
 
-  .mionas-newsletter-pagination-link__chevron {
+  .mionas-article-link__chevron {
     grid-area: chevron;
     width: 24px;
     height: 24px;
   }
 
   @media screen and (max-width: 749px) {
-    .mionas-newsletter-pagination-link {
+    .mionas-article-link {
       column-gap: 0;
       padding: var(--space-md);
     }
 
-    .mionas-newsletter-pagination-link__chevron {
+    .mionas-article-link__chevron {
       display: none;
     }
   }
@@ -95,7 +95,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: Pagination link",
+  "name": "Mionas: Article Link",
   "tag": null,
   "blocks": [
     {
@@ -110,11 +110,11 @@
       "options": [
         {
           "value": "older",
-          "label": "Older newsletter"
+          "label": "Older article"
         },
         {
           "value": "newer",
-          "label": "Newer newsletter"
+          "label": "Newer article"
         }
       ],
       "default": "older"
@@ -128,7 +128,7 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Pagination link"
+      "name": "Mionas: Article Link"
     }
   ]
 }

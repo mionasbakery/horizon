@@ -70,7 +70,7 @@
             },
             "mionas_text_XThTKA": {
               "type": "mionas-text",
-              "name": "Mionas: Title",
+              "name": "Mionas: Text - Title",
               "settings": {
                 "text": "<p>{{ closest.page.title }}</p>",
                 "variant": "display",
@@ -104,7 +104,7 @@
             },
             "mionas_text_YXRcp8": {
               "type": "mionas-text",
-              "name": "Mionas: Description",
+              "name": "Mionas: Text - Description",
               "settings": {
                 "text": "",
                 "variant": "body",
@@ -172,7 +172,7 @@
           "blocks": {
             "group_pV83HJ": {
               "type": "mionas-group",
-              "name": "Mionas: Group - Contact form",
+              "name": "Mionas: Group - Contact Form",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -215,7 +215,7 @@
               "blocks": {
                 "mionas_button_fWdrxR": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button - CTA",
+                  "name": "Mionas: Button",
                   "settings": {
                     "label": "Escríbenos por WhatsApp",
                     "link": "https://wa.me/34933348246",
@@ -240,7 +240,7 @@
                 },
                 "mionas_card_BebNXD": {
                   "type": "group",
-                  "name": "Group - Contact form",
+                  "name": "Group - Contact Form Card",
                   "settings": {
                     "content_direction": "column",
                     "vertical_on_mobile": true,
@@ -280,7 +280,7 @@
                   "blocks": {
                     "mionas_contact_form_WewLVH": {
                       "type": "mionas-contact-form",
-                      "name": "Mionas: Contact form",
+                      "name": "Mionas: Contact Form",
                       "settings": {
                         "show_name": true,
                         "label_name": "Nombre",
@@ -324,7 +324,7 @@
             },
             "info": {
               "type": "mionas-group",
-              "name": "Mionas: Group - Store info",
+              "name": "Mionas: Group - Store Details",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -410,7 +410,7 @@
                   "blocks": {
                     "mionas_card_Cb3XYY": {
                       "type": "mionas-card",
-                      "name": "Mionas: Card - Visit us",
+                      "name": "Mionas: Card - Visit Us",
                       "settings": {
                         "variant": "default",
                         "content_direction": "column",
@@ -500,7 +500,7 @@
                         },
                         "group_social_p2XKvT": {
                           "type": "mionas-group",
-                          "name": "Mionas: Group - Social links",
+                          "name": "Mionas: Group - Social Links",
                           "settings": {
                             "content_direction": "row",
                             "vertical_on_mobile": false,
@@ -543,7 +543,7 @@
                           "blocks": {
                             "mionas_social_link_whatsapp": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link - WhatsApp",
+                              "name": "Mionas: Social Link - WhatsApp",
                               "settings": {
                                 "platform": "whatsapp",
                                 "link": "https://wa.me/34933348246",
@@ -553,7 +553,7 @@
                             },
                             "mionas_social_link_instagram": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link - Instagram",
+                              "name": "Mionas: Social Link - Instagram",
                               "settings": {
                                 "platform": "instagram",
                                 "link": "https://instagram.com/mionasbakery_sitges",
@@ -563,7 +563,7 @@
                             },
                             "mionas_social_link_tiktok": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link - TikTok",
+                              "name": "Mionas: Social Link - TikTok",
                               "settings": {
                                 "platform": "tiktok",
                                 "link": "https://tiktok.com/@mionasbakery_sitges",
@@ -573,7 +573,7 @@
                             },
                             "mionas_social_link_youtube": {
                               "type": "mionas-social-link",
-                              "name": "Mionas: Social link - YouTube",
+                              "name": "Mionas: Social Link - YouTube",
                               "settings": {
                                 "platform": "youtube",
                                 "link": "https://www.youtube.com/@mionasbakery_sitges",
@@ -645,12 +645,12 @@
                         },
                         "mionas_schedule_hours": {
                           "type": "mionas-schedule",
-                          "name": "Mionas: Schedule - Opening hours",
+                          "name": "Mionas: Schedule",
                           "settings": {},
                           "blocks": {
                             "schedule_day_tuesday": {
                               "type": "_mionas-schedule-day",
-                              "name": "Mionas: Schedule day - Tuesday to Saturday",
+                              "name": "Mionas: Schedule Day - Tuesday to Saturday",
                               "settings": {
                                 "day": "<p>Martes - Sábado</p>",
                                 "hours": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
@@ -661,7 +661,7 @@
                             },
                             "schedule_day_sunday": {
                               "type": "_mionas-schedule-day",
-                              "name": "Mionas: Schedule day - Sunday",
+                              "name": "Mionas: Schedule Day - Sunday",
                               "settings": {
                                 "day": "<p>Domingo</p>",
                                 "hours": "<p>10:00 - 14:00</p>",
@@ -672,7 +672,7 @@
                             },
                             "schedule_day_monday": {
                               "type": "_mionas-schedule-day",
-                              "name": "Mionas: Schedule day - Monday",
+                              "name": "Mionas: Schedule Day - Monday",
                               "settings": {
                                 "day": "<p>Lunes</p>",
                                 "hours": "<p>Cerrado</p>",
@@ -745,7 +745,7 @@
         },
         "responsive_css": {
           "type": "custom-liquid",
-          "name": "Custom liquid - Responsive CSS",
+          "name": "Custom Liquid - Responsive Styles",
           "settings": {
             "custom_liquid": "{% render 'contacto-page-bridge' %}"
           },

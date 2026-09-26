@@ -189,19 +189,17 @@ e.g. `blocks/mionas-product-card.liquid`, `sections/mionas-footer.liquid`,
 component's own name (ProductCard → `mionas-product-card`).
 
 Sections and blocks are visible in the theme editor via their schema's `"name"` field — set it
-literally to `"Mionas: {Name}"` (e.g. `"Mionas: Product card"`), not a `t:` locale key. Native
-Horizon sections/blocks use `t:names.*` locale lookups; Mionas components use a plain string so
-they're unmistakable in the editor's block/section picker regardless of locale coverage. If the
-component has a `presets` entry, name that the same way. Each *instance* you then place in a
-`templates/*.json` needs its own `"name"` too — see CLAUDE.md's "Editor labels" rule.
+literally to `"Mionas: {Name}"` (e.g. `"Mionas: Product Card"`), not a `t:` locale key, so it is
+unmistakable in the editor's block/section picker regardless of locale coverage. The schema name,
+preset names and every instance `"name"` in `templates/*.json` follow
+`.claude/rules/editor-labels.md`.
 
 Snippets have no schema and thus no editor label — the `mionas-` file prefix is the only marker, and
 it's enough: anyone grepping `snippets/` or reading a `{% render 'mionas-...' %}` call knows
 immediately this isn't a native Shopify file.
 
-`blocks/mionas-text.liquid` (editor label `"Mionas: Text role"`, deliberately distinct from
-Horizon's own `blocks/text.liquid`/`"Text"` block, told apart by both filename and label) is a
-reference example of this convention applied.
+`blocks/mionas-text.liquid` (editor label `"Mionas: Text"`, told apart from Horizon's own
+`blocks/text.liquid`/`"Text"` by the prefix) is a reference example of this convention applied.
 
 ## Never fork or edit native *template* files without being asked
 

@@ -93,7 +93,7 @@
           "blocks": {
             "product_card_gallery_cFExAi": {
               "type": "_product-card-gallery",
-              "name": "Product card gallery",
+              "name": "Product Image",
               "settings": {
                 "image_ratio": "square",
                 "border": "none",
@@ -109,7 +109,7 @@
             },
             "product_title_j7qXTx": {
               "type": "product-title",
-              "name": "Product title",
+              "name": "Product Title",
               "settings": {
                 "width": "fit-content",
                 "max_width": "normal",

@@ -55,7 +55,7 @@
           "blocks": {
             "image_nnBhtK": {
               "type": "image",
-              "name": "Image - Loyalty card",
+              "name": "Image",
               "settings": {
                 "image": "shopify://shop_images/gif01-targeta-fidelitat.gif",
                 "link": "",
@@ -84,7 +84,7 @@
         },
         "static-copy": {
           "type": "group",
-          "name": "Group - Copy",
+          "name": "Group - Text",
           "static": true,
           "settings": {
             "content_direction": "column",
@@ -125,7 +125,7 @@
           "blocks": {
             "mionas_text_TxwLqj": {
               "type": "mionas-stamp",
-              "name": "Mionas: Stamp - Eyebrow",
+              "name": "Mionas: Stamp",
               "settings": {
                 "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
                 "size": "lg",
@@ -140,7 +140,7 @@
             },
             "mionas_text_E74aRt": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Heading",
+              "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>10% de descuento en tu primera compra</p>",
                 "variant": "display",
@@ -157,7 +157,7 @@
             },
             "mionas_text_PHRkcU": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Lead",
+              "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
                 "variant": "body",
@@ -174,7 +174,7 @@
             },
             "mionas_email_signup_AdjRU4": {
               "type": "mionas-email-signup",
-              "name": "Mionas: Email signup",
+              "name": "Mionas: Email Signup",
               "settings": {
                 "email_label": "Email",
                 "email_placeholder": "",
@@ -208,7 +208,7 @@
           ]
         }
       },
-      "name": "Mionas: Split panel - Newsletter signup",
+      "name": "Mionas: Split Panel - Newsletter Signup",
       "settings": {
         "variant": "secondary",
         "media_position": "right",
@@ -222,11 +222,11 @@
       }
     },
     "newsletter_archive": {
-      "type": "mionas-newsletter-archive",
+      "type": "mionas-newsletters",
       "blocks": {
         "featured": {
-          "type": "_mionas-newsletter-archive-featured",
-          "name": "Mionas: Archive Featured",
+          "type": "_mionas-latest-newsletter",
+          "name": "Mionas: Latest Newsletter",
           "settings": {},
           "blocks": {
             "card": {
@@ -317,7 +317,7 @@
                   "blocks": {
                     "eyebrow": {
                       "type": "mionas-group",
-                      "name": "Mionas: Group - Eyebrow",
+                      "name": "Mionas: Group - Latest Newsletter",
                       "settings": {
                         "content_direction": "row",
                         "vertical_on_mobile": false,
@@ -360,7 +360,7 @@
                       "blocks": {
                         "label": {
                           "type": "mionas-stamp",
-                          "name": "Mionas: Stamp - Label",
+                          "name": "Mionas: Stamp",
                           "settings": {
                             "text": "<p>Última newsletter,</p>",
                             "size": "lg",
@@ -396,7 +396,7 @@
                     },
                     "title": {
                       "type": "mionas-text",
-                      "name": "Mionas: Text role - Title",
+                      "name": "Mionas: Text",
                       "settings": {
                         "text": "<p>{{ closest.article.title }}</p>",
                         "variant": "headline",
@@ -419,7 +419,7 @@
                 },
                 "button": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button - Read",
+                  "name": "Mionas: Button",
                   "settings": {
                     "label": "Leer la newsletter",
                     "link": "{{ closest.article.url }}",
@@ -445,7 +445,7 @@
         },
         "heading_intro": {
           "type": "mionas-group",
-          "name": "Mionas: Group - Heading & Intro",
+          "name": "Mionas: Group - Heading and Introduction",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -488,7 +488,7 @@
           "blocks": {
             "heading": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Heading",
+              "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>Newsletters anteriores</p>",
                 "variant": "headline",
@@ -505,7 +505,7 @@
             },
             "intro": {
               "type": "mionas-text",
-              "name": "Mionas: Text role - Intro",
+              "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>Todas las que hemos enviado. La más reciente, primero.</p>",
                 "variant": "body",
@@ -527,8 +527,8 @@
           ]
         },
         "year": {
-          "type": "_mionas-newsletter-archive-year",
-          "name": "Mionas: Archive Year",
+          "type": "_mionas-past-newsletters",
+          "name": "Mionas: Past Newsletters",
           "settings": {
             "sticky_year": true,
             "row_padding_block": 16,
@@ -552,8 +552,8 @@
               "blocks": {}
             },
             "static-item": {
-              "type": "_mionas-newsletter-archive-item",
-              "name": "Mionas: Archive Item",
+              "type": "_mionas-newsletter-link",
+              "name": "Mionas: Newsletter Link",
               "static": true,
               "settings": {},
               "blocks": {
@@ -574,7 +574,7 @@
                 },
                 "subject": {
                   "type": "mionas-text",
-                  "name": "Mionas: Text role - Subject",
+                  "name": "Mionas: Text",
                   "settings": {
                     "text": "<p>{{ closest.article.title }}</p>",
                     "variant": "body",
@@ -591,7 +591,7 @@
                 },
                 "arrow": {
                   "type": "icon",
-                  "name": "Icon - Arrow",
+                  "name": "Icon",
                   "settings": {
                     "icon": "arrow",
                     "width": 24,
@@ -619,7 +619,7 @@
         "heading_intro",
         "year"
       ],
-      "name": "Mionas: Newsletter Archive",
+      "name": "Mionas: Newsletters",
       "settings": {
         "blog": "",
         "section_width": "page-width",

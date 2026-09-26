@@ -26,10 +26,10 @@
     "product": {
       "quantity": "Quantity"
     },
-    "newsletter": {
+    "more_articles": {
       "previous": "Previous",
       "next": "Next",
-      "pagination_label": "More newsletters"
+      "label": "More articles"
     }
   },
   "accessibility": {

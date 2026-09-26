@@ -6,9 +6,9 @@
 {%- enddoc -%}
 {%- liquid
   assign newsletter_blog = closest.blog | default: blog
-  assign heading_classes = 'mionas-newsletter-archive-year__heading'
+  assign heading_classes = 'mionas-past-newsletters__heading'
   if block.settings.sticky_year
-    assign heading_classes = heading_classes | append: ' mionas-newsletter-archive-year__heading--sticky'
+    assign heading_classes = heading_classes | append: ' mionas-past-newsletters__heading--sticky'
   endif
 -%}
 {%- comment -%} A parent's paginate does not reach a block, so this block pages the articles itself. {%- endcomment -%}
@@ -26,8 +26,8 @@
   -%}
   {%- if years.size > 0 -%}
     <div
-      class="mionas-newsletter-archive-year"
-      style="--mionas-newsletter-archive-row-padding-block: {{ block.settings.row_padding_block }}px; --mionas-newsletter-archive-row-padding-inline: {{ block.settings.row_padding_inline }}px;"
+      class="mionas-past-newsletters"
+      style="--mionas-newsletters-row-padding-block: {{ block.settings.row_padding_block }}px; --mionas-newsletters-row-padding-inline: {{ block.settings.row_padding_inline }}px;"
       {{ block.shopify_attributes }}
     >
       {%- for year in years -%}
@@ -40,16 +40,16 @@
             endif
           endfor
         -%}
-        <section class="mionas-newsletter-archive-year__group" aria-label="{{ year }}">
+        <section class="mionas-past-newsletters__group" aria-label="{{ year }}">
           <div class="{{ heading_classes }}">
             {%- content_for 'blocks', closest.article: first_of_year -%}
           </div>
-          <ol class="mionas-newsletter-archive-year__list">
+          <ol class="mionas-past-newsletters__list">
             {%- for article in newsletter_blog.articles -%}
               {%- assign article_year = article.published_at | date: '%Y' -%}
               {%- if article_year == year -%}
                 {%- comment -%} One fixed id, so the editor shows one Item settings row for every newsletter. {%- endcomment -%}
-                {% content_for 'block', type: '_mionas-newsletter-archive-item', id: 'static-item', closest.article: article %}
+                {% content_for 'block', type: '_mionas-newsletter-link', id: 'static-item', closest.article: article %}
               {%- endif -%}
             {%- endfor -%}
           </ol>
@@ -60,66 +60,66 @@
 {%- endpaginate -%}
 
 {% stylesheet %}
-  .mionas-newsletter-archive-year {
-    --mionas-newsletter-archive-row-gap: var(--space-xs);
-    --mionas-newsletter-archive-year-gap: var(--mionas-newsletter-archive-gap, calc(var(--space-lg) * 2));
+  .mionas-past-newsletters {
+    --mionas-newsletters-row-gap: var(--space-xs);
+    --mionas-past-newsletters-gap: var(--mionas-newsletters-gap, calc(var(--space-lg) * 2));
     display: flex;
     flex-direction: column;
   }
 
   @media screen and (max-width: 749px) {
-    .mionas-newsletter-archive-year {
-      --mionas-newsletter-archive-year-gap: min(
-        var(--mionas-newsletter-archive-gap, calc(var(--space-lg) * 2)),
+    .mionas-past-newsletters {
+      --mionas-past-newsletters-gap: min(
+        var(--mionas-newsletters-gap, calc(var(--space-lg) * 2)),
         calc(var(--space-md) * 2)
       );
     }
   }
 
   /* The line sits halfway, so the space between years stays the same as without it. */
-  .mionas-newsletter-archive-year__group + .mionas-newsletter-archive-year__group {
-    margin-top: calc(var(--mionas-newsletter-archive-year-gap) / 2);
-    padding-top: calc(var(--mionas-newsletter-archive-year-gap) / 2);
+  .mionas-past-newsletters__group + .mionas-past-newsletters__group {
+    margin-top: calc(var(--mionas-past-newsletters-gap) / 2);
+    padding-top: calc(var(--mionas-past-newsletters-gap) / 2);
     border-top: var(--list-base-border-width) solid var(--brand-primary);
   }
 
-  .mionas-newsletter-archive-year__group {
-    --mionas-newsletter-archive-year-column: 240px; /* Placeholder layout width. */
+  .mionas-past-newsletters__group {
+    --mionas-past-newsletters-column: 240px; /* Placeholder layout width. */
     display: grid;
-    grid-template-columns: var(--mionas-newsletter-archive-year-column) minmax(0, 1fr);
+    grid-template-columns: var(--mionas-past-newsletters-column) minmax(0, 1fr);
   }
 
   /* Lines the year up with the first row's text; assumes the default headline-lg year and body-lg subject. */
-  .mionas-newsletter-archive-year__heading {
+  .mionas-past-newsletters__heading {
     align-self: start;
     padding-top: calc(
-      var(--mionas-newsletter-archive-row-gap) + var(--mionas-newsletter-archive-row-padding-block) +
+      var(--mionas-newsletters-row-gap) + var(--mionas-newsletters-row-padding-block) +
         (var(--text-role-body-lg-line-height) - var(--text-role-headline-lg-line-height)) / 2
     );
   }
 
-  .mionas-newsletter-archive-year__heading--sticky {
+  .mionas-past-newsletters__heading--sticky {
     position: sticky;
     top: calc(var(--sticky-header-offset, 0px) + var(--space-lg));
   }
 
-  .mionas-newsletter-archive-year__list {
+  .mionas-past-newsletters__list {
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   @media screen and (max-width: 749px) {
-    .mionas-newsletter-archive-year__group {
+    .mionas-past-newsletters__group {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-xs);
     }
 
-    .mionas-newsletter-archive-year__heading {
+    .mionas-past-newsletters__heading {
       padding-top: 0;
     }
 
-    .mionas-newsletter-archive-year__heading--sticky {
+    .mionas-past-newsletters__heading--sticky {
       position: static;
     }
   }
@@ -127,7 +127,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: Archive Year",
+  "name": "Mionas: Past Newsletters",
   "tag": null,
   "blocks": [
     {
@@ -178,7 +178,7 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Archive Year",
+      "name": "Mionas: Past Newsletters",
       "blocks": {
         "year": {
           "type": "mionas-newsletter-year",
@@ -190,7 +190,7 @@
           }
         },
         "static-item": {
-          "type": "_mionas-newsletter-archive-item",
+          "type": "_mionas-newsletter-link",
           "static": true,
           "blocks": {
             "date": {

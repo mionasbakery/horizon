@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 const blockSource = await readFile(
-  new URL('../blocks/mionas-variant-description.liquid', import.meta.url),
+  new URL('../blocks/mionas-variant-details.liquid', import.meta.url),
   'utf8'
 );
 
@@ -28,7 +28,7 @@ globalThis.customElements = {
   },
 };
 
-await import('../assets/mionas-variant-description.js');
+await import('../assets/mionas-variant-details.js');
 
 test('renders variant rich text in a block container without flattening its HTML', () => {
   assert.doesNotMatch(blockSource, /render 'mionas-inline-richtext'/);
@@ -45,8 +45,8 @@ test('updates the dedicated Mionas variant description from the selected variant
     removeEventListener() {},
   };
 
-  const ProductVariantDescription = definitions.get('mionas-variant-description');
-  const description = new ProductVariantDescription();
+  const ProductVariantDetails = definitions.get('mionas-variant-details');
+  const description = new ProductVariantDetails();
   description.section = section;
   description.dataset.productId = '15945324167499';
   description.innerHTML = '<p>12 cookies</p>';
@@ -61,7 +61,7 @@ test('updates the dedicated Mionas variant description from the selected variant
           querySelector(selector) {
             assert.equal(
               selector,
-              'mionas-variant-description[data-product-id="15945324167499"]'
+              'mionas-variant-details[data-product-id="15945324167499"]'
             );
             return replacement;
           },

@@ -3,13 +3,6 @@ paths:
   - "templates/*.json"
 ---
 
-# Editor labels
-
-Give every section and block instance an explicit English `"name"` that states its role on that
-page: `"Mionas: {Component} - {Role}"` for custom `mionas-*` components, `"{Component} - {Role}"`
-for native ones. Leave out the role when it would repeat the component (`"Mionas: Card"`). The
-"Mionas:" prefix is the only sign of a custom component in the editor tree.
-
 # Page layout
 
 `templates/page.json`, the default page, is the reference layout for every `page.*.json`

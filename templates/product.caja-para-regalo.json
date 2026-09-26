@@ -77,7 +77,7 @@
           "blocks": {
             "group_icgrde": {
               "type": "group",
-              "name": "Header",
+              "name": "Group - Product Title",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -115,7 +115,7 @@
               "blocks": {
                 "text_xpVMaM": {
                   "type": "text",
-                  "name": "Text - Product title",
+                  "name": "Text",
                   "settings": {
                     "text": "<h1>{{ closest.product.title }}</h1>",
                     "width": "fit-content",
@@ -228,13 +228,14 @@
             },
             "gift_message": {
               "type": "custom-liquid",
+              "name": "Custom Liquid - Gift Message",
               "settings": {
                 "custom_liquid": "<div id=\"gift-textarea-field\" style=\"display:grid;gap:.5rem\">\n  <label for=\"gift-message-textarea\" style=\"font-weight:600\">Mensaje en la postal (opcional)</label>\n  <textarea\n    id=\"gift-message-textarea\"\n    name=\"properties[Mensaje en la postal]\"\n    rows=\"3\"\n    maxlength=\"250\"\n    placeholder=\"Añade tu dedicatoria aquí…\"\n    style=\"width:100%;padding:.6rem;border:1px solid #ece4d8;border-radius:.5rem\"\n  ></textarea>\n  <small id=\"gift-ta-count\" aria-live=\"polite\">0 / 250</small>\n</div>\n<script>\n  (function () {\n    var ta = document.getElementById('gift-message-textarea');\n    var count = document.getElementById('gift-ta-count');\n    var form = document.querySelector('form[id^=\"BuyButtons-ProductForm-\"]');\n    if (ta && form) ta.setAttribute('form', form.id);\n    if (ta && count) ta.addEventListener('input', function () { count.textContent = ta.value.length + ' / 250'; });\n  })();\n</script>"
               }
             },
             "text_aEtTtq": {
               "type": "text",
-              "name": "Product description",
+              "name": "Text",
               "settings": {
                 "text": "{{ closest.product.description }}",
                 "width": "100%",
@@ -294,7 +295,7 @@
       "blocks": {
         "mionas_text_heading": {
           "type": "mionas-text",
-          "name": "Mionas: Text - Heading",
+          "name": "Mionas: Text",
           "settings": {
             "text": "<p>TAMBIÉN TE PUEDE GUSTAR</p>",
             "variant": "headline",
@@ -310,7 +311,7 @@
         },
         "static-product-card": {
           "type": "_product-card",
-          "name": "Product card",
+          "name": "Product Card",
           "static": true,
           "settings": {
             "product_card_gap": 16,
@@ -328,7 +329,7 @@
           "blocks": {
             "product_card_gallery_DNizbJ": {
               "type": "_product-card-gallery",
-              "name": "Product card gallery",
+              "name": "Product Image",
               "settings": {
                 "image_ratio": "square",
                 "border": "none",
@@ -344,7 +345,7 @@
             },
             "product_card_group_info": {
               "type": "_product-card-group",
-              "name": "Product info",
+              "name": "Group - Product Details",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -383,7 +384,7 @@
               "blocks": {
                 "mionas_product_badges_card": {
                   "type": "mionas-product-badges",
-                  "name": "Mionas: Product info badges",
+                  "name": "Mionas: Product Badges",
                   "settings": {
                     "kind": "information",
                     "placement": "inline",
@@ -398,7 +399,7 @@
                 },
                 "mionas_text_card_title": {
                   "type": "mionas-text",
-                  "name": "Mionas: Title",
+                  "name": "Mionas: Text",
                   "settings": {
                     "text": "<p>{{ closest.product.title }}</p>",
                     "variant": "title",
@@ -436,7 +437,7 @@
             },
             "add_to_cart": {
               "type": "mionas-add-to-cart",
-              "name": "Mionas: Add to cart",
+              "name": "Mionas: Add to Cart",
               "settings": {
                 "label_add": "Añadir a la cesta",
                 "label_choose": "",
@@ -464,7 +465,7 @@
       "block_order": [
         "mionas_text_heading"
       ],
-      "name": "Product recommendations",
+      "name": "Recommended Products",
       "settings": {
         "product": "{{ closest.product }}",
         "recommendation_type": "related",

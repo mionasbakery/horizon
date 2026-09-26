@@ -32,7 +32,7 @@
       "block_order": [
         "announcement_hFbYgf"
       ],
-      "name": "t:names.announcement_bar",
+      "name": "Announcement Bar",
       "settings": {
         "speed": 5,
         "section_width": "page-width",
@@ -58,7 +58,7 @@
         },
         "header-menu": {
           "type": "mionas-header-menu",
-          "name": "Mionas: Header menu",
+          "name": "Mionas: Header Menu",
           "static": true,
           "settings": {
             "menu": "navigation-menu",
