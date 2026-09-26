@@ -8,7 +8,7 @@
   layout panel on Horizon's own tokens rather than the design system's --card-* ones.
 
   Renders through snippets/mionas-group.liquid (a fork of the native group block's renderer that
-  adds `wrap_children`/`min_width`/`max_width`), borrowing its layout/size/link schema, but
+  adds `wrap_children`/`min_width`/`max_width`/`sticky`), borrowing its layout/size/link schema, but
   deliberately omits
   Group's Appearance/Borders sections and Card.module.css's max-width cap: the `variant` setting
   below owns the surface entirely, and the Size settings are the single answer to width, so a
@@ -364,6 +364,13 @@
       "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.height == 'custom' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky",
+      "default": false,
+      "info": "Sticks the block to the top of its scroll container on desktop, just below the header. Only works when its flex parent does not stretch it (e.g. a row with vertical alignment other than stretch/center)."
     },
     {
       "type": "header",

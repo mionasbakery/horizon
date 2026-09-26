@@ -1,0 +1,63 @@
+{%- doc -%}
+  Renders the featured image for a menu item, including page links.
+
+  @param {object} link - The link to render
+  @param {string} [class] - The class to apply to the image
+  @param {string} [sizes] - The sizes to apply to the image
+
+  @example
+  {% render 'mionas-link-featured-image', link: link, sizes: '200px' %}
+{%- enddoc -%}
+{%- comment -%}
+  Fork of snippets/link-featured-image.liquid, which resolves an image for collection, collections
+  and catalog links only. The Ocasiones mega menu points at pages, and a page link would render an
+  empty tile, so this adds a page branch backed by the mionas.menu_image page metafield.
+
+  The three inherited branches are copied unchanged. Re-sync them if the native file changes.
+{%- endcomment -%}
+
+{% assign image_sizes = sizes | default: 'auto' %}
+
+{% if link.type == 'page_link' %}
+  {% assign page_image = link.object.metafields.mionas.menu_image.value %}
+  {% if page_image %}
+    {{
+      page_image
+      | image_url: width: 800
+      | image_tag: loading: 'lazy', class: class, sizes: image_sizes
+    }}
+  {% endif %}
+{% elsif link.type == 'collection_link' %}
+  {% if link.object.featured_image %}
+    {{
+      link.object.featured_image
+      | image_url: width: 800
+      | image_tag: loading: 'lazy', class: class, sizes: image_sizes
+    }}
+  {% elsif link.object.products.size > 0 %}
+    {% assign product_object = link.object.products | where: 'featured_image' | first %}
+    {% if product_object.featured_image %}
+      {{
+        product_object.featured_image
+        | image_url: width: 800
+        | image_tag: loading: 'lazy', class: class, sizes: image_sizes
+      }}
+    {% endif %}
+  {% endif %}
+{% elsif link.type == 'collections_link' %}
+  {% assign collection_object = collections | where: 'featured_image' | first %}
+  {% if collection_object.featured_image %}
+    {{
+      collection_object.featured_image
+      | image_url: width: 800
+      | image_tag: loading: 'lazy', class: class, sizes: image_sizes
+    }}
+  {% endif %}
+{% elsif link.type == 'catalog_link' %}
+  {% assign product_object = collections.all.products | where: 'featured_image' | first %}
+  {{
+    product_object.featured_image
+    | image_url: width: 800
+    | image_tag: loading: 'lazy', class: class, sizes: image_sizes
+  }}
+{% endif %}
