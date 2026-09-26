@@ -1,5 +1,5 @@
-// The contract between ../design-system and this theme's snippets/design-system-bridge.liquid:
-// every token the bridge spends, and the exact value it must carry.
+// The contract between ../design-system and this theme's snippets/design-system-bridge.liquid
+// (with the assets/mionas-base.css it links): every token the bridge spends, and the exact value it must carry.
 //
 // This is the ONLY place the theme hardcodes design-system token names or values. If the design
 // system renames or revalues a token, change it here and in the bridge snippet's var() references.
@@ -78,8 +78,8 @@ export const EXPECTED_TOKENS = {
   // 500, this contract fails, and the question to re-ask is whether that font-face is still
   // needed at all -- not just what number to retype here.
   "--button-base-font-weight": "500",
-  // Product card surface + layout, spent by blocks/mionas-product-card.liquid (these moved there
-  // when snippets/product-card-bridge.liquid was deleted). --card-base-* are
+  // Product card surface + layout, spent by the product card rules in
+  // assets/mionas-base.css and templates/*.json. --card-base-* are
   // Card's tokens, reused because ProductCard renders inside a Card.
   "--card-base-background": "#ffffff",
   "--card-base-border-width": "1px",
@@ -100,10 +100,10 @@ export const EXPECTED_TOKENS = {
   // gone with it. The two media tokens above (--product-card-base-media-inset and
   // --product-card-base-media-radius) are a different case: they are still pinned but deliberately
   // unspent -- the theme frames card media flush and square-cornered rather than inset, a knowing
-  // divergence documented at the top of snippets/product-card-bridge.liquid's media comment. They
+  // divergence documented in assets/mionas-base.css's media comment. They
   // stay pinned so that divergence is measured against a known value rather than a moving one.
   //
-  // --card-state-pressed-opacity IS spent, by product-card-bridge.liquid's :active rule.
+  // --card-state-pressed-opacity IS spent, by assets/mionas-base.css's :active rule.
   "--card-state-pressed-opacity": "0.92",
   // Secondary body text, spent by blocks/mionas-contact-form.liquid's note and
   // blocks/mionas-map.liquid's empty state. Card's own token rather than a borrowed --form-label-*

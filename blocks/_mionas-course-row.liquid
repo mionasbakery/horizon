@@ -86,12 +86,12 @@
 
   assign heading_tag = 'h' | append: block_settings.heading_level
 
-  # Built via append rather than a literal class="..." string, matching
-  # blocks/mionas-add-to-cart.liquid:156's convention -- theme check's ValidScopedCSSClass rule
-  # only inspects literal class attributes, and a literal string here would flag mionas-button and
-  # its modifiers as "possibly out of scope" even though blocks/mionas-button.liquid's stylesheet
-  # (rendered elsewhere on every page) is exactly where they are defined.
-  assign cta_classes = 'mionas-button mionas-button--outline mionas-button--sm' | append: ' mionas-course-row__cta'
+  # Built through mionas-button-class, not by hand: that snippet carries the .mionas-button CSS, so
+  # rendering it is what puts the rules on a page with a course row.
+  capture cta_classes
+    render 'mionas-button-class', variant: 'outline', size: 'sm'
+  endcapture
+  assign cta_classes = cta_classes | append: ' mionas-course-row__cta'
 -%}
 
 {%- if product != blank and course_date != blank -%}

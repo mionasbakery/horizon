@@ -25,6 +25,11 @@
     },
     "product": {
       "quantity": "Quantitat"
+    },
+    "newsletter": {
+      "previous": "Anterior",
+      "next": "Següent",
+      "pagination_label": "Altres newsletters"
     }
   },
   "accessibility": {

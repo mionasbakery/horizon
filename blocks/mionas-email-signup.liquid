@@ -156,11 +156,18 @@
     {%- capture consent_content -%}{% render 'mionas-inline-richtext', value: block_settings.consent_text %}{%- endcapture -%}
     {%- assign consent_visible_text = consent_content | strip_html | strip -%}
     {%- if consent_visible_text != blank -%}
+      {%- liquid
+        # The inverse button only sits on a primary surface, where default text is unreadable.
+        assign consent_color = 'default'
+        if block_settings.submit_variant == 'inverse-primary'
+          assign consent_color = 'inverse-primary'
+        endif
+      -%}
       {%- render 'mionas-text',
         content: consent_content,
         variant: 'label',
         size: 'sm',
-        color: 'default',
+        color: consent_color,
         tag: 'p',
         class: 'mionas-email-signup__consent'
       -%}
@@ -203,13 +210,19 @@
     padding: var(--card-base-padding);
   }
 
-  /* The field's underline bleeds to the surface's full width; padding-inline compensates to keep
-     label/input/error at their previous inset. width: auto overrides .mionas-form-field's fixed
-     width: 100%, which only shifts under negative margins rather than growing to fill them. */
+  /* The field's underline bleeds to the surface's full width, so the label's own start padding is
+     the only inset and matches the surface's top and bottom padding. width: auto overrides
+     .mionas-form-field's fixed width: 100%, which only shifts under negative margins rather than
+     growing to fill them. */
   .mionas-email-signup__surface .mionas-form-field {
     width: auto;
     margin-inline: calc(-1 * var(--card-base-padding));
-    padding-inline: var(--card-base-padding);
+  }
+
+  /* The label is uppercase, so the space below its baseline is always empty and reads as extra
+     padding above the input. Browsers without text-box support keep that space. */
+  .mionas-email-signup .mionas-form-label {
+    text-box: trim-end cap alphabetic;
   }
 
   .mionas-email-signup__success {
@@ -304,7 +317,8 @@
       "label": "Button style",
       "options": [
         { "value": "primary", "label": "Primary (filled)" },
-        { "value": "outline", "label": "Outline" }
+        { "value": "outline", "label": "Outline" },
+        { "value": "inverse-primary", "label": "Inverse primary (on a blue background)" }
       ],
       "default": "primary"
     },

@@ -11,10 +11,7 @@
   Size defaults to `lg`, not Stamp.tsx's own `md`, matching every Stamp call site in the design
   system and the stamps already live in this theme.
 {%- endcomment -%}
-{%- liquid
-  assign block_settings = block.settings
-  assign size = block_settings.size | default: 'lg'
--%}
+{%- assign block_settings = block.settings -%}
 {%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
 {%- liquid
   assign content = content | strip
@@ -22,38 +19,9 @@
 -%}
 
 {%- if visible_text != blank -%}
-  {%- comment -%}
-    block_settings.variant here is Stamp's own Color setting, not Text's band -- the id stayed
-    `variant` to avoid re-migrating existing stored settings like footer-group.json's.
-  {%- endcomment -%}
-  {%- capture stamp_style -%}
-    {%- render 'spacing-style', settings: block_settings -%}
-  {%- endcapture -%}
-  {%- render 'mionas-text',
-    content: content,
-    variant: 'label',
-    size: size,
-    color: block_settings.variant,
-    tag: block_settings.tag,
-    class: 'mionas-stamp spacing-style',
-    style: stamp_style,
-    shopify_attributes: block.shopify_attributes
-  -%}
+  {%- render 'mionas-stamp', content: content, settings: block_settings, shopify_attributes: block.shopify_attributes -%}
 {%- endif -%}
 
-{% stylesheet %}
-  /* The selector is two classes deep on purpose, same as .text-role.mionas-price: a single-class
-     selector would tie in specificity with .text-role--<role> and leave the winner to bundle order.
-     Font-size, line-height and color are deliberately absent -- they must come from the
-     .text-role--label-<size>/--<variant> classes the Size/Color settings pick. */
-  .text-role.mionas-stamp {
-    font-family: var(--stamp-base-font-family);
-    font-weight: var(--stamp-base-font-weight);
-    letter-spacing: var(--stamp-base-letter-spacing);
-    text-transform: var(--stamp-base-text-transform);
-  }
-
-{% endstylesheet %}
 
 {% schema %}
 {

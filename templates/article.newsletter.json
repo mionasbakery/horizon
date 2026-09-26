@@ -1,17 +1,8 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
       "type": "section",
-      "name": "Section - Page",
+      "name": "Section - Newsletter",
       "blocks": {
         "heading": {
           "type": "mionas-group",
@@ -68,7 +59,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text role - Title",
               "settings": {
-                "text": "<p>{{ closest.page.title }}</p>",
+                "text": "<p>{{ closest.article.title }}</p>",
                 "variant": "display",
                 "size": "lg",
                 "color": "default",
@@ -129,11 +120,25 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "date": {
+              "type": "mionas-newsletter-date",
+              "name": "Mionas: Newsletter Date",
+              "settings": {
+                "show_year": true,
+                "size": "lg",
+                "variant": "accent",
+                "tag": "p",
+                "padding-block-start": 0,
+                "padding-block-end": 16,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
             "body": {
               "type": "mionas-text",
               "name": "Mionas: Text role - Body",
               "settings": {
-                "text": "{{ closest.page.content }}",
+                "text": "{{ closest.article.content }}",
                 "variant": "body",
                 "size": "lg",
                 "color": "default",
@@ -145,6 +150,13 @@
                 "padding-inline-end": 0
               }
             },
+            "structured_data": {
+              "type": "custom-liquid",
+              "name": "Custom liquid - Article data for search engines",
+              "settings": {
+                "custom_liquid": "<script type=\"application/ld+json\">{{ article | structured_data }}</script>"
+              }
+            },
             "image_css": {
               "type": "custom-liquid",
               "name": "Custom liquid - Image CSS",
@@ -154,7 +166,9 @@
             }
           },
           "block_order": [
+            "date",
             "body",
+            "structured_data",
             "image_css"
           ]
         }
@@ -191,9 +205,81 @@
         "padding-block-start": 48,
         "padding-block-end": 96
       }
+    },
+    "pagination": {
+      "type": "mionas-newsletter-pagination",
+      "name": "Mionas: Pagination",
+      "blocks": {
+        "older": {
+          "type": "_mionas-newsletter-pagination-link",
+          "name": "Mionas: Pagination link - Older",
+          "settings": {
+            "direction": "older",
+            "label": ""
+          },
+          "blocks": {
+            "subject": {
+              "type": "mionas-text",
+              "name": "Mionas: Text role - Subject",
+              "settings": {
+                "text": "<p>{{ closest.article.title }}</p>",
+                "variant": "title",
+                "size": "md",
+                "color": "default",
+                "tag": "span",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": [
+            "subject"
+          ]
+        },
+        "newer": {
+          "type": "_mionas-newsletter-pagination-link",
+          "name": "Mionas: Pagination link - Newer",
+          "settings": {
+            "direction": "newer",
+            "label": ""
+          },
+          "blocks": {
+            "subject": {
+              "type": "mionas-text",
+              "name": "Mionas: Text role - Subject",
+              "settings": {
+                "text": "<p>{{ closest.article.title }}</p>",
+                "variant": "title",
+                "size": "md",
+                "color": "default",
+                "tag": "span",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": [
+            "subject"
+          ]
+        }
+      },
+      "block_order": [
+        "older",
+        "newer"
+      ],
+      "settings": {
+        "section_width": "page-width"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "pagination"
   ]
 }

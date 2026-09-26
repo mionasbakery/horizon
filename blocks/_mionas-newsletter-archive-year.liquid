@@ -1,0 +1,233 @@
+{%- doc -%}
+  Renders the newsletter archive by year, newest first: each year's heading blocks, which read the year's newest newsletter as closest.article, next to that year's items.
+
+  @param {blog} [closest.blog] - The blog chosen on the section.
+  @param {blog} [blog] - The global blog object, used when the section has no blog chosen.
+{%- enddoc -%}
+{%- liquid
+  assign newsletter_blog = closest.blog | default: blog
+  assign heading_classes = 'mionas-newsletter-archive-year__heading'
+  if block.settings.sticky_year
+    assign heading_classes = heading_classes | append: ' mionas-newsletter-archive-year__heading--sticky'
+  endif
+-%}
+{%- comment -%} A parent's paginate does not reach a block, so this block pages the articles itself. {%- endcomment -%}
+{%- paginate newsletter_blog.articles by 250 -%}
+  {%- liquid
+    # Articles come newest first, so the years do too.
+    assign years = ''
+    for article in newsletter_blog.articles
+      assign article_year = article.published_at | date: '%Y'
+      unless years contains article_year
+        assign years = years | append: article_year | append: ','
+      endunless
+    endfor
+    assign years = years | split: ','
+  -%}
+  {%- if years.size > 0 -%}
+    <div
+      class="mionas-newsletter-archive-year"
+      style="--mionas-newsletter-archive-row-padding-block: {{ block.settings.row_padding_block }}px; --mionas-newsletter-archive-row-padding-inline: {{ block.settings.row_padding_inline }}px;"
+      {{ block.shopify_attributes }}
+    >
+      {%- for year in years -%}
+        {%- liquid
+          for article in newsletter_blog.articles
+            assign article_year = article.published_at | date: '%Y'
+            if article_year == year
+              assign first_of_year = article
+              break
+            endif
+          endfor
+        -%}
+        <section class="mionas-newsletter-archive-year__group" aria-label="{{ year }}">
+          <div class="{{ heading_classes }}">
+            {%- content_for 'blocks', closest.article: first_of_year -%}
+          </div>
+          <ol class="mionas-newsletter-archive-year__list">
+            {%- for article in newsletter_blog.articles -%}
+              {%- assign article_year = article.published_at | date: '%Y' -%}
+              {%- if article_year == year -%}
+                {%- comment -%} One fixed id, so the editor shows one Item settings row for every newsletter. {%- endcomment -%}
+                {% content_for 'block', type: '_mionas-newsletter-archive-item', id: 'static-item', closest.article: article %}
+              {%- endif -%}
+            {%- endfor -%}
+          </ol>
+        </section>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+{%- endpaginate -%}
+
+{% stylesheet %}
+  .mionas-newsletter-archive-year {
+    --mionas-newsletter-archive-row-gap: var(--space-xs);
+    --mionas-newsletter-archive-year-gap: var(--mionas-newsletter-archive-gap, calc(var(--space-lg) * 2));
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-newsletter-archive-year {
+      --mionas-newsletter-archive-year-gap: min(
+        var(--mionas-newsletter-archive-gap, calc(var(--space-lg) * 2)),
+        calc(var(--space-md) * 2)
+      );
+    }
+  }
+
+  /* The line sits halfway, so the space between years stays the same as without it. */
+  .mionas-newsletter-archive-year__group + .mionas-newsletter-archive-year__group {
+    margin-top: calc(var(--mionas-newsletter-archive-year-gap) / 2);
+    padding-top: calc(var(--mionas-newsletter-archive-year-gap) / 2);
+    border-top: var(--list-base-border-width) solid var(--brand-primary);
+  }
+
+  .mionas-newsletter-archive-year__group {
+    --mionas-newsletter-archive-year-column: 240px; /* Placeholder layout width. */
+    display: grid;
+    grid-template-columns: var(--mionas-newsletter-archive-year-column) minmax(0, 1fr);
+  }
+
+  /* Lines the year up with the first row's text; assumes the default headline-lg year and body-lg subject. */
+  .mionas-newsletter-archive-year__heading {
+    align-self: start;
+    padding-top: calc(
+      var(--mionas-newsletter-archive-row-gap) + var(--mionas-newsletter-archive-row-padding-block) +
+        (var(--text-role-body-lg-line-height) - var(--text-role-headline-lg-line-height)) / 2
+    );
+  }
+
+  .mionas-newsletter-archive-year__heading--sticky {
+    position: sticky;
+    top: calc(var(--sticky-header-offset, 0px) + var(--space-lg));
+  }
+
+  .mionas-newsletter-archive-year__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-newsletter-archive-year__group {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xs);
+    }
+
+    .mionas-newsletter-archive-year__heading {
+      padding-top: 0;
+    }
+
+    .mionas-newsletter-archive-year__heading--sticky {
+      position: static;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Archive Year",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "mionas-newsletter-year"
+    },
+    {
+      "type": "mionas-newsletter-date"
+    },
+    {
+      "type": "mionas-text"
+    },
+    {
+      "type": "mionas-stamp"
+    },
+    {
+      "type": "mionas-group"
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "sticky_year",
+      "label": "Keep the year in view while scrolling",
+      "default": true,
+      "info": "Desktop only."
+    },
+    {
+      "type": "range",
+      "id": "row_padding_block",
+      "label": "Row padding, top and bottom",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "row_padding_inline",
+      "label": "Row padding, left and right",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "info": "Desktop only."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Archive Year",
+      "blocks": {
+        "year": {
+          "type": "mionas-newsletter-year",
+          "settings": {
+            "variant": "headline",
+            "size": "lg",
+            "color": "primary",
+            "tag": "h3"
+          }
+        },
+        "static-item": {
+          "type": "_mionas-newsletter-archive-item",
+          "static": true,
+          "blocks": {
+            "date": {
+              "type": "mionas-newsletter-date",
+              "settings": {
+                "tag": "span",
+                "show_year": false
+              }
+            },
+            "subject": {
+              "type": "mionas-text",
+              "settings": {
+                "text": "<p>{{ closest.article.title }}</p>",
+                "variant": "body",
+                "size": "lg",
+                "tag": "span"
+              }
+            },
+            "arrow": {
+              "type": "icon",
+              "settings": {
+                "icon": "arrow",
+                "width": 24
+              }
+            }
+          },
+          "block_order": [
+            "date",
+            "subject",
+            "arrow"
+          ]
+        }
+      },
+      "block_order": [
+        "year"
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -14,11 +14,13 @@
 {%- endcomment -%}
 <div class="contacto-layout-scope" hidden></div>
 {% style %}
-  /* minmax(0, 1fr), not auto: the native flex vars leave justify-content: flex-start here, and
-     under that an auto track sizes to its content, leaving the form column narrow. Equal column
-     height comes from both blocks' height "fill" resolving against the shared grid row, not from
-     item stretch (the native align-items: center prevents it). */
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content {
+  {%- comment -%}
+    minmax(0, 1fr), not auto: the native flex vars leave justify-content: flex-start here, and
+    under that an auto track sizes to its content, leaving the form column narrow. Equal column
+    height comes from both blocks' height "fill" resolving against the shared grid row, not from
+    item stretch (the native align-items: center prevents it).
+  {%- endcomment -%}
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block:has(.mionas-contact-form) > .group-block-content {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
@@ -26,32 +28,36 @@
       'info';
   }
 
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > :nth-child(1 of .group-block) {
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block:has(.mionas-contact-form) > .group-block-content > :nth-child(1 of .group-block) {
     grid-area: form;
   }
 
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > :nth-child(2 of .group-block) {
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block:has(.mionas-contact-form) > .group-block-content > :nth-child(2 of .group-block) {
     grid-area: info;
   }
 
   @media screen and (min-width: 990px) {
-    [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content {
+    [data-testid='section-content']:has(.contacto-layout-scope) > .group-block:has(.mionas-contact-form) > .group-block-content {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       grid-template-areas: 'form info';
     }
   }
 
-  /* Visit/hours cards: space-based, not breakpoint-based, since the info block is full-width
-     below 990 but half-width above -- no fixed viewport number can express "two 320px columns fit". */
-  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block > .group-block-content > :nth-child(2 of .group-block) > .group-block-content > :nth-child(1 of .group-block) > .group-block-content {
+  {%- comment -%}
+    Visit/hours cards: space-based, not breakpoint-based, since the info block is full-width
+    below 990 but half-width above -- no fixed viewport number can express "two 320px columns fit".
+  {%- endcomment -%}
+  [data-testid='section-content']:has(.contacto-layout-scope) > .group-block:has(.mionas-contact-form) > .group-block-content > :nth-child(2 of .group-block) > .group-block-content > :nth-child(1 of .group-block) > .group-block-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   }
 
-  /* This chain passes the column height down through each form wrapper so it lands in the
-     message field instead of as blank space below the submit button. :has(textarea), not
-     :last-child, so it survives field reordering; resize: none since a manually resized textarea
-     would fight the auto-grow. */
+  {%- comment -%}
+    This chain passes the column height down through each form wrapper so it lands in the
+    message field instead of as blank space below the submit button. :has(textarea), not
+    :last-child, so it survives field reordering; resize: none since a manually resized textarea
+    would fight the auto-grow.
+  {%- endcomment -%}
   [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form > form {
     height: 100%;
   }
@@ -70,8 +76,10 @@
     flex-direction: column;
   }
 
-  /* field-sizing: content grows the box with typed input, no JS; Chromium-only, other browsers
-     keep the static height. min-height keeps the rows="5" floor when the flex baseline is shorter. */
+  {%- comment -%}
+    field-sizing: content grows the box with typed input, no JS; Chromium-only, other browsers
+    keep the static height. min-height keeps the rows="5" floor when the flex baseline is shorter.
+  {%- endcomment -%}
   [data-testid='section-content']:has(.contacto-layout-scope) .mionas-contact-form__surface .mionas-form-field:has(textarea) textarea {
     flex: 1;
     height: 100%;

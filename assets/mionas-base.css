@@ -1,0 +1,246 @@
+/* The static rules of snippets/design-system-bridge.liquid, which links this file from <head>.
+   An asset rather than an inline {% style %} block so the browser caches it and Shopify's CDN
+   minifies it; only CSS that needs Liquid output stays inline in the bridge. */
+
+:root {
+  /* Font families: repoint the design system's two primitives at the faces Shopify actually
+     hosts/preloads (--font-body--family / --font-accent--family) rather than the design
+     system's own --font-family-* tokens, which are inert strings with no loaded font behind
+     them. Every component token resolves through these two, so new design-system components
+     need no change here. Both names are pinned in scripts/design-tokens-contract.mjs. */
+  --font-family-archivo: var(--font-body--family);
+  --font-family-oswald: var(--font-accent--family);
+
+  /* The h1-h6 ladder below is this file's own construction, not something the design system
+     hands over -- its text roles are a band x size grid with no inherent mapping to heading
+     levels. label-* is excluded despite holding the two smallest sizes: that band is "form
+     labels and UI chrome, not page content" in the design system, and a merchant's h6 is
+     page content -- which is why h5/h6 land on 20/18px rather than an unbroken 18/15 sequence. */
+
+  /* h1 -> display-lg. Set directly rather than through Shopify's type_size_h1 setting:
+     display-lg is 48px, exactly Horizon's fluid-size cutoff, so going through the setting
+     would reintroduce a clamp() with a derived 44px floor instead of a fixed 48px. */
+  --font-h1--size: var(--text-role-display-lg-font-size);
+  --font-h1--line-height: var(--text-role-display-lg-line-height);
+  --font-h1--letter-spacing: var(--text-role-display-lg-letter-spacing);
+
+  /* h2 -> headline-md. Below the fluid cutoff, so fixed. */
+  --font-h2--size: var(--text-role-headline-md-font-size);
+  --font-h2--line-height: var(--text-role-headline-md-line-height);
+  --font-h2--letter-spacing: var(--text-role-headline-md-letter-spacing);
+
+  /* h3 -> headline-sm (24px), a step of its own distinct from h2's 28px. */
+  --font-h3--size: var(--text-role-headline-sm-font-size);
+  --font-h3--line-height: var(--text-role-headline-sm-line-height);
+  --font-h3--letter-spacing: var(--text-role-headline-sm-letter-spacing);
+
+  /* h4 -> title-lg */
+  --font-h4--size: var(--text-role-title-lg-font-size);
+  --font-h4--line-height: var(--text-role-title-lg-line-height);
+  --font-h4--letter-spacing: var(--text-role-title-lg-letter-spacing);
+
+  /* h5 -> title-md */
+  --font-h5--size: var(--text-role-title-md-font-size);
+  --font-h5--line-height: var(--text-role-title-md-line-height);
+  --font-h5--letter-spacing: var(--text-role-title-md-letter-spacing);
+
+  /* h6 -> title-sm */
+  --font-h6--size: var(--text-role-title-sm-font-size);
+  --font-h6--line-height: var(--text-role-title-sm-line-height);
+  --font-h6--letter-spacing: var(--text-role-title-sm-letter-spacing);
+
+  /* paragraph -> body-md, the band's own stated default for everything that isn't the intro
+     line under a display. */
+  --font-paragraph--size: var(--text-role-body-md-font-size);
+  --font-paragraph--line-height: var(--text-role-body-md-line-height);
+  --font-paragraph--letter-spacing: var(--text-role-body-md-letter-spacing);
+
+  /* Buttons — Horizon states no height: it derives one from padding-block plus the paragraph
+     line-height (base.css:1255). The design system states height directly (48px) with 24px
+     inline padding. Derive the padding-block that yields the design system's height at the
+     line-height this bridge already set: (48px - 24px) / 2 = 12px. */
+  --button-padding-block: calc(
+    (var(--button-size-md-height) - var(--text-role-body-md-line-height)) / 2
+  );
+  --button-padding-inline: var(--button-size-md-padding);
+}
+
+/* Font smoothing: the design system renders with the platform default (subpixel AA on
+   macOS), but Horizon sets -webkit-font-smoothing: antialiased on `body` (base.css:677),
+   which inherits everywhere including Mionas markup and reads visibly thinner, independent
+   of the Archivo-500 fix above.
+
+   Universal selector + !important because four of the five upstream declarations live in
+   files this theme merges from Shopify/horizon, so restating their selectors here would need
+   re-copying after every merge and miss anything Shopify adds later. The fifth,
+   blocks/corporate-quote-form.liquid, is this theme's own file and had its declaration
+   removed outright instead. */
+*,
+*::before,
+*::after {
+  -webkit-font-smoothing: auto !important;
+}
+
+/* Horizon gives button labels the paragraph weight (400, base.css:1245); no Shopify setting
+   exposes button weight, so this needs a rule. Spends the token, not a hardcoded value, so
+   native Horizon buttons and blocks/mionas-button.liquid stay in sync -- this only renders
+   correctly because of the Archivo 500 face emitted above.
+
+   Same selector list as base.css:1229-1232; renders after base.css so it wins on source
+   order. .button-unstyled is excluded since it strips styling to read as plain text
+   (base.css:1361), matching base.css's own :not() idiom at line 1265. */
+.button:not(.button-unstyled),
+.button-secondary,
+.button-custom,
+button.shopify-payment-button__button--unbranded {
+  font-weight: var(--button-base-font-weight);
+}
+
+/* Footer tagline: a merchant `text` block with font "Accent" reads as the design system's
+   tagline line. text.liquid/typography-style.liquid always emit
+   `--font-family: var(--font-accent--family)` inline plus `custom-typography` for that
+   combination, so this targets that signature directly instead of adding a dedicated block
+   type. Scoped to `<footer>` so it can't catch accent-font text elsewhere on the page. */
+footer .custom-typography[style*='--font-family: var(--font-accent--family)'] {
+  color: var(--footer-tagline-foreground);
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Product card
+
+   Gives Horizon's native product card (snippets/product-card.liquid, rendered on the home page,
+   collection, search, cart, 404 and product-recommendation surfaces) its Mionas appearance.
+
+   This is now the only product card in the theme. It used to be one of two: the home page composed
+   blocks/_mionas-product-card.liquid and these rules made the native card match it. The home page
+   moved onto the native card, so there is nothing left to match -- these rules ARE the card's look,
+   not a copy of one.
+
+   _mionas-product-card.liquid has since been DELETED, along with mionas-product-media.liquid and
+   mionas-product-title.liquid, once nothing rendered them. The declarations each rule below was
+   derived from are therefore quoted inline rather than cited by line number: there is no longer a
+   file to point at, and a citation into a deleted file is worse than none. Git history has the
+   originals if the derivation is ever in question.
+
+   Component-scoped bridge in the shape of snippets/header-bridge.liquid: only the properties Horizon
+   exposes NO setting for live here. Everything settable -- background, border, radius, gap, padding,
+   text colour -- is configured per card block in templates/*.json instead, so the theme editor stays
+   the single source of truth for it and CSS never shadows a merchant control.
+
+   NOT COVERED: blocks/product-card.liquid, the public standalone "Product card" block. It has no
+   instances in any template today. The rules below would apply to it, but its chrome comes from its
+   own block settings -- a future merchant placement needs the templates/*.json values applied by hand
+   or it renders shadow-and-600-weight on a borderless, radius-0 box.
+
+   Deliberately left alone: quick-add button, badges, swatches, carousel arrows, predictive search.
+   --------------------------------------------------------------------------------------------- */
+
+/* Mionas cards carry a shadow; Horizon's card declares none (base.css:101-118 only *transitions*
+   box-shadow, for the lift/scale hover effects). No native rule to outrank, so a plain declaration
+   is enough. It has to sit on __content rather than on <product-card>, because __content is the
+   element that border-override paints the border and radius onto. */
+.product-card .product-card__content {
+  box-shadow: var(--card-base-shadow);
+}
+
+/* Mirrors the Mionas card's pressed state, which was
+   `.mionas-product-card:active { opacity: var(--card-state-pressed-opacity); }`.
+   Same reason as above for targeting __content: the opacity has to fade the bordered surface, not
+   a wrapper that has no paint of its own. */
+.product-card:active .product-card__content {
+  opacity: var(--card-state-pressed-opacity);
+}
+
+/* The Mionas card declared `font-family: var(--card-base-font-family);` on its root. The
+   design-system bridge already points --font-family-archivo at the theme's loaded body face, so
+   this inherits a real font rather than the DS primitive. */
+.product-card {
+  font-family: var(--card-base-font-family);
+}
+
+/* NO MEDIA-INSET RULE HERE, ON PURPOSE -- and this is a reversal worth recording.
+
+   The design system insets the card's media from the card's edges
+   (ProductCard.module.css's .media spends --product-card-base-media-inset and
+   --product-card-base-media-radius). This theme briefly followed that: a
+   `.product-card .card-gallery { margin: var(--product-card-base-media-inset); }` rule here, plus
+   border_radius: 12 on the _product-card-gallery block in every templates/*.json.
+
+   Both were reverted. The store wants the product image flush to the card's edges, so the card's
+   own 16px radius clips the image's top corners and nothing else rounds it. Leaving the gallery's
+   12px radius on while flush would have shown card background in the top-corner notches between
+   the image's 12px curve and the card's 16px one, and rounded the image's bottom corners against
+   nothing mid-card.
+
+   So --product-card-base-media-inset and --product-card-base-media-radius are deliberately
+   unspent by this theme. That is a knowing divergence from the design system, not an oversight or
+   a sync that was never done -- do not "fix" it by reintroducing the margin without also taking
+   the gallery radius back to 12 everywhere. */
+
+/* NO MEDIA-HEIGHT RULE HERE, ON PURPOSE.
+   Framing the media by height rather than ratio does not survive contact with the real markup:
+   .product-media-container is not a child of .card-gallery (an <a class="contents"> sits between
+   them, and with more than one image a whole slideshow-component does too,
+   card-gallery.liquid:112-200), and --gallery-aspect-ratio is written *inline* on .card-gallery
+   (card-gallery.liquid:72), so a stylesheet cannot outrank it on that element.
+
+   The image_ratio setting is the supported lever, so every templates/*.json uses "square". At the
+   card's real layout -- 4 columns at page width on the home page (templates/index.json), ~4 at
+   product_card_size medium on collection -- square is within a few percent of the 200px the design
+   system's ProductCard frames at, and it keeps the merchant control meaningful. At 4 columns the
+   card is roughly 290px wide, and since the media is flush (no inset, see above) the media is that
+   width too. Revisit only if the design system tokenizes a ratio.
+
+   --product-media-fit already defaults to cover inline (card-gallery.liquid:115), so no rule is
+   needed for that either. */
+
+/* Hover zoom. Scales the <img>, NOT .card-gallery: the gallery is the overflow-hidden frame, so
+   scaling it would grow the card instead of zooming inside it. The global card_hover_effect
+   setting stays "none" for the same reason -- its subtle-zoom variant scales the whole gallery box.
+
+   Gated exactly as base.css:124-150 gates Horizon's own hover effects.
+
+   Originally copied from blocks/mionas-product-media.liquid, which has since been deleted -- so
+   this is not a duplicate kept in step with something else, it is the only hover zoom the card
+   has. Removing it removes the behaviour. The scale and duration are still local custom properties
+   rather than design tokens, because the design system has not tokenized them; promote both if it
+   ever does. */
+.product-card .card-gallery {
+  --product-card-media-hover-scale: 1.05;
+  --product-card-media-hover-duration: 0.5s;
+}
+
+@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .product-card .card-gallery img {
+    transition: transform var(--product-card-media-hover-duration) ease;
+  }
+
+  .product-card:hover .card-gallery img {
+    transform: scale(var(--product-card-media-hover-scale));
+  }
+}
+
+/* Title and price weight. Both render through snippets/text.liquid as
+   `.text-block.<type_preset>` -- title "paragraph", price "h6" per templates/*.json. Horizon has
+   no weight setting for them (weight is derived from whichever font picker the block points at),
+   but base.css:673 and base.css:814 declare it as font-weight: var(--font-paragraph--weight) /
+   var(--font-h6--weight). So this is a variable re-point and wins regardless of stylesheet order,
+   which matters because per-block stylesheet tags bundle later in the body.
+
+   INVARIANT, now split across the two halves. --font-paragraph--weight still governs the native
+   product-title block, which every surface renders, so that half tracks all of templates/*.json.
+   --font-h6--weight governs the native price block, which SEVEN templates still render:
+   search.json, cart.json, 404.json, product.json and the three product.* variants (the last four
+   through their product-recommendations card). Only index.json and collection.json use
+   blocks/mionas-price.liquid instead, which sets its own weight from
+   --product-card-price-font-weight (mionas-price.liquid:122-127, the declaration at :126) and emits
+   no .text-block for this rule to reach. Both halves stay: if a card's title or price is ever switched to another
+   type_preset, add the matching --font-<preset>--weight or the text silently falls back to the
+   theme's font weight.
+
+   Both tokens are 600, so one rule covers title and price. Colour is a real Horizon setting
+   (text_color) and lives in templates/*.json, not here. */
+.product-card .text-block {
+  --font-paragraph--weight: var(--card-title-font-weight);
+  --font-h6--weight: var(--product-card-price-font-weight);
+}

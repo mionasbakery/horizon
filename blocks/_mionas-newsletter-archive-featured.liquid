@@ -1,0 +1,247 @@
+{%- doc -%}
+  Renders its child blocks for the newsletter blog's newest email, which they read as closest.article.
+
+  @param {blog} [closest.blog] - The blog chosen on the section.
+  @param {blog} [blog] - The global blog object, used when the section has no blog chosen.
+{%- enddoc -%}
+{%- comment -%}
+  A parent's paginate does not reach a block, so this block pages the articles itself. By 250,
+  not 1, so ?page=2 shows nothing instead of the second email as "latest".
+{%- endcomment -%}
+{%- assign newsletter_blog = closest.blog | default: blog -%}
+{%- paginate newsletter_blog.articles by 250 -%}
+  {%- if newsletter_blog.articles.size > 0 -%}
+    {%- assign latest = newsletter_blog.articles.first -%}
+    <div class="mionas-newsletter-archive-featured" {{ block.shopify_attributes }}>
+      {%- content_for 'blocks', closest.article: latest -%}
+    </div>
+  {%- endif -%}
+{%- endpaginate -%}
+
+{% stylesheet %}
+  /* A connected title can't be retyped in capitals, and the design sets the latest title in uppercase. */
+  .mionas-newsletter-archive-featured .text-role--headline-lg {
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Archive Featured",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "mionas-group"
+    },
+    {
+      "type": "mionas-text"
+    },
+    {
+      "type": "mionas-stamp"
+    },
+    {
+      "type": "mionas-newsletter-date"
+    },
+    {
+      "type": "mionas-button"
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Mionas: Archive Featured",
+      "blocks": {
+        "card": {
+          "type": "mionas-group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 40,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "#0b078c",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 16,
+            "link": "{{ closest.article.url }}",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 32,
+            "padding-block-end": 32,
+            "padding-inline-start": 32,
+            "padding-inline-end": 32
+          },
+          "blocks": {
+            "text": {
+              "type": "mionas-group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "eyebrow": {
+                  "type": "mionas-group",
+                  "settings": {
+                    "content_direction": "row",
+                    "vertical_on_mobile": false,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 4,
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "label": {
+                      "type": "mionas-stamp",
+                      "settings": {
+                        "text": "<p>Última newsletter,</p>",
+                        "size": "lg",
+                        "variant": "accent-inverse",
+                        "tag": "span",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      }
+                    },
+                    "date": {
+                      "type": "mionas-newsletter-date",
+                      "settings": {
+                        "size": "lg",
+                        "variant": "accent-inverse",
+                        "tag": "span",
+                        "show_year": true
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "label",
+                    "date"
+                  ]
+                },
+                "title": {
+                  "type": "mionas-text",
+                  "settings": {
+                    "text": "<p>{{ closest.article.title }}</p>",
+                    "variant": "headline",
+                    "size": "lg",
+                    "color": "inverse-primary",
+                    "tag": "p",
+                    "text_wrap": "normal",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  }
+                }
+              },
+              "block_order": [
+                "eyebrow",
+                "title"
+              ]
+            },
+            "button": {
+              "type": "mionas-button",
+              "settings": {
+                "label": "Leer la newsletter",
+                "link": "{{ closest.article.url }}",
+                "open_in_new_tab": false,
+                "variant": "inverse-primary",
+                "size": "md",
+                "full_width": false,
+                "icon": "none",
+                "icon_position": "leading"
+              }
+            }
+          },
+          "block_order": [
+            "text",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "card"
+      ]
+    }
+  ]
+}
+{% endschema %}

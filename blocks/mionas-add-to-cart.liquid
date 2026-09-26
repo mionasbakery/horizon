@@ -42,7 +42,7 @@
   leaves that judgement to the merchant rather than restricting the list.
 
   Known cosmetic overlap: pressing this button also dims the whole card, because
-  snippets/product-card-bridge.liquid's `.product-card:active .product-card__content` rule matches
+  assets/mionas-base.css's `.product-card:active .product-card__content` rule matches
   ancestors of the pressed element too. Left as-is rather than scoping the card's pressed state
   around this block.
 {%- endcomment -%}
@@ -115,10 +115,9 @@
       passed as the prefix since it's Horizon's own hook for the checkmark-burst/fly-to-cart
       animation CSS and has to stay on regardless of variant.
 
-      The rules for these classes live in snippets/mionas-button-styles.liquid, rendered globally by
-      snippets/design-system-bridge.liquid rather than as a block-level stylesheet tag -- a
-      block-level tag only ships on pages where that block renders, and this block doesn't render
-      mionas-button.liquid, so the vocabulary would resolve to nothing on a collection page.
+      The rules for these classes live in mionas-button-class's own stylesheet tag, so rendering
+      that snippet here is also what ships them: this block doesn't render mionas-button.liquid,
+      whose page presence can't be relied on.
     endcomment
     comment
       One line on purpose: inside a liquid tag every line is its own tag, so a render split across

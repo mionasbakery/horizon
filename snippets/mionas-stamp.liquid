@@ -1,0 +1,38 @@
+{%- doc -%}
+  Renders stamp text: a label role in the Stamp face, sized, coloured and padded by a stamp block's settings.
+
+  @param {string} content - Inline HTML to show. Emitted unfiltered; callers sanitise it.
+  @param {object} settings - The calling block's settings: size, variant, tag and padding-*.
+  @param {string} [shopify_attributes] - The calling block's block.shopify_attributes.
+{%- enddoc -%}
+{%- comment -%}
+  settings.variant is the stamp's Color setting, not Text's band -- the id stayed `variant` to avoid
+  re-migrating existing stored settings like footer-group.json's.
+{%- endcomment -%}
+{%- assign size = settings.size | default: 'lg' -%}
+{%- capture stamp_style -%}
+  {%- render 'spacing-style', settings: settings -%}
+{%- endcapture -%}
+{%- render 'mionas-text',
+  content: content,
+  variant: 'label',
+  size: size,
+  color: settings.variant,
+  tag: settings.tag,
+  class: 'mionas-stamp spacing-style',
+  style: stamp_style,
+  shopify_attributes: shopify_attributes
+-%}
+
+{% stylesheet %}
+  /* The selector is two classes deep on purpose, same as .text-role.mionas-price: a single-class
+     selector would tie in specificity with .text-role--<role> and leave the winner to bundle order.
+     Font-size, line-height and color are deliberately absent -- they must come from the
+     .text-role--label-<size>/--<variant> classes the Size/Color settings pick. */
+  .text-role.mionas-stamp {
+    font-family: var(--stamp-base-font-family);
+    font-weight: var(--stamp-base-font-weight);
+    letter-spacing: var(--stamp-base-letter-spacing);
+    text-transform: var(--stamp-base-text-transform);
+  }
+{% endstylesheet %}

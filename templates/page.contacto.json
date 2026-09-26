@@ -9,115 +9,127 @@
  */
 {
   "sections": {
-    "section_ThPTYr": {
+    "main": {
       "type": "section",
+      "name": "Section - Contact",
       "blocks": {
-        "mionas_breadcrumbs_YjmNh7": {
-          "type": "mionas-breadcrumbs",
-          "name": "Mionas: Breadcrumbs",
+        "heading": {
+          "type": "mionas-group",
+          "name": "Mionas: Group - Heading",
           "settings": {
-            "menu": "",
-            "home_label": "",
-            "label": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0
-          },
-          "blocks": {}
-        },
-        "mionas_text_XThTKA": {
-          "type": "mionas-text",
-          "name": "Mionas: Title",
-          "settings": {
-            "text": "<p>{{ closest.page.title }}</p>",
-            "variant": "display",
-            "size": "lg",
-            "color": "default",
-            "tag": "h1",
-            "text_wrap": "normal",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "mionas_text_ViiDkJ": {
-          "type": "mionas-text",
-          "name": "Mionas: Text - Subtitle",
-          "settings": {
-            "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
-            "variant": "body",
-            "size": "lg",
-            "color": "default",
-            "tag": "p",
-            "text_wrap": "normal",
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "wrap_children": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "min_width": 0,
+            "max_width": 0,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {}
-        },
-        "mionas_text_YXRcp8": {
-          "type": "mionas-text",
-          "name": "Mionas: Description",
-          "settings": {
-            "text": "",
-            "variant": "body",
-            "size": "lg",
-            "color": "default",
-            "tag": "p",
-            "text_wrap": "normal",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+          "blocks": {
+            "mionas_breadcrumbs_YjmNh7": {
+              "type": "mionas-breadcrumbs",
+              "name": "Mionas: Breadcrumbs",
+              "settings": {
+                "menu": "",
+                "home_label": "",
+                "label": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_text_XThTKA": {
+              "type": "mionas-text",
+              "name": "Mionas: Title",
+              "settings": {
+                "text": "<p>{{ closest.page.title }}</p>",
+                "variant": "display",
+                "size": "lg",
+                "color": "default",
+                "tag": "h1",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_text_ViiDkJ": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Subtitle",
+              "settings": {
+                "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
+                "variant": "body",
+                "size": "lg",
+                "color": "default",
+                "tag": "p",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "mionas_text_YXRcp8": {
+              "type": "mionas-text",
+              "name": "Mionas: Description",
+              "settings": {
+                "text": "",
+                "variant": "body",
+                "size": "lg",
+                "color": "default",
+                "tag": "p",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
           },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "mionas_breadcrumbs_YjmNh7",
-        "mionas_text_XThTKA",
-        "mionas_text_ViiDkJ",
-        "mionas_text_YXRcp8"
-      ],
-      "name": "Section - Heading",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "background_media": "none",
-        "background_color": "",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_color": "",
-        "border_radius": 0,
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "contacto": {
-      "type": "section",
-      "blocks": {
+          "block_order": [
+            "mionas_breadcrumbs_YjmNh7",
+            "mionas_text_XThTKA",
+            "mionas_text_ViiDkJ",
+            "mionas_text_YXRcp8"
+          ]
+        },
         "columns": {
           "type": "mionas-group",
-          "name": "Mionas: Group - Columns",
+          "name": "Mionas: Group - Body",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -152,7 +164,7 @@
             "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
-            "padding-block-start": 24,
+            "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -741,19 +753,19 @@
         }
       },
       "block_order": [
+        "heading",
         "columns",
         "responsive_css"
       ],
-      "name": "Section - Contact",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
         "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
+        "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 8,
+        "gap": 48,
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
@@ -770,13 +782,12 @@
         "border_opacity": 100,
         "border_color": "",
         "border_radius": 0,
-        "padding-block-start": 0,
-        "padding-block-end": 64
+        "padding-block-start": 48,
+        "padding-block-end": 96
       }
     }
   },
   "order": [
-    "section_ThPTYr",
-    "contacto"
+    "main"
   ]
 }

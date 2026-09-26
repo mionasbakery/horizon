@@ -1,0 +1,25 @@
+{%- doc -%}
+  Renders a date as plain text in the storefront language: "8 SEP", "8 SEP 2026" or "2026".
+
+  @param {string} date - A date or timestamp, such as article.published_at.
+  @param {string} [format] - day_month, full or year. Defaults to full.
+{%- enddoc -%}
+{%- comment -%}
+  The date filter's %b is always English, so the month comes from the same locale key
+  blocks/_mionas-course-row.liquid uses.
+{%- endcomment -%}
+{%- liquid
+  if format == 'year'
+    echo date | date: '%Y'
+  else
+    assign month_names = 'content.month_abbreviations' | t | split: ','
+    assign month_index = date | date: '%m' | plus: 0 | minus: 1
+    echo date | date: '%-d'
+    echo ' '
+    echo month_names[month_index]
+    unless format == 'day_month'
+      echo ' '
+      echo date | date: '%Y'
+    endunless
+  endif
+-%}
