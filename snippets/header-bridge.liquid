@@ -30,8 +30,10 @@
   a CSS font-weight:500 would match the 400 face and render lighter than intended.
 {% endcomment %}
 {% style %}
-  /* Top-level nav links -> label (13 / 18 / 0.02em). Weight 600 comes from the slot.
-     Was label-lg (15 / 20) before the design system collapsed the label sizes into one role. */
+  {%- comment -%}
+    Top-level nav links -> label (13 / 18 / 0.02em). Weight 600 comes from the slot.
+    Was label-lg (15 / 20) before the design system collapsed the label sizes into one role.
+  {%- endcomment -%}
   .menu-list__link {
     --menu-top-level-font-size-desktop: var(--text-role-label-md-font-size);
     --menu-top-level-font-line-height: var(--text-role-label-md-line-height);
@@ -39,18 +41,22 @@
     letter-spacing: var(--text-role-label-md-letter-spacing);
   }
 
-  /* Horizon has no menu hover-colour setting. It applies
-     `color: var(--menu-top-level-font-color)` on :hover, so re-pointing the variable on the
-     hovered element is enough - no need to out-specify its colour rule. */
+  {%- comment -%}
+    Horizon has no menu hover-colour setting. It applies
+    `color: var(--menu-top-level-font-color)` on :hover, so re-pointing the variable on the
+    hovered element is enough - no need to out-specify its colour rule.
+  {%- endcomment -%}
   .menu-list__link:hover,
   .menu-list__link:focus {
     --menu-top-level-font-color: var(--color-blau-sitges);
   }
 
-  /* Drawer main-list items share the nav's tracking. Size lives in
-     blocks/mionas-header-menu.liquid instead, where the rest of the drawer's typography is: the
-     reworked MegaMenu puts every row in the drawer on one band, which is the mobile reference
-     this rule once had none of. */
+  {%- comment -%}
+    Drawer main-list items share the nav's tracking. Size lives in
+    blocks/mionas-header-menu.liquid instead, where the rest of the drawer's typography is: the
+    reworked MegaMenu puts every row in the drawer on one band, which is the mobile reference
+    this rule once had none of.
+  {%- endcomment -%}
   .menu-drawer__menu-item--mainlist {
     letter-spacing: var(--text-role-label-md-letter-spacing);
   }

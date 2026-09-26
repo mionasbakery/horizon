@@ -11,7 +11,7 @@
   Covers only the `as="a"` case of Button.tsx's discriminated union, since it's always used as a
   static block with no `:disabled` state; `aria-disabled` stands in for that when no link is set.
 
-  The class list and CSS live in snippets/mionas-button-class.liquid / mionas-button-styles.liquid
+  The class list and CSS live in snippets/mionas-button-class.liquid
   rather than here, because blocks/mionas-add-to-cart.liquid needs the same classes on a `<button>`
   it builds itself (this block's `<a>` can't submit a form) -- keeping one shared implementation
   also avoids Shopify's block-subsetting dropping this block's own `{% raw %}{% stylesheet %}{% endraw %}` tag on pages

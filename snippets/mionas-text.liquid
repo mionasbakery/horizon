@@ -5,11 +5,9 @@
   of restating --text-role-* by hand, which is how it drifted out of step with the roles in the
   first place.
 
-  THE .text-role CSS DELIBERATELY DOES NOT LIVE HERE. Snippets cannot declare a stylesheet tag,
-  and it stays in blocks/mionas-text.liquid, which is where it already was. Every block
-  stylesheet tag is compiled into one file that ships on every page -- verified byte-identical
-  across the home page, /cart and a collection page -- so a caller does not need mionas-text to be
-  present on the page for these classes to resolve.
+  The .text-role CSS lives in this snippet's stylesheet tag. Shopify ships only the stylesheet CSS
+  of files a page renders, so the rules reach every page that renders this snippet, whichever
+  block or section calls it.
 
   CALLERS MUST SANITISE `content` THEMSELVES. This snippet outputs it unfiltered, because
   mionas-text passes richtext that has already been flattened to inline HTML and the product blocks
@@ -44,7 +42,7 @@
     split a stored `role` setting into variant/size themselves, so a stale value can produce a
     bogus pair even when each axis looks plausible alone.
 
-    Keep this list in step with the .text-role--* rules in blocks/mionas-text.liquid.
+    Keep this list in step with the .text-role--* rules below.
   endcomment
   assign allowed_roles = 'display-lg|display-md|display-sm|headline-lg|headline-md|headline-sm|title-lg|title-md|title-sm|body-lg|body-md|body-sm|label-lg|label-md|label-sm' | split: '|'
   unless allowed_roles contains resolved_role
@@ -82,3 +80,150 @@
   {%- endif %}
   {{ shopify_attributes }}
 >{{- content -}}</{{ resolved_tag }}>
+
+{% stylesheet %}
+  .text-role {
+    margin: 0;
+    font-family: var(--font-family-archivo);
+  }
+
+  /* All fifteen band x size combinations are exposed, even though the theme only uses nine, so
+     this stays a true mirror of Text.tsx rather than a silently reduced subset. Keep the
+     `variant`/`size` selects in blocks/mionas-text.liquid and the whitelist above in step with
+     this list. */
+  .text-role--display-lg {
+    font-size: var(--text-role-display-lg-font-size);
+    line-height: var(--text-role-display-lg-line-height);
+    font-weight: var(--text-role-display-lg-font-weight);
+    letter-spacing: var(--text-role-display-lg-letter-spacing);
+  }
+
+  .text-role--display-md {
+    font-size: var(--text-role-display-md-font-size);
+    line-height: var(--text-role-display-md-line-height);
+    font-weight: var(--text-role-display-md-font-weight);
+    letter-spacing: var(--text-role-display-md-letter-spacing);
+  }
+
+  .text-role--display-sm {
+    font-size: var(--text-role-display-sm-font-size);
+    line-height: var(--text-role-display-sm-line-height);
+    font-weight: var(--text-role-display-sm-font-weight);
+    letter-spacing: var(--text-role-display-sm-letter-spacing);
+  }
+
+  .text-role--headline-lg {
+    font-size: var(--text-role-headline-lg-font-size);
+    line-height: var(--text-role-headline-lg-line-height);
+    font-weight: var(--text-role-headline-lg-font-weight);
+    letter-spacing: var(--text-role-headline-lg-letter-spacing);
+  }
+
+  .text-role--headline-md {
+    font-size: var(--text-role-headline-md-font-size);
+    line-height: var(--text-role-headline-md-line-height);
+    font-weight: var(--text-role-headline-md-font-weight);
+    letter-spacing: var(--text-role-headline-md-letter-spacing);
+  }
+
+  .text-role--headline-sm {
+    font-size: var(--text-role-headline-sm-font-size);
+    line-height: var(--text-role-headline-sm-line-height);
+    font-weight: var(--text-role-headline-sm-font-weight);
+    letter-spacing: var(--text-role-headline-sm-letter-spacing);
+  }
+
+  .text-role--title-lg {
+    font-size: var(--text-role-title-lg-font-size);
+    line-height: var(--text-role-title-lg-line-height);
+    font-weight: var(--text-role-title-lg-font-weight);
+    letter-spacing: var(--text-role-title-lg-letter-spacing);
+  }
+
+  .text-role--title-md {
+    font-size: var(--text-role-title-md-font-size);
+    line-height: var(--text-role-title-md-line-height);
+    font-weight: var(--text-role-title-md-font-weight);
+    letter-spacing: var(--text-role-title-md-letter-spacing);
+  }
+
+  .text-role--title-sm {
+    font-size: var(--text-role-title-sm-font-size);
+    line-height: var(--text-role-title-sm-line-height);
+    font-weight: var(--text-role-title-sm-font-weight);
+    letter-spacing: var(--text-role-title-sm-letter-spacing);
+  }
+
+  .text-role--body-lg {
+    font-size: var(--text-role-body-lg-font-size);
+    line-height: var(--text-role-body-lg-line-height);
+    font-weight: var(--text-role-body-lg-font-weight);
+    letter-spacing: var(--text-role-body-lg-letter-spacing);
+  }
+
+  .text-role--body-md {
+    font-size: var(--text-role-body-md-font-size);
+    line-height: var(--text-role-body-md-line-height);
+    font-weight: var(--text-role-body-md-font-weight);
+    letter-spacing: var(--text-role-body-md-letter-spacing);
+  }
+
+  .text-role--body-sm {
+    font-size: var(--text-role-body-sm-font-size);
+    line-height: var(--text-role-body-sm-line-height);
+    font-weight: var(--text-role-body-sm-font-weight);
+    letter-spacing: var(--text-role-body-sm-letter-spacing);
+  }
+
+  .text-role--label-lg {
+    font-size: var(--text-role-label-lg-font-size);
+    line-height: var(--text-role-label-lg-line-height);
+    font-weight: var(--text-role-label-lg-font-weight);
+    letter-spacing: var(--text-role-label-lg-letter-spacing);
+  }
+
+  .text-role--label-md {
+    font-size: var(--text-role-label-md-font-size);
+    line-height: var(--text-role-label-md-line-height);
+    font-weight: var(--text-role-label-md-font-weight);
+    letter-spacing: var(--text-role-label-md-letter-spacing);
+  }
+
+  .text-role--label-sm {
+    font-size: var(--text-role-label-sm-font-size);
+    line-height: var(--text-role-label-sm-line-height);
+    font-weight: var(--text-role-label-sm-font-weight);
+    letter-spacing: var(--text-role-label-sm-letter-spacing);
+  }
+
+  /* No text-role--stamp rule here on purpose: blocks/mionas-stamp.liquid composes the label roles
+     above rather than adding one beside them, mirroring Stamp.tsx's <Text variant="label">. */
+
+  .text-role--default {
+    color: var(--text-color-default);
+  }
+
+  .text-role--primary {
+    color: var(--text-color-primary);
+  }
+
+  .text-role--inverse-primary {
+    color: var(--text-color-inverse-primary);
+  }
+
+  .text-role--inverse-primary-muted {
+    color: var(--text-color-inverse-primary-muted);
+  }
+
+  .text-role--accent {
+    color: var(--text-color-accent);
+  }
+
+  .text-role--accent-inverse {
+    color: var(--text-color-accent-inverse);
+  }
+
+  .text-role--tint {
+    color: var(--text-color-tint);
+  }
+{% endstylesheet %}

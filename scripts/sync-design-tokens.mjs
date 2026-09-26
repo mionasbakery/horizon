@@ -37,7 +37,7 @@ const wrong = findWrongValues(sourceCss);
 
 if (missing.length > 0) {
   console.error(
-    `\nERROR: ${missing.length} token(s) required by snippets/design-system-bridge.liquid are missing from ${source}:`
+    `\nERROR: ${missing.length} token(s) required by the design-system bridge are missing from ${source}:`
   );
   for (const token of missing) console.error(`  ${token}`);
   console.error(

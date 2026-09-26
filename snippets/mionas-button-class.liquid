@@ -12,10 +12,12 @@
   there -- a shared element snippet would have to emit an <a>, a submit <button> and a
   quick-add <button> with on:click, which is three elements wearing one name.
 
-  THE CSS THESE CLASSES NEED IS NOT DELIVERED BY THIS SNIPPET EITHER. It lives in
-  snippets/mionas-button-styles.liquid, rendered once per page from snippets/design-system-bridge.liquid.
-  It used to be a {% raw %}{% stylesheet %}{% endraw %} tag in blocks/mionas-button.liquid, which meant it only shipped on
-  pages where that block actually rendered -- see that snippet's header for what broke.
+  THE CSS THESE CLASSES NEED LIVES IN THIS SNIPPET'S STYLESHEET TAG, and every file that wears the
+  classes must build them here. Shopify ships only the stylesheet CSS of files a page renders. The
+  rules used to sit in blocks/mionas-button.liquid, and blocks/mionas-add-to-cart.liquid wears the
+  classes without rendering that block, so a collection page shipped the add-to-cart button with no
+  Mionas rules at all ("Full width does nothing"). Keep every .mionas-button rule in this one sheet:
+  split across two, their relative order would decide every tie between them.
 
   @param {string} [variant] - primary, secondary, outline, ghost, danger, inverse-primary or inverse-ghost. Anything else falls back to primary.
   @param {string} [size] - sm, md or lg. Defaults to md, which adds no modifier because .mionas-button carries the md metrics itself.
@@ -32,7 +34,7 @@
     Whitelisted rather than interpolated: an unrecognised value would silently emit a modifier class
     that no rule matches, producing a button with no colour at all -- harder to spot than an
     obviously wrong one. Same pattern as the role whitelist in snippets/mionas-text.liquid; keep both
-    lists in step with snippets/mionas-button-styles.liquid.
+    lists in step with the stylesheet below.
   endcomment
   assign allowed_variants = 'primary|secondary|outline|ghost|danger|inverse-primary|inverse-ghost' | split: '|'
   assign resolved_variant = variant | default: 'primary'
@@ -65,3 +67,117 @@
   endif
 -%}
 {{- classes -}}
+
+{% stylesheet %}
+  .mionas-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--button-base-gap);
+    border: 1.5px solid transparent;
+    border-radius: var(--button-base-radius);
+    font-family: var(--button-base-font-family);
+    font-weight: var(--button-base-font-weight);
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    height: var(--button-size-md-height);
+    padding: 0 var(--button-size-md-padding);
+    font-size: var(--button-size-md-font-size);
+  }
+
+  .mionas-button--sm {
+    height: var(--button-size-sm-height);
+    padding: 0 var(--button-size-sm-padding);
+    font-size: var(--button-size-sm-font-size);
+  }
+
+  .mionas-button--sm .mionas-button__icon {
+    width: var(--button-size-sm-icon-size);
+    height: var(--button-size-sm-icon-size);
+  }
+
+  .mionas-button--lg {
+    height: var(--button-size-lg-height);
+    padding: 0 var(--button-size-lg-padding);
+    font-size: var(--button-size-lg-font-size);
+  }
+
+  .mionas-button--lg .mionas-button__icon {
+    width: var(--button-size-lg-icon-size);
+    height: var(--button-size-lg-icon-size);
+  }
+
+  /* Button.tsx has no fullWidth prop -- the prototype's `full-width` was its own harness prop.
+     The Contacto page needs a full-width WhatsApp button, so this is a theme-side addition;
+     see the spec's follow-ups about proposing it back to the design system.
+
+     THE SELECTOR IS DOUBLED ON PURPOSE AND MUST NOT BE FLATTENED BACK TO .mionas-button--full.
+     base.css:1006-1040 declares `.button { display: grid; width: fit-content }`, and a Mionas button
+     can carry that class: snippets/add-to-cart-button.liquid prefixes whatever class attribute it is
+     handed with a literal "button", so every product-card add-to-cart button wears both. At one
+     class each, `fit-content` and `width: 100%` tie on specificity and only source order separates
+     them -- and `fit-content` is precisely the "full width does nothing" symptom. Source order
+     favours this file today, but an order-dependent tie is not a win, so the double class settles it
+     at (0,2,0).
+
+     `display` is doubled for the same reason: it ties with .button's `grid`. */
+  .mionas-button.mionas-button--full {
+    display: flex;
+    width: 100%;
+  }
+
+  .mionas-button--primary {
+    background: var(--button-primary-background);
+    color: var(--button-primary-foreground);
+  }
+
+  .mionas-button--secondary {
+    background: var(--button-secondary-background);
+    color: var(--button-secondary-foreground);
+  }
+
+  .mionas-button--outline {
+    background: transparent;
+    color: var(--button-outline-foreground);
+    box-shadow: var(--button-outline-shadow);
+  }
+
+  .mionas-button--ghost {
+    background: transparent;
+    color: var(--button-ghost-foreground);
+  }
+
+  .mionas-button--danger {
+    background: var(--button-danger-background);
+    color: var(--button-danger-foreground);
+  }
+
+  .mionas-button--inverse-primary {
+    background: var(--button-inverse-primary-background);
+    color: var(--button-inverse-primary-foreground);
+  }
+
+  .mionas-button--inverse-ghost {
+    background: transparent;
+    color: var(--button-inverse-ghost-foreground);
+  }
+
+  .mionas-button[aria-disabled="true"] {
+    opacity: var(--button-state-disabled-opacity);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mionas-button:active {
+    transform: scale(var(--button-state-pressed-scale));
+    opacity: var(--button-state-pressed-opacity);
+  }
+
+  .mionas-button__icon {
+    display: inline-flex;
+    flex: none;
+    width: var(--button-size-md-icon-size);
+    height: var(--button-size-md-icon-size);
+  }
+{% endstylesheet %}

@@ -11,7 +11,9 @@
 {%- endcomment -%}
 <div class="mionas-faq-cta-scope" hidden></div>
 {% style %}
-  /* The custom-liquid block's own wrapper div must not occupy a flex slot. */
+  {%- comment -%}
+    The custom-liquid block's own wrapper div must not occupy a flex slot.
+  {%- endcomment -%}
   .group-block-content:has(> div > .mionas-faq-cta-scope) > :has(> .mionas-faq-cta-scope) {
     display: none;
   }

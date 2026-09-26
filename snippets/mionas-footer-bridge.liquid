@@ -13,8 +13,10 @@
 {%- endcomment -%}
 <div class="mionas-footer-scope" hidden></div>
 {% style %}
-  /* minmax(0, 1fr), not an implicit auto track: the native flex vars leave justify-content:
-     flex-start here, and under that an auto track sizes to its content, not the container. */
+  {%- comment -%}
+    minmax(0, 1fr), not an implicit auto track: the native flex vars leave justify-content:
+    flex-start here, and under that an auto track sizes to its content, not the container.
+  {%- endcomment -%}
   .group-block-content:has(> div > .mionas-footer-scope) {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -26,7 +28,9 @@
       'horario';
   }
 
-  /* The custom-liquid block's own wrapper div must not occupy a grid cell. */
+  {%- comment -%}
+    The custom-liquid block's own wrapper div must not occupy a grid cell.
+  {%- endcomment -%}
   .group-block-content:has(> div > .mionas-footer-scope) > :has(> .mionas-footer-scope) {
     display: none;
   }
@@ -61,9 +65,11 @@
     }
   }
 
-  /* The columns' min_width settings plus gaps (currently 200 + 160 + 160 + 260 + 120 = 900) must
-     stay under the ~910px available here, or the grid overflows -- min-width doesn't shrink, and
-     nowrap content (logo image, address, schedule) also floors the auto columns. */
+  {%- comment -%}
+    The columns' min_width settings plus gaps (currently 200 + 160 + 160 + 260 + 120 = 900) must
+    stay under the ~910px available here, or the grid overflows -- min-width doesn't shrink, and
+    nowrap content (logo image, address, schedule) also floors the auto columns.
+  {%- endcomment -%}
   @media screen and (min-width: 990px) {
     .group-block-content:has(> div > .mionas-footer-scope) {
       grid-template-columns: auto 1fr 1fr auto;

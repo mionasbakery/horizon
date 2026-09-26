@@ -23,3 +23,16 @@
   style: stamp_style,
   shopify_attributes: shopify_attributes
 -%}
+
+{% stylesheet %}
+  /* The selector is two classes deep on purpose, same as .text-role.mionas-price: a single-class
+     selector would tie in specificity with .text-role--<role> and leave the winner to bundle order.
+     Font-size, line-height and color are deliberately absent -- they must come from the
+     .text-role--label-<size>/--<variant> classes the Size/Color settings pick. */
+  .text-role.mionas-stamp {
+    font-family: var(--stamp-base-font-family);
+    font-weight: var(--stamp-base-font-weight);
+    letter-spacing: var(--stamp-base-letter-spacing);
+    text-transform: var(--stamp-base-text-transform);
+  }
+{% endstylesheet %}
