@@ -1,11 +1,11 @@
 ---
-name: shopify-theme-production-sync
+name: mionas-live-theme
 description: Safely pull from or push to the configured Shopify production theme, preserving local and remote copies before any synchronization.
 metadata:
-  short-description: Safely sync a production theme
+  short-description: Push or pull the live theme
 ---
 
-# Shopify Production Theme Sync
+# Mionas Live Theme
 
 Use this skill when the user asks to pull from, push to, or synchronize a Shopify theme's configured `production` environment. It protects both sides of the sync; it does not publish a theme.
 
