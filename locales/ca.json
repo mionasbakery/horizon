@@ -30,6 +30,13 @@
       "previous": "Anterior",
       "next": "Següent",
       "label": "Altres articles"
+    },
+    "newsletter_popup": {
+      "label": "Newsletter",
+      "decline": "No, gràcies",
+      "continue": "Continua comprant",
+      "close": "Tanca",
+      "dismiss_widget": "Tanca l'avís de la newsletter"
     }
   },
   "accessibility": {

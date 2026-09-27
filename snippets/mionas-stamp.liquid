@@ -2,23 +2,30 @@
   Renders stamp text: a label role in the Stamp face, sized, coloured and padded by a stamp block's settings.
 
   @param {string} content - Inline HTML to show. Emitted unfiltered; callers sanitise it.
-  @param {object} settings - The calling block's settings: size, variant, tag and padding-*.
+  @param {object} [settings] - The calling block's settings: size, variant, tag and padding-*.
+  @param {string} [size] - Label size (lg, md, sm) for a caller with no block settings; wins over settings.size.
+  @param {string} [color] - Text colour variant for a caller with no block settings; wins over settings.variant.
+  @param {string} [tag] - Element for a caller with no block settings; wins over settings.tag.
   @param {string} [shopify_attributes] - The calling block's block.shopify_attributes.
 {%- enddoc -%}
 {%- comment -%}
   settings.variant is the stamp's Color setting, not Text's band -- the id stayed `variant` to avoid
   re-migrating existing stored settings like footer-group.json's.
 {%- endcomment -%}
-{%- assign size = settings.size | default: 'lg' -%}
+{%- liquid
+  assign size = size | default: settings.size | default: 'lg'
+  assign color = color | default: settings.variant
+  assign tag = tag | default: settings.tag
+-%}
 {%- capture stamp_style -%}
-  {%- render 'spacing-style', settings: settings -%}
+  {%- if settings -%}{%- render 'spacing-style', settings: settings -%}{%- endif -%}
 {%- endcapture -%}
 {%- render 'mionas-text',
   content: content,
   variant: 'label',
   size: size,
-  color: settings.variant,
-  tag: settings.tag,
+  color: color,
+  tag: tag,
   class: 'mionas-stamp spacing-style',
   style: stamp_style,
   shopify_attributes: shopify_attributes
