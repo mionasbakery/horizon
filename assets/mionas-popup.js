@@ -1,6 +1,7 @@
 import { DialogComponent, DialogCloseEvent, DialogOpenEvent } from '@theme/dialog';
 import { getScrollContainer, getScrollTop, scrollTo } from '@theme/scroll-container';
 import { DrawerCloseEvent } from '@theme/theme-drawer';
+import { unlockScroll } from '@theme/utilities';
 
 const INTERACTIONS = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -196,6 +197,8 @@ export class MionasPopup extends DialogComponent {
   #openSource = 'api';
   /** Set by a handle drag, so the click that follows the pointer release does not close the sheet. */
   #dragMoved = false;
+  /** Set from the open until the popup's own close steps ran, to catch a close the browser made alone. */
+  #isOpen = false;
   #closeDialog = this.closeDialog;
 
   /**
@@ -311,6 +314,8 @@ export class MionasPopup extends DialogComponent {
     this.addEventListener(DialogCloseEvent.eventName, this.#onClose);
     this.addEventListener('keydown', this.#onEscapeCapture, { capture: true });
     this.refs.handle?.addEventListener('pointerdown', this.#onHandleDown);
+    this.refs.dialog.addEventListener('cancel', this.#onCancel);
+    this.refs.dialog.addEventListener('close', this.#onNativeClose);
 
     if (window.Shopify?.designMode) {
       document.addEventListener('shopify:section:select', this.#onEditorSelect);
@@ -351,13 +356,39 @@ export class MionasPopup extends DialogComponent {
     if (event.cancelable) event.preventDefault();
   };
 
+  /**
+   * Android's back gesture closes a modal dialog natively, past DialogComponent, which then never
+   * releases the scroll lock. The gesture is routed through the popup's own close instead.
+   * @param {Event} event
+   */
+  #onCancel = (event) => {
+    event.preventDefault();
+    this.closeWith('back');
+  };
+
+  /**
+   * Chrome does not always let the page cancel the back gesture, and the dialog then closes alone; the
+   * scroll lock is released and the popup's close steps run here instead.
+   */
+  #onNativeClose = () => {
+    if (!this.#isOpen) return;
+    const { dialog } = this.refs;
+    dialog.classList.remove('dialog-closing');
+    dialog.style.removeProperty('translate');
+    unlockScroll(dialog);
+    this.#closeMethod = 'back';
+    this.dispatchEvent(new DialogCloseEvent());
+  };
+
   #onOpen = () => {
+    this.#isOpen = true;
     this.#autoCancelled = true;
     this.dispatchEvent(new CustomEvent('mionas-popup:open', { detail: { source: this.#openSource } }));
     this.#openSource = 'api';
   };
 
   #onClose = () => {
+    this.#isOpen = false;
     document.removeEventListener('touchmove', this.#blockTouchScroll, { capture: true });
     this.#autoCancelled = true;
     if (activePopup === this) activePopup = null;
