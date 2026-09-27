@@ -17,19 +17,18 @@
      labels and UI chrome, not page content" in the design system, and a merchant's h6 is
      page content -- which is why h5/h6 land on 20/18px rather than an unbroken 18/15 sequence. */
 
-  /* h1 -> display-lg. Set directly rather than through Shopify's type_size_h1 setting:
-     display-lg is 48px, exactly Horizon's fluid-size cutoff, so going through the setting
-     would reintroduce a clamp() with a derived 44px floor instead of a fixed 48px. */
+  /* h1 -> display-lg. Set directly rather than through Shopify's type_size_h1 setting, which
+     would swap the design system's own 36-48px clamp() for Horizon's derived one. */
   --font-h1--size: var(--text-role-display-lg-font-size);
   --font-h1--line-height: var(--text-role-display-lg-line-height);
   --font-h1--letter-spacing: var(--text-role-display-lg-letter-spacing);
 
-  /* h2 -> headline-md. Below the fluid cutoff, so fixed. */
+  /* h2 -> headline-md, fluid from 26px to 28px. */
   --font-h2--size: var(--text-role-headline-md-font-size);
   --font-h2--line-height: var(--text-role-headline-md-line-height);
   --font-h2--letter-spacing: var(--text-role-headline-md-letter-spacing);
 
-  /* h3 -> headline-sm (24px), a step of its own distinct from h2's 28px. */
+  /* h3 -> headline-sm (24px), a step of its own below h2's 26px floor at every width. */
   --font-h3--size: var(--text-role-headline-sm-font-size);
   --font-h3--line-height: var(--text-role-headline-sm-line-height);
   --font-h3--letter-spacing: var(--text-role-headline-sm-letter-spacing);

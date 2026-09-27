@@ -19,7 +19,7 @@
   Mionas rules at all ("Full width does nothing"). Keep every .mionas-button rule in this one sheet:
   split across two, their relative order would decide every tie between them.
 
-  @param {string} [variant] - primary, secondary, outline, ghost, danger, inverse-primary or inverse-ghost. Anything else falls back to primary.
+  @param {string} [variant] - primary, secondary, outline, ghost, danger, inverse-primary, inverse-ghost or inverse-outline. Anything else falls back to primary.
   @param {string} [size] - sm, md or lg. Defaults to md, which adds no modifier because .mionas-button carries the md metrics itself.
   @param {boolean} [full_width] - Adds the --full modifier.
   @param {string} [prefix] - Classes to put in front, for a caller's own hooks (e.g. add-to-cart-button, which Horizon's animation CSS hangs off).
@@ -36,7 +36,7 @@
     obviously wrong one. Same pattern as the role whitelist in snippets/mionas-text.liquid; keep both
     lists in step with the stylesheet below.
   endcomment
-  assign allowed_variants = 'primary|secondary|outline|ghost|danger|inverse-primary|inverse-ghost' | split: '|'
+  assign allowed_variants = 'primary|secondary|outline|ghost|danger|inverse-primary|inverse-ghost|inverse-outline' | split: '|'
   assign resolved_variant = variant | default: 'primary'
   unless allowed_variants contains resolved_variant
     assign resolved_variant = 'primary'
@@ -163,15 +163,65 @@
     color: var(--button-inverse-ghost-foreground);
   }
 
+  /* The theme's focus ring uses the text colour, which is the primary blue of the band this sits on. */
+  .mionas-button--inverse-primary:focus-visible {
+    outline-color: var(--button-inverse-primary-background);
+  }
+
+  .mionas-button--inverse-outline {
+    background: transparent;
+    color: var(--button-inverse-outline-foreground);
+    box-shadow: var(--button-inverse-outline-shadow);
+  }
+
+  .mionas-button:disabled,
   .mionas-button[aria-disabled="true"] {
     opacity: var(--button-state-disabled-opacity);
     cursor: default;
     pointer-events: none;
   }
 
+  /* The design system presses with a currentColor tint on ::after and scales only its fill layers. The
+     fill stays on the element here, since Horizon's .button rules paint it on add-to-cart, so the
+     whole button scales; the tint and the timings match. */
+  .mionas-button {
+    position: relative;
+    isolation: isolate;
+    transition: transform var(--button-base-duration) var(--button-base-easing);
+  }
+
+  .mionas-button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--button-base-duration) var(--button-state-pressed-easing);
+  }
+
   .mionas-button:active {
     transform: scale(var(--button-state-pressed-scale));
+    transition-duration: var(--button-state-pressed-duration);
+    transition-timing-function: var(--button-state-pressed-easing);
+  }
+
+  .mionas-button:active::after {
     opacity: var(--button-state-pressed-opacity);
+    transition-duration: var(--button-state-pressed-duration);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-button,
+    .mionas-button::after {
+      transition: none;
+    }
+
+    .mionas-button:active {
+      transform: none;
+    }
   }
 
   .mionas-button__icon {

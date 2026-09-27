@@ -14,12 +14,14 @@
   pass values from `| money` and product.title. Nothing here escapes; nothing here strips tags.
 
   @param {string} content - The text to render. Emitted unfiltered; see above.
-  @param {string} [variant] - A Text.tsx band: display, headline, title, body, label. Defaults to body.
+  @param {string} [variant] - A Text.tsx band: display, headline, title, body, label. Defaults to body. `inherit` renders no band, so size, line-height and tracking come from the surroundings.
   @param {string} [size] - A Text.tsx size within the band: lg, md, sm. Defaults to md.
-  @param {string} [color] - A colour variant: default, primary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
-  @param {string} [tag] - p, span, div or h1-h6. Anything else falls back to p.
+  @param {string} [color] - A colour variant: default, primary, secondary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
+  @param {string} [transform] - uppercase, lowercase, capitalize or none. Unset leaves the inherited case.
+  @param {string} [tag] - p, span, div, h1-h6, a or button. Anything else falls back to p.
   @param {string} [class] - Extra classes for the caller's own box (padding, weight overrides).
   @param {string} [style] - Inline declarations for the caller's own box. Emitted unfiltered like `content`, but unlike `content` it is NOT for caller HTML -- it exists so a block can pass its own inline CSS, such as snippets/spacing-style.liquid output (the --padding-* custom properties behind Horizon's `spacing-style` class) or a per-instance custom property the caller already validated the shape of (blocks/mionas-product-badges.liquid's per-badge accent colors, sourced from a Shopify `color`-type field so they are guaranteed "#rrggbb" or blank). Never pass merchant free text through here.
+  @param {string} [attributes] - Raw extra attributes, such as a link's href. Caller-controlled only; never merchant free text.
   @param {string} [heading_level] - When set, emits role="heading" aria-level="<n>" instead of a real <h*>, matching snippets/text.liquid's product-title branch.
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
@@ -53,13 +55,27 @@
     tag comes from a select in every caller today, but a snippet is reachable from anywhere, so an
     unknown value falls back to p rather than emitting an invalid element.
   endcomment
-  assign allowed_tags = 'p|span|div|h1|h2|h3|h4|h5|h6' | split: '|'
+  assign allowed_tags = 'p|span|div|h1|h2|h3|h4|h5|h6|a|button' | split: '|'
   assign resolved_tag = tag | default: 'p'
   unless allowed_tags contains resolved_tag
     assign resolved_tag = 'p'
   endunless
 
-  assign classes = 'text-role text-role--' | append: resolved_role | append: ' text-role--' | append: resolved_color
+  comment
+    `inherit` is Link.tsx's opt-in: no band class, so the element takes its size from its
+    surroundings, and no colour class, so it takes their colour.
+  endcomment
+  assign classes = 'text-role'
+  unless variant == 'inherit'
+    assign classes = classes | append: ' text-role--' | append: resolved_role
+  endunless
+  unless resolved_color == 'inherit'
+    assign classes = classes | append: ' text-role--' | append: resolved_color
+  endunless
+  assign allowed_transforms = 'uppercase|lowercase|capitalize|none' | split: '|'
+  if allowed_transforms contains transform
+    assign classes = classes | append: ' text-role--transform-' | append: transform
+  endif
   if class != blank
     assign classes = classes | append: ' ' | append: class
   endif
@@ -73,6 +89,9 @@
   class="{{ classes }}"
   {%- if style != blank %}
     style="{{ style }}"
+  {%- endif %}
+  {%- if attributes != blank %}
+    {{ attributes }}
   {%- endif %}
   {%- if heading_level != blank %}
     role="heading"
@@ -196,8 +215,8 @@
     letter-spacing: var(--text-role-label-sm-letter-spacing);
   }
 
-  /* No text-role--stamp rule here on purpose: blocks/mionas-stamp.liquid composes the label roles
-     above rather than adding one beside them, mirroring Stamp.tsx's <Text variant="label">. */
+  /* No text-role--stamp rule here on purpose: snippets/mionas-stamp.liquid renders label-md and
+     overrides its size there, mirroring Stamp.tsx's <Text variant="label">. */
 
   .text-role--default {
     color: var(--text-color-default);
@@ -205,6 +224,10 @@
 
   .text-role--primary {
     color: var(--text-color-primary);
+  }
+
+  .text-role--secondary {
+    color: var(--text-color-secondary);
   }
 
   .text-role--inverse-primary {
@@ -225,5 +248,22 @@
 
   .text-role--tint {
     color: var(--text-color-tint);
+  }
+
+  /* `none` exists so a text inside an uppercased container can opt back out. */
+  .text-role--transform-uppercase {
+    text-transform: uppercase;
+  }
+
+  .text-role--transform-lowercase {
+    text-transform: lowercase;
+  }
+
+  .text-role--transform-capitalize {
+    text-transform: capitalize;
+  }
+
+  .text-role--transform-none {
+    text-transform: none;
   }
 {% endstylesheet %}

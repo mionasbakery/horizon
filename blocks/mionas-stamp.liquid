@@ -3,13 +3,9 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Stamp/Stamp.tsx: an uppercase Oswald eyebrow that owns the
-  typeface, tracking and uppercasing a bundled `text-role` token can't carry. Everything else still
-  comes from Text -- Stamp.tsx renders `<Text variant="label" size={size}>`, so this block declares
-  no font-size, line-height or colour of its own; the Size setting just picks a label-band role.
-
-  Size defaults to `lg`, not Stamp.tsx's own `md`, matching every Stamp call site in the design
-  system and the stamps already live in this theme.
+  Mirrors ../design-system/src/components/Stamp/Stamp.tsx: an uppercase Oswald eyebrow sized to the
+  text it labels. The Size setting holds that text's variant and size as one value, so the stamp
+  can't be set to a pair Stamp.tsx doesn't have.
 {%- endcomment -%}
 {%- assign block_settings = block.settings -%}
 {%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
@@ -40,12 +36,21 @@
       "id": "size",
       "label": "Size",
       "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
+        { "value": "display-lg", "label": "Display large" },
+        { "value": "display-md", "label": "Display medium" },
+        { "value": "display-sm", "label": "Display small" },
+        { "value": "headline-lg", "label": "Headline large" },
+        { "value": "headline-md", "label": "Headline medium" },
+        { "value": "headline-sm", "label": "Headline small" },
+        { "value": "title-lg", "label": "Title large" },
+        { "value": "title-md", "label": "Title medium" },
+        { "value": "title-sm", "label": "Title small" },
+        { "value": "body-lg", "label": "Body large" },
+        { "value": "body-md", "label": "Body medium" },
+        { "value": "body-sm", "label": "Body small" }
       ],
-      "default": "lg",
-      "info": "The label-band size the stamp renders at, the same ladder as Mionas: Text."
+      "default": "headline-md",
+      "info": "Match the variant and size of the text this stamp labels. Body stamps sit beside their text, the others above it."
     },
     {
       "type": "select",
@@ -54,6 +59,7 @@
       "options": [
         { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
         { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
         { "value": "accent", "label": "Accent" },

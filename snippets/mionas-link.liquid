@@ -1,10 +1,10 @@
 {%- doc -%}
-  Renders an inline text link styled by ../design-system/src/react/Link/Link.tsx's role/size
-  vocabulary, as either an <a> or a <button>.
+  Renders an inline text link, a ../design-system/src/components/Link/Link.tsx mirror, as either an <a> or a <button>.
 
   @param {string} content - Label content. Emitted unfiltered; caller must sanitise if needed.
-  @param {string} [variant] - primary, inverse-primary or inverse-primary-muted. Defaults to primary.
-  @param {string} [size] - sm or md. Defaults to md.
+  @param {string} [color] - A Text colour, or inherit to take the surrounding colour. Defaults to primary.
+  @param {string} [variant] - A Text band: display, headline, title, body or label. Leave it and size blank, or pass inherit, to take the surrounding size.
+  @param {string} [size] - lg, md or sm within the band. Defaults to md once a band is set.
   @param {string} [icon] - Icon name, passed through to snippets/icon.liquid. Blank/"none" for no icon.
   @param {string} [text_wrap] - normal or nowrap. Defaults to normal.
   @param {string} [tag] - "a" (default) or "button".
@@ -14,83 +14,107 @@
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
   @example
-  {% render 'mionas-link', content: 'Contact us', link: '/pages/contact', variant: 'primary' %}
+  {% render 'mionas-link', content: 'Contact us', link: '/pages/contact', variant: 'body', size: 'md' %}
 {%- enddoc -%}
 {%- comment -%}
-  Extracted from blocks/mionas-link.liquid so snippets/mionas-language-links.liquid can reuse the
-  same markup and tokens without duplicating them -- a block can't {% render %} another block.
+  Link.tsx renders through Text, so this renders through snippets/mionas-text.liquid: the band and
+  colour classes, and their CSS, come from there. This file adds only the link weight, hover and
+  icon. It is a snippet so blocks/mionas-language-links.liquid and mionas-policy-links.liquid share
+  it; a block can't {% render %} another block.
 
   The tag switch exists because language links must be real <button> elements to submit the native
   'localization' form (see snippets/mionas-language-links.liquid); a plain <a> can't do that without
   JavaScript, which this component deliberately avoids.
 {%- endcomment -%}
-{% liquid
-  assign resolved_variant = variant | default: 'primary'
-  assign resolved_size = size | default: 'md'
+{%- liquid
   assign resolved_tag = tag | default: 'a'
+  assign resolved_color = color | default: 'primary'
 
-  assign classes = 'mionas-link mionas-link--' | append: resolved_variant
-  unless resolved_size == 'md'
-    assign classes = classes | append: ' mionas-link--' | append: resolved_size
-  endunless
+  assign resolved_variant = variant
+  if variant == 'inherit' or variant == blank and size == blank
+    assign resolved_variant = 'inherit'
+  endif
+
+  assign classes = 'mionas-link'
+  if resolved_variant == 'inherit'
+    assign classes = classes | append: ' mionas-link--inherit'
+  else
+    assign band = resolved_variant | default: 'body'
+    assign classes = classes | append: ' mionas-link--' | append: band
+  endif
   if icon != blank and icon != 'none'
     assign classes = classes | append: ' mionas-link--with-icon'
   endif
   if text_wrap == 'nowrap'
     assign classes = classes | append: ' mionas-link--nowrap'
   endif
-%}
-{%- capture link_icon -%}
+-%}
+{%- capture link_attributes -%}
+  {%- if resolved_tag == 'button' -%}
+    {{ attributes }}
+  {%- elsif link == blank -%}
+    role="link" aria-disabled="true"
+  {%- else -%}
+    href="{{ link }}"
+    {%- if open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif -%}
+  {%- endif -%}
+{%- endcapture -%}
+{%- capture link_content -%}
   {%- if icon != blank and icon != 'none' -%}
     <svg class="mionas-link__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
       {%- render 'icon', icon: icon -%}
     </svg>
   {%- endif -%}
+  {{- content -}}
 {%- endcapture -%}
-{%- comment -%}
-  The if/else tags below deliberately carry no whitespace-stripping hyphens -- the same shape as
-  snippets/button.liquid. A stripping hyphen on the opening tag eats the newline between the anchor
-  and its first attribute, emitting arole="link" as a single glued token: an unknown element rather
-  than an anchor, with no link semantics and no styling. Whitespace inside a tag is harmless;
-  removing it is not.
-{%- endcomment -%}
-{% if resolved_tag == 'button' %}
-<button
-  class="{{ classes }}"
-  {{ attributes }}
-  {{ shopify_attributes }}
->
-  {{- link_icon -}}{{- content -}}
-</button>
-{% else %}
-<a
-  {% if link == blank %}
-    role="link"
-    aria-disabled="true"
-  {% else %}
-    href="{{ link }}"
-  {% endif %}
-  class="{{ classes }}"
-  {% if open_in_new_tab %}
-    target="_blank"
-    rel="noopener noreferrer"
-  {% endif %}
-  {{ shopify_attributes }}
->
-  {{- link_icon -}}{{- content -}}
-</a>
-{% endif %}
+{%- render 'mionas-text',
+  content: link_content,
+  variant: resolved_variant,
+  size: size,
+  color: resolved_color,
+  tag: resolved_tag,
+  class: classes,
+  attributes: link_attributes,
+  shopify_attributes: shopify_attributes
+-%}
 
 {% stylesheet %}
-  .mionas-link {
-    font-family: var(--link-base-font-family);
+  /* Two classes deep so the link weight beats the .text-role--<role> weight at one class, the way
+     Link.module.css overrides Text's. */
+  .text-role.mionas-link {
     font-weight: var(--link-base-font-weight);
-    font-size: var(--link-size-md-font-size);
     text-decoration: none;
     cursor: pointer;
     background: none;
     border: none;
     padding: 0;
+  }
+
+  .text-role.mionas-link--display {
+    font-weight: var(--link-display-font-weight);
+  }
+
+  .text-role.mionas-link--headline {
+    font-weight: var(--link-headline-font-weight);
+  }
+
+  .text-role.mionas-link--title {
+    font-weight: var(--link-title-font-weight);
+  }
+
+  .text-role.mionas-link--body {
+    font-weight: var(--link-body-font-weight);
+  }
+
+  .text-role.mionas-link--label {
+    font-weight: var(--link-label-font-weight);
+  }
+
+  /* A <button> doesn't inherit font size from its surroundings on its own. */
+  .mionas-link--inherit {
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
   }
 
   .mionas-link--nowrap {
@@ -116,21 +140,5 @@
     flex: none;
     width: 16px;
     height: 16px;
-  }
-
-  .mionas-link--sm {
-    font-size: var(--link-size-sm-font-size);
-  }
-
-  .mionas-link--primary {
-    color: var(--link-base-foreground);
-  }
-
-  .mionas-link--inverse-primary {
-    color: var(--link-inverse-primary-foreground);
-  }
-
-  .mionas-link--inverse-primary-muted {
-    color: var(--link-inverse-primary-muted-foreground);
   }
 {% endstylesheet %}

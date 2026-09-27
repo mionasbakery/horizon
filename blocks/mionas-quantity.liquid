@@ -31,7 +31,8 @@
     {% endstyle %}
   {%- endif -%}
   <mionas-quantity class="mionas-quantity">
-    <p class="mionas-quantity__label">{{ quantity_label | escape }}</p>
+    {%- assign quantity_label_text = quantity_label | escape -%}
+    {%- render 'mionas-text', content: quantity_label_text, variant: 'title', size: 'sm', transform: 'uppercase' -%}
     {% render 'quantity-selector', product: closest.product, block: block, wrapper_class: wrapper_class %}
   </mionas-quantity>
 {%- endif -%}
@@ -40,17 +41,6 @@
   .mionas-quantity {
     display: grid;
     gap: var(--space-2, 8px);
-  }
-
-  .mionas-quantity__label {
-    margin: 0;
-    color: var(--text-color-default);
-    font-family: var(--font-family-archivo);
-    font-size: var(--text-role-title-sm-font-size);
-    font-weight: var(--text-role-title-sm-font-weight);
-    letter-spacing: var(--text-role-title-sm-letter-spacing);
-    line-height: var(--text-role-title-sm-line-height);
-    text-transform: uppercase;
   }
 {% endstylesheet %}
 

@@ -36,14 +36,16 @@
       {{- content -}}
     </span>
   </button>
-  <button
-    type="button"
-    class="mionas-popup-widget__close"
-    aria-label="{{ dismiss_label }}"
-    on:click="/dismiss"
-  >
-    {{- 'icon-close.svg' | inline_asset_content -}}
-  </button>
+  {%- assign close_icon = 'icon-close.svg' | inline_asset_content -%}
+  {%- render 'mionas-icon-button',
+    tag: 'button',
+    variant: 'inverse-ghost',
+    size: 'md',
+    svg: close_icon,
+    aria_label: dismiss_label,
+    attributes: 'type="button" on:click="/dismiss"',
+    class: 'mionas-popup-widget__close'
+  -%}
 </mionas-popup-widget>
 
 {% stylesheet %}
@@ -122,33 +124,18 @@
     gap: var(--space-2xs);
   }
 
-  .mionas-popup-widget__open:hover .mionas-popup-widget__line {
-    text-decoration: underline;
+  /* Stretches the open button's hit area over the whole widget, padding included; the close button
+     sits above it. */
+  .mionas-popup-widget__open::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
 
+  /* Above the open button's stretched hit area; .mionas-button already makes it position: relative. */
   .mionas-popup-widget__close {
+    z-index: 1;
     flex: none;
-    align-self: flex-start;
-    /* Centres the button on the stamp line: the open button's top padding plus half the stamp's
-       label-md line, minus half the button. Change it with the stamp size or that padding. */
-    margin-block-start: calc(
-      var(--space-md) + var(--text-role-label-md-line-height) / 2 - var(--icon-button-base-size) / 2
-    );
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--icon-button-base-size);
-    height: var(--icon-button-base-size);
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .mionas-popup-widget__close svg {
-    width: var(--icon-button-base-icon-size);
-    height: var(--icon-button-base-icon-size);
   }
 
   /* The theme's focus ring is brand blue, which vanishes on this blue surface. */
@@ -183,8 +170,11 @@
       bottom: 0;
       left: 0;
       max-width: none;
-      padding-bottom: env(safe-area-inset-bottom);
+      /* The open button's bottom padding counts toward the home-indicator inset instead of adding to
+         it. iOS changes the inset when the browser's bottom toolbar hides, so the bar grows gently. */
+      padding-bottom: max(0px, env(safe-area-inset-bottom) - var(--space-md));
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      transition: padding-bottom var(--animation-speed-slow) var(--ease-out-cubic);
     }
 
     .mionas-popup-widget .mionas-popup-widget__open {
@@ -199,6 +189,10 @@
 
     .mionas-popup-widget--sliding-out {
       animation-name: mionas-popup-widget-fade-out;
+    }
+
+    .mionas-popup-widget.mionas-popup-widget {
+      transition: none;
     }
   }
 

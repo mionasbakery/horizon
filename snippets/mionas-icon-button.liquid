@@ -1,92 +1,94 @@
 {%- doc -%}
-  Renders a circular icon-only link button.
+  Renders a circular icon-only button or link, a ../design-system/src/components/IconButton/IconButton.tsx mirror.
 
-  @param {string} icon - Icon name, passed through to snippets/icon.liquid
-  @param {string} [link] - Destination URL; renders a disabled, non-interactive button when blank
-  @param {string} aria_label - Accessible name; required in practice, see the block header comment
-  @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer"
-  @param {string} [variant] - "default" (token-filled), "outline" (unfilled, dark border/icon) or
-    "outline-inverse" (unfilled, light border/icon, for dark backgrounds); default: "default"
+  @param {string} aria_label - Accessible name; the button shows no text, so this is its only name
+  @param {string} [icon] - Icon name, passed through to snippets/icon.liquid
+  @param {string} [svg] - Ready-made SVG markup, for an icon that lives in assets/; wins over icon
+  @param {string} [variant] - A Button variant, see snippets/mionas-button-class.liquid. Defaults to primary.
+  @param {string} [size] - sm, md or lg: a 40, 48 or 56px circle with a 20, 24 or 28px icon. Defaults to md.
+  @param {string} [tag] - "a" (default) or "button"
+  @param {string} [link] - Destination URL for an "a"; blank renders a disabled, non-interactive link
+  @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer" to an "a"
+  @param {string} [attributes] - Raw extra attributes, such as a button's type and on:click. Caller-controlled only.
+  @param {string} [class] - Extra classes, for the caller's own placement
   @param {string} [shopify_attributes] - Raw block.shopify_attributes to forward, if editor-owned
 {%- enddoc -%}
 {%- comment -%}
-  Extracted from blocks/mionas-icon-button.liquid so blocks/mionas-social-link.liquid can reuse the
-  same markup and tokens without duplicating them -- a block can't {% render %} another block.
+  IconButton.tsx is a square Button, so this renders the Button classes from
+  snippets/mionas-button-class.liquid and adds only the square shape and the icon size.
 {%- endcomment -%}
-{% liquid
-  assign icon_button_variant = variant | default: 'default'
-
-  assign icon_button_classes = 'mionas-icon-button'
-  unless icon_button_variant == 'default'
-    assign icon_button_classes = icon_button_classes | append: ' mionas-icon-button--' | append: icon_button_variant
+{%- liquid
+  assign allowed_sizes = 'sm|md|lg' | split: '|'
+  assign resolved_size = size | default: 'md'
+  unless allowed_sizes contains resolved_size
+    assign resolved_size = 'md'
   endunless
-%}
-<a
-  {% if link == blank %}
-    role="link"
-    aria-disabled="true"
-  {% else %}
-    href="{{ link }}"
-  {% endif %}
-  class="{{ icon_button_classes }}"
-  aria-label="{{ aria_label }}"
-  {% if open_in_new_tab %}
-    target="_blank"
-    rel="noopener noreferrer"
-  {% endif %}
-  {{ shopify_attributes }}
->
-  <svg class="mionas-icon-button__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-    {%- render 'icon', icon: icon -%}
-  </svg>
-</a>
+
+  capture icon_button_classes
+    render 'mionas-button-class', variant: variant, size: resolved_size
+  endcapture
+  assign icon_button_classes = icon_button_classes | append: ' mionas-icon-button mionas-icon-button--' | append: resolved_size
+  if class != blank
+    assign icon_button_classes = icon_button_classes | append: ' ' | append: class
+  endif
+-%}
+{%- capture icon_markup -%}
+  {%- if svg != blank -%}
+    {{- svg -}}
+  {%- else -%}
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      {%- render 'icon', icon: icon -%}
+    </svg>
+  {%- endif -%}
+{%- endcapture -%}
+{%- if tag == 'button' -%}
+  <button class="{{ icon_button_classes }}" aria-label="{{ aria_label }}" {{ attributes }} {{ shopify_attributes }}>
+    {{- icon_markup -}}
+  </button>
+{%- else -%}
+  <a
+    {% if link == blank %}
+      role="link"
+      aria-disabled="true"
+    {% else %}
+      href="{{ link }}"
+    {% endif %}
+    class="{{ icon_button_classes }}"
+    aria-label="{{ aria_label }}"
+    {% if open_in_new_tab %}
+      target="_blank"
+      rel="noopener noreferrer"
+    {% endif %}
+    {{ attributes }}
+    {{ shopify_attributes }}
+  >
+    {{- icon_markup -}}
+  </a>
+{%- endif -%}
 
 {% stylesheet %}
-  .mionas-icon-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  /* Two classes deep so the icon size beats the .mionas-button--<size> font-size, whatever order the
+     two stylesheets land in. The icon draws at 1em, so font-size is the icon size. */
+  .mionas-button.mionas-icon-button {
+    aspect-ratio: 1;
+    padding: 0;
+  }
+
+  .mionas-button.mionas-icon-button--sm {
+    font-size: var(--icon-button-size-sm-icon-size);
+  }
+
+  .mionas-button.mionas-icon-button--md {
+    font-size: var(--icon-button-size-md-icon-size);
+  }
+
+  .mionas-button.mionas-icon-button--lg {
+    font-size: var(--icon-button-size-lg-icon-size);
+  }
+
+  .mionas-icon-button svg {
     flex: none;
-    width: var(--icon-button-base-size);
-    height: var(--icon-button-base-size);
-    border-radius: var(--icon-button-base-radius);
-    border: 1px solid transparent;
-    background: var(--icon-button-base-background);
-    color: var(--icon-button-base-foreground);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .mionas-icon-button__icon {
-    width: var(--icon-button-base-icon-size);
-    height: var(--icon-button-base-icon-size);
-  }
-
-  /* Additive variants, not part of ../design-system's own token set -- see the block header comment.
-     Both are unfilled (transparent background); border and icon always share one color, so the
-     variant is a single visible knob rather than two colors that could drift apart. */
-  .mionas-icon-button--outline,
-  .mionas-icon-button--outline-inverse {
-    background: transparent;
-    border-width: var(--card-base-border-width);
-    border-color: currentColor;
-  }
-
-  .mionas-icon-button--outline {
-    color: var(--icon-button-base-foreground);
-  }
-
-  .mionas-icon-button--outline-inverse {
-    color: var(--text-color-inverse-primary);
-  }
-
-  .mionas-icon-button[aria-disabled="true"] {
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .mionas-icon-button:active {
-    transform: scale(var(--button-state-pressed-scale));
-    opacity: var(--button-state-pressed-opacity);
+    width: 1em;
+    height: 1em;
   }
 {% endstylesheet %}

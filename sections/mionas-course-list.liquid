@@ -123,7 +123,7 @@
       copy because it is the merchant's message, not the theme's.
     {%- endcomment -%}
     {%- if section.settings.empty_message != blank -%}
-      <p class="mionas-course-list__empty">{{ section.settings.empty_message }}</p>
+      {%- render 'mionas-text', content: section.settings.empty_message, variant: 'body', size: 'lg' -%}
     {%- endif -%}
   {%- else -%}
     <div class="mionas-course-list__rows">{{ rows_content }}</div>
@@ -136,10 +136,17 @@
   {%- endcomment -%}
   {%- if request.design_mode and skipped_products != blank -%}
     {%- assign skipped_list = skipped_products | split: '|' -%}
-    <p class="mionas-course-list__warning">
+    {%- capture skipped_warning -%}
       {{ skipped_list.size }} {% if skipped_list.size == 1 %}product{% else %}products{% endif %} hidden — no “Course date” metafield set:
-      {{ skipped_list | join: ', ' }}
-    </p>
+      {{ skipped_list | join: ', ' | escape }}
+    {%- endcapture -%}
+    {%- render 'mionas-text',
+      content: skipped_warning,
+      variant: 'label',
+      size: 'lg',
+      color: 'accent',
+      class: 'mionas-course-list__warning'
+    -%}
   {%- endif -%}
 </div>
 
@@ -150,20 +157,12 @@
     gap: var(--space-sm);
   }
 
-  .mionas-course-list__empty {
-    margin: 0;
-    font-size: var(--text-role-body-lg-font-size);
-    line-height: var(--text-role-body-lg-line-height);
-  }
-
   /* Theme editor only -- deliberately loud, and never rendered on the storefront. */
-  .mionas-course-list__warning {
-    margin: var(--space-sm) 0 0;
+  .text-role.mionas-course-list__warning {
+    margin-top: var(--space-sm);
     padding: var(--space-xs) var(--space-sm);
     border: var(--border-width-thin) solid var(--border-danger);
     border-radius: var(--radius-md);
-    color: var(--color-vermell-segell);
-    font-size: var(--text-role-label-lg-font-size);
   }
 {% endstylesheet %}
 

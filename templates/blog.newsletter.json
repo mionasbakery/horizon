@@ -128,7 +128,7 @@
               "name": "Mionas: Stamp",
               "settings": {
                 "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "lg",
+                "size": "display-lg",
                 "variant": "accent",
                 "tag": "div",
                 "padding-block-start": 0,
@@ -363,7 +363,7 @@
                           "name": "Mionas: Stamp",
                           "settings": {
                             "text": "<p>Última newsletter,</p>",
-                            "size": "lg",
+                            "size": "headline-lg",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -378,7 +378,7 @@
                           "name": "Mionas: Newsletter Date",
                           "settings": {
                             "show_year": true,
-                            "size": "lg",
+                            "size": "headline-lg",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,

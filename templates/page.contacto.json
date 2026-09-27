@@ -477,7 +477,7 @@
                             "label": "hola@mionasbakery.com",
                             "link": "mailto:hola@mionasbakery.com",
                             "open_in_new_tab": false,
-                            "variant": "primary",
+                            "color": "primary", "variant": "body",
                             "size": "md",
                             "icon": "mail",
                             "text_wrap": "normal"
@@ -491,7 +491,7 @@
                             "label": "93 334 82 46",
                             "link": "",
                             "open_in_new_tab": false,
-                            "variant": "primary",
+                            "color": "primary", "variant": "body",
                             "size": "md",
                             "icon": "phone",
                             "text_wrap": "normal"
@@ -547,7 +547,7 @@
                               "settings": {
                                 "platform": "whatsapp",
                                 "link": "https://wa.me/34933348246",
-                                "variant": "default"
+                                "variant": "outline"
                               },
                               "blocks": {}
                             },
@@ -557,7 +557,7 @@
                               "settings": {
                                 "platform": "instagram",
                                 "link": "https://instagram.com/mionasbakery_sitges",
-                                "variant": "default"
+                                "variant": "outline"
                               },
                               "blocks": {}
                             },
@@ -567,7 +567,7 @@
                               "settings": {
                                 "platform": "tiktok",
                                 "link": "https://tiktok.com/@mionasbakery_sitges",
-                                "variant": "default"
+                                "variant": "outline"
                               },
                               "blocks": {}
                             },
@@ -577,7 +577,7 @@
                               "settings": {
                                 "platform": "youtube",
                                 "link": "https://www.youtube.com/@mionasbakery_sitges",
-                                "variant": "default"
+                                "variant": "outline"
                               },
                               "blocks": {}
                             }

@@ -134,7 +134,7 @@
               "name": "Mionas: Newsletter Date",
               "settings": {
                 "show_year": true,
-                "size": "lg",
+                "size": "body-lg",
                 "variant": "accent",
                 "tag": "p",
                 "padding-block-start": 0,

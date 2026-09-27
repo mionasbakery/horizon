@@ -15,10 +15,6 @@
   hidden cap silently contradicting a merchant's choice would be worse than losing that bit of
   fidelity.
 
-  Background/border/radius are applied via the `style:` param rather than a plain CSS rule, because
-  snippets/border-override.liquid emits unconditionally and would tie with `.mionas-card` at equal
-  specificity; `style:` is appended last, so it always wins.
-
   Padding starts at 0 on every side, diverging from Card.tsx's own default bottom padding, so
   children bleed to all edges until a merchant adds what the composition needs.
 
@@ -27,34 +23,13 @@
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
-  assign variant = block_settings.variant | default: 'default'
-
-  assign card_classes = 'mionas-card'
-  unless variant == 'default'
-    assign card_classes = card_classes | append: ' mionas-card--' | append: variant
-  endunless
+  assign interactive = false
   if block_settings.link != blank
-    assign card_classes = card_classes | append: ' mionas-card--interactive'
+    assign interactive = true
   endif
 %}
-
-{%- comment -%}
-  The whole card surface, driven by `variant` alone. Plain is a transparent, square, borderless
-  surface -- it contributes no background so whatever sits behind the card shows through.
-{%- endcomment -%}
-{%- capture card_style -%}
-  {%- case variant -%}
-    {%- when 'plain' -%}
-      --border-width: 0; --border-style: none; --border-radius: 0;
-    {%- when 'outline' -%}
-      background: var(--card-base-background);
-      --border-width: var(--card-base-border-width); --border-style: solid;
-      --border-color: var(--card-outline-border-color); --border-radius: var(--card-base-radius);
-    {%- else -%}
-      background: var(--card-base-background);
-      --border-width: var(--card-base-border-width); --border-style: solid;
-      --border-color: var(--card-base-border-color); --border-radius: var(--card-base-radius);
-  {%- endcase -%}
+{%- capture card_classes -%}
+  {%- render 'mionas-card-class', variant: block_settings.variant, interactive: interactive -%}
 {%- endcapture -%}
 
 {%- capture children -%}
@@ -66,32 +41,8 @@
   settings: block_settings,
   shopify_attributes: block.shopify_attributes,
   block_id: block.id,
-  class: card_classes,
-  style: card_style
+  class: card_classes
 -%}
-
-{% stylesheet %}
-  /* Background, border and radius ride on the `style:` param above, not here -- see the file
-     comment. Padding is absent entirely: it comes from the Padding settings alone. */
-  .mionas-card {
-    box-shadow: var(--card-base-shadow);
-    font-family: var(--card-base-font-family);
-    overflow: hidden;
-  }
-
-  .mionas-card--outline,
-  .mionas-card--plain {
-    box-shadow: none;
-  }
-
-  .mionas-card--interactive {
-    cursor: pointer;
-  }
-
-  .mionas-card--interactive:active {
-    opacity: var(--card-state-pressed-opacity);
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
@@ -116,7 +67,8 @@
       "options": [
         { "value": "default", "label": "Default" },
         { "value": "outline", "label": "Outline" },
-        { "value": "plain", "label": "Plain" }
+        { "value": "plain", "label": "Plain" },
+        { "value": "note", "label": "Note" }
       ],
       "default": "default"
     },

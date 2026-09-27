@@ -84,9 +84,7 @@
       endif
 
       if tax_note != blank
-        echo '<span class="mionas-price__tax-note">'
-        echo tax_note
-        echo '</span>'
+        render 'mionas-text', content: tax_note, variant: 'label', size: 'md', color: 'secondary', tag: 'span', class: 'mionas-price__tax-note'
       endif
     endcapture
   -%}
@@ -156,20 +154,12 @@
     font-weight: var(--text-role-body-md-font-weight, 400);
   }
 
-  /* The note is deliberately not a text role of its own: it always reads as the label-md role in
-     the secondary colour, whatever Variant/Size the price uses, matching the form-label treatment.
-
-     flex-basis: 100% forces it onto its own line inside the price's wrapping flex row, which is why
-     it lives inside the text role at all: as a sibling element, a parent container's gap would open
-     up between price and note. */
-  .mionas-price__tax-note {
+  /* The note is always the label-md role in the secondary colour, whatever Variant/Size the price
+     uses. flex-basis: 100% puts it on its own line inside the price's wrapping flex row. Two classes
+     deep to beat .text-role's margin: 0, which sits in another stylesheet. */
+  .text-role.mionas-price__tax-note {
     flex-basis: 100%;
-    margin: var(--space-3xs) 0 0;
-    font-size: var(--text-role-label-md-font-size);
-    line-height: var(--text-role-label-md-line-height);
-    font-weight: var(--text-role-label-md-font-weight);
-    letter-spacing: var(--text-role-label-md-letter-spacing);
-    color: var(--text-color-secondary);
+    margin-top: var(--space-3xs);
   }
 {% endstylesheet %}
 
@@ -211,6 +201,7 @@
       "options": [
         { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
         { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
         { "value": "accent", "label": "Accent" },

@@ -17,11 +17,11 @@ export const EXPECTED_TOKENS = {
   // Horizon's heading ladder and paragraph from. That ladder is the theme's own construction, not
   // a transcription of the design system's, which is exactly why it needs pinning: a revalue
   // upstream would silently reshape a ladder nobody upstream is maintaining.
-  "--text-role-display-lg-font-size": "48px",
-  "--text-role-display-lg-line-height": "52px",
+  "--text-role-display-lg-font-size": "clamp(36px, 30.86px + 1.429vw, 48px)",
+  "--text-role-display-lg-line-height": "clamp(40px, 34.86px + 1.429vw, 52px)",
   "--text-role-display-lg-letter-spacing": "-0.02em",
-  "--text-role-headline-md-font-size": "28px",
-  "--text-role-headline-md-line-height": "34px",
+  "--text-role-headline-md-font-size": "clamp(26px, 25.14px + 0.238vw, 28px)",
+  "--text-role-headline-md-line-height": "clamp(32px, 31.14px + 0.238vw, 34px)",
   "--text-role-headline-md-letter-spacing": "-0.01em",
   "--text-role-headline-sm-font-size": "24px",
   "--text-role-headline-sm-line-height": "30px",
@@ -65,13 +65,11 @@ export const EXPECTED_TOKENS = {
   // every component's own. Pinning those here would assert a literal against a var() and fail.
   "--font-family-archivo": "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif",
   "--font-family-oswald": "Oswald, 'Arial Narrow', sans-serif",
-  // Link, spent by blocks/mionas-link.liquid and sections/mionas-breadcrumbs.liquid.
-  "--link-base-foreground": "#0b078c",
+  // Link: the weight is spent by snippets/mionas-link.liquid, the sizes by the header menu and
+  // snippets/mionas-breadcrumbs.liquid.
   "--link-base-font-weight": "500",
   "--link-size-md-font-size": "16px",
   "--link-size-sm-font-size": "15px",
-  "--link-inverse-primary-foreground": "#ffffff",
-  "--link-inverse-primary-muted-foreground": "#cfcac2",
   // Every "500" above is load-bearing beyond its own colour/size: snippets/design-system-bridge
   // .liquid emits an extra Archivo 500 @font-face solely because these tokens ask for a weight
   // none of the theme's four font settings load. Should the design system move any of them off
@@ -276,6 +274,17 @@ export const EXPECTED_TOKENS = {
   "--faq-question-header-gap": "12px",
   "--faq-question-header-icon-size": "16px",
   "--faq-question-content-padding-block-end": "16px",
+  // Button press, spent by snippets/mionas-button-class.liquid, which every button and icon button
+  // renders. Pinned because the opacity's meaning depends on the model: it is the
+  // strength of a currentColor tint, and was once the whole button's opacity at 0.92.
+  "--button-state-pressed-opacity": "0.14",
+  "--button-state-pressed-scale": "0.97",
+  "--button-state-pressed-duration": "80ms",
+  "--button-base-duration": "220ms",
+  // The IconButton sizes the theme spends: sm on the popup close and the social links, md on the
+  // popup widget close. Their box heights are the Button heights.
+  "--icon-button-size-sm-icon-size": "20px",
+  "--icon-button-size-md-icon-size": "24px",
 };
 
 export const REQUIRED_TOKENS = Object.keys(EXPECTED_TOKENS);

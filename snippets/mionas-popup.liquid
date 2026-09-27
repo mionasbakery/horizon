@@ -59,14 +59,16 @@
       </div>
     </div>
 
-    <button
-      type="button"
-      class="mionas-popup__close"
-      aria-label="{{ close_label }}"
-      on:click="/dismiss"
-    >
-      {{- 'icon-close.svg' | inline_asset_content -}}
-    </button>
+    {%- assign close_icon = 'icon-close.svg' | inline_asset_content -%}
+    {%- render 'mionas-icon-button',
+      tag: 'button',
+      variant: 'ghost',
+      size: 'sm',
+      svg: close_icon,
+      aria_label: close_label,
+      attributes: 'type="button" on:click="/dismiss"',
+      class: 'mionas-popup__close'
+    -%}
     <button
       type="button"
       ref="handle"
@@ -154,26 +156,12 @@
     overflow-y: auto;
   }
 
-  .mionas-popup__close {
+  /* Two classes deep: .mionas-button sets position and display at one class, in a stylesheet whose
+     order against this one isn't fixed. */
+  .mionas-button.mionas-popup__close {
     position: absolute;
     top: var(--space-md);
     right: var(--space-md);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--icon-button-base-size);
-    height: var(--icon-button-base-size);
-    padding: 0;
-    border: 0;
-    border-radius: var(--radius-full);
-    background: transparent;
-    color: var(--text-color-default);
-    cursor: pointer;
-  }
-
-  .mionas-popup__close svg {
-    width: var(--icon-button-base-icon-size);
-    height: var(--icon-button-base-icon-size);
   }
 
   .mionas-popup__close:focus-visible,
@@ -223,7 +211,7 @@
     }
 
     .mionas-popup__media,
-    .mionas-popup__close {
+    .mionas-button.mionas-popup__close {
       display: none;
     }
 
@@ -240,7 +228,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      height: var(--icon-button-base-size);
+      height: var(--button-size-sm-height);
       /* Placeholder: the design system has no sheet handle; these are the iOS grabber's measures
          (5px from the edge, 36 by 5px, grey at 30%). Candidate tokens. */
       padding: 5px 0 0;

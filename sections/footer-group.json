@@ -126,7 +126,7 @@
                   "name": "Mionas: Stamp",
                   "settings": {
                     "text": "<p>Especialitat en cookies</p>",
-                    "size": "lg",
+                    "size": "headline-md",
                     "variant": "accent-inverse",
                     "tag": "p",
                     "padding-block-start": 0,
@@ -185,7 +185,7 @@
                       "settings": {
                         "platform": "whatsapp",
                         "link": "https://wa.me/34933348246",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     },
@@ -195,7 +195,7 @@
                       "settings": {
                         "platform": "instagram",
                         "link": "https://instagram.com/mionasbakery_sitges",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     },
@@ -205,7 +205,7 @@
                       "settings": {
                         "platform": "tiktok",
                         "link": "https://tiktok.com/@mionasbakery_sitges",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     },
@@ -215,7 +215,7 @@
                       "settings": {
                         "platform": "youtube",
                         "link": "https://www.youtube.com/@mionasbakery_sitges",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     }
@@ -341,7 +341,7 @@
                         "label": "Cookies",
                         "link": "shopify://collections/cookies",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -355,7 +355,7 @@
                         "label": "Cookies veganas",
                         "link": "shopify://collections/cookies-veganas",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -369,7 +369,7 @@
                         "label": "Packs",
                         "link": "shopify://collections/packs",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -383,7 +383,7 @@
                         "label": "Concept store",
                         "link": "shopify://collections/concept-store",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -397,7 +397,7 @@
                         "label": "Cursos",
                         "link": "shopify://collections/cursos",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -526,7 +526,7 @@
                         "label": "Alérgenos",
                         "link": "shopify://pages/alergenos",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "md",
                         "icon": "none",
                         "text_wrap": "normal"
@@ -540,7 +540,7 @@
                         "label": "Sobre nosotros",
                         "link": "shopify://pages/sobre-nosotros",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -554,7 +554,7 @@
                         "label": "Newsletter",
                         "link": "shopify://blogs/newsletter",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -568,7 +568,7 @@
                         "label": "Contacto",
                         "link": "shopify://pages/contacto",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -582,7 +582,7 @@
                         "label": "FAQ",
                         "link": "shopify://pages/faq",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
@@ -846,7 +846,7 @@
           "type": "mionas-policy-links",
           "name": "Mionas: Policy Links",
           "settings": {
-            "variant": "inverse-primary-muted",
+            "color": "inverse-primary-muted", "variant": "body",
             "size": "sm"
           },
           "blocks": {}
@@ -855,7 +855,7 @@
           "type": "mionas-language-links",
           "name": "Mionas: Language Links",
           "settings": {
-            "variant": "inverse-primary-muted",
+            "color": "inverse-primary-muted", "variant": "body",
             "size": "sm"
           },
           "blocks": {}
@@ -884,7 +884,7 @@
           "name": "Mionas: Stamp - Newsletter",
           "settings": {
             "text": "<p>Suscríbete a la newsletter</p>",
-            "size": "md",
+            "size": "headline-lg",
             "variant": "accent",
             "tag": "p",
             "padding-block-start": 0,

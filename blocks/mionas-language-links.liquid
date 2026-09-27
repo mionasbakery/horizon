@@ -18,23 +18,45 @@
     },
     {
       "type": "select",
+      "id": "color",
+      "label": "Color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" },
+        { "value": "inherit", "label": "Inherited" }
+      ],
+      "default": "inverse-primary-muted",
+      "info": "Inverse primary (muted) matches the footer text."
+    },
+    {
+      "type": "select",
       "id": "variant",
       "label": "Variant",
       "options": [
-        { "value": "primary", "label": "Primary" },
-        { "value": "inverse-primary", "label": "Inverse primary" },
-        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" }
+        { "value": "inherit", "label": "Inherited" },
+        { "value": "display", "label": "Display" },
+        { "value": "headline", "label": "Headline" },
+        { "value": "title", "label": "Title" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
       ],
-      "default": "inverse-primary-muted",
-      "info": "Inverse primary (muted) matches the footer's default text color."
+      "default": "body",
+      "info": "Inherited takes its size from the surrounding text and ignores Size."
     },
     {
       "type": "select",
       "id": "size",
-      "label": "t:settings.size",
+      "label": "Size",
       "options": [
-        { "value": "sm", "label": "Small" },
-        { "value": "md", "label": "Medium" }
+        { "value": "lg", "label": "Large" },
+        { "value": "md", "label": "Medium" },
+        { "value": "sm", "label": "Small" }
       ],
       "default": "sm"
     }

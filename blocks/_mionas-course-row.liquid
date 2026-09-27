@@ -13,10 +13,8 @@
   add-to-cart, because the family workshop has two variants at different prices and this is a
   considered purchase people research before committing.
 
-  It wears .mionas-button--outline directly rather than duplicating the CSS (as
-  snippets/mionas-submit-button.liquid must, for its own reasons) because the CTA is already an
-  anchor. That also means the inert waitlist button inherits
-  .mionas-button[aria-disabled="true"]'s dimmed styling for free.
+  The CTA wears the Button classes from snippets/mionas-button-class.liquid, so the inert waitlist
+  button inherits .mionas-button[aria-disabled="true"]'s dimmed styling for free.
 
   `| date:` accepts the `custom.course_date` metafield value directly, so no string-parsing
   fallback is needed. But `| date: '%b'` renders the English abbreviation regardless of storefront
@@ -96,11 +94,11 @@
 
 {%- if product != blank and course_date != blank -%}
   <div
-    class="mionas-course-row spacing-style"
+    class="{% render 'mionas-card-class' %} mionas-course-row spacing-style"
     style="
       {% render 'spacing-style', settings: block_settings %}
-      {% if block_settings.background_color != blank %}--mionas-course-row-background: {{ block_settings.background_color }};{% endif %}
-      --mionas-course-row-radius: {{ block_settings.corner_radius }}px;
+      {% if block_settings.background_color != blank %}--mionas-card-background: {{ block_settings.background_color }};{% endif %}
+      --mionas-card-radius: {{ block_settings.corner_radius }}px;
     "
     {{ block.shopify_attributes }}
   >
@@ -111,21 +109,43 @@
     {%- endcomment -%}
     <div class="mionas-course-row__date">
       <time datetime="{{ course_date | date: '%Y-%m-%d' }}">
-        <span class="mionas-course-row__day">{{ course_date | date: '%d' }}</span>
-        <span class="mionas-course-row__month">{{ month_label }}</span>
+        {%- assign course_day = course_date | date: '%d' -%}
+        {%- render 'mionas-text', content: course_day, variant: 'title', size: 'lg', tag: 'span' -%}
+        {%- render 'mionas-text', content: month_label, variant: 'label', size: 'lg', color: 'accent', tag: 'span' -%}
       </time>
     </div>
 
     <div class="mionas-course-row__body">
-      <{{ heading_tag }} class="mionas-course-row__title">{{ product.title }}</{{ heading_tag }}>
+      {%- render 'mionas-text',
+        content: product.title,
+        variant: 'body',
+        size: 'md',
+        transform: 'none',
+        tag: heading_tag,
+        class: 'mionas-course-row__title'
+      -%}
       {%- if meta_list.size > 0 -%}
-        <p class="mionas-course-row__meta">{{ meta_list | join: ' · ' }}</p>
+        {%- assign meta_text = meta_list | join: ' · ' -%}
+        {%- render 'mionas-text',
+          content: meta_text,
+          variant: 'label',
+          size: 'lg',
+          color: 'secondary',
+          class: 'mionas-course-row__meta'
+        -%}
       {%- endif -%}
     </div>
 
     <div class="mionas-course-row__actions">
       {%- unless product.available -%}
-        <span class="mionas-course-row__badge">{{ block_settings.sold_out_label }}</span>
+        {%- render 'mionas-text',
+          content: block_settings.sold_out_label,
+          variant: 'label',
+          size: 'lg',
+          color: 'inverse-primary',
+          tag: 'span',
+          class: 'mionas-course-row__badge'
+        -%}
       {%- endunless -%}
 
       {%- comment -%}
@@ -160,17 +180,16 @@
     align-items: start;
     column-gap: var(--space-sm);
     row-gap: var(--space-xs);
-    background: var(--mionas-course-row-background, var(--card-base-background));
-    border: var(--card-base-border-width) solid var(--card-base-border-color);
-    border-radius: var(--mionas-course-row-radius, var(--card-base-radius));
-    box-shadow: var(--card-base-shadow);
-    font-family: var(--card-base-font-family);
   }
 
   .mionas-course-row__date {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  /* The day and month stack tight, as one date badge. */
+  .mionas-course-row__date .text-role {
     line-height: 1;
   }
 
@@ -181,42 +200,17 @@
     display: contents;
   }
 
-  .mionas-course-row__day {
-    font-size: var(--text-role-title-lg-font-size);
-    font-weight: var(--text-role-title-lg-font-weight);
-    line-height: 1;
-  }
-
-  .mionas-course-row__month {
-    color: var(--color-vermell-segell);
-    font-size: var(--text-role-label-lg-font-size);
-    font-weight: var(--text-role-label-md-font-weight);
-    letter-spacing: var(--text-role-label-md-letter-spacing);
-  }
-
   .mionas-course-row__body {
     min-width: 0;
   }
 
-  /* Body typography on a heading element, kept a heading only for document outline/accessibility.
-     text-transform and letter-spacing are set explicitly to override base.css's h3 preset
-     (uppercase, tracked), which otherwise leaks through -- same reason
-     blocks/mionas-text.liquid's .text-role declares font-family. */
   .mionas-course-row__title {
-    margin: 0;
-    font-size: var(--text-role-body-md-font-size);
-    font-weight: var(--text-role-label-md-font-weight);
-    line-height: var(--text-role-body-md-line-height);
-    text-transform: none;
-    letter-spacing: var(--text-role-body-md-letter-spacing);
     text-wrap: pretty;
   }
 
-  .mionas-course-row__meta {
-    margin: var(--space-3xs) 0 0;
-    font-size: var(--text-role-label-lg-font-size);
-    line-height: var(--text-role-label-lg-line-height);
-    color: var(--color-neutral-400);
+  /* Two classes deep to beat .text-role's margin: 0, which sits in another stylesheet. */
+  .text-role.mionas-course-row__meta {
+    margin-top: var(--space-3xs);
   }
 
   /* Full-bleed across both columns on mobile -- this is what makes the CTA a full-width tap target,
@@ -232,11 +226,8 @@
   .mionas-course-row__badge {
     align-self: flex-start;
     background: var(--color-vermell-segell);
-    color: var(--color-white);
     border-radius: var(--radius-full);
     padding: var(--space-3xs) var(--space-xs);
-    font-size: var(--text-role-label-lg-font-size);
-    font-weight: var(--text-role-label-md-font-weight);
   }
 
   /* .mionas-button is inline-flex; stretch it to the column on mobile only. */

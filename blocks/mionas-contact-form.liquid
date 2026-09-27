@@ -14,8 +14,8 @@
   Owns only the fields, submit button and validation/success state -- no heading, CTA or divider;
   those are composed in the page template instead (wrap this block in a Mionas: Card, etc.).
 
-  The fields surface duplicates Mionas: Card's own --card-* tokens onto the wrapping `<div>` rather
-  than reusing the Card component -- see blocks/mionas-email-signup.liquid's header comment for why.
+  The fields surface wears the Card classes from snippets/mionas-card-class.liquid around the fields
+  only, so the submit button sits outside the card.
   `field_gap` spaces the fields inside that surface; `button_gap` spaces the surface from the submit
   button via the outer mionas-form gap.
 
@@ -154,7 +154,7 @@
       assign button_gap_css = block_settings.button_gap | append: 'px'
     -%}
     {%- capture contact_form_content -%}
-      <div class="mionas-contact-form__surface" style="--mionas-contact-form-field-gap: {{ field_gap_css }};">{{ contact_form_fields }}</div>
+      <div class="{% render 'mionas-card-class' %} mionas-contact-form__surface" style="--mionas-contact-form-field-gap: {{ field_gap_css }};">{{ contact_form_fields }}</div>
 
       {%- render 'mionas-submit-button',
         label: block_settings.submit_label,
@@ -182,12 +182,7 @@
     }
   }
 
-  /* Duplicates Mionas: Card's own surface tokens -- see the header comment's fields-surface note. */
   .mionas-contact-form__surface {
-    background: var(--card-base-background);
-    border: var(--card-base-border-width) solid var(--card-base-border-color);
-    border-radius: var(--card-base-radius);
-    box-shadow: var(--card-base-shadow);
     padding: var(--card-base-padding);
     display: flex;
     flex-direction: column;
@@ -360,8 +355,14 @@
       "id": "submit_variant",
       "label": "Submit button style",
       "options": [
-        { "value": "primary", "label": "Primary (filled)" },
-        { "value": "outline", "label": "Outline" }
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "ghost", "label": "Ghost" },
+        { "value": "danger", "label": "Danger" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-ghost", "label": "Inverse ghost" },
+        { "value": "inverse-outline", "label": "Inverse outline" }
       ],
       "default": "primary"
     },

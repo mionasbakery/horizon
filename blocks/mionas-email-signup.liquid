@@ -16,8 +16,8 @@
   mionas-contact-form do. `consent_text` is the one exception: fine print the form itself owns (see
   NO CONSENT CHECKBOX below).
 
-  `field_surface` duplicates Card's tokens onto a `<div>` rather than a real Card, since Card's
-  `overflow: hidden` would clip the button outside its border. Turn it off if already inside a Card.
+  `field_surface` wears the Card classes around the field only, so the button sits outside the
+  card. Turn it off if already inside a Card.
 
   Errors are validated client-side via assets/mionas-form-validation.js (`validate: true`), which
   sets `novalidate` from JavaScript rather than in the tag, so a no-JS visitor keeps native browser
@@ -134,7 +134,7 @@
 
     {%- capture email_signup_fields -%}
       {%- if block_settings.field_surface -%}
-        <div class="mionas-email-signup__surface">{{ email_field_markup }}</div>
+        <div class="{% render 'mionas-card-class' %} mionas-email-signup__surface">{{ email_field_markup }}</div>
       {%- else -%}
         {{ email_field_markup }}
       {%- endif -%}
@@ -206,12 +206,7 @@
     }
   }
 
-  /* Duplicates Mionas: Card's own surface tokens -- see the header comment's `field_surface` note. */
   .mionas-email-signup__surface {
-    background: var(--card-base-background);
-    border: var(--card-base-border-width) solid var(--card-base-border-color);
-    border-radius: var(--card-base-radius);
-    box-shadow: var(--card-base-shadow);
     padding: var(--card-base-padding);
   }
 
@@ -248,7 +243,7 @@
 
      The inline layout overrides width regardless, since a full-width button in a row would leave
      no space for the field; this setting becoming a no-op there is intended. */
-  .mionas-email-signup--button-fit .mionas-submit-button {
+  .mionas-email-signup--button-fit .mionas-button.mionas-submit-button {
     width: fit-content;
     align-self: flex-start;
   }
@@ -272,7 +267,7 @@
       flex: 1 1 auto;
     }
 
-    .mionas-email-signup--inline .mionas-submit-button {
+    .mionas-email-signup--inline .mionas-button.mionas-submit-button {
       width: auto;
       flex: 0 0 auto;
     }
@@ -321,9 +316,14 @@
       "id": "submit_variant",
       "label": "Button style",
       "options": [
-        { "value": "primary", "label": "Primary (filled)" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "outline", "label": "Outline" },
-        { "value": "inverse-primary", "label": "Inverse primary (on a blue background)" }
+        { "value": "ghost", "label": "Ghost" },
+        { "value": "danger", "label": "Danger" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-ghost", "label": "Inverse ghost" },
+        { "value": "inverse-outline", "label": "Inverse outline" }
       ],
       "default": "primary"
     },
