@@ -244,3 +244,24 @@ footer .custom-typography[style*='--font-family: var(--font-accent--family)'] {
   --font-paragraph--weight: var(--card-title-font-weight);
   --font-h6--weight: var(--product-card-price-font-weight);
 }
+
+/* Horizon's scroll lock (html[scroll-lock], utilities.js lockScroll) hides the page scroller's
+   scrollbar, which widens the page and moves its content under every modal and drawer; the gutter
+   keeps that space. The scroller is .page-wrapper from 990px, where html never scrolls and a gutter
+   on it would add a shift of its own. */
+@media screen and (max-width: 989px) {
+  html[scroll-lock] {
+    scrollbar-gutter: stable;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  html[scroll-lock] .page-wrapper {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* A swipe that reaches the end of a modal or drawer stops there instead of moving the locked page. */
+dialog:modal {
+  overscroll-behavior: contain;
+}

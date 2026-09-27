@@ -295,19 +295,12 @@
     background: var(--mionas-newsletter-popup-backdrop);
   }
 
-  /* Horizon's scroll lock hides the page scroller's scrollbar, which widens the page and moves its
-     content; the gutter keeps that space while the popup is open. The scroller is .page-wrapper from
-     990px, where html never scrolls and a gutter on it would add a shift of its own. */
-  @media screen and (max-width: 989px) {
-    html:has(.mionas-newsletter-popup__dialog[open]) {
-      scrollbar-gutter: stable;
-    }
-  }
-
-  @media screen and (min-width: 990px) {
-    html:has(.mionas-newsletter-popup__dialog[open]) .page-wrapper {
-      scrollbar-gutter: stable;
-    }
+  /* Chrome on Android still scrolls the page behind Horizon's overflow lock from some touches. Nothing
+     inside the popup scrolls, so no swipe starts on it or on its backdrop, which belongs to it; taps
+     and typing are unaffected. A fixed body would also lock the page, but moves its scroll position,
+     which the sticky header reacts to. mionas-base.css repairs the rest of the lock for every dialog. */
+  .mionas-newsletter-popup__dialog.dialog-modal {
+    touch-action: none;
   }
 
   /* Horizon's elementSlideInTop animates margin-top with fill-mode forwards, which pins the dialog

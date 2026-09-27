@@ -1,5 +1,5 @@
 import { DialogComponent, DialogCloseEvent, DialogOpenEvent } from '@theme/dialog';
-import { getScrollContainer } from '@theme/scroll-container';
+import { getScrollContainer, getScrollTop, scrollTo } from '@theme/scroll-container';
 import { DrawerCloseEvent } from '@theme/theme-drawer';
 import { onAnimationEnd } from '@theme/utilities';
 
@@ -131,6 +131,19 @@ class MionasNewsletterPopup extends DialogComponent {
     await this.#closeDialog();
     if (minimizing) this.#finishMinimize();
   };
+
+  /**
+   * A fling keeps moving the page under the scroll lock on phones, and a touch on the dialog cannot
+   * stop it. The open pins the page to the position DialogComponent reads here and restores on close,
+   * which ends the fling and keeps the close from jumping back.
+   */
+  showDialog() {
+    if (this.refs.dialog.open) return;
+
+    const top = getScrollTop();
+    this.addEventListener(DialogOpenEvent.eventName, () => scrollTo({ top, behavior: 'instant' }), { once: true });
+    super.showDialog();
+  }
 
   connectedCallback() {
     super.connectedCallback();
