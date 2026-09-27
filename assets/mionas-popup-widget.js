@@ -69,7 +69,15 @@ class MionasPopupWidget extends Component {
 
     if (window.Shopify?.designMode) return;
     const showNow = this.dataset.show === 'always' || popup.dataset.autoOpen !== 'true' || popup.closedBefore;
-    this.hidden = !(showNow && this.#follows());
+    if (!(showNow && this.#follows())) return;
+
+    // A popup that opens on load, after a signup reload, opens in a frame queued before this one; the
+    // widget then stays hidden, since a slide-out mid slide-in would jump back to the resting place.
+    requestAnimationFrame(() => {
+      if (this.#popupOpen) return;
+      this.hidden = false;
+      this.#slide('in');
+    });
   }
 
   /** Whether the widget belongs on the page now: never in the editor's automatic flow, for a popup this visitor cannot get, or within its reshow days. */

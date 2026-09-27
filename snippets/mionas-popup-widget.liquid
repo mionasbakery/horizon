@@ -52,6 +52,11 @@
   .mionas-popup-widget {
     /* How far the widget slides to leave the screen: down by its own height from the bottom edge. */
     --mionas-popup-widget-slide: 100%;
+    /* Placeholder: the design system has no motion tokens; the popup's entry and exit curves. */
+    --mionas-popup-widget-speed-in: 0.3s;
+    --mionas-popup-widget-easing-in: var(--ease-out-cubic);
+    --mionas-popup-widget-speed-out: 0.2s;
+    --mionas-popup-widget-easing-out: var(--animation-timing-active);
 
     position: fixed;
     bottom: 0;
@@ -153,11 +158,12 @@
   }
 
   .mionas-popup-widget--sliding-in {
-    animation: mionas-popup-widget-slide-in var(--animation-speed) var(--animation-easing);
+    animation: mionas-popup-widget-slide-in var(--mionas-popup-widget-speed-in) var(--mionas-popup-widget-easing-in);
   }
 
   .mionas-popup-widget--sliding-out {
-    animation: mionas-popup-widget-slide-out var(--animation-speed) var(--animation-easing) forwards;
+    animation: mionas-popup-widget-slide-out var(--mionas-popup-widget-speed-out)
+      var(--mionas-popup-widget-easing-out) forwards;
   }
 
   @media screen and (max-width: 749px) {
@@ -166,9 +172,10 @@
     }
 
     .mionas-popup-widget.mionas-popup-widget {
-      /* Placeholder: the design system has no motion tokens; it matches the popup's sheet. */
-      --animation-speed: 0.5s;
-      --animation-easing: var(--ease-out-quad);
+      /* The bar enters on the popup sheet's curve, a little quicker because it is shorter. */
+      --mionas-popup-widget-speed-in: 0.4s;
+      --mionas-popup-widget-easing-in: var(--ease-out-quad);
+      --mionas-popup-widget-speed-out: 0.25s;
       --mionas-popup-widget-slide: 100%;
 
       top: auto;

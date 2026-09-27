@@ -83,6 +83,12 @@
     --mionas-popup-backdrop: rgb(16 20 19 / 0.56);
     /* Placeholder: the design system has no dialog width. Candidate token. */
     --mionas-popup-width: 960px;
+    /* Placeholder: the design system has no motion tokens. Entries slow to a stop; exits speed up and
+       are shorter, so nothing lingers once the visitor chose to leave. Candidate tokens. */
+    --mionas-popup-speed-in: 0.3s;
+    --mionas-popup-easing-in: var(--ease-out-cubic);
+    --mionas-popup-speed-out: 0.2s;
+    --mionas-popup-easing-out: var(--animation-timing-active);
 
     width: min(var(--mionas-popup-width), calc(100vw - 2 * var(--space-lg)));
     max-width: none;
@@ -98,18 +104,31 @@
     touch-action: none;
   }
 
+  /* A transition outranks an animation, so Horizon's opacity transition would override the fade-out
+     below. The scrim must keep the dialog's durations, since the close waits only for the dialog.
+     The static brightness replaces Horizon's backdropFilter animation, which the fades replace. */
   .mionas-popup__dialog.dialog-modal::backdrop {
     background: var(--mionas-popup-backdrop);
+    backdrop-filter: brightness(0.75);
+    transition: none;
   }
 
   /* Horizon's elementSlideInTop animates margin-top with fill-mode forwards, which pins the dialog
      to the top edge instead of centring it; this one moves only transform and opacity. */
   .mionas-popup__dialog.dialog-modal[open] {
-    animation: mionas-popup-in var(--animation-speed) var(--animation-easing) forwards;
+    animation: mionas-popup-in var(--mionas-popup-speed-in) var(--mionas-popup-easing-in) forwards;
+  }
+
+  .mionas-popup__dialog.dialog-modal[open]::backdrop {
+    animation: mionas-popup-fade-in var(--mionas-popup-speed-in) var(--mionas-popup-easing-in);
   }
 
   .mionas-popup__dialog.dialog-modal.dialog-closing {
-    animation: mionas-popup-out var(--animation-speed) var(--animation-easing) forwards;
+    animation: mionas-popup-out var(--mionas-popup-speed-out) var(--mionas-popup-easing-out) forwards;
+  }
+
+  .mionas-popup__dialog.dialog-modal.dialog-closing::backdrop {
+    animation: mionas-popup-fade-out var(--mionas-popup-speed-out) var(--mionas-popup-easing-out) forwards;
   }
 
   .mionas-popup__panel {
@@ -173,10 +192,10 @@
     /* The UA's modal dialog keeps inset-block-start: 0, which with height: auto stretches the sheet
        to the full max-height; releasing the top edge lets it fit its content. */
     .mionas-popup__dialog.dialog-modal {
-      /* Placeholder: the design system has no motion tokens. A sheet moves slower than the theme's
-         fades, on the theme's sheet curve. Candidate token. */
-      --animation-speed: 0.5s;
-      --animation-easing: var(--ease-out-quad);
+      /* A sheet travels further than the desktop dialog, so it enters on the theme's sheet curve. */
+      --mionas-popup-speed-in: 0.5s;
+      --mionas-popup-easing-in: var(--ease-out-quad);
+      --mionas-popup-speed-out: 0.3s;
 
       inset-block-start: auto;
       width: 100%;
@@ -185,18 +204,18 @@
       margin: 0;
       padding: 0;
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      transition: translate var(--animation-speed) var(--animation-easing);
+      transition: translate var(--mionas-popup-speed-in) var(--mionas-popup-easing-in);
     }
 
     /* Horizon's search styles square every open .dialog-modal on phones with the weight of the rule
        above, and the compiled stylesheet's order is not fixed; the [open] state outranks them. */
     .mionas-popup__dialog.dialog-modal[open] {
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      animation: mionas-popup-sheet-in var(--animation-speed) var(--animation-easing) forwards;
+      animation: mionas-popup-sheet-in var(--mionas-popup-speed-in) var(--mionas-popup-easing-in) forwards;
     }
 
     .mionas-popup__dialog.dialog-modal.dialog-closing {
-      animation: mionas-popup-sheet-out var(--animation-speed) var(--animation-easing) forwards;
+      animation: mionas-popup-sheet-out var(--mionas-popup-speed-out) var(--mionas-popup-easing-out) forwards;
     }
 
     .mionas-popup__panel {

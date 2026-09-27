@@ -203,13 +203,14 @@ export class MionasPopup extends DialogComponent {
 
   /**
    * The popup's own buttons stay clickable while it closes, so a second call is ignored. A handle drag
-   * leaves the sheet moved, which is cleared once it is closed.
+   * leaves the sheet moved and its exit curve changed, which are cleared once it is closed.
    */
   closeDialog = async () => {
     const { dialog } = this.refs;
     if (!dialog.open || dialog.classList.contains('dialog-closing')) return;
     await this.#closeDialog();
     dialog.style.removeProperty('translate');
+    dialog.style.removeProperty('--mionas-popup-easing-out');
   };
 
   /**
@@ -375,6 +376,7 @@ export class MionasPopup extends DialogComponent {
     const { dialog } = this.refs;
     dialog.classList.remove('dialog-closing');
     dialog.style.removeProperty('translate');
+    dialog.style.removeProperty('--mionas-popup-easing-out');
     unlockScroll(dialog);
     this.#closeMethod = 'back';
     this.dispatchEvent(new DialogCloseEvent());
@@ -556,6 +558,8 @@ export class MionasPopup extends DialogComponent {
       dialog.style.removeProperty('transition');
       const offset = Math.max(0, lastY - startY);
       if (this.#dragMoved && (offset > height * DRAG_CLOSE_SHARE || speed > DRAG_CLOSE_SPEED)) {
+        // The exit curve starts from rest, which would stall a sheet the finger just flung.
+        dialog.style.setProperty('--mionas-popup-easing-out', 'linear');
         this.closeWith('handle');
       } else {
         dialog.style.removeProperty('translate');
