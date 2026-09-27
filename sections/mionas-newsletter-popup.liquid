@@ -127,6 +127,10 @@
     assign widget_subline = section.settings.widget_subline | escape
     assign widget_offer = widget_headline | append: ' ' | append: widget_subline | strip
     assign widget_label = widget_eyebrow | append: ': ' | append: widget_offer | strip
+    assign widget_offer_html = widget_subline
+    if widget_headline != blank
+      assign widget_offer_html = '<strong>' | append: widget_headline | append: '</strong> ' | append: widget_subline | strip
+    endif
   -%}
   {%- liquid
     # GA4 accepts only letters, digits and underscores in event names, so hyphens and spaces become underscores.
@@ -144,6 +148,7 @@
     data-scroll-depth="{{ section.settings.scroll_depth }}"
     data-reshow-days="{{ section.settings.reshow_days }}"
     data-launcher="{{ section.settings.launcher }}"
+    data-widget-reshow-days="{{ section.settings.widget_reshow_days }}"
     data-audience="{{ section.settings.audience }}"
     data-ab-test="{{ section.settings.ab_test_enabled }}"
     data-popup-share="{{ section.settings.popup_share }}"
@@ -172,7 +177,7 @@
               | image_tag:
                 loading: 'lazy',
                 widths: '480, 960',
-                sizes: '(max-width: 749px) 100vw, 480px',
+                sizes: '480px',
                 class: 'mionas-newsletter-popup__image'
             -}}
           </div>
@@ -253,7 +258,7 @@
             {%- if widget_eyebrow != blank -%}
               {%- render 'mionas-stamp', content: widget_eyebrow, size: 'md', color: 'accent-inverse', tag: 'span' -%}
             {%- endif -%}
-            {%- render 'mionas-text', content: widget_offer, variant: 'title', size: 'sm', color: 'inverse-primary', tag: 'span', class: 'mionas-newsletter-popup__widget-line' -%}
+            {%- render 'mionas-text', content: widget_offer_html, variant: 'body', size: 'md', color: 'inverse-primary', tag: 'span', class: 'mionas-newsletter-popup__widget-line' -%}
           </span>
         </button>
         <button
@@ -288,6 +293,21 @@
 
   .mionas-newsletter-popup__dialog.dialog-modal::backdrop {
     background: var(--mionas-newsletter-popup-backdrop);
+  }
+
+  /* Horizon's scroll lock hides the page scroller's scrollbar, which widens the page and moves its
+     content; the gutter keeps that space while the popup is open. The scroller is .page-wrapper from
+     990px, where html never scrolls and a gutter on it would add a shift of its own. */
+  @media screen and (max-width: 989px) {
+    html:has(.mionas-newsletter-popup__dialog[open]) {
+      scrollbar-gutter: stable;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    html:has(.mionas-newsletter-popup__dialog[open]) .page-wrapper {
+      scrollbar-gutter: stable;
+    }
   }
 
   /* Horizon's elementSlideInTop animates margin-top with fill-mode forwards, which pins the dialog
@@ -370,8 +390,9 @@
     cursor: pointer;
   }
 
-  .mionas-newsletter-popup__close:hover {
-    background: var(--surface-subtle);
+  .mionas-newsletter-popup__close svg {
+    width: var(--icon-button-base-icon-size);
+    height: var(--icon-button-base-icon-size);
   }
 
   .mionas-newsletter-popup__close:focus-visible {
@@ -394,14 +415,21 @@
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }
 
-  /* The script writes the widget's height, 0 while hidden, so the footer can scroll clear of it. */
-  body:has(.mionas-newsletter-popup__widget--bottom) {
+  /* The script writes the widget's height, 0 while hidden, so the footer can scroll clear of it. The
+     room goes to the last footer section, not the body, so the footer's own background shows through
+     the widget's round corners; this needs the popup section to stay last in the footer group. */
+  .shopify-section:has(+ .shopify-section:last-child .mionas-newsletter-popup__widget--bottom) {
     padding-block-end: var(--mionas-newsletter-popup-widget-height, 0px);
   }
 
-  .mionas-newsletter-popup__widget[hidden],
-  .mionas-newsletter-popup:has(dialog[open]) .mionas-newsletter-popup__widget {
+  .mionas-newsletter-popup__widget[hidden] {
     display: none;
+  }
+
+  /* Hidden but still laid out, so the page padding keeps its height under the open dialog and the
+     page behind the scrim does not jump. */
+  .mionas-newsletter-popup:has(dialog[open]) .mionas-newsletter-popup__widget {
+    visibility: hidden;
   }
 
   /* Under the header and announcement bar; header.js keeps --header-group-height current after load. */
@@ -444,6 +472,12 @@
 
   .mionas-newsletter-popup__widget-close {
     flex: none;
+    align-self: flex-start;
+    /* Centres the button on the stamp line: the open button's top padding plus half the stamp's
+       label-md line, minus half the button. Change it with the stamp size or that padding. */
+    margin-block-start: calc(
+      var(--space-md) + var(--text-role-label-md-line-height) / 2 - var(--icon-button-base-size) / 2
+    );
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -468,7 +502,7 @@
   }
 
   @media screen and (max-width: 749px) {
-    body:has(.mionas-newsletter-popup__widget) {
+    .shopify-section:has(+ .shopify-section:last-child .mionas-newsletter-popup__widget) {
       padding-block-end: var(--mionas-newsletter-popup-widget-height, 0px);
     }
 
@@ -487,8 +521,8 @@
     }
   }
 
-  /* Horizon's dialog-modal goes full screen below 750px; the design is a bottom sheet, with the
-     photo as a short banner on top so the sheet still leaves part of the page in view. */
+  /* Horizon's dialog-modal goes full screen below 750px; the design is a bottom sheet without the
+     photo, so the sheet still leaves part of the page in view. */
   @media screen and (max-width: 749px) {
     /* The UA's modal dialog keeps inset-block-start: 0, which with height: auto stretches the sheet
        to the full max-height; releasing the top edge lets it shrink to its content. */
@@ -515,8 +549,7 @@
     }
 
     .mionas-newsletter-popup__media {
-      aspect-ratio: 2 / 1;
-      overflow: hidden;
+      display: none;
     }
 
     .mionas-newsletter-popup__content.spacing-style {
@@ -524,13 +557,8 @@
     }
   }
 
-  /* Closing into the widget: the script lays the widget out invisibly to measure it, then writes the
-     move and scale that land the dialog on it. Four classes outrank the phone sheet-out rule. */
-  .mionas-newsletter-popup--minimizing:has(dialog[open]) .mionas-newsletter-popup__widget:not([hidden]) {
-    display: flex;
-    visibility: hidden;
-  }
-
+  /* Closing into the widget: the script measures the invisible widget, then writes the move and scale
+     that land the dialog on it. Four classes outrank the phone sheet-out rule. */
   .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing.mionas-newsletter-popup__dialog--minimize {
     animation: mionas-newsletter-popup-minimize var(--animation-speed) var(--animation-easing) forwards;
   }
@@ -539,9 +567,52 @@
     animation: mionas-newsletter-popup-arrive var(--animation-speed) var(--animation-easing);
   }
 
+  /* Opening from the widget: the reverse of the minimize, with the same custom properties. */
+  .mionas-newsletter-popup__dialog.dialog-modal.mionas-newsletter-popup__dialog--maximize[open] {
+    animation: mionas-newsletter-popup-maximize var(--animation-speed) var(--animation-easing) forwards;
+  }
+
+  /* On phones the widget and the sheet share the bottom edge, the width and the corners, so the sheet
+     slides between the two heights and changes colour: a scale would squash its text and corners, and
+     a fade would leave a frame where neither shows. Kept before the reduced-motion rules, which win. */
+  @media screen and (max-width: 749px) {
+    .mionas-newsletter-popup__dialog.dialog-modal,
+    .mionas-newsletter-popup__widget {
+      /* Placeholder: the design system has no motion tokens. A sheet moves slower than the theme's
+         fades, on the theme's sheet curve. Candidate token. */
+      --animation-speed: 0.5s;
+      --animation-easing: var(--ease-out-quad);
+    }
+
+    .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing.mionas-newsletter-popup__dialog--minimize {
+      animation-name: mionas-newsletter-popup-sheet-minimize;
+    }
+
+    .mionas-newsletter-popup__dialog.dialog-modal.mionas-newsletter-popup__dialog--maximize[open] {
+      animation-name: mionas-newsletter-popup-sheet-maximize;
+    }
+
+    .mionas-newsletter-popup__dialog--minimize > * {
+      animation: mionas-newsletter-popup-fade-out var(--animation-speed) var(--animation-easing) forwards;
+    }
+
+    .mionas-newsletter-popup__dialog--maximize > *,
+    .mionas-newsletter-popup__widget--arriving > * {
+      animation: mionas-newsletter-popup-fade-in var(--animation-speed) var(--animation-easing);
+    }
+
+    .mionas-newsletter-popup__widget--arriving {
+      animation: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing.mionas-newsletter-popup__dialog--minimize {
       animation-name: mionas-newsletter-popup-fade-out;
+    }
+
+    .mionas-newsletter-popup__dialog.dialog-modal.mionas-newsletter-popup__dialog--maximize[open] {
+      animation-name: mionas-newsletter-popup-fade-in;
     }
 
     .mionas-newsletter-popup__widget--arriving {
@@ -604,6 +675,38 @@
     }
   }
 
+  @keyframes mionas-newsletter-popup-maximize {
+    from {
+      opacity: 0;
+      transform: translate(var(--mionas-newsletter-popup-minimize-x), var(--mionas-newsletter-popup-minimize-y))
+        scale(var(--mionas-newsletter-popup-minimize-scale-x), var(--mionas-newsletter-popup-minimize-scale-y));
+    }
+    40% {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes mionas-newsletter-popup-sheet-maximize {
+    from {
+      transform: translateY(var(--mionas-newsletter-popup-minimize-drop));
+      background-color: var(--brand-primary);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mionas-newsletter-popup-sheet-minimize {
+    to {
+      transform: translateY(var(--mionas-newsletter-popup-minimize-drop));
+      background-color: var(--brand-primary);
+    }
+  }
+
   @keyframes mionas-newsletter-popup-arrive {
     from {
       opacity: 0;
@@ -662,7 +765,7 @@
         { "value": "testers", "label": "Only testers" }
       ],
       "default": "everyone",
-      "info": "With Testers, the A/B test is off and only testers see the popup. Testers see it even when they already get marketing emails. To test the first visit again, clear the store's site data in the browser."
+      "info": "With Testers, the A/B test is off and only testers see the popup. Testers see it even when they already get marketing emails. The popup forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
     },
     {
       "type": "textarea",
@@ -806,6 +909,18 @@
       ],
       "default": "off",
       "info": "A tab on the bottom edge on desktop and a sheet at the bottom on phones. It opens the popup and has its own close button. It never shows to the A/B control group or to subscribers. With Open automatically off, choose Always: Never leaves no way to open the popup, and After the popup is closed works like Always."
+    },
+    {
+      "type": "range",
+      "id": "widget_reshow_days",
+      "label": "Days before showing the widget again after its close",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "unit": "d",
+      "default": 7,
+      "info": "0 never shows it again. After a signup it never shows again.",
+      "visible_if": "{{ section.settings.launcher != 'off' }}"
     },
     {
       "type": "text",

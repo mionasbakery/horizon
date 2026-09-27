@@ -113,6 +113,10 @@
     {%- endif -%}
 
     {%- capture email_field_markup -%}
+      {%- comment -%}
+        The data-* attributes are each password manager's opt-out: this field is not a login, and
+        autocomplete="email" alone still lets them offer saved identities over it.
+      {%- endcomment -%}
       {%- render 'mionas-text-field',
         label: block_settings.email_label,
         name: 'contact[email]',
@@ -123,7 +127,8 @@
         autocomplete: 'email',
         spellcheck: 'false',
         autocapitalize: 'off',
-        error: email_error
+        error: email_error,
+        attributes: 'data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" data-protonpass-ignore="true"'
       -%}
     {%- endcapture -%}
 

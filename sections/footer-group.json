@@ -878,7 +878,6 @@
     },
     "newsletter_popup": {
       "type": "mionas-newsletter-popup",
-      "name": "Mionas: Newsletter popup",
       "blocks": {
         "stamp": {
           "type": "mionas-stamp",
@@ -887,7 +886,11 @@
             "text": "<p>Suscríbete a la newsletter</p>",
             "size": "md",
             "variant": "accent",
-            "tag": "p"
+            "tag": "p",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -900,7 +903,11 @@
             "size": "lg",
             "color": "default",
             "tag": "h2",
-            "text_wrap": "normal"
+            "text_wrap": "normal",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -913,7 +920,11 @@
             "size": "md",
             "color": "default",
             "tag": "p",
-            "text_wrap": "normal"
+            "text_wrap": "normal",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -922,6 +933,7 @@
           "name": "Mionas: Email signup - Popup",
           "settings": {
             "email_label": "Email",
+            "email_placeholder": "",
             "button_label": "Suscribirme",
             "button_width": "fill",
             "submit_variant": "primary",
@@ -929,8 +941,17 @@
             "field_surface": true,
             "success_text": "¡Gracias! Ya estás suscrito.",
             "customer_tag": "newsletter-popup",
+            "consent_text": "",
             "field_gap": 16,
-            "layout": "stacked"
+            "layout": "stacked",
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         }
@@ -941,6 +962,7 @@
         "body",
         "signup"
       ],
+      "name": "Mionas: Newsletter popup",
       "settings": {
         "image": "shopify://shop_images/gif01-targeta-fidelitat.gif",
         "audience": "testers",
@@ -961,19 +983,20 @@
         "scroll_depth": 0,
         "reshow_days": 30,
         "launcher": "after_close",
+        "widget_reshow_days": 7,
         "widget_eyebrow": "Suscríbete a la newsletter",
         "widget_headline": "10% de descuento",
         "widget_subline": "en tu primera compra",
         "launcher_position": "left",
         "launcher_vertical": "bottom",
         "ab_test_enabled": true,
+        "popup_share": 50,
         "test_name": "newsletter-popup",
         "measurement_name": "newsletter_popup",
         "padding-block-start": 48,
         "padding-block-end": 48,
         "padding-inline-start": 48,
-        "padding-inline-end": 48,
-        "popup_share": 50
+        "padding-inline-end": 48
       }
     }
   },

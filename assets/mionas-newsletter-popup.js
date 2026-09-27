@@ -1,5 +1,7 @@
-import { DialogComponent, DialogCloseEvent } from '@theme/dialog';
+import { DialogComponent, DialogCloseEvent, DialogOpenEvent } from '@theme/dialog';
 import { getScrollContainer } from '@theme/scroll-container';
+import { DrawerCloseEvent } from '@theme/theme-drawer';
+import { onAnimationEnd } from '@theme/utilities';
 
 const STORAGE_KEY = 'newsletter-popup';
 const INTERACTIONS = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
@@ -7,33 +9,58 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const SETTLE_MS = 300;
 
 /**
- * Reads the stored popup state.
- * @returns {{ test?: string, group?: string, state?: string, closedAt?: number, widgetDismissed?: boolean } | null} null when local storage
- *   is unusable, since without memory the popup would open on every page.
+ * With the testers audience the state lives in a session cookie, which the browser deletes when it
+ * closes, and a page reload also clears it, so testers can replay the first visit on demand.
  */
-function readStore() {
-  try {
-    localStorage.setItem(`${STORAGE_KEY}-probe`, '1');
-    localStorage.removeItem(`${STORAGE_KEY}-probe`);
-  } catch {
-    return null;
+let sessionOnly = false;
+
+/** @returns {string | null} null when the storage is unusable. */
+function readRaw() {
+  if (sessionOnly) {
+    if (!navigator.cookieEnabled) return null;
+    const cookie = document.cookie.split('; ').find((entry) => entry.startsWith(`${STORAGE_KEY}=`));
+    return cookie ? decodeURIComponent(cookie.slice(STORAGE_KEY.length + 1)) : '';
   }
 
   try {
-    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    localStorage.setItem(`${STORAGE_KEY}-probe`, '1');
+    localStorage.removeItem(`${STORAGE_KEY}-probe`);
+    return localStorage.getItem(STORAGE_KEY) ?? '';
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads the stored popup state.
+ * @returns {{ test?: string, group?: string, state?: string, closedAt?: number, widgetDismissedAt?: number } | null} null when the storage
+ *   is unusable, since without memory the popup would open on every page.
+ */
+function readStore() {
+  const raw = readRaw();
+  if (raw === null) return null;
+
+  try {
+    const value = JSON.parse(raw || '{}');
     return value && typeof value === 'object' ? value : {};
   } catch {
     return {};
   }
 }
 
-/** @param {{ test?: string, group?: string, state?: string, closedAt?: number, widgetDismissed?: boolean }} patch */
+/** @param {{ test?: string, group?: string, state?: string, closedAt?: number, widgetDismissedAt?: number }} patch */
 function writeStore(patch) {
   const current = readStore();
   if (!current) return;
 
+  const value = JSON.stringify({ ...current, ...patch });
+  if (sessionOnly) {
+    document.cookie = `${STORAGE_KEY}=${encodeURIComponent(value)}; path=/; SameSite=Lax`;
+    return;
+  }
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...current, ...patch }));
+    localStorage.setItem(STORAGE_KEY, value);
   } catch {
     // Quota or a storage policy change mid-session: the popup only loses its memory.
   }
@@ -99,6 +126,7 @@ class MionasNewsletterPopup extends DialogComponent {
    */
   closeDialog = async () => {
     if (this.refs.dialog.classList.contains('dialog-closing')) return;
+    this.#clearTransform('maximize');
     const minimizing = this.#prepareMinimize();
     await this.#closeDialog();
     if (minimizing) this.#finishMinimize();
@@ -106,6 +134,10 @@ class MionasNewsletterPopup extends DialogComponent {
 
   connectedCallback() {
     super.connectedCallback();
+    sessionOnly = this.dataset.audience === 'testers';
+    if (sessionOnly && performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+      document.cookie = `${STORAGE_KEY}=; path=/; max-age=0; SameSite=Lax`;
+    }
     this.#labelDialog(this.refs.formView);
 
     if (window.Shopify?.designMode) {
@@ -170,13 +202,18 @@ class MionasNewsletterPopup extends DialogComponent {
   dismissWidget = () => {
     this.#toggleLauncher(false);
     if (window.Shopify?.designMode) return;
-    writeStore({ widgetDismissed: true });
+    writeStore({ widgetDismissedAt: Date.now() });
     this.#track('widget_dismissed');
   };
 
   openFromLauncher = () => {
     this.#autoCancelled = true;
     if (!window.Shopify?.designMode) this.#track('shown', { source: 'launcher' });
+
+    const from = this.refs.launcher?.getBoundingClientRect();
+    if (from?.width) {
+      this.addEventListener(DialogOpenEvent.eventName, () => this.#maximizeFrom(from), { once: true });
+    }
     this.showDialog();
   };
 
@@ -313,6 +350,12 @@ class MionasNewsletterPopup extends DialogComponent {
     const open = (source) => {
       if (this.#autoCancelled || this.refs.dialog.open) return settle.abort();
 
+      const cart = document.querySelector('theme-drawer#cart-drawer');
+      if (cart?.hasAttribute('open')) {
+        cart.addEventListener(DrawerCloseEvent.eventName, () => open(source), { once: true });
+        return;
+      }
+
       const wait = touching ? SETTLE_MS : lastMove + SETTLE_MS - performance.now();
       if (wait > 0) {
         setTimeout(() => open(source), wait);
@@ -396,13 +439,22 @@ class MionasNewsletterPopup extends DialogComponent {
     );
   }
 
+  /** Whether a close of the widget still hides it; 0 days hides it for good. */
+  #widgetDismissed() {
+    if (window.Shopify?.designMode) return false;
+    const dismissedAt = readStore()?.widgetDismissedAt;
+    if (!dismissedAt) return false;
+
+    const reshowDays = Number(this.dataset.widgetReshowDays) || 0;
+    return reshowDays === 0 || Date.now() - dismissedAt < reshowDays * DAY_MS;
+  }
+
   /** @param {boolean} visible */
   #toggleLauncher(visible) {
     const { launcher } = this.refs;
     if (!(launcher instanceof HTMLElement)) return;
 
-    const dismissed = !window.Shopify?.designMode && readStore()?.widgetDismissed;
-    launcher.hidden = !visible || !!dismissed;
+    launcher.hidden = !visible || this.#widgetDismissed();
 
     // The widget is fixed over the page end, so the page gets its height as extra room to scroll to
     // the footer; the height changes when the text wraps on narrow phones.
@@ -430,8 +482,10 @@ class MionasNewsletterPopup extends DialogComponent {
   }
 
   /**
-   * When the widget follows the close, points the closing animation at it. The widget is display: none
-   * while the dialog is open, so it is laid out invisibly to be measured.
+   * When the widget follows the close, points the closing animation at it. The widget stays laid out,
+   * invisible, while the dialog is open, so it can be measured. The dialog's animation is paused for
+   * the measurement, because clearing the maximize class restarts the open animation at its offset
+   * first frame.
    * @returns {boolean}
    */
   #prepareMinimize() {
@@ -442,46 +496,73 @@ class MionasNewsletterPopup extends DialogComponent {
       !window.Shopify?.designMode &&
       !this.#subscribed &&
       this.dataset.launcher !== 'off' &&
-      !readStore()?.widgetDismissed;
+      !this.#widgetDismissed();
     if (!widgetFollows) return false;
 
     launcher.hidden = false;
-    this.classList.add('mionas-newsletter-popup--minimizing');
+    dialog.style.animation = 'none';
     const from = dialog.getBoundingClientRect();
     const to = launcher.getBoundingClientRect();
-    if (!from.width || !from.height || !to.width) {
-      this.classList.remove('mionas-newsletter-popup--minimizing');
-      return false;
-    }
+    dialog.style.animation = '';
+    if (!from.width || !from.height || !to.width) return false;
 
-    const x = to.left + to.width / 2 - (from.left + from.width / 2);
-    const y = to.top + to.height / 2 - (from.top + from.height / 2);
-    dialog.style.setProperty('--mionas-newsletter-popup-minimize-x', `${x}px`);
-    dialog.style.setProperty('--mionas-newsletter-popup-minimize-y', `${y}px`);
-    dialog.style.setProperty('--mionas-newsletter-popup-minimize-scale-x', `${to.width / from.width}`);
-    dialog.style.setProperty('--mionas-newsletter-popup-minimize-scale-y', `${to.height / from.height}`);
+    this.#setTransform(from, to);
     dialog.classList.add('mionas-newsletter-popup__dialog--minimize');
     return true;
   }
 
+  /**
+   * Grows the just-opened dialog out of the widget. Runs in the frame showModal() ran in, before the
+   * first paint; the open animation is paused for the measurement because its first frame is offset.
+   * The class stays until the close: removing it would replay the plain open animation.
+   * @param {DOMRect} widget
+   */
+  #maximizeFrom(widget) {
+    const { dialog } = this.refs;
+    dialog.style.animation = 'none';
+    const rect = dialog.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      this.#setTransform(rect, widget);
+      dialog.classList.add('mionas-newsletter-popup__dialog--maximize');
+    }
+    dialog.style.animation = '';
+  }
+
+  /**
+   * Writes the move and scale that put the dialog, laid out at `dialog`, over `target`, and the drop
+   * that puts its top edge on the target's top edge.
+   * @param {DOMRect} dialog
+   * @param {DOMRect} target
+   */
+  #setTransform(dialog, target) {
+    const x = target.left + target.width / 2 - (dialog.left + dialog.width / 2);
+    const y = target.top + target.height / 2 - (dialog.top + dialog.height / 2);
+    const { style } = this.refs.dialog;
+    style.setProperty('--mionas-newsletter-popup-minimize-x', `${x}px`);
+    style.setProperty('--mionas-newsletter-popup-minimize-y', `${y}px`);
+    style.setProperty('--mionas-newsletter-popup-minimize-scale-x', `${target.width / dialog.width}`);
+    style.setProperty('--mionas-newsletter-popup-minimize-scale-y', `${target.height / dialog.height}`);
+    style.setProperty('--mionas-newsletter-popup-minimize-drop', `${target.top - dialog.top}px`);
+  }
+
+  /** @param {'minimize' | 'maximize'} direction */
+  #clearTransform(direction) {
+    const { dialog } = this.refs;
+    dialog.classList.remove(`mionas-newsletter-popup__dialog--${direction}`);
+    for (const name of ['x', 'y', 'scale-x', 'scale-y', 'drop']) {
+      dialog.style.removeProperty(`--mionas-newsletter-popup-minimize-${name}`);
+    }
+  }
+
   /** Runs after #onClose showed the widget, in the same task, so no frame shows it without its entrance. */
   #finishMinimize() {
-    const { dialog, launcher } = this.refs;
-    this.classList.remove('mionas-newsletter-popup--minimizing');
-    dialog.classList.remove('mionas-newsletter-popup__dialog--minimize');
-    for (const axis of ['x', 'y', 'scale-x', 'scale-y']) {
-      dialog.style.removeProperty(`--mionas-newsletter-popup-minimize-${axis}`);
-    }
+    const { launcher } = this.refs;
+    this.#clearTransform('minimize');
 
     if (!(launcher instanceof HTMLElement) || launcher.hidden) return;
+    // On phones the entrance animates the widget's children, not the widget itself.
     launcher.classList.add('mionas-newsletter-popup__widget--arriving');
-    /** @param {AnimationEvent} event */
-    const onArrived = (event) => {
-      if (event.target !== launcher) return;
-      launcher.classList.remove('mionas-newsletter-popup__widget--arriving');
-      launcher.removeEventListener('animationend', onArrived);
-    };
-    launcher.addEventListener('animationend', onArrived);
+    onAnimationEnd(launcher, () => launcher.classList.remove('mionas-newsletter-popup__widget--arriving'));
   }
 
   /** @param {string} method */
