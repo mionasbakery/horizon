@@ -261,6 +261,16 @@ footer .custom-typography[style*='--font-family: var(--font-accent--family)'] {
   }
 }
 
+/* Touch screens draw the page scrollbar as an overlay that keeps fading for a moment after the lock,
+   over the dialog that just opened. Removing it moves nothing there, since an overlay takes no space. */
+@media (hover: none) and (pointer: coarse) {
+  html[scroll-lock] {
+    scrollbar-width: none;
+    /* No pull-to-refresh or bounce of the locked page behind the dialog. */
+    overscroll-behavior: none;
+  }
+}
+
 /* A swipe that reaches the end of a modal or drawer stops there instead of moving the locked page. */
 dialog:modal {
   overscroll-behavior: contain;

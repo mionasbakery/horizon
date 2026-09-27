@@ -1,0 +1,308 @@
+{%- doc -%}
+  Renders a Mionas popup: a dialog on desktop and a bottom sheet with a handle on phones. It ships
+  closed; assets/mionas-popup.js, or a script that extends it, opens it.
+
+  @param {string} element - The custom element tag: mionas-popup-component, or the tag of a subclass.
+  @param {string} id - The element id, which other parts use to find the popup.
+  @param {string} storage_key - The key that holds this popup's memory in the visitor's browser.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {object} settings - The section settings: auto_open, delay_seconds, wait_for_interaction,
+    exit_intent, scroll_depth, reshow_days, audience, image and the padding-* settings.
+  @param {string} label - The dialog's accessible name until a heading in the content names it.
+  @param {string} close_label - The accessible name of the close button and the handle.
+  @param {string} content - The dialog content.
+  @param {string} [attributes] - Extra attributes for the custom element.
+{%- enddoc -%}
+
+{% render 'dialog-styles' %}
+
+<{{ element }}
+  id="{{ id }}"
+  class="mionas-popup"
+  data-storage-key="{{ storage_key }}"
+  data-section-id="{{ section_id }}"
+  data-auto-open="{{ settings.auto_open }}"
+  data-delay="{{ settings.delay_seconds }}"
+  data-wait-for-interaction="{{ settings.wait_for_interaction }}"
+  data-exit-intent="{{ settings.exit_intent }}"
+  data-scroll-depth="{{ settings.scroll_depth }}"
+  data-reshow-days="{{ settings.reshow_days }}"
+  data-audience="{{ settings.audience }}"
+  {{ attributes }}
+>
+  <dialog
+    ref="dialog"
+    class="mionas-popup__dialog dialog-modal"
+    aria-label="{{ label }}"
+    scroll-lock
+  >
+    {%- comment -%} Google honours data-nosnippet on div, span and section only, not on dialog. {%- endcomment -%}
+    <div
+      class="mionas-popup__panel"
+      data-nosnippet
+    >
+      {%- if settings.image != blank -%}
+        <div class="mionas-popup__media">
+          {{-
+            settings.image
+            | image_url: width: 960
+            | image_tag: loading: 'lazy', widths: '480, 960', sizes: '480px', class: 'mionas-popup__image'
+          -}}
+        </div>
+      {%- endif -%}
+
+      <div
+        class="mionas-popup__content spacing-style"
+        style="{% render 'spacing-style', settings: settings %}"
+      >
+        {{ content }}
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="mionas-popup__close"
+      aria-label="{{ close_label }}"
+      on:click="/dismiss"
+    >
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+    <button
+      type="button"
+      ref="handle"
+      class="mionas-popup__handle"
+      aria-label="{{ close_label }}"
+      on:click="/handleTap"
+    ></button>
+  </dialog>
+</{{ element }}>
+
+{% stylesheet %}
+  .mionas-popup__dialog.dialog-modal {
+    /* Placeholder: the design system has no scrim for overlays. Candidate token. */
+    --mionas-popup-backdrop: rgb(16 20 19 / 0.56);
+    /* Placeholder: the design system has no dialog width. Candidate token. */
+    --mionas-popup-width: 960px;
+
+    width: min(var(--mionas-popup-width), calc(100vw - 2 * var(--space-lg)));
+    max-width: none;
+    padding: 0;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    background: var(--color-beige-vainilla);
+    color: var(--text-color-default);
+    overflow: hidden;
+    /* Chrome on Android still scrolls the page behind Horizon's overflow lock from some touches.
+       Nothing inside a popup scrolls, so no swipe starts on it or on its backdrop, which belongs to
+       it; taps, typing and the handle's pointer events are unaffected. */
+    touch-action: none;
+  }
+
+  .mionas-popup__dialog.dialog-modal::backdrop {
+    background: var(--mionas-popup-backdrop);
+  }
+
+  /* Horizon's elementSlideInTop animates margin-top with fill-mode forwards, which pins the dialog
+     to the top edge instead of centring it; this one moves only transform and opacity. */
+  .mionas-popup__dialog.dialog-modal[open] {
+    animation: mionas-popup-in var(--animation-speed) var(--animation-easing) forwards;
+  }
+
+  .mionas-popup__dialog.dialog-modal.dialog-closing {
+    animation: mionas-popup-out var(--animation-speed) var(--animation-easing) forwards;
+  }
+
+  .mionas-popup__panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mionas-popup__panel:not(:has(.mionas-popup__media)) {
+    grid-template-columns: 1fr;
+  }
+
+  .mionas-popup__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mionas-popup__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .mionas-popup__close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-button-base-size);
+    height: var(--icon-button-base-size);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--text-color-default);
+    cursor: pointer;
+  }
+
+  .mionas-popup__close svg {
+    width: var(--icon-button-base-icon-size);
+    height: var(--icon-button-base-icon-size);
+  }
+
+  .mionas-popup__close:focus-visible,
+  .mionas-popup__handle:focus-visible {
+    outline: var(--focus-outline-width) solid var(--brand-primary);
+    outline-offset: var(--focus-outline-offset);
+  }
+
+  .mionas-popup__handle {
+    display: none;
+  }
+
+  /* Horizon's dialog-modal goes full screen below 750px; the design is a bottom sheet without the
+     photo, so the sheet still leaves part of the page in view. */
+  @media screen and (max-width: 749px) {
+    /* The UA's modal dialog keeps inset-block-start: 0, which with height: auto stretches the sheet
+       to the full max-height; releasing the top edge lets it fit its content. */
+    .mionas-popup__dialog.dialog-modal {
+      /* Placeholder: the design system has no motion tokens. A sheet moves slower than the theme's
+         fades, on the theme's sheet curve. Candidate token. */
+      --animation-speed: 0.5s;
+      --animation-easing: var(--ease-out-quad);
+
+      inset-block-start: auto;
+      width: 100%;
+      height: auto;
+      max-height: 90dvh;
+      margin: 0;
+      padding: 0;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      transition: translate var(--animation-speed) var(--animation-easing);
+    }
+
+    /* Horizon's search styles square every open .dialog-modal on phones with the weight of the rule
+       above, and the compiled stylesheet's order is not fixed; the [open] state outranks them. */
+    .mionas-popup__dialog.dialog-modal[open] {
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      animation: mionas-popup-sheet-in var(--animation-speed) var(--animation-easing) forwards;
+    }
+
+    .mionas-popup__dialog.dialog-modal.dialog-closing {
+      animation: mionas-popup-sheet-out var(--animation-speed) var(--animation-easing) forwards;
+    }
+
+    .mionas-popup__panel {
+      grid-template-columns: 1fr;
+    }
+
+    .mionas-popup__media,
+    .mionas-popup__close {
+      display: none;
+    }
+
+    .mionas-popup__content.spacing-style {
+      padding-block-end: calc(var(--padding-block-end) + env(safe-area-inset-bottom));
+    }
+
+    /* The handle closes the sheet on a tap or a drag down; its hit area spans the top of the sheet,
+       inside the content's top padding, and the bar sits near the edge like a native sheet's. */
+    .mionas-popup__handle {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      height: var(--icon-button-base-size);
+      /* Placeholder: the design system has no sheet handle; these are the iOS grabber's measures
+         (5px from the edge, 36 by 5px, grey at 30%). Candidate tokens. */
+      padding: 5px 0 0;
+      border: 0;
+      background: transparent;
+      cursor: grab;
+    }
+
+    .mionas-popup__handle::before {
+      content: '';
+      width: 36px;
+      height: 5px;
+      border-radius: var(--radius-full);
+      background: rgb(60 60 67 / 0.3);
+    }
+  }
+
+  /* Reduced motion keeps the popup's entrance and exit as fades. Kept after the phone rules, which
+     have the same weight. */
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-popup__dialog.dialog-modal[open] {
+      animation-name: mionas-popup-fade-in;
+    }
+
+    .mionas-popup__dialog.dialog-modal.dialog-closing {
+      animation-name: mionas-popup-fade-out;
+    }
+  }
+
+  @keyframes mionas-popup-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-md));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mionas-popup-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(var(--space-md));
+    }
+  }
+
+  @keyframes mionas-popup-sheet-in {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mionas-popup-sheet-out {
+    to {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes mionas-popup-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mionas-popup-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+{% endstylesheet %}

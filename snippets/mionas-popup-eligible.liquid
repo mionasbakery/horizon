@@ -1,0 +1,111 @@
+{%- doc -%}
+  Prints true when this visitor may get a Mionas popup on this page, and false otherwise.
+
+  @param {object} settings - The popup section's settings: audience, tester_emails, the hide_on_*
+    checkboxes and hidden_pages_menu.
+  @param {boolean} [exclude_marketing_subscribers] - Leaves out customers who already get marketing
+    emails, except testers.
+{%- enddoc -%}
+{%- liquid
+  assign is_tester = false
+  if customer
+    assign customer_email = customer.email | downcase
+    # newline_to_br is the only way to split on line breaks, since Liquid has no newline literal.
+    assign tester_emails = settings.tester_emails | downcase | newline_to_br | split: '<br />'
+    for tester_email in tester_emails
+      assign trimmed_email = tester_email | strip
+      if trimmed_email != blank and trimmed_email == customer_email
+        assign is_tester = true
+        break
+      endif
+    endfor
+  endif
+
+  assign eligible = true
+  if settings.audience == 'testers' and is_tester == false
+    assign eligible = false
+  endif
+  # A tester is often already subscribed, and would otherwise never see the popup.
+  if exclude_marketing_subscribers and customer and customer.accepts_marketing and is_tester == false
+    assign eligible = false
+  endif
+
+  assign page_type = template.name
+  if template.directory == 'customers'
+    assign page_type = 'customers'
+  endif
+  case page_type
+    when 'index'
+      assign hidden_by_type = settings.hide_on_home
+    when 'product'
+      assign hidden_by_type = settings.hide_on_product
+    when 'collection', 'list-collections'
+      assign hidden_by_type = settings.hide_on_collection
+    when 'cart'
+      assign hidden_by_type = settings.hide_on_cart
+    when 'search'
+      assign hidden_by_type = settings.hide_on_search
+    when 'blog', 'article'
+      assign hidden_by_type = settings.hide_on_blog
+    when 'page'
+      assign hidden_by_type = settings.hide_on_page
+    when 'customers'
+      assign hidden_by_type = settings.hide_on_account
+    else
+      assign hidden_by_type = false
+  endcase
+  if hidden_by_type
+    assign eligible = false
+  endif
+
+  # Menu links store the resource itself, so each entry holds in every language, unlike a URL list:
+  # Shopify translates handles. Two menu levels count; a blog also covers its articles.
+  for top_link in settings.hidden_pages_menu.links
+    assign level_links = top_link.links | default: empty
+    for link in (0..level_links.size)
+      if forloop.first
+        assign current_link = top_link
+      else
+        assign link_index = forloop.index0 | minus: 1
+        assign current_link = level_links[link_index]
+      endif
+
+      case current_link.type
+        when 'frontpage_link'
+          if page_type == 'index'
+            assign eligible = false
+          endif
+        when 'catalog_link'
+          if page_type == 'collection' and collection.handle == 'all'
+            assign eligible = false
+          endif
+        when 'search_link'
+          if page_type == 'search'
+            assign eligible = false
+          endif
+        when 'product_link'
+          if page_type == 'product' and current_link.object.id == product.id
+            assign eligible = false
+          endif
+        when 'collection_link'
+          if page_type == 'collection' and current_link.object.id == collection.id
+            assign eligible = false
+          endif
+        when 'page_link'
+          if page_type == 'page' and current_link.object.id == page.id
+            assign eligible = false
+          endif
+        when 'blog_link'
+          if blog and current_link.object.id == blog.id
+            assign eligible = false
+          endif
+        when 'article_link'
+          if page_type == 'article' and current_link.object.id == article.id
+            assign eligible = false
+          endif
+      endcase
+    endfor
+  endfor
+
+  echo eligible
+-%}

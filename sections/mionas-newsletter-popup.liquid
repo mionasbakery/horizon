@@ -1,127 +1,22 @@
 {%- comment -%}
-  Mionas newsletter popup: a first-visit signup dialog, rendered on every page from the footer group.
+  Mionas newsletter popup: a first-visit signup popup with its widget, rendered on every page from
+  the footer group.
 
-  The markup ships closed and assets/mionas-newsletter-popup.js decides whether to open it; the
-  Liquid exclusions below only skip visitors the script could never show it to.
+  The markup ships closed and the scripts decide whether to open it; the Liquid exclusions only skip
+  visitors the scripts could never show it to.
 {%- endcomment -%}
-{%- liquid
-  assign is_tester = false
-  if customer
-    assign customer_email = customer.email | downcase
-    # newline_to_br is the only way to split on line breaks, since Liquid has no newline literal.
-    assign tester_emails = section.settings.tester_emails | downcase | newline_to_br | split: '<br />'
-    for tester_email in tester_emails
-      assign trimmed_email = tester_email | strip
-      if trimmed_email != blank and trimmed_email == customer_email
-        assign is_tester = true
-        break
-      endif
-    endfor
-  endif
+{%- capture popup_eligible -%}
+  {%- render 'mionas-popup-eligible', settings: section.settings, exclude_marketing_subscribers: true -%}
+{%- endcapture -%}
+{%- assign popup_eligible = popup_eligible | strip -%}
 
-  assign popup_eligible = true
-  if section.settings.audience == 'testers' and is_tester == false
-    assign popup_eligible = false
-  endif
-  # A tester is often already subscribed, and would otherwise never see the popup.
-  if customer and customer.accepts_marketing and is_tester == false
-    assign popup_eligible = false
-  endif
-
-  assign page_type = template.name
-  if template.directory == 'customers'
-    assign page_type = 'customers'
-  endif
-  case page_type
-    when 'index'
-      assign hidden_by_type = section.settings.hide_on_home
-    when 'product'
-      assign hidden_by_type = section.settings.hide_on_product
-    when 'collection', 'list-collections'
-      assign hidden_by_type = section.settings.hide_on_collection
-    when 'cart'
-      assign hidden_by_type = section.settings.hide_on_cart
-    when 'search'
-      assign hidden_by_type = section.settings.hide_on_search
-    when 'blog', 'article'
-      assign hidden_by_type = section.settings.hide_on_blog
-    when 'page'
-      assign hidden_by_type = section.settings.hide_on_page
-    when 'customers'
-      assign hidden_by_type = section.settings.hide_on_account
-    else
-      assign hidden_by_type = false
-  endcase
-  if hidden_by_type
-    assign popup_eligible = false
-  endif
-
-  # Menu links store the resource itself, so each entry holds in every language, unlike a URL list:
-  # Shopify translates handles. Two menu levels count; a blog also covers its articles.
-  for top_link in section.settings.hidden_pages_menu.links
-    assign level_links = top_link.links | default: empty
-    for link in (0..level_links.size)
-      if forloop.first
-        assign current_link = top_link
-      else
-        assign link_index = forloop.index0 | minus: 1
-        assign current_link = level_links[link_index]
-      endif
-
-      case current_link.type
-        when 'frontpage_link'
-          if page_type == 'index'
-            assign popup_eligible = false
-          endif
-        when 'catalog_link'
-          if page_type == 'collection' and collection.handle == 'all'
-            assign popup_eligible = false
-          endif
-        when 'search_link'
-          if page_type == 'search'
-            assign popup_eligible = false
-          endif
-        when 'product_link'
-          if page_type == 'product' and current_link.object.id == product.id
-            assign popup_eligible = false
-          endif
-        when 'collection_link'
-          if page_type == 'collection' and current_link.object.id == collection.id
-            assign popup_eligible = false
-          endif
-        when 'page_link'
-          if page_type == 'page' and current_link.object.id == page.id
-            assign popup_eligible = false
-          endif
-        when 'blog_link'
-          if blog and current_link.object.id == blog.id
-            assign popup_eligible = false
-          endif
-        when 'article_link'
-          if page_type == 'article' and current_link.object.id == article.id
-            assign popup_eligible = false
-          endif
-      endcase
-    endfor
-  endfor
--%}
-
-{%- if popup_eligible or request.design_mode -%}
-  <script
-    src="{{ 'mionas-newsletter-popup.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-
-  {% render 'dialog-styles' %}
-
-  {%- capture decline_classes -%}
-    {%- render 'mionas-button-class', variant: 'ghost', full_width: true -%}
-  {%- endcapture -%}
-  {%- capture continue_classes -%}
-    {%- render 'mionas-button-class', variant: 'primary', full_width: true -%}
-  {%- endcapture -%}
+{%- if popup_eligible == 'true' or request.design_mode -%}
   {%- liquid
+    assign popup_id = 'MionasNewsletterPopup-' | append: section.id
+    assign popup_label = 'mionas.newsletter_popup.label' | t
+    assign close_label = 'mionas.newsletter_popup.close' | t
+    assign dismiss_label = 'mionas.newsletter_popup.dismiss_widget' | t
+
     assign widget_eyebrow = section.settings.widget_eyebrow | escape
     assign widget_headline = section.settings.widget_headline | escape
     assign widget_subline = section.settings.widget_subline | escape
@@ -131,211 +26,123 @@
     if widget_headline != blank
       assign widget_offer_html = '<strong>' | append: widget_headline | append: '</strong> ' | append: widget_subline | strip
     endif
-  -%}
-  {%- liquid
+    assign show_widget = false
+    if section.settings.launcher != 'off' and widget_label != blank
+      assign show_widget = true
+    endif
+
     # GA4 accepts only letters, digits and underscores in event names, so hyphens and spaces become underscores.
     assign test_name = section.settings.test_name | default: 'newsletter-popup' | handleize
     assign measurement_name = section.settings.measurement_name | default: 'newsletter_popup' | handleize | replace: '-', '_'
   -%}
 
-  <mionas-newsletter-popup-component
-    class="mionas-newsletter-popup"
-    data-section-id="{{ section.id }}"
-    data-auto-open="{{ section.settings.auto_open }}"
-    data-delay="{{ section.settings.delay_seconds }}"
-    data-wait-for-interaction="{{ section.settings.wait_for_interaction }}"
-    data-exit-intent="{{ section.settings.exit_intent }}"
-    data-scroll-depth="{{ section.settings.scroll_depth }}"
-    data-reshow-days="{{ section.settings.reshow_days }}"
-    data-launcher="{{ section.settings.launcher }}"
-    data-widget-reshow-days="{{ section.settings.widget_reshow_days }}"
-    data-audience="{{ section.settings.audience }}"
-    data-ab-test="{{ section.settings.ab_test_enabled }}"
-    data-popup-share="{{ section.settings.popup_share }}"
-    data-test-name="{{ test_name }}"
-    data-event-prefix="{{ measurement_name }}_"
-    data-clarity-tag="{{ measurement_name }}"
-    {%- comment -%} Shopify hides cart attributes that start with an underscore from the buyer at checkout. {%- endcomment -%}
-    data-cart-attribute="_{{ measurement_name }}"
-  >
-    <dialog
-      ref="dialog"
-      class="mionas-newsletter-popup__dialog dialog-modal"
-      aria-label="{{ 'mionas.newsletter_popup.label' | t }}"
-      scroll-lock
+  <script
+    src="{{ 'mionas-popup.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  {%- if show_widget -%}
+    <script
+      src="{{ 'mionas-popup-widget.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
+  {%- endif -%}
+  <script
+    src="{{ 'mionas-newsletter-popup.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+
+  {%- capture decline_classes -%}
+    {%- render 'mionas-button-class', variant: 'ghost', full_width: true -%}
+  {%- endcapture -%}
+  {%- capture continue_classes -%}
+    {%- render 'mionas-button-class', variant: 'primary', full_width: true -%}
+  {%- endcapture -%}
+
+  {%- capture popup_content -%}
+    <div
+      ref="formView"
+      class="mionas-newsletter-popup__view"
     >
-      {%- comment -%} Google honours data-nosnippet on div, span and section only, not on dialog. {%- endcomment -%}
-      <div
-        class="mionas-newsletter-popup__panel"
-        data-nosnippet
-      >
-        {%- if section.settings.image != blank -%}
-          <div class="mionas-newsletter-popup__media">
-            {{-
-              section.settings.image
-              | image_url: width: 960
-              | image_tag:
-                loading: 'lazy',
-                widths: '480, 960',
-                sizes: '480px',
-                class: 'mionas-newsletter-popup__image'
-            -}}
-          </div>
-        {%- endif -%}
-
-        <div
-          class="mionas-newsletter-popup__content spacing-style"
-          style="{% render 'spacing-style', settings: section.settings %}"
-        >
-          <div
-            ref="formView"
-            class="mionas-newsletter-popup__view"
-          >
-            {% content_for 'blocks' %}
-
-            <button
-              type="button"
-              class="{{ decline_classes }} mionas-newsletter-popup__decline"
-              on:click="/decline"
-            >
-              {{ 'mionas.newsletter_popup.decline' | t }}
-            </button>
-          </div>
-
-          <div
-            ref="successView"
-            class="mionas-newsletter-popup__view"
-            role="status"
-            tabindex="-1"
-            hidden
-          >
-            <span class="mionas-newsletter-popup__check">
-              {{- 'icon-checkmark.svg' | inline_asset_content -}}
-            </span>
-            {%- comment -%}
-              Empty on purpose: the script copies the signup block's success banner into it, because a
-              theme block's settings are not readable from its parent section.
-            {%- endcomment -%}
-            {%- render 'mionas-text', content: '', variant: 'headline', size: 'lg', tag: 'h2' -%}
-            <button
-              type="button"
-              class="{{ continue_classes }}"
-              on:click="/continueShopping"
-            >
-              {{ 'mionas.newsletter_popup.continue' | t }}
-            </button>
-          </div>
-        </div>
-      </div>
+      {% content_for 'blocks' %}
 
       <button
         type="button"
-        class="mionas-newsletter-popup__close"
-        aria-label="{{ 'mionas.newsletter_popup.close' | t }}"
-        on:click="/dismiss"
+        class="{{ decline_classes }} mionas-newsletter-popup__decline"
+        on:click="/decline"
       >
-        {{- 'icon-close.svg' | inline_asset_content -}}
+        {{ 'mionas.newsletter_popup.decline' | t }}
       </button>
-    </dialog>
+    </div>
 
-    {%- if section.settings.launcher != 'off' and widget_label != blank -%}
+    <div
+      ref="successView"
+      class="mionas-newsletter-popup__view"
+      role="status"
+      tabindex="-1"
+      hidden
+    >
+      <span class="mionas-newsletter-popup__check">
+        {{- 'icon-checkmark.svg' | inline_asset_content -}}
+      </span>
       {%- comment -%}
-        Rendered hidden: only the script knows the visitor's group and state.
+        Empty on purpose: the script copies the signup block's success banner into it, because a
+        theme block's settings are not readable from its parent section.
       {%- endcomment -%}
-      <div
-        ref="launcher"
-        class="mionas-newsletter-popup__widget mionas-newsletter-popup__widget--{{ section.settings.launcher_position }} mionas-newsletter-popup__widget--{{ section.settings.launcher_vertical }}"
-        hidden
+      {%- render 'mionas-text', content: '', variant: 'headline', size: 'lg', tag: 'h2' -%}
+      <button
+        type="button"
+        class="{{ continue_classes }}"
+        on:click="/continueShopping"
       >
-        <button
-          type="button"
-          class="mionas-newsletter-popup__widget-open"
-          aria-haspopup="dialog"
-          aria-label="{{ widget_label }}"
-          on:click="/openFromLauncher"
-        >
-          <span class="mionas-newsletter-popup__widget-body" aria-hidden="true">
-            {%- if widget_eyebrow != blank -%}
-              {%- render 'mionas-stamp', content: widget_eyebrow, size: 'md', color: 'accent-inverse', tag: 'span' -%}
-            {%- endif -%}
-            {%- render 'mionas-text', content: widget_offer_html, variant: 'body', size: 'md', color: 'inverse-primary', tag: 'span', class: 'mionas-newsletter-popup__widget-line' -%}
-          </span>
-        </button>
-        <button
-          type="button"
-          class="mionas-newsletter-popup__widget-close"
-          aria-label="{{ 'mionas.newsletter_popup.dismiss_widget' | t }}"
-          on:click="/dismissWidget"
-        >
-          {{- 'icon-close.svg' | inline_asset_content -}}
-        </button>
-      </div>
-    {%- endif -%}
-  </mionas-newsletter-popup-component>
+        {{ 'mionas.newsletter_popup.continue' | t }}
+      </button>
+    </div>
+  {%- endcapture -%}
+
+  {%- comment -%} Shopify hides cart attributes that start with an underscore from the buyer at checkout. {%- endcomment -%}
+  {%- capture popup_attributes -%}
+    data-ab-test="{{ section.settings.ab_test_enabled }}" data-popup-share="{{ section.settings.popup_share }}"
+    data-test-name="{{ test_name }}" data-event-prefix="{{ measurement_name }}_"
+    data-clarity-tag="{{ measurement_name }}" data-cart-attribute="_{{ measurement_name }}"
+  {%- endcapture -%}
+
+  {%- render 'mionas-popup',
+    element: 'mionas-newsletter-popup-component',
+    id: popup_id,
+    storage_key: 'newsletter-popup',
+    section_id: section.id,
+    settings: section.settings,
+    label: popup_label,
+    close_label: close_label,
+    content: popup_content,
+    attributes: popup_attributes
+  -%}
+
+  {%- if show_widget -%}
+    {%- capture widget_content -%}
+      {%- if widget_eyebrow != blank -%}
+        {%- render 'mionas-stamp', content: widget_eyebrow, size: 'md', color: 'accent-inverse', tag: 'span' -%}
+      {%- endif -%}
+      {%- render 'mionas-text', content: widget_offer_html, variant: 'body', size: 'md', color: 'inverse-primary', tag: 'span', class: 'mionas-popup-widget__line' -%}
+    {%- endcapture -%}
+    {%- render 'mionas-popup-widget',
+      popup_id: popup_id,
+      show: section.settings.launcher,
+      reshow_days: section.settings.widget_reshow_days,
+      section_id: section.id,
+      position: section.settings.launcher_position,
+      vertical: section.settings.launcher_vertical,
+      label: widget_label,
+      dismiss_label: dismiss_label,
+      content: widget_content
+    -%}
+  {%- endif -%}
 {%- endif -%}
 
 {% stylesheet %}
-  .mionas-newsletter-popup__dialog.dialog-modal {
-    /* Placeholder: the design system has no scrim for overlays. Candidate token. */
-    --mionas-newsletter-popup-backdrop: rgb(16 20 19 / 0.56);
-    /* Placeholder: the design system has no dialog width. Candidate token. */
-    --mionas-newsletter-popup-width: 960px;
-
-    width: min(var(--mionas-newsletter-popup-width), calc(100vw - 2 * var(--space-lg)));
-    max-width: none;
-    padding: 0;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-lg);
-    background: var(--color-beige-vainilla);
-    color: var(--text-color-default);
-    overflow: hidden;
-  }
-
-  .mionas-newsletter-popup__dialog.dialog-modal::backdrop {
-    background: var(--mionas-newsletter-popup-backdrop);
-  }
-
-  /* Chrome on Android still scrolls the page behind Horizon's overflow lock from some touches. Nothing
-     inside the popup scrolls, so no swipe starts on it or on its backdrop, which belongs to it; taps
-     and typing are unaffected. A fixed body would also lock the page, but moves its scroll position,
-     which the sticky header reacts to. mionas-base.css repairs the rest of the lock for every dialog. */
-  .mionas-newsletter-popup__dialog.dialog-modal {
-    touch-action: none;
-  }
-
-  /* Horizon's elementSlideInTop animates margin-top with fill-mode forwards, which pins the dialog
-     to the top edge instead of centring it; this one moves only transform and opacity. */
-  .mionas-newsletter-popup__dialog.dialog-modal[open] {
-    animation: mionas-newsletter-popup-in var(--animation-speed) var(--animation-easing) forwards;
-  }
-
-  .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing {
-    animation: mionas-newsletter-popup-out var(--animation-speed) var(--animation-easing) forwards;
-  }
-
-  .mionas-newsletter-popup__panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .mionas-newsletter-popup__panel:not(:has(.mionas-newsletter-popup__media)) {
-    grid-template-columns: 1fr;
-  }
-
-  .mionas-newsletter-popup__image {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .mionas-newsletter-popup__content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow-y: auto;
-  }
-
   .mionas-newsletter-popup__view {
     display: flex;
     flex-direction: column;
@@ -364,369 +171,6 @@
     border-radius: var(--radius-full);
     background: var(--brand-primary);
     color: var(--text-color-inverse-primary);
-  }
-
-  .mionas-newsletter-popup__close {
-    position: absolute;
-    top: var(--space-md);
-    right: var(--space-md);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--icon-button-base-size);
-    height: var(--icon-button-base-size);
-    padding: 0;
-    border: 0;
-    border-radius: var(--radius-full);
-    background: transparent;
-    color: var(--text-color-default);
-    cursor: pointer;
-  }
-
-  .mionas-newsletter-popup__close svg {
-    width: var(--icon-button-base-icon-size);
-    height: var(--icon-button-base-icon-size);
-  }
-
-  .mionas-newsletter-popup__close:focus-visible {
-    outline: var(--focus-outline-width) solid var(--brand-primary);
-    outline-offset: var(--focus-outline-offset);
-  }
-
-  /* Newsletter widget: a blue tab docked to the bottom edge inside the page margin on desktop, a
-     bottom sheet on phones like the popup. */
-  .mionas-newsletter-popup__widget {
-    position: fixed;
-    bottom: 0;
-    z-index: var(--layer-sticky);
-    display: flex;
-    align-items: center;
-    max-width: calc(100vw - 2 * var(--page-margin));
-    padding-inline-end: var(--space-xs);
-    background: var(--brand-primary);
-    color: var(--text-color-inverse-primary);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  }
-
-  /* The script writes the widget's height, 0 while hidden, so the footer can scroll clear of it. The
-     room goes to the last footer section, not the body, so the footer's own background shows through
-     the widget's round corners; this needs the popup section to stay last in the footer group. */
-  .shopify-section:has(+ .shopify-section:last-child .mionas-newsletter-popup__widget--bottom) {
-    padding-block-end: var(--mionas-newsletter-popup-widget-height, 0px);
-  }
-
-  .mionas-newsletter-popup__widget[hidden] {
-    display: none;
-  }
-
-  /* Hidden but still laid out, so the page padding keeps its height under the open dialog and the
-     page behind the scrim does not jump. */
-  .mionas-newsletter-popup:has(dialog[open]) .mionas-newsletter-popup__widget {
-    visibility: hidden;
-  }
-
-  /* Under the header and announcement bar; header.js keeps --header-group-height current after load. */
-  .mionas-newsletter-popup__widget--top {
-    top: calc(var(--header-group-height, 0px) + var(--space-lg));
-    bottom: auto;
-    border-radius: var(--radius-xl);
-  }
-
-  .mionas-newsletter-popup__widget--right {
-    right: var(--page-margin);
-  }
-
-  .mionas-newsletter-popup__widget--left {
-    left: var(--page-margin);
-  }
-
-  .mionas-newsletter-popup__widget-open {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    padding: var(--space-md) var(--space-2xs) var(--space-md) var(--space-lg);
-    border: 0;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    text-align: start;
-    cursor: pointer;
-  }
-
-  .mionas-newsletter-popup__widget-body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xs);
-  }
-
-  .mionas-newsletter-popup__widget-open:hover .mionas-newsletter-popup__widget-line {
-    text-decoration: underline;
-  }
-
-  .mionas-newsletter-popup__widget-close {
-    flex: none;
-    align-self: flex-start;
-    /* Centres the button on the stamp line: the open button's top padding plus half the stamp's
-       label-md line, minus half the button. Change it with the stamp size or that padding. */
-    margin-block-start: calc(
-      var(--space-md) + var(--text-role-label-md-line-height) / 2 - var(--icon-button-base-size) / 2
-    );
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--icon-button-base-size);
-    height: var(--icon-button-base-size);
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .mionas-newsletter-popup__widget-close svg {
-    width: var(--icon-button-base-icon-size);
-    height: var(--icon-button-base-icon-size);
-  }
-
-  /* The theme's focus ring is brand blue, which vanishes on this blue surface. */
-  .mionas-newsletter-popup__widget button:focus-visible {
-    outline: var(--focus-outline-width) solid currentColor;
-    outline-offset: calc(-1 * var(--space-2xs));
-  }
-
-  @media screen and (max-width: 749px) {
-    .shopify-section:has(+ .shopify-section:last-child .mionas-newsletter-popup__widget) {
-      padding-block-end: var(--mionas-newsletter-popup-widget-height, 0px);
-    }
-
-    .mionas-newsletter-popup__widget.mionas-newsletter-popup__widget {
-      top: auto;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      max-width: none;
-      padding-bottom: env(safe-area-inset-bottom);
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    }
-
-    .mionas-newsletter-popup__widget .mionas-newsletter-popup__widget-open {
-      padding-inline-start: var(--page-margin);
-    }
-  }
-
-  /* Horizon's dialog-modal goes full screen below 750px; the design is a bottom sheet without the
-     photo, so the sheet still leaves part of the page in view. */
-  @media screen and (max-width: 749px) {
-    /* The UA's modal dialog keeps inset-block-start: 0, which with height: auto stretches the sheet
-       to the full max-height; releasing the top edge lets it shrink to its content. */
-    .mionas-newsletter-popup__dialog.dialog-modal {
-      inset-block-start: auto;
-      width: 100%;
-      height: auto;
-      max-height: 90dvh;
-      margin: 0;
-      padding: 0;
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    }
-
-    .mionas-newsletter-popup__dialog.dialog-modal[open] {
-      animation: mionas-newsletter-popup-sheet-in var(--animation-speed) var(--animation-easing) forwards;
-    }
-
-    .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing {
-      animation: mionas-newsletter-popup-sheet-out var(--animation-speed) var(--animation-easing) forwards;
-    }
-
-    .mionas-newsletter-popup__panel {
-      grid-template-columns: 1fr;
-    }
-
-    .mionas-newsletter-popup__media {
-      display: none;
-    }
-
-    .mionas-newsletter-popup__content.spacing-style {
-      padding-block-end: calc(var(--padding-block-end) + env(safe-area-inset-bottom));
-    }
-  }
-
-  /* Closing into the widget: the script measures the invisible widget, then writes the move and scale
-     that land the dialog on it. Four classes outrank the phone sheet-out rule. */
-  .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing.mionas-newsletter-popup__dialog--minimize {
-    animation: mionas-newsletter-popup-minimize var(--animation-speed) var(--animation-easing) forwards;
-  }
-
-  .mionas-newsletter-popup__widget--arriving {
-    animation: mionas-newsletter-popup-arrive var(--animation-speed) var(--animation-easing);
-  }
-
-  /* Opening from the widget: the reverse of the minimize, with the same custom properties. */
-  .mionas-newsletter-popup__dialog.dialog-modal.mionas-newsletter-popup__dialog--maximize[open] {
-    animation: mionas-newsletter-popup-maximize var(--animation-speed) var(--animation-easing) forwards;
-  }
-
-  /* On phones the widget and the sheet share the bottom edge, the width and the corners, so the sheet
-     slides between the two heights and changes colour: a scale would squash its text and corners, and
-     a fade would leave a frame where neither shows. Kept before the reduced-motion rules, which win. */
-  @media screen and (max-width: 749px) {
-    .mionas-newsletter-popup__dialog.dialog-modal,
-    .mionas-newsletter-popup__widget {
-      /* Placeholder: the design system has no motion tokens. A sheet moves slower than the theme's
-         fades, on the theme's sheet curve. Candidate token. */
-      --animation-speed: 0.5s;
-      --animation-easing: var(--ease-out-quad);
-    }
-
-    .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing.mionas-newsletter-popup__dialog--minimize {
-      animation-name: mionas-newsletter-popup-sheet-minimize;
-    }
-
-    .mionas-newsletter-popup__dialog.dialog-modal.mionas-newsletter-popup__dialog--maximize[open] {
-      animation-name: mionas-newsletter-popup-sheet-maximize;
-    }
-
-    .mionas-newsletter-popup__dialog--minimize > * {
-      animation: mionas-newsletter-popup-fade-out var(--animation-speed) var(--animation-easing) forwards;
-    }
-
-    .mionas-newsletter-popup__dialog--maximize > *,
-    .mionas-newsletter-popup__widget--arriving > * {
-      animation: mionas-newsletter-popup-fade-in var(--animation-speed) var(--animation-easing);
-    }
-
-    .mionas-newsletter-popup__widget--arriving {
-      animation: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mionas-newsletter-popup__dialog.dialog-modal.dialog-closing.mionas-newsletter-popup__dialog--minimize {
-      animation-name: mionas-newsletter-popup-fade-out;
-    }
-
-    .mionas-newsletter-popup__dialog.dialog-modal.mionas-newsletter-popup__dialog--maximize[open] {
-      animation-name: mionas-newsletter-popup-fade-in;
-    }
-
-    .mionas-newsletter-popup__widget--arriving {
-      animation-name: mionas-newsletter-popup-fade-in;
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-in {
-    from {
-      opacity: 0;
-      transform: translateY(var(--space-md));
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-out {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(var(--space-md));
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-sheet-in {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-sheet-out {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(100%);
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-minimize {
-    from {
-      opacity: 1;
-      transform: none;
-    }
-    60% {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-      transform: translate(var(--mionas-newsletter-popup-minimize-x), var(--mionas-newsletter-popup-minimize-y))
-        scale(var(--mionas-newsletter-popup-minimize-scale-x), var(--mionas-newsletter-popup-minimize-scale-y));
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-maximize {
-    from {
-      opacity: 0;
-      transform: translate(var(--mionas-newsletter-popup-minimize-x), var(--mionas-newsletter-popup-minimize-y))
-        scale(var(--mionas-newsletter-popup-minimize-scale-x), var(--mionas-newsletter-popup-minimize-scale-y));
-    }
-    40% {
-      opacity: 1;
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-sheet-maximize {
-    from {
-      transform: translateY(var(--mionas-newsletter-popup-minimize-drop));
-      background-color: var(--brand-primary);
-    }
-    to {
-      transform: none;
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-sheet-minimize {
-    to {
-      transform: translateY(var(--mionas-newsletter-popup-minimize-drop));
-      background-color: var(--brand-primary);
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-arrive {
-    from {
-      opacity: 0;
-      transform: scale(0.92);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-fade-out {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-
-  @keyframes mionas-newsletter-popup-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 {% endstylesheet %}
 
