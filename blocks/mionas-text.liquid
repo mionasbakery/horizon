@@ -1,9 +1,9 @@
 {%- doc -%}
-  Renders a single text node styled by the design system's role/size/color vocabulary.
+  Renders a single text node styled by the design system's variant and color vocabulary.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Text/Text.tsx's role/size/color vocabulary directly, unlike
+  Mirrors ../design-system/src/react/Text/Text.tsx's variant and color vocabulary directly, unlike
   Horizon's native blocks/text.liquid, which bridges its own preset typography instead.
 
   The Text setting is richtext, flattened to inline HTML by mionas-inline-richtext.liquid to keep
@@ -53,7 +53,6 @@
   {%- render 'mionas-text',
     content: content,
     variant: block_settings.variant,
-    size: block_settings.size,
     color: block_settings.color,
     transform: block_settings.transform,
     tag: tag,
@@ -82,25 +81,15 @@
       "label": "Variant",
       "options": [
         { "value": "display", "label": "Display" },
-        { "value": "headline", "label": "Headline" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
         { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
         { "value": "body", "label": "Body" },
         { "value": "label", "label": "Label" }
       ],
       "default": "body",
-      "info": "The typography band, same as Text.tsx's `variant` prop."
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
-      ],
-      "default": "md",
-      "info": "The step within the Variant band."
+      "info": "Display heads the page, Heading a section, Subheading a group, Title one item. Lead is the opening paragraph, Label small meta text."
     },
     {
       "type": "select",

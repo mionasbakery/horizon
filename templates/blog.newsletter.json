@@ -128,7 +128,7 @@
               "name": "Mionas: Stamp",
               "settings": {
                 "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "display-lg",
+                "size": "display",
                 "variant": "accent",
                 "tag": "div",
                 "padding-block-start": 0,
@@ -144,7 +144,6 @@
               "settings": {
                 "text": "<p>10% de descuento en tu primera compra</p>",
                 "variant": "display",
-                "size": "lg",
                 "color": "default",
                 "tag": "h1",
                 "text_wrap": "normal",
@@ -160,8 +159,7 @@
               "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -363,7 +361,7 @@
                           "name": "Mionas: Stamp",
                           "settings": {
                             "text": "<p>Última newsletter,</p>",
-                            "size": "headline-lg",
+                            "size": "heading",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -378,7 +376,7 @@
                           "name": "Mionas: Newsletter Date",
                           "settings": {
                             "show_year": true,
-                            "size": "headline-lg",
+                            "size": "heading",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -399,8 +397,7 @@
                       "name": "Mionas: Text",
                       "settings": {
                         "text": "<p>{{ closest.article.title }}</p>",
-                        "variant": "headline",
-                        "size": "lg",
+                        "variant": "heading",
                         "color": "inverse-primary",
                         "tag": "p",
                         "text_wrap": "normal",
@@ -491,8 +488,7 @@
               "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>Newsletters anteriores</p>",
-                "variant": "headline",
-                "size": "lg",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -509,7 +505,6 @@
               "settings": {
                 "text": "<p>Todas las que hemos enviado. La más reciente, primero.</p>",
                 "variant": "body",
-                "size": "md",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -539,8 +534,7 @@
               "type": "mionas-newsletter-year",
               "name": "Mionas: Newsletter Year",
               "settings": {
-                "variant": "headline",
-                "size": "lg",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h3",
                 "text_wrap": "normal",
@@ -562,7 +556,7 @@
                   "name": "Mionas: Newsletter Date",
                   "settings": {
                     "show_year": false,
-                    "size": "lg",
+                    "size": "lead",
                     "variant": "accent",
                     "tag": "span",
                     "padding-block-start": 0,
@@ -577,8 +571,7 @@
                   "name": "Mionas: Text",
                   "settings": {
                     "text": "<p>{{ closest.article.title }}</p>",
-                    "variant": "body",
-                    "size": "lg",
+                    "variant": "lead",
                     "color": "default",
                     "tag": "span",
                     "text_wrap": "normal",

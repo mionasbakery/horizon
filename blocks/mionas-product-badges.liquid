@@ -48,12 +48,6 @@
 
   assign kind_filter = block_settings.kind | default: 'all'
   assign placement = block_settings.placement | default: 'inline'
-  assign size = block_settings.size | default: 'label-sm'
-
-  # snippets/mionas-text.liquid takes variant/size as two params now; `size` above is still the
-  # fixed-band "label-<size>" value this block's own Size setting stores, so split off the step
-  # once here rather than per badge in the loop below (`render` args can't take an inline filter).
-  assign size_step = size | split: '-' | last
 -%}
 
 {%- if badges != blank -%}
@@ -100,7 +94,6 @@
             {%- render 'mionas-text',
               content: badge_label,
               variant: 'label',
-              size: size_step,
               color: badge_variant,
               tag: 'span',
               class: badge_class,
@@ -277,18 +270,6 @@
       "default": "top-left",
       "visible_if": "{{ block.settings.placement == 'overlay' }}",
       "info": "Avoid the corner used by the theme's own Sale and Sold out badges, or they overlap."
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        { "value": "label-lg", "label": "Large" },
-        { "value": "label-md", "label": "Medium" },
-        { "value": "label-sm", "label": "Small" }
-      ],
-      "default": "label-sm",
-      "info": "The label-band size the badges render at, the same ladder as Mionas: Text."
     },
     {
       "type": "header",

@@ -4,8 +4,8 @@
 
 {%- comment -%}
   Mirrors ../design-system/src/components/Stamp/Stamp.tsx: an uppercase Oswald eyebrow sized to the
-  text it labels. The Size setting holds that text's variant and size as one value, so the stamp
-  can't be set to a pair Stamp.tsx doesn't have.
+  text it labels. The Size setting holds that text's variant; the id stayed `size` so stored
+  instances kept their key.
 {%- endcomment -%}
 {%- assign block_settings = block.settings -%}
 {%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
@@ -36,21 +36,16 @@
       "id": "size",
       "label": "Size",
       "options": [
-        { "value": "display-lg", "label": "Display large" },
-        { "value": "display-md", "label": "Display medium" },
-        { "value": "display-sm", "label": "Display small" },
-        { "value": "headline-lg", "label": "Headline large" },
-        { "value": "headline-md", "label": "Headline medium" },
-        { "value": "headline-sm", "label": "Headline small" },
-        { "value": "title-lg", "label": "Title large" },
-        { "value": "title-md", "label": "Title medium" },
-        { "value": "title-sm", "label": "Title small" },
-        { "value": "body-lg", "label": "Body large" },
-        { "value": "body-md", "label": "Body medium" },
-        { "value": "body-sm", "label": "Body small" }
+        { "value": "display", "label": "Display" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
       ],
-      "default": "headline-md",
-      "info": "Match the variant and size of the text this stamp labels. Body stamps sit beside their text, the others above it."
+      "default": "heading",
+      "info": "Match the variant of the text this stamp labels. Lead, body and label stamps sit beside their text, the others above it."
     },
     {
       "type": "select",

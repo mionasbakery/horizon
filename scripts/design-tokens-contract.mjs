@@ -13,38 +13,30 @@
 // never quietly bind to the theme's value. Repointing at the unflattened file brings the whole
 // class of bug back.
 export const EXPECTED_TOKENS = {
-  // The seven roles pinned in full are the seven snippets/design-system-bridge.liquid builds
-  // Horizon's heading ladder and paragraph from. That ladder is the theme's own construction, not
-  // a transcription of the design system's, which is exactly why it needs pinning: a revalue
-  // upstream would silently reshape a ladder nobody upstream is maintaining.
-  "--text-role-display-lg-font-size": "clamp(36px, 30.86px + 1.429vw, 48px)",
-  "--text-role-display-lg-line-height": "clamp(40px, 34.86px + 1.429vw, 52px)",
-  "--text-role-display-lg-letter-spacing": "-0.02em",
-  "--text-role-headline-md-font-size": "clamp(26px, 25.14px + 0.238vw, 28px)",
-  "--text-role-headline-md-line-height": "clamp(32px, 31.14px + 0.238vw, 34px)",
-  "--text-role-headline-md-letter-spacing": "-0.01em",
-  "--text-role-headline-sm-font-size": "24px",
-  "--text-role-headline-sm-line-height": "30px",
-  "--text-role-headline-sm-letter-spacing": "-0.01em",
-  "--text-role-title-lg-font-size": "22px",
-  "--text-role-title-lg-line-height": "28px",
-  "--text-role-title-lg-letter-spacing": "0",
-  "--text-role-title-md-font-size": "20px",
-  "--text-role-title-md-line-height": "26px",
-  "--text-role-title-md-letter-spacing": "0",
-  "--text-role-title-sm-font-size": "18px",
-  "--text-role-title-sm-line-height": "24px",
-  "--text-role-title-sm-letter-spacing": "0",
-  "--text-role-body-md-font-size": "16px",
-  "--text-role-body-md-line-height": "24px",
-  "--text-role-body-md-letter-spacing": "0",
-  // blocks/mionas-text.liquid exposes all fifteen roles, so the theme technically spends every axis
-  // of every one. Pinning all sixty would make this file a copy of the token file, which the note at
-  // the top rules out -- so beyond the ladder, only what is load-bearing for some other reason is
-  // pinned: the 500 weights below, and the label sizes the form mirrors spend directly.
-  "--text-role-label-lg-font-weight": "500",
-  "--text-role-label-md-font-weight": "500",
-  "--text-role-label-sm-font-weight": "500",
+  // The five variants pinned in full are the ones assets/mionas-base.css builds Horizon's h1-h6
+  // ladder and paragraph from. A revalue upstream reshapes every native heading on the store, so
+  // it should fail the sync and be looked at rather than land silently.
+  "--text-role-display-font-size": "clamp(36px, 30.86px + 1.429vw, 48px)",
+  "--text-role-display-line-height": "clamp(40px, 34.86px + 1.429vw, 52px)",
+  "--text-role-display-letter-spacing": "-0.02em",
+  "--text-role-heading-font-size": "clamp(28px, 26.29px + 0.476vw, 32px)",
+  "--text-role-heading-line-height": "clamp(34px, 32.29px + 0.476vw, 38px)",
+  "--text-role-heading-letter-spacing": "-0.01em",
+  "--text-role-subheading-font-size": "22px",
+  "--text-role-subheading-line-height": "28px",
+  "--text-role-subheading-letter-spacing": "0",
+  "--text-role-title-font-size": "18px",
+  "--text-role-title-line-height": "24px",
+  "--text-role-title-letter-spacing": "0",
+  "--text-role-body-font-size": "16px",
+  "--text-role-body-line-height": "24px",
+  "--text-role-body-letter-spacing": "0",
+  // blocks/mionas-text.liquid exposes all seven variants, so the theme spends every axis of every
+  // one. Pinning them all would make this file a copy of the token file, so beyond the ladder only
+  // what is load-bearing for another reason is pinned: the 500 label weight below, the title weight
+  // the native card price takes, and the label sizes the form mirrors spend directly.
+  "--text-role-label-font-weight": "500",
+  "--text-role-title-font-weight": "700",
   // Button metrics, not type presets.
   "--button-size-md-height": "48px",
   "--button-size-md-padding": "24px",
@@ -65,10 +57,9 @@ export const EXPECTED_TOKENS = {
   // every component's own. Pinning those here would assert a literal against a var() and fail.
   "--font-family-archivo": "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif",
   "--font-family-oswald": "Oswald, 'Arial Narrow', sans-serif",
-  // Link: the weight is spent by snippets/mionas-link.liquid, the sizes by the header menu and
-  // snippets/mionas-breadcrumbs.liquid.
+  // Link: the weight is spent by snippets/mionas-link.liquid and snippets/mionas-breadcrumbs.liquid,
+  // the sm size by the breadcrumbs.
   "--link-base-font-weight": "500",
-  "--link-size-md-font-size": "16px",
   "--link-size-sm-font-size": "15px",
   // Every "500" above is load-bearing beyond its own colour/size: snippets/design-system-bridge
   // .liquid emits an extra Archivo 500 @font-face solely because these tokens ask for a weight
@@ -91,8 +82,6 @@ export const EXPECTED_TOKENS = {
   "--product-card-base-media-radius": "12px",
   "--product-card-base-gap": "16px",
   "--product-card-base-padding-inline": "16px",
-  "--product-card-price-font-weight": "600",
-  "--product-card-price-foreground": "#101413",
   // --product-card-base-media-height was pinned here for a Mionas card block that owned its own
   // media height. That block has been deleted and no file spends the token any more, so the pin is
   // gone with it. The two media tokens above (--product-card-base-media-inset and
@@ -157,25 +146,17 @@ export const EXPECTED_TOKENS = {
   "--checkbox-checked-foreground": "#ffffff",
   "--checkbox-state-disabled-opacity": "0.5",
   "--checkbox-state-focused-border-color": "#0b078c",
-  // Completes the label and body scales. snippets/mionas-form-label.liquid and
+  // Completes the label and body variants. snippets/mionas-form-label.liquid and
   // mionas-form-error.liquid spend the label sizes directly, because FormLabel.tsx and
-  // FormError.tsx both render through <Text role="label-md">, and mionas-checkbox's text label
-  // needs the body weight for the same reason (Checkbox.tsx renders it as role="body-md"). The
-  // axes already pinned above -- the label weights and body-md's size/line-height/letter-spacing --
-  // are not repeated here; a duplicate key would silently shadow the earlier entry rather than error.
-  "--text-role-label-md-font-size": "13px",
-  "--text-role-label-md-line-height": "18px",
-  "--text-role-label-md-letter-spacing": "0.02em",
-  "--text-role-body-md-font-weight": "400",
-  // label-lg's sizes, spent in three places that are not form labels: the mega menu item's own
-  // label (MegaMenuItem.tsx renders it at this exact role), and both Stamp mirrors below.
-  "--text-role-label-lg-font-size": "15px",
-  "--text-role-label-lg-line-height": "20px",
-  "--text-role-label-lg-letter-spacing": "0.02em",
-  // Stamp is a component rather than a text role, spent by blocks/mionas-text.liquid's
-  // .text-role--stamp and blocks/mionas-header-menu.liquid's drawer heading. It carries no
-  // font-size or line-height at all -- it renders <Text variant="label"> -- which is why those
-  // two mirrors take the label-lg sizes above instead.
+  // FormError.tsx both render <Text variant="label">, and mionas-checkbox's text label needs the
+  // body weight for the same reason (Checkbox.tsx renders it at variant="body"). The axes already
+  // pinned above are not repeated here; a duplicate key would silently shadow the earlier entry.
+  "--text-role-label-font-size": "13px",
+  "--text-role-label-line-height": "18px",
+  "--text-role-label-letter-spacing": "0.02em",
+  "--text-role-body-font-weight": "400",
+  // Stamp, spent by snippets/mionas-stamp.liquid. Its sizes come from its own --stamp-size-* tokens,
+  // one per text variant it labels.
   //
   // --stamp-base-font-family is absent for the reason every component family token is: it is a
   // var() reference to --font-family-oswald, which the bridge repoints, so pinning it would
@@ -211,13 +192,10 @@ export const EXPECTED_TOKENS = {
   // Also absent: every --mega-menu-link-*, which the theme does not spend because the mobile
   // overflow list runs on Horizon's own --menu-* settings.
   //
-  // NO --navbar-* ENTRY, though the theme now does take the top-level bar's SIZE and WEIGHT from
-  // the design system -- via Link's tokens below, not Navbar's. That is not a workaround: since the
-  // design system split the disclosure out of NavbarItem, navbar-item.json carries only colours and
-  // NavbarItem gets its type by composing Link, so --link-size-md-font-size and
-  // --link-base-font-weight ARE the design system's answer for a navbar item. NavbarItem's own
-  // foregrounds stay unspent so the nav's colours remain the merchant's, and its family stays on
-  // Shopify's font settings so Shopify keeps hosting and preloading the face.
+  // The top-level bar takes its size from the body variant and its weight from NavbarItem's own
+  // token, which blocks/mionas-header-menu.liquid spends. NavbarItem's foregrounds stay unspent so
+  // the nav's colours remain the merchant's, and its family stays on Shopify's font settings so
+  // Shopify keeps hosting and preloading the face.
   //
   // Nor is there a label-to-chevron gap entry any more. --navbar-item-base-gap fed one until the
   // split removed that token, then --space-2xs did; both read as too much space on the rendered nav,
@@ -226,12 +204,13 @@ export const EXPECTED_TOKENS = {
   // ever ships its own gap token, check it against the real nav before adopting it -- this is a case
   // where the design system's value and this theme's icon asset disagree about who owns the spacing.
   "--mega-menu-base-gap": "16px",
+  "--navbar-item-base-font-weight": "600",
   // The drawer's group heading and the category rail beneath it, spent by
   // blocks/mionas-header-menu.liquid. No --mega-menu-base-padding-inline: MegaMenu insets both the
   // heading and the rail by it, but every row in this drawer sits at the list edge, so the theme
   // zeroes the pair rather than adopting the 8px on one side only.
   "--mega-menu-heading-height": "44px",
-  "--mega-menu-heading-font-weight": "700",
+  "--mega-menu-heading-font-weight": "600",
   "--mega-menu-heading-foreground": "#101413",
   "--mega-menu-categories-border-width": "2px",
   "--mega-menu-categories-border-color": "#ece8e2",
@@ -250,11 +229,10 @@ export const EXPECTED_TOKENS = {
   "--mega-menu-item-base-media-size": "44px",
   "--mega-menu-item-base-media-radius": "8px",
   "--mega-menu-item-base-media-background": "#ece8e2",
-  // 700, where label-lg -- the role MegaMenuItem renders this label at -- is 500. Pinned for the font-face
-  // reason the "every 500 above is load-bearing" note gives: it asks the theme's Archivo for a
-  // weight none of the four font settings is guaranteed to load, so a change here is a question
-  // about which faces the bridge emits, not just a number to retype.
-  "--mega-menu-item-label-font-weight": "700",
+  // 600, over the body variant's 400. Pinned for the font-face reason the "every 500 above is
+  // load-bearing" note gives: a change here is a question about which Archivo faces the theme
+  // loads, not just a number to retype.
+  "--mega-menu-item-label-font-weight": "600",
   "--mega-menu-item-label-foreground": "#101413",
   // No --mega-menu-item-description-foreground: MegaMenuItem dropped its description slot and the
   // theme's card dropped its tagline with it, so nothing spends a secondary colour here now.
@@ -264,9 +242,9 @@ export const EXPECTED_TOKENS = {
   // FAQ accordion, spent by blocks/mionas-faq.liquid (dividers) and
   // blocks/_mionas-faq-question.liquid (layout + caret). Mirrors
   // ../design-system/src/components/Faq + FaqQuestion. Question and answer both render
-  // at the body-md role (pinned above); the header's only own type token is the
+  // at the body variant (pinned above); the header's only own type token is the
   // question's semibold weight, and the caret centering spends
-  // --text-role-body-md-line-height directly.
+  // --text-role-body-line-height directly.
   "--faq-base-divider-color": "#ece8e2",
   "--faq-base-divider-width": "1px",
   "--faq-question-header-font-weight": "600",

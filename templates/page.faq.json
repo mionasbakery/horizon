@@ -74,7 +74,6 @@
               "settings": {
                 "text": "<p>{{ closest.page.title }}</p>",
                 "variant": "display",
-                "size": "lg",
                 "color": "default",
                 "tag": "h1",
                 "text_wrap": "normal",
@@ -139,8 +138,7 @@
               "name": "Mionas: Text - Orders Title",
               "settings": {
                 "text": "<p>Pedidos y recogida</p>",
-                "variant": "title",
-                "size": "lg",
+                "variant": "subheading",
                 "color": "default",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -220,8 +218,7 @@
               "name": "Mionas: Text - Shipping Title",
               "settings": {
                 "text": "<p>Envíos</p>",
-                "variant": "title",
-                "size": "lg",
+                "variant": "subheading",
                 "color": "default",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -279,8 +276,7 @@
               "name": "Mionas: Text - Products Title",
               "settings": {
                 "text": "<p>Productos y alérgenos</p>",
-                "variant": "title",
-                "size": "lg",
+                "variant": "subheading",
                 "color": "default",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -360,8 +356,7 @@
               "name": "Mionas: Text - Courses Title",
               "settings": {
                 "text": "<p>Cursos</p>",
-                "variant": "title",
-                "size": "lg",
+                "variant": "subheading",
                 "color": "default",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -397,8 +392,7 @@
               "name": "Mionas: Text - Shop Title",
               "settings": {
                 "text": "<p>Tienda</p>",
-                "variant": "title",
-                "size": "lg",
+                "variant": "subheading",
                 "color": "default",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -512,8 +506,7 @@
               "name": "Mionas: Text - Contact Heading",
               "settings": {
                 "text": "<p>¿No encuentras tu respuesta?</p>",
-                "variant": "headline",
-                "size": "sm",
+                "variant": "heading",
                 "color": "default",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -530,7 +523,6 @@
               "settings": {
                 "text": "<p>Escríbenos y te contestamos lo antes posible dentro del horario de la tienda.</p>",
                 "variant": "body",
-                "size": "md",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",

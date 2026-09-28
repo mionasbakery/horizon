@@ -32,7 +32,7 @@
   {%- endif -%}
   <mionas-quantity class="mionas-quantity">
     {%- assign quantity_label_text = quantity_label | escape -%}
-    {%- render 'mionas-text', content: quantity_label_text, variant: 'title', size: 'sm', transform: 'uppercase' -%}
+    {%- render 'mionas-text', content: quantity_label_text, variant: 'title', transform: 'uppercase' -%}
     {% render 'quantity-selector', product: closest.product, block: block, wrapper_class: wrapper_class %}
   </mionas-quantity>
 {%- endif -%}

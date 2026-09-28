@@ -89,12 +89,12 @@
     grid-template-columns: var(--mionas-past-newsletters-column) minmax(0, 1fr);
   }
 
-  /* Lines the year up with the first row's text; assumes the default headline-lg year and body-lg subject. */
+  /* Lines the year up with the first row's text; assumes the default heading year and lead subject. */
   .mionas-past-newsletters__heading {
     align-self: start;
     padding-top: calc(
       var(--mionas-newsletters-row-gap) + var(--mionas-newsletters-row-padding-block) +
-        (var(--text-role-body-lg-line-height) - var(--text-role-headline-lg-line-height)) / 2
+        (var(--text-role-lead-line-height) - var(--text-role-heading-line-height)) / 2
     );
   }
 
@@ -183,8 +183,7 @@
         "year": {
           "type": "mionas-newsletter-year",
           "settings": {
-            "variant": "headline",
-            "size": "lg",
+            "variant": "heading",
             "color": "primary",
             "tag": "h3"
           }
@@ -204,8 +203,7 @@
               "type": "mionas-text",
               "settings": {
                 "text": "<p>{{ closest.article.title }}</p>",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "tag": "span"
               }
             },

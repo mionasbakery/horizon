@@ -1,5 +1,5 @@
 {% comment %}
-  Brings the header nav to the Mionas design system's label role, using tokens from
+  Brings the header nav to the Mionas design system's NavbarItem (the body variant), using tokens from
   assets/design-tokens.css.
 
   Rendered from theme.liquid AFTER design-system-bridge.
@@ -31,14 +31,14 @@
 {% endcomment %}
 {% style %}
   {%- comment -%}
-    Top-level nav links -> label (13 / 18 / 0.02em). Weight 600 comes from the slot.
-    Was label-lg (15 / 20) before the design system collapsed the label sizes into one role.
+    Top-level nav links -> body (16 / 24 / 0), as NavbarItem.tsx renders them. Weight 600 comes
+    from the slot and uppercase from the header's type_case_primary_link setting.
   {%- endcomment -%}
   .menu-list__link {
-    --menu-top-level-font-size-desktop: var(--text-role-label-md-font-size);
-    --menu-top-level-font-line-height: var(--text-role-label-md-line-height);
+    --menu-top-level-font-size-desktop: var(--text-role-body-font-size);
+    --menu-top-level-font-line-height: var(--text-role-body-line-height);
 
-    letter-spacing: var(--text-role-label-md-letter-spacing);
+    letter-spacing: var(--text-role-body-letter-spacing);
   }
 
   {%- comment -%}
@@ -54,10 +54,10 @@
   {%- comment -%}
     Drawer main-list items share the nav's tracking. Size lives in
     blocks/mionas-header-menu.liquid instead, where the rest of the drawer's typography is: the
-    reworked MegaMenu puts every row in the drawer on one band, which is the mobile reference
+    reworked MegaMenu puts every row in the drawer on one variant, which is the mobile reference
     this rule once had none of.
   {%- endcomment -%}
   .menu-drawer__menu-item--mainlist {
-    letter-spacing: var(--text-role-label-md-letter-spacing);
+    letter-spacing: var(--text-role-body-letter-spacing);
   }
 {% endstyle %}

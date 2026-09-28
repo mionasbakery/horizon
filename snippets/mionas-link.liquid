@@ -3,8 +3,7 @@
 
   @param {string} content - Label content. Emitted unfiltered; caller must sanitise if needed.
   @param {string} [color] - A Text colour, or inherit to take the surrounding colour. Defaults to primary.
-  @param {string} [variant] - A Text band: display, headline, title, body or label. Leave it and size blank, or pass inherit, to take the surrounding size.
-  @param {string} [size] - lg, md or sm within the band. Defaults to md once a band is set.
+  @param {string} [variant] - A Text variant: display, heading, subheading, title, lead, body or label. Leave it blank, or pass inherit, to take the surrounding size.
   @param {string} [icon] - Icon name, passed through to snippets/icon.liquid. Blank/"none" for no icon.
   @param {string} [text_wrap] - normal or nowrap. Defaults to normal.
   @param {string} [tag] - "a" (default) or "button".
@@ -14,10 +13,10 @@
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
   @example
-  {% render 'mionas-link', content: 'Contact us', link: '/pages/contact', variant: 'body', size: 'md' %}
+  {% render 'mionas-link', content: 'Contact us', link: '/pages/contact', variant: 'body' %}
 {%- enddoc -%}
 {%- comment -%}
-  Link.tsx renders through Text, so this renders through snippets/mionas-text.liquid: the band and
+  Link.tsx renders through Text, so this renders through snippets/mionas-text.liquid: the variant and
   colour classes, and their CSS, come from there. This file adds only the link weight, hover and
   icon. It is a snippet so blocks/mionas-language-links.liquid and mionas-policy-links.liquid share
   it; a block can't {% render %} another block.
@@ -30,17 +29,17 @@
   assign resolved_tag = tag | default: 'a'
   assign resolved_color = color | default: 'primary'
 
-  assign resolved_variant = variant
-  if variant == 'inherit' or variant == blank and size == blank
-    assign resolved_variant = 'inherit'
-  endif
+  assign resolved_variant = variant | default: 'inherit'
+  assign allowed_variants = 'inherit|display|heading|subheading|title|lead|body|label' | split: '|'
+  unless allowed_variants contains resolved_variant
+    assign resolved_variant = 'body'
+  endunless
 
   assign classes = 'mionas-link'
   if resolved_variant == 'inherit'
     assign classes = classes | append: ' mionas-link--inherit'
   else
-    assign band = resolved_variant | default: 'body'
-    assign classes = classes | append: ' mionas-link--' | append: band
+    assign classes = classes | append: ' mionas-link--' | append: resolved_variant
   endif
   if icon != blank and icon != 'none'
     assign classes = classes | append: ' mionas-link--with-icon'
@@ -70,7 +69,6 @@
 {%- render 'mionas-text',
   content: link_content,
   variant: resolved_variant,
-  size: size,
   color: resolved_color,
   tag: resolved_tag,
   class: classes,
@@ -79,7 +77,7 @@
 -%}
 
 {% stylesheet %}
-  /* Two classes deep so the link weight beats the .text-role--<role> weight at one class, the way
+  /* Two classes deep so the link weight beats the .text-role--<variant> weight at one class, the way
      Link.module.css overrides Text's. */
   .text-role.mionas-link {
     font-weight: var(--link-base-font-weight);
@@ -94,12 +92,20 @@
     font-weight: var(--link-display-font-weight);
   }
 
-  .text-role.mionas-link--headline {
-    font-weight: var(--link-headline-font-weight);
+  .text-role.mionas-link--heading {
+    font-weight: var(--link-heading-font-weight);
+  }
+
+  .text-role.mionas-link--subheading {
+    font-weight: var(--link-subheading-font-weight);
   }
 
   .text-role.mionas-link--title {
     font-weight: var(--link-title-font-weight);
+  }
+
+  .text-role.mionas-link--lead {
+    font-weight: var(--link-lead-font-weight);
   }
 
   .text-role.mionas-link--body {

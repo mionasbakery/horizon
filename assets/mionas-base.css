@@ -11,55 +11,50 @@
   --font-family-archivo: var(--font-body--family);
   --font-family-oswald: var(--font-accent--family);
 
-  /* The h1-h6 ladder below is this file's own construction, not something the design system
-     hands over -- its text roles are a band x size grid with no inherent mapping to heading
-     levels. label-* is excluded despite holding the two smallest sizes: that band is "form
-     labels and UI chrome, not page content" in the design system, and a merchant's h6 is
-     page content -- which is why h5/h6 land on 20/18px rather than an unbroken 18/15 sequence. */
+  /* The h1-h6 ladder follows each text variant's default element in the design system: display
+     is h1, heading h2, subheading h3, and title names an item, so h4-h6 all land on it. label is
+     excluded: it names or explains something else, and a merchant's h6 is page content. */
 
-  /* h1 -> display-lg. Set directly rather than through Shopify's type_size_h1 setting, which
+  /* h1 -> display. Set directly rather than through Shopify's type_size_h1 setting, which
      would swap the design system's own 36-48px clamp() for Horizon's derived one. */
-  --font-h1--size: var(--text-role-display-lg-font-size);
-  --font-h1--line-height: var(--text-role-display-lg-line-height);
-  --font-h1--letter-spacing: var(--text-role-display-lg-letter-spacing);
+  --font-h1--size: var(--text-role-display-font-size);
+  --font-h1--line-height: var(--text-role-display-line-height);
+  --font-h1--letter-spacing: var(--text-role-display-letter-spacing);
 
-  /* h2 -> headline-md, fluid from 26px to 28px. */
-  --font-h2--size: var(--text-role-headline-md-font-size);
-  --font-h2--line-height: var(--text-role-headline-md-line-height);
-  --font-h2--letter-spacing: var(--text-role-headline-md-letter-spacing);
+  /* h2 -> heading, fluid from 28px to 32px. */
+  --font-h2--size: var(--text-role-heading-font-size);
+  --font-h2--line-height: var(--text-role-heading-line-height);
+  --font-h2--letter-spacing: var(--text-role-heading-letter-spacing);
 
-  /* h3 -> headline-sm (24px), a step of its own below h2's 26px floor at every width. */
-  --font-h3--size: var(--text-role-headline-sm-font-size);
-  --font-h3--line-height: var(--text-role-headline-sm-line-height);
-  --font-h3--letter-spacing: var(--text-role-headline-sm-letter-spacing);
+  /* h3 -> subheading */
+  --font-h3--size: var(--text-role-subheading-font-size);
+  --font-h3--line-height: var(--text-role-subheading-line-height);
+  --font-h3--letter-spacing: var(--text-role-subheading-letter-spacing);
 
-  /* h4 -> title-lg */
-  --font-h4--size: var(--text-role-title-lg-font-size);
-  --font-h4--line-height: var(--text-role-title-lg-line-height);
-  --font-h4--letter-spacing: var(--text-role-title-lg-letter-spacing);
+  /* h4-h6 -> title */
+  --font-h4--size: var(--text-role-title-font-size);
+  --font-h4--line-height: var(--text-role-title-line-height);
+  --font-h4--letter-spacing: var(--text-role-title-letter-spacing);
 
-  /* h5 -> title-md */
-  --font-h5--size: var(--text-role-title-md-font-size);
-  --font-h5--line-height: var(--text-role-title-md-line-height);
-  --font-h5--letter-spacing: var(--text-role-title-md-letter-spacing);
+  --font-h5--size: var(--text-role-title-font-size);
+  --font-h5--line-height: var(--text-role-title-line-height);
+  --font-h5--letter-spacing: var(--text-role-title-letter-spacing);
 
-  /* h6 -> title-sm */
-  --font-h6--size: var(--text-role-title-sm-font-size);
-  --font-h6--line-height: var(--text-role-title-sm-line-height);
-  --font-h6--letter-spacing: var(--text-role-title-sm-letter-spacing);
+  --font-h6--size: var(--text-role-title-font-size);
+  --font-h6--line-height: var(--text-role-title-line-height);
+  --font-h6--letter-spacing: var(--text-role-title-letter-spacing);
 
-  /* paragraph -> body-md, the band's own stated default for everything that isn't the intro
-     line under a display. */
-  --font-paragraph--size: var(--text-role-body-md-font-size);
-  --font-paragraph--line-height: var(--text-role-body-md-line-height);
-  --font-paragraph--letter-spacing: var(--text-role-body-md-letter-spacing);
+  /* paragraph -> body, the design system's default for running copy. */
+  --font-paragraph--size: var(--text-role-body-font-size);
+  --font-paragraph--line-height: var(--text-role-body-line-height);
+  --font-paragraph--letter-spacing: var(--text-role-body-letter-spacing);
 
   /* Buttons — Horizon states no height: it derives one from padding-block plus the paragraph
      line-height (base.css:1255). The design system states height directly (48px) with 24px
      inline padding. Derive the padding-block that yields the design system's height at the
      line-height this bridge already set: (48px - 24px) / 2 = 12px. */
   --button-padding-block: calc(
-    (var(--button-size-md-height) - var(--text-role-body-md-line-height)) / 2
+    (var(--button-size-md-height) - var(--text-role-body-line-height)) / 2
   );
   --button-padding-inline: var(--button-size-md-padding);
 }
@@ -231,17 +226,17 @@ footer .custom-typography[style*='--font-family: var(--font-accent--family)'] {
    --font-h6--weight governs the native price block, which SEVEN templates still render:
    search.json, cart.json, 404.json, product.json and the three product.* variants (the last four
    through their product-recommendations card). Only index.json and collection.json use
-   blocks/mionas-price.liquid instead, which sets its own weight from
-   --product-card-price-font-weight (mionas-price.liquid:122-127, the declaration at :126) and emits
-   no .text-block for this rule to reach. Both halves stay: if a card's title or price is ever switched to another
+   blocks/mionas-price.liquid instead, which takes the title variant's own weight and emits no
+   .text-block for this rule to reach. Both halves stay: if a card's title or price is ever switched to another
    type_preset, add the matching --font-<preset>--weight or the text silently falls back to the
    theme's font weight.
 
-   Both tokens are 600, so one rule covers title and price. Colour is a real Horizon setting
+   The title is CardTitle's 600 and the price is the title variant's 700, as ProductCardPrice.tsx
+   takes Text's title unmodified. Colour is a real Horizon setting
    (text_color) and lives in templates/*.json, not here. */
 .product-card .text-block {
   --font-paragraph--weight: var(--card-title-font-weight);
-  --font-h6--weight: var(--product-card-price-font-weight);
+  --font-h6--weight: var(--text-role-title-font-weight);
 }
 
 /* Horizon's scroll lock (html[scroll-lock], utilities.js lockScroll) hides the page scroller's

@@ -45,7 +45,6 @@
     {%- render 'mionas-text',
       content: block_settings.text,
       variant: block_settings.variant,
-      size: block_settings.size,
       tag: 'span',
       class: 'mionas-divider__text'
     -%}
@@ -95,23 +94,14 @@
       "label": "Variant",
       "options": [
         { "value": "display", "label": "Display" },
-        { "value": "headline", "label": "Headline" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
         { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
         { "value": "body", "label": "Body" },
         { "value": "label", "label": "Label" }
       ],
       "default": "body"
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
-      ],
-      "default": "sm"
     }
   ],
   "presets": [

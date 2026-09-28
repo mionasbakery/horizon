@@ -70,7 +70,6 @@
               "settings": {
                 "text": "<p>{{ closest.page.title }}</p>",
                 "variant": "display",
-                "size": "lg",
                 "color": "default",
                 "tag": "h1",
                 "text_wrap": "normal",
@@ -134,8 +133,7 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "{{ closest.page.content }}",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "div",
                 "text_wrap": "normal",

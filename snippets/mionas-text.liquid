@@ -14,8 +14,7 @@
   pass values from `| money` and product.title. Nothing here escapes; nothing here strips tags.
 
   @param {string} content - The text to render. Emitted unfiltered; see above.
-  @param {string} [variant] - A Text.tsx band: display, headline, title, body, label. Defaults to body. `inherit` renders no band, so size, line-height and tracking come from the surroundings.
-  @param {string} [size] - A Text.tsx size within the band: lg, md, sm. Defaults to md.
+  @param {string} [variant] - A Text.tsx variant: display, heading, subheading, title, lead, body, label. Defaults to body. `inherit` renders no variant, so size, line-height and tracking come from the surroundings.
   @param {string} [color] - A colour variant: default, primary, secondary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
   @param {string} [transform] - uppercase, lowercase, capitalize or none. Unset leaves the inherited case.
   @param {string} [tag] - p, span, div, h1-h6, a or button. Anything else falls back to p.
@@ -26,29 +25,21 @@
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
   @example
-  {% render 'mionas-text', content: product.title, variant: 'body', size: 'md', tag: 'p', class: 'mionas-price' %}
+  {% render 'mionas-text', content: product.title, variant: 'body', tag: 'p', class: 'mionas-price' %}
 {%- enddoc -%}
 
 {%- liquid
   assign resolved_variant = variant | default: 'body'
-  assign resolved_size = size | default: 'md'
-  assign resolved_role = resolved_variant | append: '-' | append: resolved_size
   assign resolved_color = color | default: 'default'
 
   comment
-    A stale variant/size pair must fall back, not pass through: `default` only catches nil/blank,
-    not a string that stopped being a valid role, and an invalid class leaves the text with no
-    size, weight or tracking at all.
-
-    Validated as the joined pair, not each axis separately: callers like blocks/mionas-price.liquid
-    split a stored `role` setting into variant/size themselves, so a stale value can produce a
-    bogus pair even when each axis looks plausible alone.
-
-    Keep this list in step with the .text-role--* rules below.
+    A stale variant must fall back, not pass through: `default` only catches nil/blank, not a
+    string that stopped being a valid variant, and an invalid class leaves the text with no size,
+    weight or tracking at all. Keep this list in step with the .text-role--* rules below.
   endcomment
-  assign allowed_roles = 'display-lg|display-md|display-sm|headline-lg|headline-md|headline-sm|title-lg|title-md|title-sm|body-lg|body-md|body-sm|label-lg|label-md|label-sm' | split: '|'
-  unless allowed_roles contains resolved_role
-    assign resolved_role = 'body-md'
+  assign allowed_variants = 'display|heading|subheading|title|lead|body|label' | split: '|'
+  unless allowed_variants contains resolved_variant
+    assign resolved_variant = 'body'
   endunless
 
   comment
@@ -62,12 +53,12 @@
   endunless
 
   comment
-    `inherit` is Link.tsx's opt-in: no band class, so the element takes its size from its
+    `inherit` is Link.tsx's opt-in: no variant class, so the element takes its size from its
     surroundings, and no colour class, so it takes their colour.
   endcomment
   assign classes = 'text-role'
   unless variant == 'inherit'
-    assign classes = classes | append: ' text-role--' | append: resolved_role
+    assign classes = classes | append: ' text-role--' | append: resolved_variant
   endunless
   unless resolved_color == 'inherit'
     assign classes = classes | append: ' text-role--' | append: resolved_color
@@ -106,116 +97,58 @@
     font-family: var(--font-family-archivo);
   }
 
-  /* All fifteen band x size combinations are exposed, even though the theme only uses nine, so
-     this stays a true mirror of Text.tsx rather than a silently reduced subset. Keep the
-     `variant`/`size` selects in blocks/mionas-text.liquid and the whitelist above in step with
+  /* Keep the Variant select in blocks/mionas-text.liquid and the whitelist above in step with
      this list. */
-  .text-role--display-lg {
-    font-size: var(--text-role-display-lg-font-size);
-    line-height: var(--text-role-display-lg-line-height);
-    font-weight: var(--text-role-display-lg-font-weight);
-    letter-spacing: var(--text-role-display-lg-letter-spacing);
+  .text-role--display {
+    font-size: var(--text-role-display-font-size);
+    line-height: var(--text-role-display-line-height);
+    font-weight: var(--text-role-display-font-weight);
+    letter-spacing: var(--text-role-display-letter-spacing);
   }
 
-  .text-role--display-md {
-    font-size: var(--text-role-display-md-font-size);
-    line-height: var(--text-role-display-md-line-height);
-    font-weight: var(--text-role-display-md-font-weight);
-    letter-spacing: var(--text-role-display-md-letter-spacing);
+  .text-role--heading {
+    font-size: var(--text-role-heading-font-size);
+    line-height: var(--text-role-heading-line-height);
+    font-weight: var(--text-role-heading-font-weight);
+    letter-spacing: var(--text-role-heading-letter-spacing);
   }
 
-  .text-role--display-sm {
-    font-size: var(--text-role-display-sm-font-size);
-    line-height: var(--text-role-display-sm-line-height);
-    font-weight: var(--text-role-display-sm-font-weight);
-    letter-spacing: var(--text-role-display-sm-letter-spacing);
+  .text-role--subheading {
+    font-size: var(--text-role-subheading-font-size);
+    line-height: var(--text-role-subheading-line-height);
+    font-weight: var(--text-role-subheading-font-weight);
+    letter-spacing: var(--text-role-subheading-letter-spacing);
   }
 
-  .text-role--headline-lg {
-    font-size: var(--text-role-headline-lg-font-size);
-    line-height: var(--text-role-headline-lg-line-height);
-    font-weight: var(--text-role-headline-lg-font-weight);
-    letter-spacing: var(--text-role-headline-lg-letter-spacing);
+  .text-role--title {
+    font-size: var(--text-role-title-font-size);
+    line-height: var(--text-role-title-line-height);
+    font-weight: var(--text-role-title-font-weight);
+    letter-spacing: var(--text-role-title-letter-spacing);
   }
 
-  .text-role--headline-md {
-    font-size: var(--text-role-headline-md-font-size);
-    line-height: var(--text-role-headline-md-line-height);
-    font-weight: var(--text-role-headline-md-font-weight);
-    letter-spacing: var(--text-role-headline-md-letter-spacing);
+  .text-role--lead {
+    font-size: var(--text-role-lead-font-size);
+    line-height: var(--text-role-lead-line-height);
+    font-weight: var(--text-role-lead-font-weight);
+    letter-spacing: var(--text-role-lead-letter-spacing);
   }
 
-  .text-role--headline-sm {
-    font-size: var(--text-role-headline-sm-font-size);
-    line-height: var(--text-role-headline-sm-line-height);
-    font-weight: var(--text-role-headline-sm-font-weight);
-    letter-spacing: var(--text-role-headline-sm-letter-spacing);
+  .text-role--body {
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    font-weight: var(--text-role-body-font-weight);
+    letter-spacing: var(--text-role-body-letter-spacing);
   }
 
-  .text-role--title-lg {
-    font-size: var(--text-role-title-lg-font-size);
-    line-height: var(--text-role-title-lg-line-height);
-    font-weight: var(--text-role-title-lg-font-weight);
-    letter-spacing: var(--text-role-title-lg-letter-spacing);
+  .text-role--label {
+    font-size: var(--text-role-label-font-size);
+    line-height: var(--text-role-label-line-height);
+    font-weight: var(--text-role-label-font-weight);
+    letter-spacing: var(--text-role-label-letter-spacing);
   }
 
-  .text-role--title-md {
-    font-size: var(--text-role-title-md-font-size);
-    line-height: var(--text-role-title-md-line-height);
-    font-weight: var(--text-role-title-md-font-weight);
-    letter-spacing: var(--text-role-title-md-letter-spacing);
-  }
-
-  .text-role--title-sm {
-    font-size: var(--text-role-title-sm-font-size);
-    line-height: var(--text-role-title-sm-line-height);
-    font-weight: var(--text-role-title-sm-font-weight);
-    letter-spacing: var(--text-role-title-sm-letter-spacing);
-  }
-
-  .text-role--body-lg {
-    font-size: var(--text-role-body-lg-font-size);
-    line-height: var(--text-role-body-lg-line-height);
-    font-weight: var(--text-role-body-lg-font-weight);
-    letter-spacing: var(--text-role-body-lg-letter-spacing);
-  }
-
-  .text-role--body-md {
-    font-size: var(--text-role-body-md-font-size);
-    line-height: var(--text-role-body-md-line-height);
-    font-weight: var(--text-role-body-md-font-weight);
-    letter-spacing: var(--text-role-body-md-letter-spacing);
-  }
-
-  .text-role--body-sm {
-    font-size: var(--text-role-body-sm-font-size);
-    line-height: var(--text-role-body-sm-line-height);
-    font-weight: var(--text-role-body-sm-font-weight);
-    letter-spacing: var(--text-role-body-sm-letter-spacing);
-  }
-
-  .text-role--label-lg {
-    font-size: var(--text-role-label-lg-font-size);
-    line-height: var(--text-role-label-lg-line-height);
-    font-weight: var(--text-role-label-lg-font-weight);
-    letter-spacing: var(--text-role-label-lg-letter-spacing);
-  }
-
-  .text-role--label-md {
-    font-size: var(--text-role-label-md-font-size);
-    line-height: var(--text-role-label-md-line-height);
-    font-weight: var(--text-role-label-md-font-weight);
-    letter-spacing: var(--text-role-label-md-letter-spacing);
-  }
-
-  .text-role--label-sm {
-    font-size: var(--text-role-label-sm-font-size);
-    line-height: var(--text-role-label-sm-line-height);
-    font-weight: var(--text-role-label-sm-font-weight);
-    letter-spacing: var(--text-role-label-sm-letter-spacing);
-  }
-
-  /* No text-role--stamp rule here on purpose: snippets/mionas-stamp.liquid renders label-md and
+  /* No text-role--stamp rule here on purpose: snippets/mionas-stamp.liquid renders label and
      overrides its size there, mirroring Stamp.tsx's <Text variant="label">. */
 
   .text-role--default {

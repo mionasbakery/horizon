@@ -1,7 +1,7 @@
 {%- doc -%}
   A row of plain-text language links (e.g. "ES EN CA"), one per available store language.
 
-  @param {object} [settings] - Block settings: variant, size (see blocks/mionas-link.liquid)
+  @param {object} [settings] - Block settings: variant (see blocks/mionas-link.liquid)
   @param {string} [shopify_attributes] - block.shopify_attributes, for editor selection
 
   @example
@@ -42,7 +42,6 @@
               tag: 'button',
               color: settings.color,
               variant: settings.variant,
-              size: settings.size,
               attributes: button_attributes
             %}
           </li>
@@ -64,7 +63,7 @@
   }
 
   .mionas-language-links .mionas-link {
-    /* mionas-link's sm/md tokens are 15-16px, sized for body links -- too large next to the
+    /* mionas-link's body variant is 16px, sized for running text -- too large next to the
        12px footer-copyright/footer-policy-list text this row sits beside, so this overrides it. */
     font-size: 0.75rem;
     opacity: 0.65;

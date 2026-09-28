@@ -94,7 +94,7 @@
         Empty on purpose: the script copies the signup block's success banner into it, because a
         theme block's settings are not readable from its parent section.
       {%- endcomment -%}
-      {%- render 'mionas-text', content: '', variant: 'headline', size: 'lg', tag: 'h2' -%}
+      {%- render 'mionas-text', content: '', variant: 'heading', tag: 'h2' -%}
       <button
         type="button"
         class="{{ continue_classes }}"
@@ -127,9 +127,9 @@
   {%- if show_widget -%}
     {%- capture widget_content -%}
       {%- if widget_eyebrow != blank -%}
-        {%- render 'mionas-stamp', content: widget_eyebrow, size: 'body-md', color: 'accent-inverse', tag: 'span' -%}
+        {%- render 'mionas-stamp', content: widget_eyebrow, size: 'body', color: 'accent-inverse', tag: 'span' -%}
       {%- endif -%}
-      {%- render 'mionas-text', content: widget_offer_html, variant: 'body', size: 'md', color: 'inverse-primary', tag: 'span' -%}
+      {%- render 'mionas-text', content: widget_offer_html, variant: 'body', color: 'inverse-primary', tag: 'span' -%}
     {%- endcapture -%}
     {%- render 'mionas-popup-widget',
       popup_id: popup_id,
@@ -498,7 +498,7 @@
           "name": "Mionas: Stamp - Newsletter",
           "settings": {
             "text": "<p>Suscríbete a la newsletter</p>",
-            "size": "headline-lg",
+            "size": "heading",
             "variant": "accent",
             "tag": "p"
           }
@@ -508,8 +508,7 @@
           "name": "Mionas: Text - Heading",
           "settings": {
             "text": "<p>10% de descuento en tu primera compra</p>",
-            "variant": "headline",
-            "size": "lg",
+            "variant": "heading",
             "tag": "h2"
           }
         },
@@ -519,7 +518,6 @@
           "settings": {
             "text": "<p>Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos y lanzamientos.</p>",
             "variant": "body",
-            "size": "md",
             "tag": "p"
           }
         },

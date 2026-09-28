@@ -28,7 +28,6 @@
           "settings": {
             "text": "<p>{{ closest.blog.title }}</p>",
             "variant": "display",
-            "size": "lg",
             "color": "default",
             "tag": "h1"
           },

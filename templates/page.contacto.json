@@ -74,7 +74,6 @@
               "settings": {
                 "text": "<p>{{ closest.page.title }}</p>",
                 "variant": "display",
-                "size": "lg",
                 "color": "default",
                 "tag": "h1",
                 "text_wrap": "normal",
@@ -90,8 +89,7 @@
               "name": "Mionas: Text - Subtitle",
               "settings": {
                 "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -107,8 +105,7 @@
               "name": "Mionas: Text - Description",
               "settings": {
                 "text": "",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -233,8 +230,7 @@
                   "name": "Mionas: Divider",
                   "settings": {
                     "text": "o envíanos un mensaje",
-                    "variant": "label",
-                    "size": "md"
+                    "variant": "label"
                   },
                   "blocks": {}
                 },
@@ -442,7 +438,6 @@
                           "settings": {
                             "text": "<p>Ven a visitarnos</p>",
                             "variant": "title",
-                            "size": "sm",
                             "color": "default",
                             "tag": "p",
                             "text_wrap": "normal",
@@ -459,7 +454,6 @@
                           "settings": {
                             "text": "<p>Carrer de Sant Bonaventura, 16<br/>08870 Sitges, Barcelona<br/>España</p>",
                             "variant": "body",
-                            "size": "md",
                             "color": "default",
                             "tag": "p",
                             "text_wrap": "nowrap",
@@ -478,7 +472,6 @@
                             "link": "mailto:hola@mionasbakery.com",
                             "open_in_new_tab": false,
                             "color": "primary", "variant": "body",
-                            "size": "md",
                             "icon": "mail",
                             "text_wrap": "normal"
                           },
@@ -492,7 +485,6 @@
                             "link": "",
                             "open_in_new_tab": false,
                             "color": "primary", "variant": "body",
-                            "size": "md",
                             "icon": "phone",
                             "text_wrap": "normal"
                           },
@@ -632,7 +624,6 @@
                           "settings": {
                             "text": "<p>Horario</p>",
                             "variant": "title",
-                            "size": "sm",
                             "color": "default",
                             "tag": "p",
                             "text_wrap": "normal",
@@ -654,7 +645,6 @@
                               "settings": {
                                 "day": "<p>Martes - Sábado</p>",
                                 "hours": "<p>10:00 - 14:00<br/>16:30 - 20:30</p>",
-                                "size": "md",
                                 "color": "default"
                               },
                               "blocks": {}
@@ -665,7 +655,6 @@
                               "settings": {
                                 "day": "<p>Domingo</p>",
                                 "hours": "<p>10:00 - 14:00</p>",
-                                "size": "md",
                                 "color": "default"
                               },
                               "blocks": {}
@@ -676,7 +665,6 @@
                               "settings": {
                                 "day": "<p>Lunes</p>",
                                 "hours": "<p>Cerrado</p>",
-                                "size": "md",
                                 "color": "default"
                               },
                               "blocks": {}
@@ -694,7 +682,6 @@
                           "settings": {
                             "text": "<p>Los horarios pueden variar en días festivos. Consúltanos por WhatsApp o redes sociales para confirmar.</p>",
                             "variant": "body",
-                            "size": "sm",
                             "color": "default",
                             "tag": "p",
                             "text_wrap": "normal",

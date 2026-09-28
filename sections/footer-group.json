@@ -126,7 +126,7 @@
                   "name": "Mionas: Stamp",
                   "settings": {
                     "text": "<p>Especialitat en cookies</p>",
-                    "size": "headline-md",
+                    "size": "heading",
                     "variant": "accent-inverse",
                     "tag": "p",
                     "padding-block-start": 0,
@@ -283,7 +283,6 @@
                   "settings": {
                     "text": "<p><strong>TIENDA</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -342,7 +341,6 @@
                         "link": "shopify://collections/cookies",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -356,7 +354,6 @@
                         "link": "shopify://collections/cookies-veganas",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -370,7 +367,6 @@
                         "link": "shopify://collections/packs",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -384,7 +380,6 @@
                         "link": "shopify://collections/concept-store",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -398,7 +393,6 @@
                         "link": "shopify://collections/cursos",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -468,7 +462,6 @@
                   "settings": {
                     "text": "<p><strong>MÁS</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -527,7 +520,6 @@
                         "link": "shopify://pages/alergenos",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "md",
                         "icon": "none",
                         "text_wrap": "normal"
                       },
@@ -541,7 +533,6 @@
                         "link": "shopify://pages/sobre-nosotros",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -555,7 +546,6 @@
                         "link": "shopify://blogs/newsletter",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -569,7 +559,6 @@
                         "link": "shopify://pages/contacto",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -583,7 +572,6 @@
                         "link": "shopify://pages/faq",
                         "open_in_new_tab": false,
                         "color": "inverse-primary-muted", "variant": "body",
-                        "size": "sm",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -653,7 +641,6 @@
                   "settings": {
                     "text": "<p><strong>VEN A VISITARNOS</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -670,7 +657,6 @@
                   "settings": {
                     "text": "<p>Carrer de Sant Bonaventura, 16<br/>08870 Sitges, Barcelona<br/>España<br/></p>",
                     "variant": "body",
-                    "size": "md",
                     "color": "inverse-primary-muted",
                     "tag": "p",
                     "text_wrap": "nowrap",
@@ -736,7 +722,6 @@
                   "settings": {
                     "text": "<p><strong>Horario</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -758,7 +743,6 @@
                       "settings": {
                         "day": "<p>Martes - Sábado</p>",
                         "hours": "<p>10:00 – 14:00<br/>16:30 – 20:30</p>",
-                        "size": "sm",
                         "color": "inverse-primary-muted"
                       },
                       "blocks": {}
@@ -769,7 +753,6 @@
                       "settings": {
                         "day": "<p>Domingo</p>",
                         "hours": "<p>10:00 – 14:00</p>",
-                        "size": "sm",
                         "color": "inverse-primary-muted"
                       },
                       "blocks": {}
@@ -780,7 +763,6 @@
                       "settings": {
                         "day": "<p>Lunes</p>",
                         "hours": "<p>Cerrado</p>",
-                        "size": "sm",
                         "color": "inverse-primary-muted"
                       },
                       "blocks": {}
@@ -846,8 +828,7 @@
           "type": "mionas-policy-links",
           "name": "Mionas: Policy Links",
           "settings": {
-            "color": "inverse-primary-muted", "variant": "body",
-            "size": "sm"
+            "color": "inverse-primary-muted", "variant": "body"
           },
           "blocks": {}
         },
@@ -855,8 +836,7 @@
           "type": "mionas-language-links",
           "name": "Mionas: Language Links",
           "settings": {
-            "color": "inverse-primary-muted", "variant": "body",
-            "size": "sm"
+            "color": "inverse-primary-muted", "variant": "body"
           },
           "blocks": {}
         }
@@ -884,7 +864,7 @@
           "name": "Mionas: Stamp - Newsletter",
           "settings": {
             "text": "<p>Suscríbete a la newsletter</p>",
-            "size": "headline-lg",
+            "size": "heading",
             "variant": "accent",
             "tag": "p",
             "padding-block-start": 0,
@@ -899,8 +879,7 @@
           "name": "Mionas: Text - Heading",
           "settings": {
             "text": "<p>10% de descuento en tu primera compra</p>",
-            "variant": "headline",
-            "size": "lg",
+            "variant": "heading",
             "color": "default",
             "tag": "h2",
             "text_wrap": "normal",
@@ -917,7 +896,6 @@
           "settings": {
             "text": "<p>Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos y lanzamientos.</p>",
             "variant": "body",
-            "size": "md",
             "color": "default",
             "tag": "p",
             "text_wrap": "normal",

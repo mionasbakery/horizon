@@ -110,8 +110,8 @@
     <div class="mionas-course-row__date">
       <time datetime="{{ course_date | date: '%Y-%m-%d' }}">
         {%- assign course_day = course_date | date: '%d' -%}
-        {%- render 'mionas-text', content: course_day, variant: 'title', size: 'lg', tag: 'span' -%}
-        {%- render 'mionas-text', content: month_label, variant: 'label', size: 'lg', color: 'accent', tag: 'span' -%}
+        {%- render 'mionas-text', content: course_day, variant: 'subheading', tag: 'span' -%}
+        {%- render 'mionas-text', content: month_label, variant: 'label', color: 'accent', tag: 'span' -%}
       </time>
     </div>
 
@@ -119,7 +119,6 @@
       {%- render 'mionas-text',
         content: product.title,
         variant: 'body',
-        size: 'md',
         transform: 'none',
         tag: heading_tag,
         class: 'mionas-course-row__title'
@@ -129,7 +128,6 @@
         {%- render 'mionas-text',
           content: meta_text,
           variant: 'label',
-          size: 'lg',
           color: 'secondary',
           class: 'mionas-course-row__meta'
         -%}
@@ -141,7 +139,6 @@
         {%- render 'mionas-text',
           content: block_settings.sold_out_label,
           variant: 'label',
-          size: 'lg',
           color: 'inverse-primary',
           tag: 'span',
           class: 'mionas-course-row__badge'
