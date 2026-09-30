@@ -88,8 +88,31 @@ class MionasFormValidation extends HTMLElement {
    */
   #handleSubmit = (event) => {
     if (event.target !== this.#form) return;
+
+    // snippets/mionas-honeypot.liquid. A filled trap never posts: Shopify renders its success state
+    // from the `customer_posted` or `contact_posted` flag alone, so the bot sees a normal success.
+    // An empty trap is disabled so real contact emails carry no blank "Website" line.
+    const trap = this.#form.elements.namedItem('contact[website]');
+    if (trap instanceof HTMLInputElement && trap.value !== '') {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.#fakeSuccess();
+      return;
+    }
+
     this.#reject(event);
+    if (trap instanceof HTMLInputElement && !event.defaultPrevented) trap.disabled = true;
   };
+
+  #fakeSuccess() {
+    const formType = this.#form?.elements.namedItem('form_type');
+    if (!(formType instanceof HTMLInputElement)) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set(`${formType.value}_posted`, 'true');
+    url.hash = this.#form?.id ?? '';
+    window.location.assign(url);
+  }
 
   /**
    * Validates and, if anything fails, kills the event outright. Returns nothing: a valid form is

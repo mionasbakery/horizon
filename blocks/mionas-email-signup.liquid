@@ -69,6 +69,7 @@
 >
   {%- form 'customer', id: form_id -%}
     <input name="contact[id]" type="hidden" value="{{ form_id }}">
+    {%- render 'mionas-honeypot' -%}
 
     {%- if block_settings.customer_tag != blank -%}
       <input name="contact[tags]" type="hidden" value="{{ block_settings.customer_tag | escape }}">

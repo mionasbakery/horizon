@@ -161,6 +161,7 @@
       -%}
     {%- endcapture -%}
 
+    {%- render 'mionas-honeypot' -%}
     {%- render 'mionas-form', content: contact_form_content, validate: true, gap: button_gap_css -%}
     {%- endif -%}
   {%- endform -%}
