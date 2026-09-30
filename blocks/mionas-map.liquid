@@ -39,7 +39,14 @@
 >
   {%- if block_settings.address == blank -%}
     {%- comment -%} No address yet: render the frame so the editor shows the block's footprint. {%- endcomment -%}
-    <div class="mionas-map__empty">{{ block_settings.title | escape }}</div>
+    {%- assign empty_text = block_settings.title | escape -%}
+    {%- render 'mionas-text',
+      content: empty_text,
+      variant: 'label',
+      color: 'secondary',
+      tag: 'div',
+      class: 'mionas-map__empty'
+    -%}
   {%- else -%}
     <iframe
       class="mionas-map__frame"
@@ -96,11 +103,6 @@
     justify-content: center;
     height: 100%;
     padding: var(--space-md);
-    /* Secondary text, so this spends Card's description token -- not a --form-label-* one, which
-       would be borrowed from an unrelated component. */
-    color: var(--card-description-foreground);
-    font-family: var(--font-family-archivo);
-    font-size: var(--font-size-13);
     text-align: center;
   }
 {% endstylesheet %}

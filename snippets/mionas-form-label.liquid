@@ -25,9 +25,6 @@
   `var(--form-label-focus-color, var(--form-label-base-foreground))`, and
   FormField.module.css's `.root:focus-within` assigns that variable -- the indirection that lets
   colour reach a label that precedes the input in the DOM, where no sibling combinator could.
-
-  Fonts: --font-family-archivo, repointed at the theme's loaded body font by
-  snippets/design-system-bridge.liquid.
 {%- endcomment -%}
 {% liquid
   assign label_is_required = true
@@ -45,31 +42,42 @@
   assign default_optional_text = 'mionas.form.optional' | t
 %}
 {%- if text != blank -%}
-  <label class="{{ label_classes }}"{% if for != blank %} for="{{ for }}"{% endif %}>
+  {%- capture label_content -%}
     {{- text -}}
     {%- unless label_is_required -%}
       <span class="mionas-form-label__optional"> ({{ optional_text | default: default_optional_text }})</span>
     {%- endunless -%}
-  </label>
+  {%- endcapture -%}
+  {%- capture label_attributes -%}{% if for != blank %}for="{{ for }}"{% endif %}{%- endcapture -%}
+  {%- render 'mionas-text',
+    content: label_content,
+    variant: 'label',
+    color: 'inherit',
+    transform: 'uppercase',
+    tag: 'label',
+    class: label_classes,
+    attributes: label_attributes
+  -%}
 {%- else -%}
-  <span class="{{ label_classes }} mionas-form-label--placeholder" aria-hidden="true">&nbsp;</span>
+  {%- assign placeholder_classes = label_classes | append: ' mionas-form-label--placeholder' -%}
+  {%- render 'mionas-text',
+    content: '&nbsp;',
+    variant: 'label',
+    color: 'inherit',
+    tag: 'span',
+    class: placeholder_classes,
+    attributes: 'aria-hidden="true"'
+  -%}
 {%- endif -%}
 
 {% stylesheet %}
-  /* FormLabel.module.css .root, plus Text's role="label" scale which FormLabel.tsx gets from
-     rendering <Text as="label" role="label">. */
-  .mionas-form-label {
+  /* FormLabel.module.css .root. Size, weight, tracking and case come from Text's label variant. */
+  .text-role.mionas-form-label {
     padding-left: var(--form-label-base-padding);
     color: var(--form-label-focus-color, var(--form-label-base-foreground));
-    text-transform: uppercase;
-    font-family: var(--font-family-archivo);
-    font-size: var(--text-role-label-font-size);
-    line-height: var(--text-role-label-line-height);
-    font-weight: var(--text-role-label-font-weight);
-    letter-spacing: var(--text-role-label-letter-spacing);
   }
 
-  .mionas-form-label--error {
+  .text-role.mionas-form-label--error {
     color: var(--form-label-state-error-foreground);
   }
 

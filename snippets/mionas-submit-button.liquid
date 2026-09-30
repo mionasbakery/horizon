@@ -28,15 +28,11 @@
 -%}
 <button type="submit" class="{{ submit_classes }}">{{- label -}}</button>
 {%- if note != blank -%}
-  <p class="mionas-submit-button__note">{{ note }}</p>
+  {%- render 'mionas-text', content: note, variant: 'label', color: 'secondary', class: 'mionas-submit-button__note' -%}
 {%- endif -%}
 
 {% stylesheet %}
-  /* Secondary body text, so this spends Card's description token rather than a form-label one. */
   .mionas-submit-button__note {
-    margin: 0;
-    color: var(--card-description-foreground);
-    font-size: var(--font-size-13);
     text-align: center;
   }
 {% endstylesheet %}

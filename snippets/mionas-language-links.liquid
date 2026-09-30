@@ -13,7 +13,7 @@
   reads a value from an HTMLSelectElement), so this works without touching assets/localization.js.
 
   Each button renders through snippets/mionas-link.liquid (tag: 'button') so the label draws on
-  Link.tsx's own variant/size tokens instead of a free-form color/font-size pair -- the current
+  Link.tsx's own variant tokens instead of a free-form color/font-size pair -- the current
   language still needs its own not-a-link opacity/underline state, kept in this file's stylesheet.
 {%- endcomment -%}
 {% liquid
@@ -63,9 +63,6 @@
   }
 
   .mionas-language-links .mionas-link {
-    /* mionas-link's body variant is 16px, sized for running text -- too large next to the
-       12px footer-copyright/footer-policy-list text this row sits beside, so this overrides it. */
-    font-size: 0.75rem;
     opacity: 0.65;
   }
 

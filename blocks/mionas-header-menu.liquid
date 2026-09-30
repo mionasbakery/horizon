@@ -925,14 +925,11 @@
     object-fit: cover;
   }
 
-  /* MegaMenuItem.tsx renders its label at the body variant and overrides only weight and colour,
-     from its own tokens. The 600 weight is one of the Archivo faces the theme already loads. */
-  .mionas-header-menu-panel__label {
+  /* MegaMenuItem.tsx renders its label through Text's body variant and overrides only weight and
+     colour, from its own tokens. The 600 weight is one of the Archivo faces the theme already loads. */
+  .text-role.mionas-header-menu-panel__label {
     min-width: 0;
-    font-size: var(--text-role-body-font-size);
-    line-height: var(--text-role-body-line-height);
     font-weight: var(--mega-menu-item-label-font-weight);
-    letter-spacing: var(--text-role-body-letter-spacing);
     color: var(--mega-menu-item-label-foreground);
   }
 

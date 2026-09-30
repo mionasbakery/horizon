@@ -828,7 +828,7 @@
           "type": "mionas-policy-links",
           "name": "Mionas: Policy Links",
           "settings": {
-            "color": "inverse-primary-muted", "variant": "body"
+            "color": "inverse-primary-muted", "variant": "label"
           },
           "blocks": {}
         },
@@ -836,7 +836,7 @@
           "type": "mionas-language-links",
           "name": "Mionas: Language Links",
           "settings": {
-            "color": "inverse-primary-muted", "variant": "body"
+            "color": "inverse-primary-muted", "variant": "label"
           },
           "blocks": {}
         }

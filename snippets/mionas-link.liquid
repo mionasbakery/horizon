@@ -9,7 +9,8 @@
   @param {string} [tag] - "a" (default) or "button".
   @param {string} [link] - href, used only when tag is "a". Blank renders a disabled, non-interactive link.
   @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer". Used only when tag is "a".
-  @param {string} [attributes] - Raw extra attributes for the <button> tag, including "type" -- this snippet doesn't default it. Caller-controlled only -- never pass merchant free text through here.
+  @param {string} [attributes] - Raw extra attributes, such as aria-current, or "type" on a <button> -- this snippet doesn't default it. Caller-controlled only -- never pass merchant free text through here.
+  @param {string} [class] - Extra classes for the caller's own overrides.
   @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
 
   @example
@@ -47,16 +48,20 @@
   if text_wrap == 'nowrap'
     assign classes = classes | append: ' mionas-link--nowrap'
   endif
+  if class != blank
+    assign classes = classes | append: ' ' | append: class
+  endif
 -%}
 {%- capture link_attributes -%}
-  {%- if resolved_tag == 'button' -%}
-    {{ attributes }}
-  {%- elsif link == blank -%}
-    role="link" aria-disabled="true"
-  {%- else -%}
-    href="{{ link }}"
-    {%- if open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif -%}
+  {%- if resolved_tag == 'a' -%}
+    {%- if link == blank -%}
+      role="link" aria-disabled="true"
+    {%- else -%}
+      href="{{ link }}"
+      {%- if open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif -%}
+    {%- endif -%}
   {%- endif -%}
+  {%- if attributes != blank %} {{ attributes }}{% endif -%}
 {%- endcapture -%}
 {%- capture link_content -%}
   {%- if icon != blank and icon != 'none' -%}

@@ -57,10 +57,9 @@ export const EXPECTED_TOKENS = {
   // every component's own. Pinning those here would assert a literal against a var() and fail.
   "--font-family-archivo": "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif",
   "--font-family-oswald": "Oswald, 'Arial Narrow', sans-serif",
-  // Link: the weight is spent by snippets/mionas-link.liquid and snippets/mionas-breadcrumbs.liquid,
-  // the sm size by the breadcrumbs.
+  // Link: the weight is spent by snippets/mionas-link.liquid, which the breadcrumbs and the footer
+  // links render.
   "--link-base-font-weight": "500",
-  "--link-size-sm-font-size": "15px",
   // Every "500" above is load-bearing beyond its own colour/size: snippets/design-system-bridge
   // .liquid emits an extra Archivo 500 @font-face solely because these tokens ask for a weight
   // none of the theme's four font settings load. Should the design system move any of them off
@@ -93,11 +92,12 @@ export const EXPECTED_TOKENS = {
   // --card-state-pressed-opacity IS spent, by assets/mionas-base.css's :active rule.
   "--card-state-pressed-opacity": "0.92",
   // Secondary body text, spent by blocks/mionas-contact-form.liquid's note and
-  // blocks/mionas-map.liquid's empty state. Card's own token rather than a borrowed --form-label-*
-  // one, since neither is a form label.
+  // blocks/mionas-divider.liquid. Card's own token rather than a borrowed --form-label-* one, since
+  // neither is a form label.
   "--card-description-foreground": "#687076",
-  // The foundation secondary-text colour, spent directly by blocks/mionas-price.liquid and
-  // snippets/mionas-breadcrumbs.liquid.
+  // The foundation secondary-text colour, spent by Text's secondary colour in
+  // snippets/mionas-text.liquid, which the breadcrumb separator, the map's empty state and the
+  // submit-button note render.
   "--text-color-secondary": "#687076",
   // Form surface, spent by the snippets/mionas-form*.liquid, mionas-text-field.liquid and
   // mionas-checkbox.liquid family (blocks/mionas-contact-form.liquid composes them and no longer
@@ -146,11 +146,10 @@ export const EXPECTED_TOKENS = {
   "--checkbox-checked-foreground": "#ffffff",
   "--checkbox-state-disabled-opacity": "0.5",
   "--checkbox-state-focused-border-color": "#0b078c",
-  // Completes the label and body variants. snippets/mionas-form-label.liquid and
-  // mionas-form-error.liquid spend the label sizes directly, because FormLabel.tsx and
-  // FormError.tsx both render <Text variant="label">, and mionas-checkbox's text label needs the
-  // body weight for the same reason (Checkbox.tsx renders it at variant="body"). The axes already
-  // pinned above are not repeated here; a duplicate key would silently shadow the earlier entry.
+  // Completes the label and body variants, which the form mirrors render through
+  // snippets/mionas-text.liquid: FormLabel.tsx and FormError.tsx render <Text variant="label">, and
+  // Checkbox.tsx renders its text label at variant="body". The axes already pinned above are not
+  // repeated here; a duplicate key would silently shadow the earlier entry.
   "--text-role-label-font-size": "13px",
   "--text-role-label-line-height": "18px",
   "--text-role-label-letter-spacing": "0.02em",
@@ -164,8 +163,8 @@ export const EXPECTED_TOKENS = {
   "--stamp-base-font-weight": "600",
   "--stamp-base-letter-spacing": "0.05em",
   "--stamp-base-text-transform": "uppercase",
-  // The three foundation font-size steps the theme spends raw, outside any role: form and figure
-  // fine print, the localization form, mionas-submit-button. The steps are named for their px value
+  // The three foundation font-size steps the theme spends raw, outside any role: the corporate
+  // form, figure and offer card fine print, and the localization form. The steps are named for their px value
   // now (--font-size-xs became --font-size-13), so the name asserts the value -- a --font-size-13
   // that stopped being 13px is worth failing the sync over in a way --font-size-xs never was.
   "--font-size-13": "13px",

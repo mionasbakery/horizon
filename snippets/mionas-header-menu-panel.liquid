@@ -121,7 +121,14 @@
               sizes: image_sizes
             -%}
           </span>
-          <span class="mionas-header-menu-panel__label">{{ link.title | escape }}</span>
+          {%- assign label_text = link.title | escape -%}
+          {%- render 'mionas-text',
+            content: label_text,
+            variant: 'body',
+            color: 'inherit',
+            tag: 'span',
+            class: 'mionas-header-menu-panel__label'
+          -%}
           {%- if is_drawer -%}
             <span class="svg-wrapper icon-caret mionas-header-menu-panel__caret" aria-hidden="true">
               {{- 'icon-caret.svg' | inline_asset_content -}}

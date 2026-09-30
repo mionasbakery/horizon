@@ -82,8 +82,19 @@
 <nav class="mionas-breadcrumbs" aria-label="{{ landmark_label }}">
   <ol class="mionas-breadcrumbs__list">
     <li class="mionas-breadcrumbs__item">
-      <a href="{{ routes.root_url }}" class="mionas-breadcrumbs__link">{{ home_label }}</a>
-      <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+      {%- render 'mionas-link',
+        content: home_label,
+        link: routes.root_url,
+        variant: 'body',
+        color: 'inherit',
+        class: 'mionas-breadcrumbs__link'
+      -%}
+      {%- render 'mionas-text',
+        content: '&rsaquo;',
+        color: 'secondary',
+        tag: 'span',
+        attributes: 'aria-hidden="true"'
+      -%}
     </li>
 
     {%- comment -%}
@@ -95,21 +106,43 @@
       {%- if ancestor_1_title != blank -%}
         <li class="mionas-breadcrumbs__item">
           {%- if ancestor_1_url == routes.root_url -%}
-            <span class="mionas-breadcrumbs__text">{{ ancestor_1_title }}</span>
+            {%- render 'mionas-text', content: ancestor_1_title, color: 'inherit', tag: 'span', class: 'mionas-breadcrumbs__text' -%}
           {%- else -%}
-            <a href="{{ ancestor_1_url }}" class="mionas-breadcrumbs__link">{{ ancestor_1_title }}</a>
+            {%- render 'mionas-link',
+              content: ancestor_1_title,
+              link: ancestor_1_url,
+              variant: 'body',
+              color: 'inherit',
+              class: 'mionas-breadcrumbs__link'
+            -%}
           {%- endif -%}
-          <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+          {%- render 'mionas-text',
+            content: '&rsaquo;',
+            color: 'secondary',
+            tag: 'span',
+            attributes: 'aria-hidden="true"'
+          -%}
         </li>
       {%- endif -%}
       {%- if ancestor_2_title != blank -%}
         <li class="mionas-breadcrumbs__item">
           {%- if ancestor_2_url == routes.root_url -%}
-            <span class="mionas-breadcrumbs__text">{{ ancestor_2_title }}</span>
+            {%- render 'mionas-text', content: ancestor_2_title, color: 'inherit', tag: 'span', class: 'mionas-breadcrumbs__text' -%}
           {%- else -%}
-            <a href="{{ ancestor_2_url }}" class="mionas-breadcrumbs__link">{{ ancestor_2_title }}</a>
+            {%- render 'mionas-link',
+              content: ancestor_2_title,
+              link: ancestor_2_url,
+              variant: 'body',
+              color: 'inherit',
+              class: 'mionas-breadcrumbs__link'
+            -%}
           {%- endif -%}
-          <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+          {%- render 'mionas-text',
+            content: '&rsaquo;',
+            color: 'secondary',
+            tag: 'span',
+            attributes: 'aria-hidden="true"'
+          -%}
         </li>
       {%- endif -%}
     {%- endif -%}
@@ -122,25 +155,50 @@
       {%- when 'product' -%}
         {%- if collection != blank and collection.url != ancestor_1_url and collection.url != ancestor_2_url -%}
           <li class="mionas-breadcrumbs__item">
-            <a href="{{ collection.url }}" class="mionas-breadcrumbs__link">{{ collection.title }}</a>
-            <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+            {%- render 'mionas-link',
+              content: collection.title,
+              link: collection.url,
+              variant: 'body',
+              color: 'inherit',
+              class: 'mionas-breadcrumbs__link'
+            -%}
+            {%- render 'mionas-text',
+              content: '&rsaquo;',
+              color: 'secondary',
+              tag: 'span',
+              attributes: 'aria-hidden="true"'
+            -%}
           </li>
         {%- endif -%}
       {%- when 'article' -%}
         {%- if blog != blank and blog.url != ancestor_1_url and blog.url != ancestor_2_url -%}
           <li class="mionas-breadcrumbs__item">
-            <a href="{{ blog.url }}" class="mionas-breadcrumbs__link">{{ blog.title }}</a>
-            <span class="mionas-breadcrumbs__separator" aria-hidden="true">&rsaquo;</span>
+            {%- render 'mionas-link',
+              content: blog.title,
+              link: blog.url,
+              variant: 'body',
+              color: 'inherit',
+              class: 'mionas-breadcrumbs__link'
+            -%}
+            {%- render 'mionas-text',
+              content: '&rsaquo;',
+              color: 'secondary',
+              tag: 'span',
+              attributes: 'aria-hidden="true"'
+            -%}
           </li>
         {%- endif -%}
     {%- endcase -%}
 
     <li class="mionas-breadcrumbs__item">
-      <a
-        href="{{ request.path }}"
-        class="mionas-breadcrumbs__link"
-        aria-current="page"
-      >{{ current_title }}</a>
+      {%- render 'mionas-link',
+        content: current_title,
+        link: request.path,
+        variant: 'body',
+        color: 'inherit',
+        class: 'mionas-breadcrumbs__link',
+        attributes: 'aria-current="page"'
+      -%}
     </li>
   </ol>
 </nav>
@@ -162,32 +220,23 @@
     gap: var(--breadcrumbs-base-gap);
   }
 
-  /* Family is --font-family-archivo, the design system's body primitive, repointed at the theme's
-     loaded body font by snippets/design-system-bridge.liquid. Breadcrumbs.module.css sets no
-     family of its own -- BreadcrumbLink inherits -- so this spends the primitive rather than
-     borrowing Link's component token for an element that isn't a Link. */
-  .mionas-breadcrumbs__link,
-  .mionas-breadcrumbs__text {
-    font-family: var(--font-family-archivo);
-    font-weight: var(--link-base-font-weight);
-    font-size: var(--link-size-sm-font-size);
-    text-decoration: none;
+  /* BreadcrumbLink.module.css. The type is Link's body variant; only the colours are the crumb's own.
+     .mionas-breadcrumbs__text is a menu ancestor with no page of its own, drawn like a crumb. */
+  .text-role.mionas-breadcrumbs__link,
+  .text-role.mionas-breadcrumbs__text {
     color: var(--breadcrumb-link-base-foreground);
   }
 
-  .mionas-breadcrumbs__link:hover {
-    text-decoration: underline;
+  .text-role.mionas-breadcrumbs__text {
+    font-weight: var(--link-body-font-weight);
+  }
+
+  .text-role.mionas-breadcrumbs__link:hover {
     color: var(--breadcrumb-link-state-hover-foreground);
   }
 
-  .mionas-breadcrumbs__link[aria-current='page'] {
+  .text-role.mionas-breadcrumbs__link[aria-current='page'] {
     color: var(--breadcrumb-link-state-active-foreground);
     font-weight: var(--breadcrumb-link-state-active-font-weight);
-  }
-
-  /* Mirrors Breadcrumbs.tsx rendering the separator as <Text variant="secondary">: only a colour
-     token, no font-size of its own -- the glyph inherits whatever size surrounds it. */
-  .mionas-breadcrumbs__separator {
-    color: var(--text-color-secondary);
   }
 {% endstylesheet %}
