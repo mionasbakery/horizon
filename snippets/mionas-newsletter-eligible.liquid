@@ -1,5 +1,7 @@
 {%- doc -%}
-  Prints true when this visitor may get a Mionas popup on this page, and false otherwise.
+  Prints true when this visitor may get the newsletter popup and this page may open it by itself,
+  page:{rule} when the visitor may get it but this page never opens it by itself, with {rule} the id
+  of the setting that hides it, and false when the visitor never gets it.
 
   @param {object} settings - The popup section's settings: audience, tester_emails, the hide_on_*
     checkboxes and hidden_pages_menu.
@@ -30,33 +32,58 @@
     assign eligible = false
   endif
 
+  assign page_hidden = false
+  assign page_rule = ''
   assign page_type = template.name
   if template.directory == 'customers'
     assign page_type = 'customers'
   endif
+  if request.page_type == 'policy'
+    assign page_type = 'policy'
+  endif
+  # Template suffixes, unlike handles, stay the same in every language.
   case page_type
     when 'index'
-      assign hidden_by_type = settings.hide_on_home
+      assign page_hidden = settings.hide_on_home
+      assign page_rule = 'hide_on_home'
     when 'product'
-      assign hidden_by_type = settings.hide_on_product
+      assign page_hidden = settings.hide_on_product
+      assign page_rule = 'hide_on_product'
     when 'collection', 'list-collections'
-      assign hidden_by_type = settings.hide_on_collection
+      assign page_hidden = settings.hide_on_collection
+      assign page_rule = 'hide_on_collection'
     when 'cart'
-      assign hidden_by_type = settings.hide_on_cart
+      assign page_hidden = settings.hide_on_cart
+      assign page_rule = 'hide_on_cart'
     when 'search'
-      assign hidden_by_type = settings.hide_on_search
+      assign page_hidden = settings.hide_on_search
+      assign page_rule = 'hide_on_search'
     when 'blog', 'article'
-      assign hidden_by_type = settings.hide_on_blog
+      if template.suffix == 'newsletter'
+        assign page_hidden = settings.hide_on_newsletter
+        assign page_rule = 'hide_on_newsletter'
+      else
+        assign page_hidden = settings.hide_on_blog
+        assign page_rule = 'hide_on_blog'
+      endif
     when 'page'
-      assign hidden_by_type = settings.hide_on_page
+      if template.suffix == 'contact' or template.suffix == 'contacto'
+        assign page_hidden = settings.hide_on_contact
+        assign page_rule = 'hide_on_contact'
+      else
+        assign page_hidden = settings.hide_on_page
+        assign page_rule = 'hide_on_page'
+      endif
     when 'customers'
-      assign hidden_by_type = settings.hide_on_account
-    else
-      assign hidden_by_type = false
+      assign page_hidden = settings.hide_on_account
+      assign page_rule = 'hide_on_account'
+    when 'policy'
+      assign page_hidden = settings.hide_on_policy
+      assign page_rule = 'hide_on_policy'
+    when '404'
+      assign page_hidden = settings.hide_on_404
+      assign page_rule = 'hide_on_404'
   endcase
-  if hidden_by_type
-    assign eligible = false
-  endif
 
   # Menu links store the resource itself, so each entry holds in every language, unlike a URL list:
   # Shopify translates handles. Two menu levels count; a blog also covers its articles.
@@ -73,39 +100,53 @@
       case current_link.type
         when 'frontpage_link'
           if page_type == 'index'
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'catalog_link'
           if page_type == 'collection' and collection.handle == 'all'
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'search_link'
           if page_type == 'search'
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'product_link'
           if page_type == 'product' and current_link.object.id == product.id
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'collection_link'
           if page_type == 'collection' and current_link.object.id == collection.id
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'page_link'
           if page_type == 'page' and current_link.object.id == page.id
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'blog_link'
           if blog and current_link.object.id == blog.id
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
         when 'article_link'
           if page_type == 'article' and current_link.object.id == article.id
-            assign eligible = false
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
           endif
       endcase
     endfor
   endfor
 
-  echo eligible
+  if eligible == false
+    echo 'false'
+  elsif page_hidden
+    echo 'page:' | append: page_rule
+  else
+    echo 'true'
+  endif
 -%}

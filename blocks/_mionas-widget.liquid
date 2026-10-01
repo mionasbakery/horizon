@@ -1,0 +1,104 @@
+{%- doc -%}
+  Renders the tab or bar that opens the newsletter popup, as a fixed block of
+  sections/mionas-newsletter-popup.liquid.
+
+  @param {string} popup_id - The id of the popup it opens.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {boolean} auto_open - The section's Open automatically setting.
+  @param {boolean} wait_for_consent - Whether it waits for the cookie banner answer before it shows.
+{%- enddoc -%}
+{%- liquid
+  assign widget_text = block.settings.text | escape
+  # With no automatic open there is no close to wait for, so the widget shows from the first page.
+  assign widget_show = block.settings.launcher
+  if auto_open == false
+    assign widget_show = 'always'
+  endif
+-%}
+
+{%- if block.settings.launcher != 'off' and widget_text != blank -%}
+  <script
+    src="{{ 'mionas-popup-widget.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'mionas-newsletter-widget.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+
+  {%- capture widget_content -%}
+    {%- render 'mionas-text', content: widget_text, variant: 'body', color: 'inverse-primary', tag: 'span' -%}
+  {%- endcapture -%}
+  {%- capture widget_attributes -%}
+    data-show="{{ widget_show }}" data-wait-for-consent="{{ wait_for_consent }}" {{ block.shopify_attributes }}
+  {%- endcapture -%}
+  {%- render 'mionas-popup-widget',
+    element: 'mionas-newsletter-widget',
+    popup_id: popup_id,
+    section_id: section_id,
+    position: block.settings.launcher_position,
+    vertical: block.settings.launcher_vertical,
+    label: widget_text,
+    content: widget_content,
+    attributes: widget_attributes
+  -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mionas: Widget",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A small tab that opens the popup. The visitor cannot close it. Once it shows, it stays on every page, also where the popup never opens by itself, until the visitor signs up. It never shows to the A/B control group or to subscribers."
+    },
+    {
+      "type": "select",
+      "id": "launcher",
+      "label": "Show newsletter widget",
+      "options": [
+        { "value": "off", "label": "Never (needs Open automatically)" },
+        { "value": "after_close", "label": "After the popup closes (needs Open automatically)" },
+        { "value": "always", "label": "Always" }
+      ],
+      "default": "after_close",
+      "info": "A tab on the bottom edge on desktop and a bar at the bottom on phones. After the popup closes shows it once the visitor has closed the popup one time. Always shows it from the first page. With Open automatically off, choose Always. Never then leaves no way to open the popup, and After the popup closes works like Always."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "info": "If empty, the widget does not show.",
+      "default": "10% descuento en tu primera compra",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "launcher_position",
+      "label": "Desktop position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "info": "On phones it is always a bar at the bottom.",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "launcher_vertical",
+      "label": "Desktop vertical position",
+      "options": [
+        { "value": "top", "label": "Top, under the header" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "bottom",
+      "info": "At the bottom right it can overlap the Shopify Inbox chat button.",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    }
+  ]
+}
+{% endschema %}

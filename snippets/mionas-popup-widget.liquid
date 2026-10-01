@@ -1,24 +1,22 @@
 {%- doc -%}
   Renders the widget that opens a Mionas popup: a tab on the page edge on desktop and a bar on the
-  bottom edge on phones. It ships hidden; assets/mionas-popup-widget.js shows it.
+  bottom edge on phones. It ships hidden; a script shows it.
 
+  @param {string} element - The custom element tag: mionas-popup-widget, or the tag of a subclass.
   @param {string} popup_id - The id of the popup it opens.
-  @param {string} show - always, or after_close to show it only once the popup was closed.
-  @param {number} reshow_days - Days before it shows again after its own close; 0 never shows it again.
   @param {string} section_id - The id of the rendering section, for the theme editor.
   @param {string} position - left or right, on desktop.
   @param {string} vertical - bottom or top, on desktop.
   @param {string} label - The accessible name of its open button.
-  @param {string} dismiss_label - The accessible name of its close button.
   @param {string} content - The visible content of its open button.
+  @param {string} [attributes] - Extra attributes for the custom element.
 {%- enddoc -%}
 
-<mionas-popup-widget
+<{{ element }}
   for="{{ popup_id }}"
   class="mionas-popup-widget mionas-popup-widget--{{ position }} mionas-popup-widget--{{ vertical }}"
-  data-show="{{ show }}"
-  data-reshow-days="{{ reshow_days }}"
   data-section-id="{{ section_id }}"
+  {{ attributes }}
   hidden
 >
   <button
@@ -36,17 +34,7 @@
       {{- content -}}
     </span>
   </button>
-  {%- assign close_icon = 'icon-close.svg' | inline_asset_content -%}
-  {%- render 'mionas-icon-button',
-    tag: 'button',
-    variant: 'inverse-ghost',
-    size: 'md',
-    svg: close_icon,
-    aria_label: dismiss_label,
-    attributes: 'type="button" on:click="/dismiss"',
-    class: 'mionas-popup-widget__close'
-  -%}
-</mionas-popup-widget>
+</{{ element }}>
 
 {% stylesheet %}
   /* A blue tab docked to the page edge inside the page margin on desktop, a bar on the bottom edge on
@@ -66,7 +54,6 @@
     display: flex;
     align-items: center;
     max-width: calc(100vw - 2 * var(--page-margin));
-    padding-inline-end: var(--space-xs);
     background: var(--brand-primary);
     color: var(--text-color-inverse-primary);
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -109,7 +96,7 @@
     display: flex;
     align-items: center;
     flex-grow: 1;
-    padding: var(--space-md) var(--space-2xs) var(--space-md) var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
     border: 0;
     background: transparent;
     color: inherit;
@@ -122,20 +109,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
-  }
-
-  /* Stretches the open button's hit area over the whole widget, padding included; the close button
-     sits above it. */
-  .mionas-popup-widget__open::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-
-  /* Above the open button's stretched hit area; .mionas-button already makes it position: relative. */
-  .mionas-popup-widget__close {
-    z-index: 1;
-    flex: none;
   }
 
   /* The theme's focus ring is brand blue, which vanishes on this blue surface. */
@@ -178,7 +151,7 @@
     }
 
     .mionas-popup-widget .mionas-popup-widget__open {
-      padding-inline-start: var(--page-margin);
+      padding-inline: var(--page-margin);
     }
   }
 

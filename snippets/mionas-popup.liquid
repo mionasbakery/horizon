@@ -1,13 +1,11 @@
 {%- doc -%}
   Renders a Mionas popup: a dialog on desktop and a bottom sheet with a handle on phones. It ships
-  closed; assets/mionas-popup.js, or a script that extends it, opens it.
+  closed; the caller's scripts open it.
 
   @param {string} element - The custom element tag: mionas-popup-component, or the tag of a subclass.
   @param {string} id - The element id, which other parts use to find the popup.
-  @param {string} storage_key - The key that holds this popup's memory in the visitor's browser.
   @param {string} section_id - The id of the rendering section, for the theme editor.
-  @param {object} settings - The section settings: auto_open, delay_seconds, wait_for_interaction,
-    exit_intent, scroll_depth, reshow_days, audience, image and the padding-* settings.
+  @param {object} settings - The settings with the image and the padding-* settings.
   @param {string} label - The dialog's accessible name until a heading in the content names it.
   @param {string} close_label - The accessible name of the close button and the handle.
   @param {string} content - The dialog content.
@@ -19,15 +17,7 @@
 <{{ element }}
   id="{{ id }}"
   class="mionas-popup"
-  data-storage-key="{{ storage_key }}"
   data-section-id="{{ section_id }}"
-  data-auto-open="{{ settings.auto_open }}"
-  data-delay="{{ settings.delay_seconds }}"
-  data-wait-for-interaction="{{ settings.wait_for_interaction }}"
-  data-exit-intent="{{ settings.exit_intent }}"
-  data-scroll-depth="{{ settings.scroll_depth }}"
-  data-reshow-days="{{ settings.reshow_days }}"
-  data-audience="{{ settings.audience }}"
   {{ attributes }}
 >
   <dialog

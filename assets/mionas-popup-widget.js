@@ -1,22 +1,21 @@
 import { Component } from '@theme/component';
 import { onAnimationEnd } from '@theme/utilities';
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 /**
  * The tab or bar that opens the Mionas popup named by its `for` attribute. It knows the popup only
- * through the popup's public API and events, and the popup works without it.
+ * through the popup's public API and events, and the popup works without it. It has no close
+ * control; the caller's scripts decide when it shows through show() and hide().
  */
-class MionasPopupWidget extends Component {
+export class MionasPopupWidget extends Component {
   /** @type {any} */
   #popup = null;
-  /** @type {any} */
-  #store = null;
   /** @type {ResizeObserver | undefined} */
   #observer;
   #listeners = new AbortController();
   /** Set while the popup is open, so a slide-out that ends after a quick close does not cover the widget. */
   #popupOpen = false;
+  /** Set by show() and cleared by hide(), so a popup close uncovers only a widget that was shown. */
+  #shown = false;
 
   connectedCallback() {
     super.connectedCallback();
@@ -50,50 +49,33 @@ class MionasPopupWidget extends Component {
     this.#popup?.open({ source: 'launcher' });
   };
 
-  dismiss = () => {
-    this.#slide('out', () => (this.hidden = true));
-    if (window.Shopify?.designMode) return;
-    this.#store?.write({ dismissedAt: Date.now() });
-    this.dispatchEvent(new CustomEvent('mionas-popup-widget:dismiss', { bubbles: true }));
-  };
+  /** Shows the widget; while the popup is open, it shows when the popup closes. */
+  show() {
+    this.#shown = true;
+    if (this.#popupOpen || !this.hidden) return;
+    this.hidden = false;
+    this.#slide('in');
+  }
+
+  hide() {
+    this.#shown = false;
+    this.hidden = true;
+  }
+
+  /**
+   * Runs once the widget found its popup. A subclass decides here when the widget shows.
+   * @param {any} popup
+   */
+  popupConnected(popup) {}
 
   /** @param {any} popup */
   #attach(popup) {
     this.#popup = popup;
-    this.#store = popup.createStore('widget');
 
     const { signal } = this.#listeners;
     popup.addEventListener('mionas-popup:open', this.#onOpen, { signal });
     popup.addEventListener('mionas-popup:close', this.#onClose, { signal });
-    popup.addEventListener('mionas-popup:complete', () => (this.hidden = true), { signal });
-
-    if (window.Shopify?.designMode) return;
-    const showNow = this.dataset.show === 'always' || popup.dataset.autoOpen !== 'true' || popup.closedBefore;
-    if (!(showNow && this.#follows())) return;
-
-    // A popup that opens on load, after a signup reload, opens in a frame queued before this one; the
-    // widget then stays hidden, since a slide-out mid slide-in would jump back to the resting place.
-    requestAnimationFrame(() => {
-      if (this.#popupOpen) return;
-      this.hidden = false;
-      this.#slide('in');
-    });
-  }
-
-  /** Whether the widget belongs on the page now: never in the editor's automatic flow, for a popup this visitor cannot get, or within its reshow days. */
-  #follows() {
-    const popup = this.#popup;
-    return Boolean(!window.Shopify?.designMode && popup?.available && !popup.completed && !this.#dismissed());
-  }
-
-  /** Whether a close of the widget still hides it; 0 days hides it for good. */
-  #dismissed() {
-    // Before the widget had its own key, its close was stored in the popup's.
-    const dismissedAt = this.#store?.read()?.dismissedAt ?? this.#popup?.store?.read()?.widgetDismissedAt;
-    if (!dismissedAt) return false;
-
-    const reshowDays = Number(this.dataset.reshowDays) || 0;
-    return reshowDays === 0 || Date.now() - dismissedAt < reshowDays * DAY_MS;
+    this.popupConnected(popup);
   }
 
   /** Slides the widget out, then covers it: still laid out, so the page padding under it keeps its height. */
@@ -109,7 +91,7 @@ class MionasPopupWidget extends Component {
   #onClose = () => {
     this.#popupOpen = false;
     this.removeAttribute('data-covered');
-    if (!this.#follows()) return;
+    if (!this.#shown) return;
 
     this.hidden = false;
     this.#slide('in');
@@ -130,7 +112,9 @@ class MionasPopupWidget extends Component {
 
   /** @param {CustomEvent} event */
   #onEditorSelect = (event) => {
-    if (event.detail?.sectionId === this.dataset.sectionId) this.hidden = false;
+    if (event.detail?.sectionId !== this.dataset.sectionId) return;
+    // A selected block outside the widget is part of the popup, which the widget would sit behind.
+    this.hidden = event.type === 'shopify:block:select' && !this.contains(/** @type {Node} */ (event.target));
   };
 
   /** @param {CustomEvent} event */
