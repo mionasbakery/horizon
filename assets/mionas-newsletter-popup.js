@@ -193,8 +193,9 @@ class MionasNewsletterPopup extends MionasPopup {
 
     this.addEventListener('mionas-popup:open', this.#onOpen);
     this.addEventListener('mionas-popup:close', this.#onClose);
+    this.addEventListener('submit', this.#onSubmit);
 
-    const outcome = this.#submitOutcome();
+    const outcome = this.#takeOwnPost() ? this.#submitOutcome() : null;
     if (outcome === 'success') {
       this.debug('signup succeeded');
       this.#track('subscribed');
@@ -213,7 +214,7 @@ class MionasNewsletterPopup extends MionasPopup {
     if (stored.state === 'subscribed') {
       this.debug('subscribed earlier');
       this.complete();
-    } else if (this.#otherSignupSucceeded()) {
+    } else if (document.querySelector('.mionas-email-signup__success')) {
       this.debug('signup succeeded in another form on this page');
       this.complete();
     }
@@ -332,9 +333,36 @@ class MionasNewsletterPopup extends MionasPopup {
     }
   };
 
+  get #postedKey() {
+    return `${this.dataset.storageKey ?? this.id}-posted`;
+  }
+
   /**
-   * Reads this popup's own signup block after a submit reload. The block renders its success banner
-   * or field error only for its own form, so no URL parsing is needed.
+   * Marks a post from this popup's form, since the customer endpoint gives every signup on the page
+   * the same result. It ignores defaultPrevented, because Shopify's captcha can cancel the submit
+   * and post the form itself; invalid forms never get here, since the validation script stops them.
+   */
+  #onSubmit = () => {
+    try {
+      sessionStorage.setItem(this.#postedKey, '1');
+    } catch {
+      // Without the mark the popup stays closed after its post, and the block shows the result in place.
+    }
+  };
+
+  /** @returns {boolean} True once, on the page load after this popup's own post. */
+  #takeOwnPost() {
+    try {
+      const posted = sessionStorage.getItem(this.#postedKey) === '1';
+      sessionStorage.removeItem(this.#postedKey);
+      return posted;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Reads this popup's own signup block after its own post.
    * @returns {'success' | 'error' | null}
    */
   #submitOutcome() {
@@ -343,14 +371,10 @@ class MionasNewsletterPopup extends MionasPopup {
     return null;
   }
 
-  #otherSignupSucceeded() {
-    return [...document.querySelectorAll('.mionas-email-signup__success')].some((element) => !this.contains(element));
-  }
-
   #showSuccess() {
-    const banner = this.querySelector('.mionas-email-signup__success');
+    const title = this.querySelector('.mionas-email-signup__success .mionas-form-success__title');
     const heading = this.refs.successView.querySelector('h2');
-    if (banner && heading) heading.textContent = banner.textContent.trim();
+    if (title && heading) heading.textContent = title.textContent.trim();
 
     this.refs.formView.hidden = true;
     this.refs.successView.hidden = false;

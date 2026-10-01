@@ -30,9 +30,9 @@
   No consent checkbox: Shopify records nothing from a client-side checkbox, so `consent_text` (fine
   print linking to the privacy policy) is the auditable equivalent.
 
-  The multi-instance guard below is confirmed on the contact endpoint but unverified on this
-  block's customer endpoint. Written as if it holds; if it doesn't, two signups on one page both
-  show the same message on submit, same as the native block.
+  The customer endpoint leaves form.id blank, so the multi-instance guard below matches every
+  signup on the page and all of them show the post's result, same as the native block.
+  assets/mionas-newsletter-popup.js tells its own post apart in the browser.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -99,20 +99,16 @@
       assign email_value = form.email
     %}
 
+    {%- assign signup_posted = false -%}
     {%- if form.posted_successfully? and form_matches -%}
-      {%- comment -%}
-        A banner above the fields, which stay in place -- matches blocks/mionas-form.liquid and
-        keeps the block editable in the theme editor after a test submit.
-
-        autofocus is load-bearing: after a post the page is a fresh document with focus on <body>,
-        so moving focus here is what makes a screen reader announce success.
-      {%- endcomment -%}
-      <div class="mionas-email-signup__success" tabindex="-1" autofocus>
-        {{- 'icon-checkmark.svg' | inline_asset_content -}}
-        {{ block_settings.success_text }}
-      </div>
-    {%- endif -%}
-
+      {%- assign signup_posted = true -%}
+      {%- render 'mionas-form-success', title: block_settings.success_text, class: 'mionas-email-signup__success' -%}
+      <script>
+        try {
+          localStorage.setItem('mionas-newsletter-subscribed', '1');
+        } catch {}
+      </script>
+    {%- else -%}
     {%- capture email_field_markup -%}
       {%- comment -%}
         The data-* attributes are each password manager's opt-out: this field is not a login, and
@@ -177,7 +173,25 @@
         class: 'mionas-email-signup__consent'
       -%}
     {%- endif -%}
+    {%- endif -%}
   {%- endform -%}
+
+  {%- if block_settings.hide_section_for_subscribers and signup_posted == false and request.design_mode == false -%}
+    {%- comment -%}
+      Inline and at the end of the block, so the section hides as the page parses, before it paints.
+      The browser mark covers visitors who are not logged in; it stays in the browser where they
+      signed up.
+    {%- endcomment -%}
+    <script>
+      (() => {
+        let subscribed = {{ customer.accepts_marketing | default: false | json }};
+        try {
+          subscribed ||= localStorage.getItem('mionas-newsletter-subscribed') === '1';
+        } catch {}
+        if (subscribed) document.currentScript.closest('.shopify-section')?.style.setProperty('display', 'none');
+      })();
+    </script>
+  {%- endif -%}
 </div>
 
 {% stylesheet %}
@@ -223,13 +237,6 @@
      padding above the input. Browsers without text-box support keep that space. */
   .mionas-email-signup .mionas-form-label {
     text-box: trim-end cap alphabetic;
-  }
-
-  .mionas-email-signup__success {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-md);
   }
 
   /* No design-system token for muted fine print, so this dims the default role colour directly. */
@@ -350,6 +357,13 @@
       "id": "success_text",
       "label": "Success message",
       "default": "¡Gracias! Ya estás suscrito."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_section_for_subscribers",
+      "label": "Hide the section for subscribers",
+      "default": false,
+      "info": "Hides the whole section that holds this form from logged-in customers who accept marketing, and from visitors who signed up in this browser. The theme editor always shows it."
     },
     {
       "type": "text",

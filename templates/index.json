@@ -783,6 +783,7 @@
                 "submit_size": "md",
                 "field_surface": true,
                 "success_text": "¡Gracias! Ya estás suscrito.",
+                "hide_section_for_subscribers": true,
                 "customer_tag": "newsletter-home",
                 "consent_text": "",
                 "field_gap": 16,

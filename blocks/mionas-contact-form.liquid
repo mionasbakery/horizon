@@ -71,25 +71,7 @@
     %}
 
     {%- if form.posted_successfully? and form_matches -%}
-      <div class="mionas-contact-form__success" tabindex="-1" autofocus>
-        <span class="mionas-contact-form__success-icon">
-          {{- 'icon-checkmark.svg' | inline_asset_content -}}
-        </span>
-        {%- render 'mionas-text',
-          content: block_settings.success_title,
-          variant: 'title',
-          tag: 'p',
-          class: 'mionas-contact-form__success-title'
-        -%}
-        {%- if block_settings.success_text != blank -%}
-          {%- render 'mionas-text',
-            content: block_settings.success_text,
-            variant: 'body',
-            tag: 'p',
-            class: 'mionas-contact-form__success-text'
-          -%}
-        {%- endif -%}
-      </div>
+      {%- render 'mionas-form-success', title: block_settings.success_title, text: block_settings.success_text -%}
     {%- else -%}
     {%- capture contact_form_fields -%}
       {%- if block_settings.show_name -%}
@@ -196,38 +178,6 @@
     width: auto;
     margin-inline: calc(-1 * var(--card-base-padding));
     padding-inline: var(--card-base-padding);
-  }
-
-  .mionas-contact-form__success {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-xs);
-    text-align: center;
-    padding-block: var(--space-md);
-  }
-
-  /* No design-system token for success green -- deliberate one-off. */
-  .mionas-contact-form__success-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px;
-    height: 56px;
-    margin-bottom: var(--space-2xs);
-    border-radius: 50%;
-    background: #4a7c59;
-    color: var(--color-white, #fff);
-  }
-
-  .mionas-contact-form__success-icon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  /* Higher specificity than .text-role--<color> so the muted colour always wins. */
-  .text-role.mionas-contact-form__success-text {
-    color: var(--card-description-foreground);
   }
 {% endstylesheet %}
 
