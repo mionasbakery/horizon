@@ -1,38 +1,89 @@
 {%- doc -%}
-  Renders stamp text: a label role in the Stamp face, sized, coloured and padded by a stamp block's settings.
+  Renders stamp text in the Stamp face at a Text variant's size, coloured and padded by a stamp block's settings.
 
   @param {string} content - Inline HTML to show. Emitted unfiltered; callers sanitise it.
-  @param {object} settings - The calling block's settings: size, variant, tag and padding-*.
+  @param {object} [settings] - The calling block's settings: size, variant, tag and padding-*.
+  @param {string} [size] - A Text variant whose font-size and line-height the stamp takes, e.g. body, for a caller with no block settings; wins over settings.size.
+  @param {string} [color] - Text colour variant for a caller with no block settings; wins over settings.variant.
+  @param {string} [tag] - Element for a caller with no block settings; wins over settings.tag.
   @param {string} [shopify_attributes] - The calling block's block.shopify_attributes.
 {%- enddoc -%}
 {%- comment -%}
-  settings.variant is the stamp's Color setting, not Text's band -- the id stayed `variant` to avoid
-  re-migrating existing stored settings like footer-group.json's.
+  settings.variant is the stamp's Color setting, not Text's variant -- the id stayed `variant` to avoid
+  re-migrating existing stored settings like footer-group.json's. A size that is not one of the
+  variants below falls back to Stamp.tsx's default.
 {%- endcomment -%}
-{%- assign size = settings.size | default: 'lg' -%}
+{%- liquid
+  assign size = size | default: settings.size
+  assign allowed_sizes = 'display|heading|subheading|title|lead|body|label|note' | split: '|'
+  unless allowed_sizes contains size
+    assign size = 'heading'
+  endunless
+  assign color = color | default: settings.variant
+  assign tag = tag | default: settings.tag
+  assign stamp_class = 'mionas-stamp mionas-stamp--' | append: size | append: ' spacing-style'
+-%}
 {%- capture stamp_style -%}
-  {%- render 'spacing-style', settings: settings -%}
+  {%- if settings -%}{%- render 'spacing-style', settings: settings -%}{%- endif -%}
 {%- endcapture -%}
 {%- render 'mionas-text',
   content: content,
   variant: 'label',
-  size: size,
-  color: settings.variant,
-  tag: settings.tag,
-  class: 'mionas-stamp spacing-style',
+  color: color,
+  tag: tag,
+  class: stamp_class,
   style: stamp_style,
   shopify_attributes: shopify_attributes
 -%}
 
 {% stylesheet %}
-  /* The selector is two classes deep on purpose, same as .text-role.mionas-price: a single-class
-     selector would tie in specificity with .text-role--<role> and leave the winner to bundle order.
-     Font-size, line-height and color are deliberately absent -- they must come from the
-     .text-role--label-<size>/--<variant> classes the Size/Color settings pick. */
+  /* Two classes deep on purpose, same as .text-role.mionas-price: a single-class selector would tie
+     in specificity with the .text-role--label role underneath and leave the winner to bundle
+     order. Color is deliberately absent -- it must come from the .text-role--<variant> class. */
   .text-role.mionas-stamp {
     font-family: var(--stamp-base-font-family);
     font-weight: var(--stamp-base-font-weight);
     letter-spacing: var(--stamp-base-letter-spacing);
     text-transform: var(--stamp-base-text-transform);
+  }
+
+  .text-role.mionas-stamp--display {
+    font-size: var(--stamp-size-display-font-size);
+    line-height: var(--stamp-size-display-line-height);
+  }
+
+  .text-role.mionas-stamp--heading {
+    font-size: var(--stamp-size-heading-font-size);
+    line-height: var(--stamp-size-heading-line-height);
+  }
+
+  .text-role.mionas-stamp--subheading {
+    font-size: var(--stamp-size-subheading-font-size);
+    line-height: var(--stamp-size-subheading-line-height);
+  }
+
+  .text-role.mionas-stamp--title {
+    font-size: var(--stamp-size-title-font-size);
+    line-height: var(--stamp-size-title-line-height);
+  }
+
+  .text-role.mionas-stamp--lead {
+    font-size: var(--stamp-size-lead-font-size);
+    line-height: var(--stamp-size-lead-line-height);
+  }
+
+  .text-role.mionas-stamp--body {
+    font-size: var(--stamp-size-body-font-size);
+    line-height: var(--stamp-size-body-line-height);
+  }
+
+  .text-role.mionas-stamp--label {
+    font-size: var(--stamp-size-label-font-size);
+    line-height: var(--stamp-size-label-line-height);
+  }
+
+  .text-role.mionas-stamp--note {
+    font-size: var(--stamp-size-note-font-size);
+    line-height: var(--stamp-size-note-line-height);
   }
 {% endstylesheet %}

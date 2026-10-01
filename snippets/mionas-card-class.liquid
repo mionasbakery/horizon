@@ -1,0 +1,70 @@
+{%- doc -%}
+  Builds the class list for a ../design-system/src/components/Card/Card.tsx surface and ships its CSS.
+
+  @param {string} [variant] - default, outline, plain or note. Anything else falls back to default.
+  @param {boolean} [interactive] - Adds the pressed state, for a card that is a link.
+
+  @example
+  <div class="{% render 'mionas-card-class', variant: 'outline' %} my-block__surface">
+{%- enddoc -%}
+{%- comment -%}
+  The one home of the card surface. blocks/mionas-card.liquid and every form or row that sits on a
+  card render these classes, so a new Card variant reaches all of them at once. Padding is left to
+  each caller: the Card block takes it from its Padding settings, the forms from --card-base-padding.
+{%- endcomment -%}
+{%- liquid
+  assign allowed_variants = 'default|outline|plain|note' | split: '|'
+  assign resolved_variant = variant | default: 'default'
+  unless allowed_variants contains resolved_variant
+    assign resolved_variant = 'default'
+  endunless
+
+  assign classes = 'mionas-card'
+  unless resolved_variant == 'default'
+    assign classes = classes | append: ' mionas-card--' | append: resolved_variant
+  endunless
+  if interactive
+    assign classes = classes | append: ' mionas-card--interactive'
+  endif
+-%}
+{{- classes -}}
+
+{% stylesheet %}
+  /* Two classes deep so the surface beats Horizon's .border-style, which blocks/mionas-card.liquid
+     wears through snippets/mionas-group.liquid. A caller sets --mionas-card-background or
+     --mionas-card-radius inline to change one instance, such as a course row's own settings. */
+  .mionas-card.mionas-card {
+    background: var(--mionas-card-background, var(--card-base-background));
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--mionas-card-radius, var(--card-base-radius));
+    box-shadow: var(--card-base-shadow);
+    font-family: var(--card-base-font-family);
+    overflow: hidden;
+  }
+
+  .mionas-card.mionas-card--outline {
+    border-color: var(--card-outline-border-color);
+    box-shadow: none;
+  }
+
+  .mionas-card.mionas-card--plain {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .mionas-card.mionas-card--note {
+    background: var(--card-note-background);
+    border: none;
+    box-shadow: none;
+  }
+
+  .mionas-card--interactive {
+    cursor: pointer;
+  }
+
+  .mionas-card--interactive:active {
+    opacity: var(--card-state-pressed-opacity);
+  }
+{% endstylesheet %}

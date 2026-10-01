@@ -43,8 +43,3 @@ Use `mcp__jbcontext__*` semantic search to locate code when you don't know the n
 searches other repos, but indexes committed code, so confirm a hit still exists). Use `mcp__idea__*`
 to verify and change code you can name; it reads the working tree and needs the IDE open. A hook
 blocks Bash discovery (`find`, `grep`, `git log`) until a jbcontext search has run this session.
-
-## Superpowers skills
-
-- Never commit anything to git when following a superpowers skill — skip any commit steps entirely.
-- Ignore the superpowers:using-git-worktrees skill — never invoke it.

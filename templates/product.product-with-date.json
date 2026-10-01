@@ -295,8 +295,7 @@
           "name": "Mionas: Text",
           "settings": {
             "text": "<p>TAMBIÉN TE PUEDE GUSTAR</p>",
-            "variant": "headline",
-            "size": "md",
+            "variant": "heading",
             "color": "primary",
             "tag": "h2",
             "padding-block-start": 0,
@@ -386,7 +385,6 @@
                     "kind": "information",
                     "placement": "inline",
                     "corner": "top-left",
-                    "size": "label-sm",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -400,7 +398,6 @@
                   "settings": {
                     "text": "<p>{{ closest.product.title }}</p>",
                     "variant": "title",
-                    "size": "sm",
                     "color": "default",
                     "tag": "div",
                     "padding-block-start": 0,
@@ -415,7 +412,6 @@
                   "name": "Mionas: Price",
                   "settings": {
                     "variant": "title",
-                    "size": "sm",
                     "color": "default",
                     "show_compare_at_price": false,
                     "padding-block-start": 0,

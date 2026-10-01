@@ -2,7 +2,7 @@
   A row of inline policy links (e.g. "Privacy policy · Terms of service"), one per shop policy set
   under Settings > Policies.
 
-  @param {object} [settings] - Block settings: variant, size (see blocks/mionas-link.liquid)
+  @param {object} [settings] - Block settings: variant (see blocks/mionas-link.liquid)
   @param {string} [shopify_attributes] - block.shopify_attributes, for editor selection
 
   @example
@@ -13,6 +13,9 @@
   popover trigger button, which is the "menu" this is inlining. shop.policies is looped directly
   here for the same reason as mionas-language-links -- the set of policies is store-configured,
   not merchant-placed blocks, so a mionas-group of hand-added links would drift out of sync.
+
+  The links keep the variant's text weight: they are footer fine print, and the heavier link weight
+  made them stand out from it.
 {%- endcomment -%}
 {% if shop.policies.size > 0 %}
   <ul class="mionas-policy-links list-unstyled" role="list" {{ shopify_attributes }}>
@@ -33,8 +36,9 @@
           {% render 'mionas-link',
             content: policy_title,
             link: policy.url,
+            color: settings.color,
             variant: settings.variant,
-            size: settings.size
+            weight: 'text'
           %}
         </li>
       {%- endif -%}
@@ -48,12 +52,5 @@
     flex-wrap: wrap;
     gap: var(--space-xs, 8px) var(--space-sm, 16px);
     margin: 0;
-  }
-
-  /* Matches .mionas-language-links .mionas-link's override in snippets/mionas-language-links.liquid
-     -- mionas-link's sm/md tokens (15-16px) are sized for body links, too large next to the 12px
-     footer-copyright text this row sits beside. */
-  .mionas-policy-links .mionas-link {
-    font-size: 0.75rem;
   }
 {% endstylesheet %}

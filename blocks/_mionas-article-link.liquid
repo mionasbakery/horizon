@@ -24,7 +24,7 @@
     {{ block.shopify_attributes }}
   >
     <span class="mionas-article-link__label">
-      {%- render 'mionas-text', content: label, variant: 'label', size: 'md', color: 'default', tag: 'span' -%}
+      {%- render 'mionas-text', content: label, variant: 'label', color: 'default', tag: 'span' -%}
     </span>
     <svg class="mionas-article-link__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       {%- if is_newer -%}<path d="M9 6l6 6-6 6"/>{%- else -%}<path d="M15 6l-6 6 6 6"/>{%- endif -%}

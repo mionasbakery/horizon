@@ -30,6 +30,13 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "label": "Otros artículos"
+    },
+    "newsletter_popup": {
+      "label": "Newsletter",
+      "decline": "No, gracias",
+      "continue": "Seguir comprando",
+      "close": "Cerrar",
+      "dismiss_widget": "Cerrar aviso de la newsletter"
     }
   },
   "blocks": {

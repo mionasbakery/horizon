@@ -23,8 +23,8 @@
   content: block_settings.label,
   link: block_settings.link,
   open_in_new_tab: block_settings.open_in_new_tab,
+  color: block_settings.color,
   variant: block_settings.variant,
-  size: block_settings.size,
   icon: block_settings.icon,
   text_wrap: block_settings.text_wrap,
   shopify_attributes: block.shopify_attributes
@@ -54,24 +54,38 @@
     },
     {
       "type": "select",
-      "id": "variant",
-      "label": "Variant",
+      "id": "color",
+      "label": "Color",
       "options": [
+        { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
-        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" }
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" },
+        { "value": "inherit", "label": "Inherited" }
       ],
       "default": "primary"
     },
     {
       "type": "select",
-      "id": "size",
-      "label": "Size",
+      "id": "variant",
+      "label": "Variant",
       "options": [
-        { "value": "sm", "label": "Small" },
-        { "value": "md", "label": "Medium" }
+        { "value": "inherit", "label": "Inherited" },
+        { "value": "display", "label": "Display" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
-      "default": "md"
+      "default": "body",
+      "info": "Inherited takes its size from the surrounding text."
     },
     {
       "type": "select",

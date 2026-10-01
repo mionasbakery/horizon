@@ -23,7 +23,6 @@
   {%- render 'mionas-text',
     content: year_content,
     variant: block_settings.variant,
-    size: block_settings.size,
     color: block_settings.color,
     tag: tag,
     class: 'spacing-style',
@@ -47,12 +46,20 @@
           "label": "Display"
         },
         {
-          "value": "headline",
-          "label": "Headline"
+          "value": "heading",
+          "label": "Heading"
+        },
+        {
+          "value": "subheading",
+          "label": "Subheading"
         },
         {
           "value": "title",
           "label": "Title"
+        },
+        {
+          "value": "lead",
+          "label": "Lead"
         },
         {
           "value": "body",
@@ -61,31 +68,14 @@
         {
           "value": "label",
           "label": "Label"
+        },
+        {
+          "value": "note",
+          "label": "Note"
         }
       ],
       "default": "body",
-      "info": "The typography band, same as Text.tsx's `variant` prop."
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        {
-          "value": "lg",
-          "label": "Large"
-        },
-        {
-          "value": "md",
-          "label": "Medium"
-        },
-        {
-          "value": "sm",
-          "label": "Small"
-        }
-      ],
-      "default": "md",
-      "info": "The step within the Variant band."
+      "info": "Same as Text.tsx's `variant` prop."
     },
     {
       "type": "select",

@@ -1,15 +1,12 @@
 {%- doc -%}
-  Renders an uppercase eyebrow/kicker in the Stamp face (Oswald, wide tracking, uppercase).
+  Renders a short uppercase label in the Stamp face (Oswald, wide tracking): a tag, a category or a date.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Stamp/Stamp.tsx: an uppercase Oswald eyebrow that owns the
-  typeface, tracking and uppercasing a bundled `text-role` token can't carry. Everything else still
-  comes from Text -- Stamp.tsx renders `<Text variant="label" size={size}>`, so this block declares
-  no font-size, line-height or colour of its own; the Size setting just picks a label-band role.
-
-  Size defaults to `lg`, not Stamp.tsx's own `md`, matching every Stamp call site in the design
-  system and the stamps already live in this theme.
+  Mirrors ../design-system/src/components/Stamp/Stamp.tsx: an uppercase Oswald label at a Text
+  variant's font-size and line-height. The Size setting holds that variant; the id stayed `size` so
+  stored instances kept their key. A stamp above a display heading belongs in
+  blocks/mionas-heading-group.liquid instead.
 {%- endcomment -%}
 {%- assign block_settings = block.settings -%}
 {%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
@@ -40,12 +37,17 @@
       "id": "size",
       "label": "Size",
       "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
+        { "value": "display", "label": "Display" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
-      "default": "lg",
-      "info": "The label-band size the stamp renders at, the same ladder as Mionas: Text."
+      "default": "heading",
+      "info": "The stamp takes this text variant's size. Body suits a stamp above a heading, Label a date or tag in a row of meta text."
     },
     {
       "type": "select",
@@ -54,6 +56,7 @@
       "options": [
         { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
         { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
         { "value": "accent", "label": "Accent" },

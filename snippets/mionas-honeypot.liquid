@@ -1,0 +1,38 @@
+{%- doc -%}
+  Renders a hidden "Website" field that only bots fill. Render it inside a {% form %} tag that also
+  renders snippets/mionas-form.liquid with `validate: true`, whose script blocks a filled submit.
+{%- enddoc -%}
+{%- comment -%}
+  Off-screen rather than display: none, because bots skip fields a page hides outright. inert
+  removes it from the tab order and from screen readers, but the browser still posts it.
+
+  No real field uses the name contact[website]. The contact endpoint prints it in the merchant
+  email, so a bot that posts without running the script still shows there.
+{%- endcomment -%}
+<div class="mionas-honeypot" inert>
+  <label>
+    Website
+    <input
+      type="text"
+      name="contact[website]"
+      value=""
+      tabindex="-1"
+      autocomplete="off"
+      data-1p-ignore
+      data-lpignore="true"
+      data-bwignore
+      data-form-type="other"
+      data-protonpass-ignore="true"
+    >
+  </label>
+</div>
+
+{% stylesheet %}
+  .mionas-honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+{% endstylesheet %}

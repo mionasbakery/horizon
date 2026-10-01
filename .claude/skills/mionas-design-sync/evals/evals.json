@@ -42,6 +42,20 @@
         "blocks/mionas-text.liquid updated to --text-role-display-* with no stale --text-role-hero-* (a stale var() is silent)",
         "shopify theme check passes in the theme"
       ]
+    },
+    {
+      "id": 3,
+      "name": "drift-review-icon-button",
+      "prompt": "Sync the theme with the design system.",
+      "expected_output": "Runs the token sync, then the drift review over the design-system commits since the last sync. Finds that IconButton now composes Button with its eight variants and three sizes, and lists the drift: snippets/mionas-icon-button.liquid carries theme-only outline/outline-inverse variants and a single size, and the newsletter popup close and widget close buttons are lookalikes restating the look in local CSS. Reports one table with each element, its target design-system variant and size, and the visible effect, then waits for approval before changing pages.",
+      "files": [],
+      "assertions": [
+        "assets/design-tokens.css is byte-identical to ../design-system/dist/tokens.flat.css (synced verbatim, no hand edits)",
+        "the report names snippets/mionas-popup.liquid's close button and snippets/mionas-popup-widget.liquid's close button as lookalikes of IconButton",
+        "the report maps the theme-only outline/outline-inverse icon-button variants to design-system Button variants",
+        "the report lists the stored icon-button and social-link instances in templates/page.contacto.json and sections/footer-group.json",
+        "no block, snippet, section or template changed before the user approved the proposal"
+      ]
     }
   ]
 }

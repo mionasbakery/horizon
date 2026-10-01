@@ -12,8 +12,8 @@
 {% endcomment %}
 {%- comment -%}
   Archivo 500 (medium). The theme's four font settings only load Archivo at 400/600/800 (plus
-  font_modify'd bold), but several design-system tokens (links, buttons, the label text-role
-  band) need weight 500. With no 500 face available, CSS font matching silently falls back to
+  font_modify'd bold), but several design-system tokens (links, buttons, the label text
+  variant) need weight 500. With no 500 face available, CSS font matching silently falls back to
   400 -- no error, just wrong-looking text -- so this derives and emits the 500 face from the
   body font directly. Guarded because font_modify returns blank when a weight isn't in
   Shopify's library for that family.

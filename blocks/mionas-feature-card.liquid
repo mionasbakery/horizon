@@ -9,13 +9,8 @@
   No native Horizon block/section covers this, so it forks a new file per mionas-design-component's
   rule rather than reskinning.
 
-  FeatureCard.tsx composes Card + CardMedia + Box + Text, but none render here as separate blocks --
-  this reproduces their combined CSS directly, since the anatomy is fixed and Card's own
-  padding/max-width don't apply (FeatureCard.module.css overrides both to 0/none).
-
-  Family is --font-family-archivo, the design system's body primitive that
-  snippets/design-system-bridge.liquid repoints at the theme's loaded body font -- spent directly
-  since FeatureCard.module.css itself sets no family and just inherits it from Text.
+  FeatureCard.tsx composes Card, CardMedia, Box and Text. This renders the Card classes and Text, and
+  adds only what FeatureCard.module.css adds: the tile shape, the full-bleed media and the overlay.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -24,7 +19,7 @@
 {%- if block_settings.link != blank -%}
   <a
     href="{{ block_settings.link }}"
-    class="mionas-feature-card"
+    class="{% render 'mionas-card-class', interactive: true %} mionas-feature-card"
     {%- if block_settings.open_in_new_tab -%} target="_blank" rel="noopener noreferrer"{%- endif -%}
     {{ block.shopify_attributes }}
   >
@@ -37,10 +32,20 @@
     {%- endif -%}
     <div class="mionas-feature-card__overlay">
       {%- if block_settings.title != blank -%}
-        <p class="mionas-feature-card__title">{{ block_settings.title }}</p>
+        {%- render 'mionas-text',
+          content: block_settings.title,
+          variant: 'subheading',
+          color: 'inverse-primary',
+          transform: 'uppercase'
+        -%}
       {%- endif -%}
       {%- if block_settings.subtitle != blank -%}
-        <p class="mionas-feature-card__subtitle">{{ block_settings.subtitle }}</p>
+        {%- render 'mionas-text',
+          content: block_settings.subtitle,
+          variant: 'body',
+          color: 'inverse-primary',
+          class: 'mionas-feature-card__subtitle'
+        -%}
       {%- endif -%}
     </div>
   </a>
@@ -51,14 +56,8 @@
     position: relative;
     display: block;
     aspect-ratio: var(--feature-card-base-aspect-ratio);
-    border-radius: var(--card-base-radius);
-    overflow: hidden;
     text-decoration: none;
     color: inherit;
-  }
-
-  .mionas-feature-card:active {
-    opacity: var(--card-state-pressed-opacity);
   }
 
   .mionas-feature-card__media {
@@ -81,27 +80,8 @@
     background: var(--feature-card-base-background);
   }
 
-  /* Weight comes from the title-lg role, not a FeatureCard token -- the design system has none;
-     Text's title-lg band already carries the weight. Its tracking is 0 (not an omission). */
-  .mionas-feature-card__title {
-    margin: 0;
-    font-family: var(--font-family-archivo);
-    font-size: var(--text-role-title-lg-font-size);
-    line-height: var(--text-role-title-lg-line-height);
-    font-weight: var(--text-role-title-lg-font-weight);
-    letter-spacing: var(--text-role-title-lg-letter-spacing);
-    text-transform: uppercase;
-    color: var(--text-color-inverse-primary);
-  }
-
-  .mionas-feature-card__subtitle {
-    margin: 4px 0 0;
-    font-family: var(--font-family-archivo);
-    font-size: var(--text-role-body-md-font-size);
-    line-height: var(--text-role-body-md-line-height);
-    font-weight: var(--text-role-body-md-font-weight);
-    letter-spacing: var(--text-role-body-md-letter-spacing);
-    color: var(--text-color-inverse-primary);
+  .text-role.mionas-feature-card__subtitle {
+    margin-top: 4px;
     opacity: var(--feature-card-subtitle-opacity);
   }
 {% endstylesheet %}

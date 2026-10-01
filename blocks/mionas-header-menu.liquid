@@ -749,14 +749,9 @@
      No label-to-chevron gap token is spent: the icon box is already wider than the glyph it draws,
      so a gap token reads as too much space on screen. Check a future gap token against the
      rendered nav before adopting it. */
-  /* Top-level nav type pinned to the design system: the bar was rendering at 18px/800 (the
-     merchant's type_font_primary_size plus the heading role's weight); NavbarItem composes Link at
-     16px/500, so Link's tokens are the correct source, not a --navbar-item-* one.
-
-     The 500 weight has to be pinned in CSS, not the theme editor: the theme's four font settings
-     load 400/600/700/800 and no 500 -- snippets/design-system-bridge.liquid emits an extra Archivo
-     500 face for exactly this. Family is left untouched on --menu-top-level-font-family so Shopify
-     keeps hosting/preloading it; only size and weight move here.
+  /* Top-level nav type pinned to the design system: NavbarItem.tsx renders Link at the body variant
+     with its own 600 weight, so the size is body's and the weight is --navbar-item-base-font-weight.
+     600 is one of the Archivo faces the theme's font settings already load.
 
      Consequence: type_font_primary_size and type_font_primary_link no longer affect the desktop
      bar's size or weight (still drives family) -- an intended trade so the nav tracks the design
@@ -766,8 +761,8 @@
      font-size sits inside a media query, which adds no specificity, so a bare class would only tie
      and depend on source order. */
   .menu-list__list-item > .menu-list__link {
-    font-size: var(--link-size-md-font-size);
-    font-weight: var(--link-base-font-weight);
+    font-size: var(--text-role-body-font-size);
+    font-weight: var(--navbar-item-base-font-weight);
   }
 
   /* Centred, with no gap -- settled by eye against the rendered nav rather than derived: baseline
@@ -930,19 +925,11 @@
     object-fit: cover;
   }
 
-  /* Size, line-height and letter-spacing come from the caption type role; MegaMenuItem's label only
-     overrides weight and colour, so those two move here, now from MegaMenuItem's own tokens
-     (previously borrowed from Card, at the identical values).
-
-     Weight is a genuine change: label asks for 700, not the caption role's 500. Confirmed 700 is
-     one of the four Archivo weights already loaded (per snippets/design-system-bridge.liquid), so
-     it renders on a real face rather than a synthesised faux-bold. */
-  .mionas-header-menu-panel__label {
+  /* MegaMenuItem.tsx renders its label through Text's body variant and overrides only weight and
+     colour, from its own tokens. The 600 weight is one of the Archivo faces the theme already loads. */
+  .text-role.mionas-header-menu-panel__label {
     min-width: 0;
-    font-size: var(--text-role-label-lg-font-size);
-    line-height: var(--text-role-label-lg-line-height);
     font-weight: var(--mega-menu-item-label-font-weight);
-    letter-spacing: var(--text-role-label-lg-letter-spacing);
     color: var(--mega-menu-item-label-foreground);
   }
 
@@ -1046,8 +1033,8 @@
      re-imposes a ~48px min-height on this inert heading when drawer_dividers is on. A (0,3,0)
      selector here would only tie and fall back to unguaranteed source order; (0,4,0) wins outright. */
   /* MegaMenu's own heading, no longer a Stamp mirror: the design system moved this row off Stamp
-     to plain label-lg at MegaMenu's heading weight and colour, so it shares one band with the card
-     labels the rail ties it to. The family still comes from --mainlist's --menu-top-level-font-*
+     to the body variant at MegaMenu's heading weight and colour, so it shares one variant with the
+     card labels the rail ties it to. The family still comes from --mainlist's --menu-top-level-font-*
      (see just above), because that keeps Shopify hosting the face.
 
      No inline padding, where MegaMenu takes 8px. The rail must start under this heading's first
@@ -1056,9 +1043,9 @@
   .menu-drawer__menu .menu-drawer__menu-item.menu-drawer__menu-item--mainlist.menu-drawer__menu-item--mionas-heading {
     min-height: var(--mega-menu-heading-height);
     padding-block: 0;
-    font-size: var(--text-role-label-lg-font-size);
-    line-height: var(--text-role-label-lg-line-height);
-    letter-spacing: var(--text-role-label-lg-letter-spacing);
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
+    letter-spacing: var(--text-role-body-letter-spacing);
     font-weight: var(--mega-menu-heading-font-weight);
     color: var(--mega-menu-heading-foreground);
     align-items: center;
@@ -1077,9 +1064,8 @@
      stopped being a Stamp. Overridden here rather than by flipping type_case_primary_link, which
      would also affect the desktop nav.
 
-     Size and line-height too, because MegaMenu puts every row in the drawer on one band: its
-     heading and MegaMenuItem's label are both label-lg, and MegaMenuLink composes Link size="sm",
-     which is the same 15px. Horizon instead renders these rows at --menu-font-2xl--size
+     Size and line-height too, because MegaMenu puts every row in the drawer on one variant: its
+     heading, MegaMenuItem's label and MegaMenuLink are all body. Horizon instead renders these rows at --menu-font-2xl--size
      (snippets/menu-font-styles.liquid:16-18), which left the childless rows visibly larger than
      the cards beside them. Set as properties, not by re-pointing --menu-top-level-font-size:
      Horizon declares that variable inline on the drawer's nav, so a declaration here would lose
@@ -1089,8 +1075,8 @@
      two stylesheet tags isn't guaranteed. */
   .menu-drawer__menu .menu-drawer__menu-item--mainlist {
     text-transform: none;
-    font-size: var(--text-role-label-lg-font-size);
-    line-height: var(--text-role-label-lg-line-height);
+    font-size: var(--text-role-body-font-size);
+    line-height: var(--text-role-body-line-height);
   }
 
   /* A gap after each card group, not a hairline: MegaMenu dropped its divider here because the

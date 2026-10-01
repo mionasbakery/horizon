@@ -6,11 +6,10 @@
 
 {%- comment -%}
   Renders through snippets/mionas-text.liquid, the same snippet blocks/mionas-text.liquid uses, so
-  size, line-height, letter-spacing, family and colour follow the role. Only the weight is the
-  price's own -- see the stylesheet.
+  typography and colour follow the variant, as ProductCardPrice.tsx takes Text's `title` unmodified.
 
-  Variant/size mirror mionas-text.liquid's band x size grid. Color was renamed from `variant`
-  because the new band setting needed that id, and a block schema can't have two settings share one.
+  Color was renamed from `variant` because the Variant setting needed that id, and a block schema
+  can't have two settings share one.
 
   A dedicated block rather than mionas-text.liquid: price needs `| money` formatting, the compare-at
   comparison and an accessible label on the struck-through original -- none of which a literal
@@ -19,8 +18,7 @@
   figure.
 
   Not in the design system as a standalone component -- ../design-system/src/react/ has Text and
-  ProductCardPrice but no Price, so the tokens below are ProductCardPrice's while the role plumbing
-  is Text's.
+  ProductCardPrice but no Price, so the plumbing is Text's.
 
   The compare-at price is opt-in and off by default: ProductCardPrice.tsx shows a single price, but
   a bakery running a promotion needs somewhere to show the original. It renders only when the
@@ -84,9 +82,7 @@
       endif
 
       if tax_note != blank
-        echo '<span class="mionas-price__tax-note">'
-        echo tax_note
-        echo '</span>'
+        render 'mionas-text', content: tax_note, variant: 'note', color: 'secondary', tag: 'span', class: 'mionas-price__tax-note'
       endif
     endcapture
   -%}
@@ -109,7 +105,6 @@
       {%- render 'mionas-text',
         content: price_content,
         variant: block_settings.variant,
-        size: block_settings.size,
         color: block_settings.color,
         tag: 'p',
         class: 'mionas-price spacing-style',
@@ -120,24 +115,14 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* The role owns size, line-height, letter-spacing, family and colour. This adds
-     display/align-items/gap, since the price is a row of two figures when a compare-at is shown,
-     and font-weight, since ProductCardPrice's weight token is always 600 regardless of size.
-
-     Colour is deliberately not overridden: --product-card-price-foreground maps to the same token
-     .text-role--default already applies, so overriding it here would make the Color setting below
-     do nothing.
+  /* The variant owns the typography and colour. This adds display/align-items/gap, since the price
+     is a row of two figures when a compare-at is shown.
 
      No padding is declared here on purpose -- it's four range settings via spacing-style,
      defaulting to 0, same mechanism as blocks/mionas-add-to-cart.liquid and Horizon's own
      blocks/_product-card.liquid, so the block imposes no inset and the composition decides. The
      horizontal inset the card needs is set per instance in the theme editor (templates/index.json,
-     templates/collection.json, sections/mionas-collection.liquid's preset).
-
-     The selector is two classes deep on purpose: every .text-role--<role> declares font-weight from
-     a single-class selector in this bundle, so equal specificity would leave the winner to bundle
-     order. .text-role.mionas-price is (0,2,0) and must stay that way -- padding doesn't need the
-     same trick, since no .text-role rule declares padding at all. */
+     templates/collection.json, sections/mionas-collection.liquid's preset). */
   /* Row-gap is zero on purpose: the tax note wraps onto a second line inside this element, and its
      vertical distance must come only from its own margin -- a row-gap would silently add to it. */
   .text-role.mionas-price {
@@ -145,7 +130,6 @@
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0 var(--space-xs);
-    font-weight: var(--product-card-price-font-weight);
   }
 
   /* The struck-through original uses the price colour at reduced opacity rather than a colour of
@@ -153,23 +137,15 @@
      Color resolves to. */
   .mionas-price__compare {
     opacity: 0.6;
-    font-weight: var(--text-role-body-md-font-weight, 400);
+    font-weight: var(--text-role-body-font-weight, 400);
   }
 
-  /* The note is deliberately not a text role of its own: it always reads as the label-md role in
-     the secondary colour, whatever Variant/Size the price uses, matching the form-label treatment.
-
-     flex-basis: 100% forces it onto its own line inside the price's wrapping flex row, which is why
-     it lives inside the text role at all: as a sibling element, a parent container's gap would open
-     up between price and note. */
-  .mionas-price__tax-note {
+  /* The note is always the note variant in the secondary colour, whatever Variant the price
+     uses. flex-basis: 100% puts it on its own line inside the price's wrapping flex row. Two classes
+     deep to beat .text-role's margin: 0, which sits in another stylesheet. */
+  .text-role.mionas-price__tax-note {
     flex-basis: 100%;
-    margin: var(--space-3xs) 0 0;
-    font-size: var(--text-role-label-md-font-size);
-    line-height: var(--text-role-label-md-line-height);
-    font-weight: var(--text-role-label-md-font-weight);
-    letter-spacing: var(--text-role-label-md-letter-spacing);
-    color: var(--text-color-secondary);
+    margin-top: var(--space-3xs);
   }
 {% endstylesheet %}
 
@@ -184,25 +160,16 @@
       "label": "Variant",
       "options": [
         { "value": "display", "label": "Display" },
-        { "value": "headline", "label": "Headline" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
         { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
         { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" }
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
       "default": "body",
-      "info": "The same text variants as Mionas: Text. The price keeps its own weight."
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
-      ],
-      "default": "md",
-      "info": "The step within the Variant band."
+      "info": "The same text variants as Mionas: Text. Product cards use Title."
     },
     {
       "type": "select",
@@ -211,6 +178,7 @@
       "options": [
         { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
         { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
         { "value": "accent", "label": "Accent" },

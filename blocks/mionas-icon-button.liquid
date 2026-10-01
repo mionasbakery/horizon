@@ -2,16 +2,7 @@
   A circular icon-only link button.
 {%- enddoc -%}
 {%- comment -%}
-  Ports ../design-system's --icon-button-base-* tokens (assets/design-tokens.css) into a circular
-  icon-only link. Those tokens have existed since the design system sync but had no Liquid consumer
-  until this block -- the Contacto page's Instagram/TikTok/WhatsApp row is the first.
-
-  `default` is the token-faithful surface: filled --icon-button-base-background/-foreground, exactly
-  what the tokens alone define. `outline` is a variant BEYOND what the tokens define -- white
-  background, a --card-base-border-* border, icon in --icon-button-base-foreground -- the same
-  "add a variant the tokens don't cover" move blocks/mionas-card.liquid's outline/plain variants
-  already made for the same reason: the Contacto page's social row needs a bordered look the base
-  tokens alone can't produce. See docs/superpowers/specs/2026-08-12-contacto-page-design.md.
+  Mirrors ../design-system's IconButton: a circular icon-only link on the Button variants and sizes.
 
   Icon-only means the label is entirely the accessible name -- there is no visible text for a screen
   reader to fall back on. `aria_label` is therefore effectively required, not decorative; it carries
@@ -27,6 +18,7 @@
   aria_label: block.settings.aria_label,
   open_in_new_tab: block.settings.open_in_new_tab,
   variant: block.settings.variant,
+  size: block.settings.size,
   shopify_attributes: block.shopify_attributes
 %}
 
@@ -68,11 +60,27 @@
       "id": "variant",
       "label": "Variant",
       "options": [
-        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "outline", "label": "Outline" },
-        { "value": "outline-inverse", "label": "Outline — inverse" }
+        { "value": "ghost", "label": "Ghost" },
+        { "value": "danger", "label": "Danger" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-ghost", "label": "Inverse ghost" },
+        { "value": "inverse-outline", "label": "Inverse outline" }
       ],
-      "default": "default"
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
     }
   ],
   "presets": [

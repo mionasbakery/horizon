@@ -1,0 +1,121 @@
+{%- doc -%}
+  Renders a page's display heading with a short stamp above it, as one <hgroup>.
+{%- enddoc -%}
+{%- comment -%}
+  Mirrors ../design-system/src/components/HeadingGroup/HeadingGroup.tsx. One block, not a group of
+  a Stamp and a Text, so the eyebrow size and the gap stay fixed in one place, as the component
+  intends. The eyebrow is a <p>, so a screen reader does not announce it as a heading.
+{%- endcomment -%}
+{%- liquid
+  assign block_settings = block.settings
+  capture eyebrow
+    render 'mionas-inline-richtext', value: block_settings.eyebrow
+  endcapture
+  assign eyebrow = eyebrow | strip
+  capture heading
+    render 'mionas-inline-richtext', value: block_settings.heading
+  endcapture
+  assign heading = heading | strip
+  assign heading_text = heading | strip_html | strip
+-%}
+
+{%- if heading_text != blank -%}
+  <hgroup class="mionas-heading-group" {{ block.shopify_attributes }}>
+    {%- assign eyebrow_text = eyebrow | strip_html | strip -%}
+    {%- if eyebrow_text != blank -%}
+      {%- render 'mionas-stamp', content: eyebrow, size: 'body', color: block_settings.eyebrow_color, tag: 'p' -%}
+    {%- endif -%}
+    {%- render 'mionas-text',
+      content: heading,
+      variant: 'display',
+      color: block_settings.heading_color,
+      tag: block_settings.heading_tag
+    -%}
+  </hgroup>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-heading-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+    gap: var(--heading-group-base-gap);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Heading Group",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "eyebrow",
+      "label": "Stamp",
+      "default": "<p>Stamp</p>",
+      "info": "Short uppercase line above the heading. Leave blank to show the heading alone."
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_color",
+      "label": "Stamp color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "accent"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Heading</p>",
+      "info": "Press Enter for a line break; it renders inside the same heading."
+    },
+    {
+      "type": "select",
+      "id": "heading_color",
+      "label": "Heading color",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag",
+      "options": [
+        { "value": "h1", "label": "h1" },
+        { "value": "h2", "label": "h2" },
+        { "value": "h3", "label": "h3" },
+        { "value": "h4", "label": "h4" },
+        { "value": "h5", "label": "h5" },
+        { "value": "h6", "label": "h6" }
+      ],
+      "default": "h1",
+      "info": "Pick the level from the page outline. The heading stays display size at every level."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Heading Group",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,54 @@
+{%- doc -%}
+  Renders the success state that replaces a Mionas form's fields after a post.
+
+  @param {string} title - The success message.
+  @param {string} [text] - A second line under the title.
+  @param {string} [class] - Extra classes on the wrapper.
+{%- enddoc -%}
+{%- comment -%}
+  autofocus is load-bearing: after a post the page is a fresh document with focus on <body>, so
+  moving focus here is what makes a screen reader announce success.
+{%- endcomment -%}
+<div class="mionas-form-success{% if class != blank %} {{ class }}{% endif %}" tabindex="-1" autofocus>
+  <span class="mionas-form-success__icon">
+    {{- 'icon-checkmark.svg' | inline_asset_content -}}
+  </span>
+  {%- render 'mionas-text', content: title, variant: 'title', tag: 'p', class: 'mionas-form-success__title' -%}
+  {%- if text != blank -%}
+    {%- render 'mionas-text', content: text, variant: 'body', tag: 'p', class: 'mionas-form-success__text' -%}
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mionas-form-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    text-align: center;
+    padding-block: var(--space-md);
+  }
+
+  /* No design-system token for success green -- deliberate one-off. */
+  .mionas-form-success__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--space-2xs);
+    border-radius: 50%;
+    background: #4a7c59;
+    color: var(--color-white, #fff);
+  }
+
+  .mionas-form-success__icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Higher specificity than .text-role--<color> so the muted colour always wins. */
+  .text-role.mionas-form-success__text {
+    color: var(--card-description-foreground);
+  }
+{% endstylesheet %}

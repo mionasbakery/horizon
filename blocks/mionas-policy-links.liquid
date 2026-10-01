@@ -18,25 +18,39 @@
     },
     {
       "type": "select",
-      "id": "variant",
-      "label": "Variant",
+      "id": "color",
+      "label": "Color",
       "options": [
+        { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
-        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" }
+        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
+        { "value": "accent", "label": "Accent" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" },
+        { "value": "tint", "label": "Tint" },
+        { "value": "inherit", "label": "Inherited" }
       ],
       "default": "inverse-primary-muted",
-      "info": "Inverse primary (muted) matches the footer's default text color."
+      "info": "Inverse primary (muted) matches the footer text."
     },
     {
       "type": "select",
-      "id": "size",
-      "label": "t:settings.size",
+      "id": "variant",
+      "label": "Variant",
       "options": [
-        { "value": "sm", "label": "Small" },
-        { "value": "md", "label": "Medium" }
+        { "value": "inherit", "label": "Inherited" },
+        { "value": "display", "label": "Display" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
-      "default": "sm"
+      "default": "note",
+      "info": "Inherited takes its size from the surrounding text. Note suits footer fine print."
     }
   ],
   "presets": [

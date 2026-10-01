@@ -123,45 +123,23 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_text_TxwLqj": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp",
+            "mionas_heading_group_Rb7mWs": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "lg",
-                "variant": "accent",
-                "tag": "div",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_E74aRt": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
-              "settings": {
-                "text": "<p>10% de descuento en tu primera compra</p>",
-                "variant": "display",
-                "size": "lg",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "eyebrow": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>10% de descuento en tu primera compra</p>",
+                "heading_color": "default",
+                "heading_tag": "h1"
+              }
             },
             "mionas_text_PHRkcU": {
               "type": "mionas-text",
               "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -201,8 +179,7 @@
             }
           },
           "block_order": [
-            "mionas_text_TxwLqj",
-            "mionas_text_E74aRt",
+            "mionas_heading_group_Rb7mWs",
             "mionas_text_PHRkcU",
             "mionas_email_signup_AdjRU4"
           ]
@@ -363,7 +340,7 @@
                           "name": "Mionas: Stamp",
                           "settings": {
                             "text": "<p>Última newsletter,</p>",
-                            "size": "lg",
+                            "size": "body",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -378,7 +355,7 @@
                           "name": "Mionas: Newsletter Date",
                           "settings": {
                             "show_year": true,
-                            "size": "lg",
+                            "size": "body",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -399,8 +376,7 @@
                       "name": "Mionas: Text",
                       "settings": {
                         "text": "<p>{{ closest.article.title }}</p>",
-                        "variant": "headline",
-                        "size": "lg",
+                        "variant": "heading",
                         "color": "inverse-primary",
                         "tag": "p",
                         "text_wrap": "normal",
@@ -491,8 +467,7 @@
               "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>Newsletters anteriores</p>",
-                "variant": "headline",
-                "size": "lg",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -509,7 +484,6 @@
               "settings": {
                 "text": "<p>Todas las que hemos enviado. La más reciente, primero.</p>",
                 "variant": "body",
-                "size": "md",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -539,8 +513,7 @@
               "type": "mionas-newsletter-year",
               "name": "Mionas: Newsletter Year",
               "settings": {
-                "variant": "headline",
-                "size": "lg",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h3",
                 "text_wrap": "normal",
@@ -562,7 +535,7 @@
                   "name": "Mionas: Newsletter Date",
                   "settings": {
                     "show_year": false,
-                    "size": "lg",
+                    "size": "body",
                     "variant": "accent",
                     "tag": "span",
                     "padding-block-start": 0,
@@ -577,8 +550,7 @@
                   "name": "Mionas: Text",
                   "settings": {
                     "text": "<p>{{ closest.article.title }}</p>",
-                    "variant": "body",
-                    "size": "lg",
+                    "variant": "lead",
                     "color": "default",
                     "tag": "span",
                     "text_wrap": "normal",

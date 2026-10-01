@@ -12,18 +12,14 @@
 {% liquid
   assign block_settings = block.settings
   assign platform_label = block_settings.platform | capitalize
-
-  assign icon_variant = 'outline'
-  if block_settings.variant == 'inverse'
-    assign icon_variant = 'outline-inverse'
-  endif
 %}
 {% render 'mionas-icon-button',
   icon: block_settings.platform,
   link: block_settings.link,
   aria_label: platform_label,
   open_in_new_tab: true,
-  variant: icon_variant,
+  variant: block_settings.variant,
+  size: block_settings.size,
   shopify_attributes: block.shopify_attributes
 %}
 
@@ -55,11 +51,28 @@
       "id": "variant",
       "label": "Variant",
       "options": [
-        { "value": "default", "label": "Default" },
-        { "value": "inverse", "label": "Inverse" }
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "ghost", "label": "Ghost" },
+        { "value": "danger", "label": "Danger" },
+        { "value": "inverse-primary", "label": "Inverse primary" },
+        { "value": "inverse-ghost", "label": "Inverse ghost" },
+        { "value": "inverse-outline", "label": "Inverse outline" }
       ],
-      "default": "default",
-      "info": "Inverse uses a light border and icon for dark backgrounds, like the footer."
+      "default": "outline",
+      "info": "Outline suits a light background, Inverse outline a dark one."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "sm"
     }
   ],
   "presets": [

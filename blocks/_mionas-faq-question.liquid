@@ -5,7 +5,7 @@
 
 {%- comment -%}
   Mirrors ../design-system/src/components/Faq/FaqQuestion.tsx: question and answer both
-  render at the body-md role (via mionas-text); the only type this block owns is the
+  render at the body variant (via mionas-text); the only type this block owns is the
   question's semibold weight, which the role can't carry. Private (underscore)
   because a lone row has no divider context -- only mionas-faq accepts it, the same
   parent/child shape as mionas-schedule and _mionas-schedule-day. Rendering through the
@@ -38,7 +38,6 @@
       {%- render 'mionas-text',
         content: faq_question_label,
         variant: 'body',
-        size: 'md',
         tag: 'span',
         class: 'mionas-faq-question__label'
       -%}
@@ -47,7 +46,7 @@
       </span>
     </summary>
     <div class="details-content mionas-faq-question__content">
-      {% render 'mionas-text', content: block_settings.answer, variant: 'body', size: 'md', tag: 'div' %}
+      {% render 'mionas-text', content: block_settings.answer, variant: 'body', tag: 'div' %}
     </div>
   </details>
 {% endcapture %}
@@ -82,10 +81,10 @@
     flex-shrink: 0;
     width: var(--faq-question-header-icon-size);
     height: var(--faq-question-header-icon-size);
-    /* Centers the caret in the label's first line box -- the body-md role the
+    /* Centers the caret in the label's first line box -- the body variant the
        label renders at, hence the role-token spend. */
     margin-block-start: calc(
-      (var(--text-role-body-md-line-height) - var(--faq-question-header-icon-size)) / 2
+      (var(--text-role-body-line-height) - var(--faq-question-header-icon-size)) / 2
     );
   }
 

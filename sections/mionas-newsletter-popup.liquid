@@ -1,0 +1,393 @@
+{%- comment -%}
+  Mionas newsletter popup: a first-visit signup popup with its widget, rendered on every page from
+  the footer group. The popup and the widget are fixed blocks with their own settings; this section
+  holds the rules for both.
+
+  The markup ships closed and the scripts decide whether to open it. The Liquid leaves out visitors the
+  scripts could never show it to; an excluded page still renders it for the widget, but never opens it
+  by itself.
+{%- endcomment -%}
+{%- capture popup_eligible -%}
+  {%- render 'mionas-newsletter-eligible', settings: section.settings, exclude_marketing_subscribers: true -%}
+{%- endcapture -%}
+{%- liquid
+  assign eligibility = popup_eligible | strip | split: ':'
+  assign popup_eligible = eligibility[0]
+  assign page_rule = eligibility[1]
+-%}
+
+{%- if popup_eligible != 'false' or request.design_mode -%}
+  {%- liquid
+    assign popup_id = 'MionasNewsletterPopup-' | append: section.id
+    assign auto_open = false
+    if section.settings.auto_open and popup_eligible == 'true'
+      assign auto_open = true
+    endif
+
+    # GA4 accepts only letters, digits and underscores in event names, so hyphens and spaces become underscores.
+    assign test_name = section.settings.test_name | default: 'newsletter-popup' | handleize
+    assign measurement_name = section.settings.measurement_name | default: 'newsletter_popup' | handleize | replace: '-', '_'
+  -%}
+
+  <script
+    src="{{ 'mionas-popup.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  {%- if auto_open -%}
+    <script
+      src="{{ 'mionas-newsletter-trigger.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
+  {%- endif -%}
+  <script
+    src="{{ 'mionas-newsletter-popup.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+
+  {%- comment -%} Shopify hides cart attributes that start with an underscore from the buyer at checkout. {%- endcomment -%}
+  {%- capture popup_attributes -%}
+    data-ab-test="{{ section.settings.ab_test_enabled }}" data-popup-share="{{ section.settings.popup_share }}"
+    data-test-name="{{ test_name }}" data-event-prefix="{{ measurement_name }}_"
+    data-clarity-tag="{{ measurement_name }}" data-cart-attribute="_{{ measurement_name }}"
+    {%- if page_rule != blank %} data-page-rule="{{ page_rule }}"{% endif -%}
+  {%- endcapture -%}
+
+  {% content_for 'block',
+    type: '_mionas-popup',
+    id: 'popup',
+    popup_id: popup_id,
+    section_id: section.id,
+    audience: section.settings.audience,
+    popup_attributes: popup_attributes
+  %}
+
+  {%- if auto_open -%}
+    {%- render 'mionas-newsletter-trigger', popup_id: popup_id, settings: section.settings -%}
+  {%- endif -%}
+
+  {% content_for 'block',
+    type: '_mionas-widget',
+    id: 'widget',
+    popup_id: popup_id,
+    section_id: section.id,
+    auto_open: section.settings.auto_open,
+    wait_for_consent: section.settings.wait_for_consent
+  %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mionas: Newsletter popup",
+  "tag": "div",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "audience",
+      "label": "Who sees the popup",
+      "options": [
+        { "value": "everyone", "label": "Everyone" },
+        { "value": "testers", "label": "Only testers" }
+      ],
+      "default": "everyone",
+      "info": "With Testers, the A/B test is off and only testers see the popup. Testers see it even when they already get marketing emails. The popup forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
+    },
+    {
+      "type": "textarea",
+      "id": "tester_emails",
+      "label": "Tester emails",
+      "info": "One email on each line. A tester must log in to their customer account with that email.",
+      "visible_if": "{{ section.settings.audience == 'testers' }}"
+    },
+    {
+      "type": "header",
+      "content": "Pages",
+      "info": "The popup never opens by itself on the checked page types or on the pages in the menu. The widget still shows there and still opens the popup. The checkout, the order status page and the storefront password page never show the popup, because they are outside the theme or have no footer."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_home",
+      "label": "Hide on the home page",
+      "info": "The front page of the store.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_product",
+      "label": "Hide on product pages",
+      "info": "Every product page.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_collection",
+      "label": "Hide on collection pages",
+      "info": "Every collection page and the list of all collections.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_cart",
+      "label": "Hide on the cart page",
+      "info": "The cart page. The cart drawer has its own setting under Automatic opening.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_search",
+      "label": "Hide on search results",
+      "info": "The search results page.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_blog",
+      "label": "Hide on blogs and articles",
+      "info": "Every blog and article, except the newsletter blog, which has its own setting.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_page",
+      "label": "Hide on content pages",
+      "info": "Every page made in Online Store → Pages, except the contact page, which has its own setting.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_account",
+      "label": "Hide on customer account pages",
+      "info": "Login, register, password reset and account pages. This store uses Shopify's new customer accounts, which are outside the theme, so this setting has no effect there.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_policy",
+      "label": "Hide on policy pages",
+      "default": true,
+      "info": "Privacy, cookies, terms, legal notice, shipping and refunds, which Shopify builds from Settings → Policies."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_contact",
+      "label": "Hide on the contact page",
+      "default": true,
+      "info": "The page with the contact template. It does not follow Hide on content pages."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_404",
+      "label": "Hide on the 404 page",
+      "info": "The page a visitor gets for a link that does not exist.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_newsletter",
+      "label": "Hide on the newsletter blog",
+      "default": true,
+      "info": "The blog and articles with the newsletter template. They do not follow Hide on blogs and articles."
+    },
+    {
+      "type": "link_list",
+      "id": "hidden_pages_menu",
+      "label": "Hide on the pages in this menu",
+      "info": "Create a menu in Online Store → Navigation and add the pages, products, collections, blogs or articles where the popup must not show. A blog also hides its articles. Works in every language."
+    },
+    {
+      "type": "header",
+      "content": "Automatic opening",
+      "info": "The popup opens when the visitor has been idle for the idle time, counted from the first action on the page. The settings below say what starts, restarts and pauses that count."
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_open",
+      "label": "Open automatically",
+      "default": true,
+      "info": "Turn off only if the newsletter widget is on: the widget is then the only way to open the popup."
+    },
+    {
+      "type": "range",
+      "id": "idle_seconds",
+      "label": "Idle time before opening",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "default": 5,
+      "info": "The popup opens when the visitor has done nothing for this long. The count starts at the first action on the page, as set below. If a finger or mouse button is still down at that moment, the popup opens after the release, and the click still works. Each page starts the count again.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "wait_for_consent",
+      "label": "Wait for the cookie banner answer",
+      "default": true,
+      "info": "Nothing counts until the visitor answers the cookie banner. The widget waits too. When off, the popup can open over the banner and block it until the visitor closes the popup. Pages with no banner skip this."
+    },
+    {
+      "type": "checkbox",
+      "id": "wait_for_interaction",
+      "label": "Start the count at the first scroll, tap, click or key press",
+      "default": true,
+      "info": "The count starts at the first scroll, tap, click or key press. With the cookie banner, its answer is the first action. Moving the mouse does not start it. When off, the count starts when the page loads. Keep on for SEO. A popup that opens on an untouched page can count as the page's largest element in Google's page speed data, and Google's crawler never sees a popup that waits for an action.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "reset_on_press",
+      "label": "Restart the count on every tap, click or key press",
+      "default": true,
+      "info": "Every tap, click or key press starts the count again from the full idle time. So does every change to a form control, such as a variant, checkbox, quantity button or select, and every carousel swipe or arrow. When off, the count runs from the first action and ignores later presses.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "reset_on_scroll",
+      "label": "Restart the count on scroll and mouse movement",
+      "info": "When on, every page scroll and every mouse movement start the count again, so the popup waits for a real pause. When off, the count keeps running while the visitor scrolls or moves the mouse.",
+      "default": false,
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_while_typing",
+      "label": "Pause while the visitor types in a field",
+      "default": true,
+      "info": "The count stops while a text, email, search, phone, password or number field has focus. When the field loses focus, the count starts again from the full idle time. Other controls only restart the count. When off, the popup can open while the visitor types.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_while_hidden",
+      "label": "Pause while the tab is hidden",
+      "default": true,
+      "info": "The count stops while the visitor is in another tab or app. When the tab shows again, the count starts again from the full idle time. When off, the count runs in the background, and the popup can be open when the visitor comes back.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_for_cart",
+      "label": "Wait while the cart drawer is open",
+      "default": true,
+      "info": "The count stops while the cart drawer is open. When the drawer closes, the count starts again from the full idle time. When off, the popup can open over the cart drawer.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "range",
+      "id": "reshow_days",
+      "label": "Days before showing again after a close",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "unit": "d",
+      "default": 7,
+      "info": "After a close, the popup opens by itself again only after this many days. No thanks counts as a close. 0 never opens it by itself again. After a signup it never opens by itself again.",
+      "visible_if": "{{ section.settings.auto_open }}"
+    },
+    {
+      "type": "header",
+      "content": "A/B test",
+      "info": "Splits new visitors into a group that gets the popup and a control group that never does, to measure the popup's effect on signups and orders."
+    },
+    {
+      "type": "checkbox",
+      "id": "ab_test_enabled",
+      "label": "A/B test on",
+      "default": true,
+      "info": "Visitors in the control group never see the popup. Turn off to show it to every new visitor.",
+      "visible_if": "{{ section.settings.audience == 'everyone' }}"
+    },
+    {
+      "type": "range",
+      "id": "popup_share",
+      "label": "Share of visitors who see the popup",
+      "info": "The other visitors form the control group. They never see the popup or the widget.",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 50,
+      "visible_if": "{{ section.settings.audience == 'everyone' and section.settings.ab_test_enabled }}"
+    },
+    {
+      "type": "text",
+      "id": "test_name",
+      "label": "Test name",
+      "default": "newsletter-popup",
+      "info": "Sent with every event, the Clarity tag and the order attribute. A new name puts every visitor in a new group; visitors who closed or subscribed still don't see the popup again."
+    },
+    {
+      "type": "text",
+      "id": "measurement_name",
+      "label": "Measurement name",
+      "default": "newsletter_popup",
+      "info": "Used for the GA4 and Clarity events (newsletter_popup_shown, …), the Clarity tag and the order attribute (_newsletter_popup). Their value is <test name>:<group>. If you change it, change it in the GA4 custom pixel too."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Newsletter popup",
+      "blocks": {
+        "popup": {
+          "type": "_mionas-popup",
+          "name": "Mionas: Popup",
+          "static": true,
+          "blocks": {
+            "stamp": {
+              "type": "mionas-stamp",
+              "name": "Mionas: Stamp - Newsletter",
+              "settings": {
+                "text": "<p>Suscríbete a la newsletter</p>",
+                "size": "body",
+                "variant": "accent",
+                "tag": "p"
+              }
+            },
+            "heading": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Heading",
+              "settings": {
+                "text": "<p>10% de descuento en tu primera compra</p>",
+                "variant": "heading",
+                "tag": "h2"
+              }
+            },
+            "body": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Body",
+              "settings": {
+                "text": "<p>Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos y lanzamientos.</p>",
+                "variant": "body",
+                "tag": "p"
+              }
+            },
+            "signup": {
+              "type": "mionas-email-signup",
+              "name": "Mionas: Email signup - Popup",
+              "settings": {
+                "button_width": "fill",
+                "submit_variant": "primary",
+                "submit_size": "md",
+                "field_surface": true,
+                "customer_tag": "newsletter-popup"
+              }
+            }
+          },
+          "block_order": ["stamp", "heading", "body", "signup"]
+        },
+        "widget": {
+          "type": "_mionas-widget",
+          "name": "Mionas: Widget",
+          "static": true
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

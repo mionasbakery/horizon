@@ -123,45 +123,23 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_text_ARrD79": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp",
+            "mionas_heading_group_Hx4kQe": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>ESPECIALITAT EN COOKIES</p>",
-                "size": "lg",
-                "variant": "accent",
-                "tag": "div",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_NJkqUW": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
-              "settings": {
-                "text": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
-                "variant": "display",
-                "size": "lg",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "eyebrow": "<p>ESPECIALITAT EN COOKIES</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
+                "heading_color": "default",
+                "heading_tag": "h1"
+              }
             },
             "mionas_text_H8dqtJ": {
               "type": "mionas-text",
               "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la Península.</p>",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -250,8 +228,7 @@
             }
           },
           "block_order": [
-            "mionas_text_ARrD79",
-            "mionas_text_NJkqUW",
+            "mionas_heading_group_Hx4kQe",
             "mionas_text_H8dqtJ",
             "group_QJdFQn"
           ]
@@ -318,8 +295,7 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>LO MÁS VENDIDO</p>",
-                "variant": "headline",
-                "size": "md",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -431,7 +407,6 @@
                     "kind": "information",
                     "placement": "inline",
                     "corner": "top-left",
-                    "size": "label-sm",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -445,7 +420,6 @@
                   "settings": {
                     "text": "<p>{{ closest.product.title }}</p>",
                     "variant": "title",
-                    "size": "sm",
                     "color": "default",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -461,7 +435,6 @@
                   "name": "Mionas: Price",
                   "settings": {
                     "variant": "title",
-                    "size": "sm",
                     "color": "default",
                     "show_compare_at_price": false,
                     "show_tax_info": false,
@@ -578,8 +551,7 @@
               "name": "Mionas: Text",
               "settings": {
                 "text": "<p>Que dicen nuestros clientes</p>",
-                "variant": "headline",
-                "size": "md",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -757,7 +729,7 @@
               "name": "Mionas: Stamp",
               "settings": {
                 "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "lg",
+                "size": "body",
                 "variant": "accent",
                 "tag": "div",
                 "padding-block-start": 0,
@@ -772,8 +744,7 @@
               "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>10% de descuento en tu primera compra</p>",
-                "variant": "headline",
-                "size": "md",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h2",
                 "text_wrap": "normal",
@@ -789,8 +760,7 @@
               "name": "Mionas: Text - Introduction",
               "settings": {
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
-                "variant": "body",
-                "size": "lg",
+                "variant": "lead",
                 "color": "default",
                 "tag": "p",
                 "text_wrap": "normal",
@@ -813,7 +783,8 @@
                 "submit_size": "md",
                 "field_surface": true,
                 "success_text": "¡Gracias! Ya estás suscrito.",
-                "customer_tag": "",
+                "hide_section_for_subscribers": true,
+                "customer_tag": "newsletter-home",
                 "consent_text": "",
                 "field_gap": 16,
                 "layout": "stacked",

@@ -20,7 +20,7 @@
 
 {% stylesheet %}
   /* A connected title can't be retyped in capitals, and the design sets the latest title in uppercase. */
-  .mionas-latest-newsletter .text-role--headline-lg {
+  .mionas-latest-newsletter .text-role--heading {
     text-transform: uppercase;
     overflow-wrap: anywhere;
   }
@@ -176,7 +176,7 @@
                       "type": "mionas-stamp",
                       "settings": {
                         "text": "<p>Última newsletter,</p>",
-                        "size": "lg",
+                        "size": "body",
                         "variant": "accent-inverse",
                         "tag": "span",
                         "padding-block-start": 0,
@@ -188,7 +188,7 @@
                     "date": {
                       "type": "mionas-newsletter-date",
                       "settings": {
-                        "size": "lg",
+                        "size": "body",
                         "variant": "accent-inverse",
                         "tag": "span",
                         "show_year": true
@@ -204,8 +204,7 @@
                   "type": "mionas-text",
                   "settings": {
                     "text": "<p>{{ closest.article.title }}</p>",
-                    "variant": "headline",
-                    "size": "lg",
+                    "variant": "heading",
                     "color": "inverse-primary",
                     "tag": "p",
                     "text_wrap": "normal",

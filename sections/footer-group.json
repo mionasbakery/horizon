@@ -126,7 +126,7 @@
                   "name": "Mionas: Stamp",
                   "settings": {
                     "text": "<p>Especialitat en cookies</p>",
-                    "size": "lg",
+                    "size": "body",
                     "variant": "accent-inverse",
                     "tag": "p",
                     "padding-block-start": 0,
@@ -185,7 +185,7 @@
                       "settings": {
                         "platform": "whatsapp",
                         "link": "https://wa.me/34933348246",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     },
@@ -195,7 +195,7 @@
                       "settings": {
                         "platform": "instagram",
                         "link": "https://instagram.com/mionasbakery_sitges",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     },
@@ -205,7 +205,7 @@
                       "settings": {
                         "platform": "tiktok",
                         "link": "https://tiktok.com/@mionasbakery_sitges",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     },
@@ -215,7 +215,7 @@
                       "settings": {
                         "platform": "youtube",
                         "link": "https://www.youtube.com/@mionasbakery_sitges",
-                        "variant": "inverse"
+                        "variant": "inverse-outline"
                       },
                       "blocks": {}
                     }
@@ -283,7 +283,6 @@
                   "settings": {
                     "text": "<p><strong>TIENDA</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -341,8 +340,7 @@
                         "label": "Cookies",
                         "link": "shopify://collections/cookies",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -355,8 +353,7 @@
                         "label": "Cookies veganas",
                         "link": "shopify://collections/cookies-veganas",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -369,8 +366,7 @@
                         "label": "Packs",
                         "link": "shopify://collections/packs",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -383,8 +379,7 @@
                         "label": "Concept store",
                         "link": "shopify://collections/concept-store",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -397,8 +392,7 @@
                         "label": "Cursos",
                         "link": "shopify://collections/cursos",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -468,7 +462,6 @@
                   "settings": {
                     "text": "<p><strong>MÁS</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -526,8 +519,7 @@
                         "label": "Alérgenos",
                         "link": "shopify://pages/alergenos",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "md",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "normal"
                       },
@@ -540,8 +532,7 @@
                         "label": "Sobre nosotros",
                         "link": "shopify://pages/sobre-nosotros",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -554,8 +545,7 @@
                         "label": "Newsletter",
                         "link": "shopify://blogs/newsletter",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -568,8 +558,7 @@
                         "label": "Contacto",
                         "link": "shopify://pages/contacto",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -582,8 +571,7 @@
                         "label": "FAQ",
                         "link": "shopify://pages/faq",
                         "open_in_new_tab": false,
-                        "variant": "inverse-primary-muted",
-                        "size": "sm",
+                        "color": "inverse-primary-muted", "variant": "body",
                         "icon": "none",
                         "text_wrap": "nowrap"
                       },
@@ -653,7 +641,6 @@
                   "settings": {
                     "text": "<p><strong>VEN A VISITARNOS</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -670,7 +657,6 @@
                   "settings": {
                     "text": "<p>Carrer de Sant Bonaventura, 16<br/>08870 Sitges, Barcelona<br/>España<br/></p>",
                     "variant": "body",
-                    "size": "md",
                     "color": "inverse-primary-muted",
                     "tag": "p",
                     "text_wrap": "nowrap",
@@ -736,7 +722,6 @@
                   "settings": {
                     "text": "<p><strong>Horario</strong></p>",
                     "variant": "label",
-                    "size": "lg",
                     "color": "inverse-primary",
                     "tag": "h3",
                     "text_wrap": "normal",
@@ -758,7 +743,6 @@
                       "settings": {
                         "day": "<p>Martes - Sábado</p>",
                         "hours": "<p>10:00 – 14:00<br/>16:30 – 20:30</p>",
-                        "size": "sm",
                         "color": "inverse-primary-muted"
                       },
                       "blocks": {}
@@ -769,7 +753,6 @@
                       "settings": {
                         "day": "<p>Domingo</p>",
                         "hours": "<p>10:00 – 14:00</p>",
-                        "size": "sm",
                         "color": "inverse-primary-muted"
                       },
                       "blocks": {}
@@ -780,7 +763,6 @@
                       "settings": {
                         "day": "<p>Lunes</p>",
                         "hours": "<p>Cerrado</p>",
-                        "size": "sm",
                         "color": "inverse-primary-muted"
                       },
                       "blocks": {}
@@ -846,8 +828,7 @@
           "type": "mionas-policy-links",
           "name": "Mionas: Policy Links",
           "settings": {
-            "variant": "inverse-primary-muted",
-            "size": "sm"
+            "color": "inverse-primary-muted", "variant": "note"
           },
           "blocks": {}
         },
@@ -855,8 +836,7 @@
           "type": "mionas-language-links",
           "name": "Mionas: Language Links",
           "settings": {
-            "variant": "inverse-primary-muted",
-            "size": "sm"
+            "color": "inverse-primary-muted", "variant": "label"
           },
           "blocks": {}
         }
@@ -875,10 +855,155 @@
         "padding-block-start": 12,
         "padding-block-end": 16
       }
+    },
+    "newsletter_popup": {
+      "type": "mionas-newsletter-popup",
+      "blocks": {
+        "popup": {
+          "type": "_mionas-popup",
+          "name": "Mionas: Popup",
+          "static": true,
+          "settings": {
+            "image": "shopify://shop_images/gif01-targeta-fidelitat.gif",
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "padding-inline-start": 48,
+            "padding-inline-end": 48
+          },
+          "blocks": {
+            "stamp": {
+              "type": "mionas-stamp",
+              "name": "Mionas: Stamp - Newsletter",
+              "settings": {
+                "text": "<p>Suscríbete a la newsletter</p>",
+                "size": "body",
+                "variant": "accent",
+                "tag": "p",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "heading": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Heading",
+              "settings": {
+                "text": "<p>10% de descuento en tu primera compra</p>",
+                "variant": "heading",
+                "color": "default",
+                "tag": "h2",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "body": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Body",
+              "settings": {
+                "text": "<p>Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos y lanzamientos.</p>",
+                "variant": "body",
+                "color": "default",
+                "tag": "p",
+                "text_wrap": "normal",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "signup": {
+              "type": "mionas-email-signup",
+              "name": "Mionas: Email signup - Popup",
+              "settings": {
+                "email_label": "Email",
+                "email_placeholder": "",
+                "button_label": "Suscribirme",
+                "button_width": "fill",
+                "submit_variant": "primary",
+                "submit_size": "md",
+                "field_surface": true,
+                "success_text": "¡Gracias! Ya estás suscrito.",
+                "customer_tag": "newsletter-popup",
+                "consent_text": "",
+                "field_gap": 16,
+                "layout": "stacked",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "stamp",
+            "heading",
+            "body",
+            "signup"
+          ]
+        },
+        "widget": {
+          "type": "_mionas-widget",
+          "name": "Mionas: Widget",
+          "static": true,
+          "settings": {
+            "launcher": "after_close",
+            "text": "10% descuento en tu primera compra",
+            "launcher_position": "left",
+            "launcher_vertical": "bottom"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [],
+      "name": "Mionas: Newsletter popup",
+      "settings": {
+        "audience": "testers",
+        "tester_emails": "marcmarcet.bcn@gmail.com\nmariavp567@gmail.com",
+        "hide_on_home": false,
+        "hide_on_product": false,
+        "hide_on_collection": false,
+        "hide_on_cart": true,
+        "hide_on_search": true,
+        "hide_on_blog": false,
+        "hide_on_page": false,
+        "hide_on_account": true,
+        "hidden_pages_menu": "pop-up-de-la-newsletter-paginas-excluidas",
+        "auto_open": true,
+        "wait_for_interaction": true,
+        "reshow_days": 7,
+        "ab_test_enabled": true,
+        "popup_share": 50,
+        "test_name": "newsletter-popup",
+        "measurement_name": "newsletter_popup",
+        "hide_on_policy": true,
+        "hide_on_contact": true,
+        "hide_on_404": true,
+        "hide_on_newsletter": true,
+        "idle_seconds": 5,
+        "wait_for_consent": true,
+        "reset_on_press": true,
+        "reset_on_scroll": false,
+        "pause_while_typing": true,
+        "pause_while_hidden": true,
+        "pause_for_cart": true
+      }
     }
   },
   "order": [
     "footer",
-    "utilities"
+    "utilities",
+    "newsletter_popup"
   ]
 }

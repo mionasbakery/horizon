@@ -1,0 +1,174 @@
+{%- doc -%}
+  Renders the newsletter popup's dialog and its content blocks, as a fixed block of
+  sections/mionas-newsletter-popup.liquid.
+
+  @param {string} popup_id - The element id, which the trigger and the widget use to find the popup.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {string} audience - The section's audience setting: everyone or testers.
+  @param {string} popup_attributes - The section's A/B test, measurement and page rule attributes.
+{%- enddoc -%}
+{%- capture decline_classes -%}
+  {%- render 'mionas-button-class', variant: 'ghost', full_width: true -%}
+{%- endcapture -%}
+{%- capture continue_classes -%}
+  {%- render 'mionas-button-class', variant: 'primary', full_width: true -%}
+{%- endcapture -%}
+
+{%- capture popup_content -%}
+  <div
+    ref="formView"
+    class="mionas-newsletter-popup__view"
+  >
+    {% content_for 'blocks' %}
+
+    <button
+      type="button"
+      class="{{ decline_classes }} mionas-newsletter-popup__decline"
+      on:click="/decline"
+    >
+      {{ 'mionas.newsletter_popup.decline' | t }}
+    </button>
+  </div>
+
+  <div
+    ref="successView"
+    class="mionas-newsletter-popup__view"
+    role="status"
+    tabindex="-1"
+    hidden
+  >
+    <span class="mionas-newsletter-popup__check">
+      {{- 'icon-checkmark.svg' | inline_asset_content -}}
+    </span>
+    {%- comment -%}
+      Empty on purpose: the script copies the signup block's success message into it, because a
+      theme block's settings are not readable from its parent.
+    {%- endcomment -%}
+    {%- render 'mionas-text', content: '', variant: 'heading', tag: 'h2' -%}
+    <button
+      type="button"
+      class="{{ continue_classes }}"
+      on:click="/continueShopping"
+    >
+      {{ 'mionas.newsletter_popup.continue' | t }}
+    </button>
+  </div>
+{%- endcapture -%}
+
+{%- liquid
+  assign element_attributes = 'data-storage-key="newsletter-popup" data-audience="' | append: audience | append: '" ' | append: popup_attributes | append: ' ' | append: block.shopify_attributes
+  assign popup_label = 'mionas.newsletter_popup.label' | t
+  assign close_label = 'mionas.newsletter_popup.close' | t
+-%}
+
+{%- render 'mionas-popup',
+  element: 'mionas-newsletter-popup-component',
+  id: popup_id,
+  section_id: section_id,
+  settings: block.settings,
+  label: popup_label,
+  close_label: close_label,
+  content: popup_content,
+  attributes: element_attributes
+-%}
+
+{% stylesheet %}
+  .mionas-newsletter-popup__view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .mionas-newsletter-popup__view[hidden] {
+    display: none;
+  }
+
+  .mionas-newsletter-popup__view:focus {
+    outline: none;
+  }
+
+  /* The design sets the two buttons 8px apart, closer than the column's 16px gap. */
+  .mionas-newsletter-popup__decline {
+    margin-top: calc(var(--space-xs) - var(--space-md));
+  }
+
+  .mionas-newsletter-popup__check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--button-size-sm-height);
+    height: var(--button-size-sm-height);
+    border-radius: var(--radius-full);
+    background: var(--brand-primary);
+    color: var(--text-color-inverse-primary);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Popup",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "@theme"
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Beside the text on screens 750px and wider. Phones do not show it."
+    },
+    {
+      "type": "header",
+      "content": "Content padding",
+      "info": "Space around the popup's text, inside the dialog."
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "info": "Space above the popup's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "info": "Space below the popup's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "info": "Space left of the popup's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "info": "Space right of the popup's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    }
+  ]
+}
+{% endschema %}

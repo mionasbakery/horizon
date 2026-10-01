@@ -1,9 +1,9 @@
 {%- doc -%}
-  Renders a single text node styled by the design system's role/size/color vocabulary.
+  Renders a single text node styled by the design system's variant and color vocabulary.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/Text/Text.tsx's role/size/color vocabulary directly, unlike
+  Mirrors ../design-system/src/react/Text/Text.tsx's variant and color vocabulary directly, unlike
   Horizon's native blocks/text.liquid, which bridges its own preset typography instead.
 
   The Text setting is richtext, flattened to inline HTML by mionas-inline-richtext.liquid to keep
@@ -53,8 +53,8 @@
   {%- render 'mionas-text',
     content: content,
     variant: block_settings.variant,
-    size: block_settings.size,
     color: block_settings.color,
+    transform: block_settings.transform,
     tag: tag,
     class: text_class,
     style: text_style,
@@ -81,25 +81,16 @@
       "label": "Variant",
       "options": [
         { "value": "display", "label": "Display" },
-        { "value": "headline", "label": "Headline" },
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
         { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
         { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" }
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
       "default": "body",
-      "info": "The typography band, same as Text.tsx's `variant` prop."
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
-      ],
-      "default": "md",
-      "info": "The step within the Variant band."
+      "info": "Display heads the page, Heading a section, Subheading a group, Title one item. Lead is the opening paragraph, Label small meta text, Note fine print."
     },
     {
       "type": "select",
@@ -108,6 +99,7 @@
       "options": [
         { "value": "default", "label": "Default" },
         { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
         { "value": "inverse-primary", "label": "Inverse primary" },
         { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
         { "value": "accent", "label": "Accent" },
@@ -115,6 +107,20 @@
         { "value": "tint", "label": "Tint" }
       ],
       "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "transform",
+      "label": "Case",
+      "options": [
+        { "value": "inherit", "label": "Inherited" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "inherit",
+      "info": "None undoes an uppercase the text inherits from its container."
     },
     {
       "type": "select",

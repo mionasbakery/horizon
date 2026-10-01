@@ -29,7 +29,6 @@
         {%- render 'mionas-text',
           content: 'No published newsletters yet. The blocks appear once the blog has an article.',
           variant: 'label',
-          size: 'lg',
           tag: 'p',
           class: 'mionas-newsletters__note'
         -%}
@@ -272,7 +271,7 @@
                           "type": "mionas-stamp",
                           "settings": {
                             "text": "<p>Última newsletter,</p>",
-                            "size": "lg",
+                            "size": "body",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -284,7 +283,7 @@
                         "date": {
                           "type": "mionas-newsletter-date",
                           "settings": {
-                            "size": "lg",
+                            "size": "body",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -304,8 +303,7 @@
                       "type": "mionas-text",
                       "settings": {
                         "text": "<p>{{ closest.article.title }}</p>",
-                        "variant": "headline",
-                        "size": "lg",
+                        "variant": "heading",
                         "color": "inverse-primary",
                         "tag": "p",
                         "text_wrap": "normal",
@@ -357,8 +355,7 @@
               "name": "Mionas: Text - Heading",
               "settings": {
                 "text": "<p>Newsletters anteriores</p>",
-                "variant": "headline",
-                "size": "lg",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h2"
               }
@@ -369,7 +366,6 @@
               "settings": {
                 "text": "<p>Todas las que hemos enviado. La más reciente, primero.</p>",
                 "variant": "body",
-                "size": "md",
                 "tag": "p"
               }
             }
@@ -385,8 +381,7 @@
             "year": {
               "type": "mionas-newsletter-year",
               "settings": {
-                "variant": "headline",
-                "size": "lg",
+                "variant": "heading",
                 "color": "primary",
                 "tag": "h3"
               }
@@ -398,6 +393,7 @@
                 "date": {
                   "type": "mionas-newsletter-date",
                   "settings": {
+                    "size": "body",
                     "tag": "span",
                     "show_year": false
                   }
@@ -406,8 +402,7 @@
                   "type": "mionas-text",
                   "settings": {
                     "text": "<p>{{ closest.article.title }}</p>",
-                    "variant": "body",
-                    "size": "lg",
+                    "variant": "lead",
                     "tag": "span"
                   }
                 },
@@ -427,8 +422,7 @@
                       "type": "mionas-text",
                       "settings": {
                         "text": "<p>Leer</p>",
-                        "variant": "body",
-                        "size": "lg",
+                        "variant": "lead",
                         "color": "primary",
                         "tag": "span"
                       }

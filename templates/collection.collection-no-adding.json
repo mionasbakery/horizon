@@ -30,7 +30,6 @@
           "settings": {
             "text": "<p>{{ closest.collection.title }}</p>",
             "variant": "display",
-            "size": "lg",
             "color": "default",
             "tag": "h1",
             "text_wrap": "normal",
@@ -46,8 +45,7 @@
           "name": "Mionas: Text - Description",
           "settings": {
             "text": "{{ closest.collection.description }}",
-            "variant": "body",
-            "size": "lg",
+            "variant": "lead",
             "color": "default",
             "tag": "p",
             "text_wrap": "normal",
@@ -199,7 +197,6 @@
                     "kind": "information",
                     "placement": "inline",
                     "corner": "top-left",
-                    "size": "label-sm",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -213,7 +210,6 @@
                   "settings": {
                     "text": "<p>{{ closest.product.title }}</p>",
                     "variant": "title",
-                    "size": "sm",
                     "color": "default",
                     "tag": "div",
                     "text_wrap": "normal",
@@ -229,7 +225,6 @@
                   "name": "Mionas: Price",
                   "settings": {
                     "variant": "title",
-                    "size": "sm",
                     "color": "default",
                     "show_compare_at_price": false,
                     "show_tax_info": false,

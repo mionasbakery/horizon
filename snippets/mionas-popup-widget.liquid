@@ -1,0 +1,201 @@
+{%- doc -%}
+  Renders the widget that opens a Mionas popup: a tab on the page edge on desktop and a bar on the
+  bottom edge on phones. It ships hidden; a script shows it.
+
+  @param {string} element - The custom element tag: mionas-popup-widget, or the tag of a subclass.
+  @param {string} popup_id - The id of the popup it opens.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {string} position - left or right, on desktop.
+  @param {string} vertical - bottom or top, on desktop.
+  @param {string} label - The accessible name of its open button.
+  @param {string} content - The visible content of its open button.
+  @param {string} [attributes] - Extra attributes for the custom element.
+{%- enddoc -%}
+
+<{{ element }}
+  for="{{ popup_id }}"
+  class="mionas-popup-widget mionas-popup-widget--{{ position }} mionas-popup-widget--{{ vertical }}"
+  data-section-id="{{ section_id }}"
+  {{ attributes }}
+  hidden
+>
+  <button
+    type="button"
+    class="mionas-popup-widget__open"
+    aria-haspopup="dialog"
+    aria-controls="{{ popup_id }}"
+    aria-label="{{ label }}"
+    on:click="/openPopup"
+  >
+    <span
+      class="mionas-popup-widget__body"
+      aria-hidden="true"
+    >
+      {{- content -}}
+    </span>
+  </button>
+</{{ element }}>
+
+{% stylesheet %}
+  /* A blue tab docked to the page edge inside the page margin on desktop, a bar on the bottom edge on
+     phones like the popup's sheet. */
+  .mionas-popup-widget {
+    /* How far the widget slides to leave the screen: down by its own height from the bottom edge. */
+    --mionas-popup-widget-slide: 100%;
+    /* Placeholder: the design system has no motion tokens; the popup's entry and exit curves. */
+    --mionas-popup-widget-speed-in: 0.3s;
+    --mionas-popup-widget-easing-in: var(--ease-out-cubic);
+    --mionas-popup-widget-speed-out: 0.2s;
+    --mionas-popup-widget-easing-out: var(--animation-timing-active);
+
+    position: fixed;
+    bottom: 0;
+    z-index: var(--layer-sticky);
+    display: flex;
+    align-items: center;
+    max-width: calc(100vw - 2 * var(--page-margin));
+    background: var(--brand-primary);
+    color: var(--text-color-inverse-primary);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  /* The script writes the widget's height, 0 while hidden, so the footer can scroll clear of it. The
+     room goes to the last footer section, not the body, so the footer's own background shows through
+     the widget's round corners; this needs the widget's section to stay last in the footer group. */
+  .shopify-section:has(+ .shopify-section:last-child .mionas-popup-widget--bottom) {
+    padding-block-end: var(--mionas-popup-widget-height, 0px);
+  }
+
+  .mionas-popup-widget[hidden] {
+    display: none;
+  }
+
+  /* Hidden but still laid out, so the page padding keeps its height under the open popup. */
+  .mionas-popup-widget[data-covered] {
+    visibility: hidden;
+  }
+
+  /* Under the header and announcement bar; header.js keeps --header-group-height current after load. */
+  .mionas-popup-widget--top {
+    --mionas-popup-widget-slide: calc(-100% - var(--header-group-height, 0px) - var(--space-lg));
+
+    top: calc(var(--header-group-height, 0px) + var(--space-lg));
+    bottom: auto;
+    border-radius: var(--radius-xl);
+  }
+
+  .mionas-popup-widget--right {
+    right: var(--page-margin);
+  }
+
+  .mionas-popup-widget--left {
+    left: var(--page-margin);
+  }
+
+  .mionas-popup-widget__open {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    padding: var(--space-md) var(--space-lg);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .mionas-popup-widget__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  /* The theme's focus ring is brand blue, which vanishes on this blue surface. */
+  .mionas-popup-widget button:focus-visible {
+    outline: var(--focus-outline-width) solid currentColor;
+    outline-offset: calc(-1 * var(--space-2xs));
+  }
+
+  .mionas-popup-widget--sliding-in {
+    animation: mionas-popup-widget-slide-in var(--mionas-popup-widget-speed-in) var(--mionas-popup-widget-easing-in);
+  }
+
+  .mionas-popup-widget--sliding-out {
+    animation: mionas-popup-widget-slide-out var(--mionas-popup-widget-speed-out)
+      var(--mionas-popup-widget-easing-out) forwards;
+  }
+
+  @media screen and (max-width: 749px) {
+    .shopify-section:has(+ .shopify-section:last-child .mionas-popup-widget) {
+      padding-block-end: var(--mionas-popup-widget-height, 0px);
+    }
+
+    .mionas-popup-widget.mionas-popup-widget {
+      /* The bar enters on the popup sheet's curve, a little quicker because it is shorter. */
+      --mionas-popup-widget-speed-in: 0.4s;
+      --mionas-popup-widget-easing-in: var(--ease-out-quad);
+      --mionas-popup-widget-speed-out: 0.25s;
+      --mionas-popup-widget-slide: 100%;
+
+      top: auto;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      max-width: none;
+      /* The open button's bottom padding counts toward the home-indicator inset instead of adding to
+         it. iOS changes the inset when the browser's bottom toolbar hides, so the bar grows gently. */
+      padding-bottom: max(0px, env(safe-area-inset-bottom) - var(--space-md));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      transition: padding-bottom var(--animation-speed-slow) var(--ease-out-cubic);
+    }
+
+    .mionas-popup-widget .mionas-popup-widget__open {
+      padding-inline: var(--page-margin);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-popup-widget--sliding-in {
+      animation-name: mionas-popup-widget-fade-in;
+    }
+
+    .mionas-popup-widget--sliding-out {
+      animation-name: mionas-popup-widget-fade-out;
+    }
+
+    .mionas-popup-widget.mionas-popup-widget {
+      transition: none;
+    }
+  }
+
+  @keyframes mionas-popup-widget-slide-in {
+    from {
+      transform: translateY(var(--mionas-popup-widget-slide));
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mionas-popup-widget-slide-out {
+    to {
+      transform: translateY(var(--mionas-popup-widget-slide));
+    }
+  }
+
+  @keyframes mionas-popup-widget-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mionas-popup-widget-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+{% endstylesheet %}

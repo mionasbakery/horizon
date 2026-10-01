@@ -4,12 +4,12 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  The text-role classes (defined in blocks/mionas-text.liquid, shipped globally) go on the day
-  box, not on each cell, so both cells inherit one size/color pair.
+  The text-role classes (defined in snippets/mionas-text.liquid) go on the day box, not on each
+  cell, so both cells inherit one variant and color.
 {%- endcomment -%}
 {% # theme-check-disable ValidScopedCSSClass %}
 <div
-  class="mionas-schedule__day text-role text-role--body-{{ block.settings.size }} text-role--{{ block.settings.color }}"
+  class="mionas-schedule__day text-role text-role--body text-role--{{ block.settings.color }}"
   {{ block.shopify_attributes }}
 >
   {% # theme-check-enable ValidScopedCSSClass %}
@@ -35,18 +35,6 @@
       "label": "Hours",
       "default": "<p>Cerrado</p>",
       "info": "Press Enter for a second line, e.g. a split morning and afternoon schedule."
-    },
-    {
-      "type": "select",
-      "id": "size",
-      "label": "Size",
-      "options": [
-        { "value": "lg", "label": "Large" },
-        { "value": "md", "label": "Medium" },
-        { "value": "sm", "label": "Small" }
-      ],
-      "default": "md",
-      "info": "The step within the Body band."
     },
     {
       "type": "select",
