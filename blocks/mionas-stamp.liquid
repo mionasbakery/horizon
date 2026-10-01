@@ -1,11 +1,12 @@
 {%- doc -%}
-  Renders an uppercase eyebrow/kicker in the Stamp face (Oswald, wide tracking, uppercase).
+  Renders a short uppercase label in the Stamp face (Oswald, wide tracking): a tag, a category or a date.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/components/Stamp/Stamp.tsx: an uppercase Oswald eyebrow sized to the
-  text it labels. The Size setting holds that text's variant; the id stayed `size` so stored
-  instances kept their key.
+  Mirrors ../design-system/src/components/Stamp/Stamp.tsx: an uppercase Oswald label at a Text
+  variant's font-size and line-height. The Size setting holds that variant; the id stayed `size` so
+  stored instances kept their key. A stamp above a display heading belongs in
+  blocks/mionas-heading-group.liquid instead.
 {%- endcomment -%}
 {%- assign block_settings = block.settings -%}
 {%- capture content %}{% render 'mionas-inline-richtext', value: block_settings.text %}{% endcapture -%}
@@ -42,10 +43,11 @@
         { "value": "title", "label": "Title" },
         { "value": "lead", "label": "Lead" },
         { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" }
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
       "default": "heading",
-      "info": "Match the variant of the text this stamp labels. Lead, body and label stamps sit beside their text, the others above it."
+      "info": "The stamp takes this text variant's size. Body suits a stamp above a heading, Label a date or tag in a row of meta text."
     },
     {
       "type": "select",

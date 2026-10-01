@@ -1,9 +1,9 @@
 {%- doc -%}
-  Renders stamp text in the Stamp face, sized to the text it labels, coloured and padded by a stamp block's settings.
+  Renders stamp text in the Stamp face at a Text variant's size, coloured and padded by a stamp block's settings.
 
   @param {string} content - Inline HTML to show. Emitted unfiltered; callers sanitise it.
   @param {object} [settings] - The calling block's settings: size, variant, tag and padding-*.
-  @param {string} [size] - The labelled text's variant, e.g. heading, for a caller with no block settings; wins over settings.size.
+  @param {string} [size] - A Text variant whose font-size and line-height the stamp takes, e.g. body, for a caller with no block settings; wins over settings.size.
   @param {string} [color] - Text colour variant for a caller with no block settings; wins over settings.variant.
   @param {string} [tag] - Element for a caller with no block settings; wins over settings.tag.
   @param {string} [shopify_attributes] - The calling block's block.shopify_attributes.
@@ -15,7 +15,7 @@
 {%- endcomment -%}
 {%- liquid
   assign size = size | default: settings.size
-  assign allowed_sizes = 'display|heading|subheading|title|lead|body|label' | split: '|'
+  assign allowed_sizes = 'display|heading|subheading|title|lead|body|label|note' | split: '|'
   unless allowed_sizes contains size
     assign size = 'heading'
   endunless
@@ -80,5 +80,10 @@
   .text-role.mionas-stamp--label {
     font-size: var(--stamp-size-label-font-size);
     line-height: var(--stamp-size-label-line-height);
+  }
+
+  .text-role.mionas-stamp--note {
+    font-size: var(--stamp-size-note-font-size);
+    line-height: var(--stamp-size-note-line-height);
   }
 {% endstylesheet %}

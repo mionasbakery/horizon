@@ -13,6 +13,9 @@
   popover trigger button, which is the "menu" this is inlining. shop.policies is looped directly
   here for the same reason as mionas-language-links -- the set of policies is store-configured,
   not merchant-placed blocks, so a mionas-group of hand-added links would drift out of sync.
+
+  The links keep the variant's text weight: they are footer fine print, and the heavier link weight
+  made them stand out from it.
 {%- endcomment -%}
 {% if shop.policies.size > 0 %}
   <ul class="mionas-policy-links list-unstyled" role="list" {{ shopify_attributes }}>
@@ -34,7 +37,8 @@
             content: policy_title,
             link: policy.url,
             color: settings.color,
-            variant: settings.variant
+            variant: settings.variant,
+            weight: 'text'
           %}
         </li>
       {%- endif -%}

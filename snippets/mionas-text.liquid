@@ -14,7 +14,7 @@
   pass values from `| money` and product.title. Nothing here escapes; nothing here strips tags.
 
   @param {string} content - The text to render. Emitted unfiltered; see above.
-  @param {string} [variant] - A Text.tsx variant: display, heading, subheading, title, lead, body, label. Defaults to body. `inherit` renders no variant, so size, line-height and tracking come from the surroundings.
+  @param {string} [variant] - A Text.tsx variant: display, heading, subheading, title, lead, body, label, note. Defaults to body. `inherit` renders no variant, so size, line-height and tracking come from the surroundings.
   @param {string} [color] - A colour variant: default, primary, secondary, inverse-primary, inverse-primary-muted, accent, accent-inverse, tint. Defaults to default.
   @param {string} [transform] - uppercase, lowercase, capitalize or none. Unset leaves the inherited case.
   @param {string} [tag] - p, span, div, h1-h6, a, button or label. Anything else falls back to p.
@@ -37,7 +37,7 @@
     string that stopped being a valid variant, and an invalid class leaves the text with no size,
     weight or tracking at all. Keep this list in step with the .text-role--* rules below.
   endcomment
-  assign allowed_variants = 'display|heading|subheading|title|lead|body|label' | split: '|'
+  assign allowed_variants = 'display|heading|subheading|title|lead|body|label|note' | split: '|'
   unless allowed_variants contains resolved_variant
     assign resolved_variant = 'body'
   endunless
@@ -146,6 +146,13 @@
     line-height: var(--text-role-label-line-height);
     font-weight: var(--text-role-label-font-weight);
     letter-spacing: var(--text-role-label-letter-spacing);
+  }
+
+  .text-role--note {
+    font-size: var(--text-role-note-font-size);
+    line-height: var(--text-role-note-line-height);
+    font-weight: var(--text-role-note-font-weight);
+    letter-spacing: var(--text-role-note-letter-spacing);
   }
 
   /* No text-role--stamp rule here on purpose: snippets/mionas-stamp.liquid renders label and

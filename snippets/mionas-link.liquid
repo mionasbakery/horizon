@@ -3,7 +3,8 @@
 
   @param {string} content - Label content. Emitted unfiltered; caller must sanitise if needed.
   @param {string} [color] - A Text colour, or inherit to take the surrounding colour. Defaults to primary.
-  @param {string} [variant] - A Text variant: display, heading, subheading, title, lead, body or label. Leave it blank, or pass inherit, to take the surrounding size.
+  @param {string} [variant] - A Text variant: display, heading, subheading, title, lead, body, label or note. Leave it blank, or pass inherit, to take the surrounding size.
+  @param {string} [weight] - link (default) reads one weight step above the variant, as Link.tsx does; text keeps the variant's own weight.
   @param {string} [icon] - Icon name, passed through to snippets/icon.liquid. Blank/"none" for no icon.
   @param {string} [text_wrap] - normal or nowrap. Defaults to normal.
   @param {string} [tag] - "a" (default) or "button".
@@ -31,7 +32,7 @@
   assign resolved_color = color | default: 'primary'
 
   assign resolved_variant = variant | default: 'inherit'
-  assign allowed_variants = 'inherit|display|heading|subheading|title|lead|body|label' | split: '|'
+  assign allowed_variants = 'inherit|display|heading|subheading|title|lead|body|label|note' | split: '|'
   unless allowed_variants contains resolved_variant
     assign resolved_variant = 'body'
   endunless
@@ -39,6 +40,8 @@
   assign classes = 'mionas-link'
   if resolved_variant == 'inherit'
     assign classes = classes | append: ' mionas-link--inherit'
+  elsif weight == 'text'
+    assign classes = classes | append: ' mionas-link--text-weight'
   else
     assign classes = classes | append: ' mionas-link--' | append: resolved_variant
   endif
@@ -85,12 +88,16 @@
   /* Two classes deep so the link weight beats the .text-role--<variant> weight at one class, the way
      Link.module.css overrides Text's. */
   .text-role.mionas-link {
-    font-weight: var(--link-base-font-weight);
     text-decoration: none;
     cursor: pointer;
     background: none;
     border: none;
     padding: 0;
+  }
+
+  /* :where keeps this at two classes, so the per-variant weights below still win on source order. */
+  .text-role.mionas-link:where(:not(.mionas-link--text-weight)) {
+    font-weight: var(--link-base-font-weight);
   }
 
   .text-role.mionas-link--display {
@@ -119,6 +126,10 @@
 
   .text-role.mionas-link--label {
     font-weight: var(--link-label-font-weight);
+  }
+
+  .text-role.mionas-link--note {
+    font-weight: var(--link-note-font-weight);
   }
 
   /* A <button> doesn't inherit font size from its surroundings on its own. */

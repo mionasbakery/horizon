@@ -154,8 +154,9 @@ export const EXPECTED_TOKENS = {
   "--text-role-label-line-height": "18px",
   "--text-role-label-letter-spacing": "0.02em",
   "--text-role-body-font-weight": "400",
-  // Stamp, spent by snippets/mionas-stamp.liquid. Its sizes come from its own --stamp-size-* tokens,
-  // one per text variant it labels.
+  // Stamp, spent by snippets/mionas-stamp.liquid. Each --stamp-size-* pair is a Text variant's
+  // font-size and line-height. The stored stamps use body, label and note, so those are pinned:
+  // a revalue there resizes every eyebrow and date on the site.
   //
   // --stamp-base-font-family is absent for the reason every component family token is: it is a
   // var() reference to --font-family-oswald, which the bridge repoints, so pinning it would
@@ -163,6 +164,21 @@ export const EXPECTED_TOKENS = {
   "--stamp-base-font-weight": "600",
   "--stamp-base-letter-spacing": "0.05em",
   "--stamp-base-text-transform": "uppercase",
+  "--stamp-size-body-font-size": "16px",
+  "--stamp-size-body-line-height": "24px",
+  "--stamp-size-label-font-size": "13px",
+  "--stamp-size-label-line-height": "18px",
+  "--stamp-size-note-font-size": "11px",
+  "--stamp-size-note-line-height": "14px",
+  // The note variant, spent by snippets/mionas-text.liquid (the price tax note, the signup consent
+  // text) and snippets/mionas-link.liquid.
+  "--text-role-note-font-size": "11px",
+  "--text-role-note-line-height": "14px",
+  "--text-role-note-font-weight": "500",
+  "--text-role-note-letter-spacing": "0.02em",
+  "--link-note-font-weight": "600",
+  // HeadingGroup, spent by blocks/mionas-heading-group.liquid.
+  "--heading-group-base-gap": "8px",
   // The three foundation font-size steps the theme spends raw, outside any role: the corporate
   // form, figure and offer card fine print, and the localization form. The steps are named for their px value
   // now (--font-size-xs became --font-size-13), so the name asserts the value -- a --font-size-13

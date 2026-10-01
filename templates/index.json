@@ -123,36 +123,16 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_text_ARrD79": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp",
+            "mionas_heading_group_Hx4kQe": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>ESPECIALITAT EN COOKIES</p>",
-                "size": "display",
-                "variant": "accent",
-                "tag": "div",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_NJkqUW": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
-              "settings": {
-                "text": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
-                "variant": "display",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "eyebrow": "<p>ESPECIALITAT EN COOKIES</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
+                "heading_color": "default",
+                "heading_tag": "h1"
+              }
             },
             "mionas_text_H8dqtJ": {
               "type": "mionas-text",
@@ -248,8 +228,7 @@
             }
           },
           "block_order": [
-            "mionas_text_ARrD79",
-            "mionas_text_NJkqUW",
+            "mionas_heading_group_Hx4kQe",
             "mionas_text_H8dqtJ",
             "group_QJdFQn"
           ]
@@ -750,7 +729,7 @@
               "name": "Mionas: Stamp",
               "settings": {
                 "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "heading",
+                "size": "body",
                 "variant": "accent",
                 "tag": "div",
                 "padding-block-start": 0,

@@ -126,7 +126,7 @@
                   "name": "Mionas: Stamp",
                   "settings": {
                     "text": "<p>Especialitat en cookies</p>",
-                    "size": "heading",
+                    "size": "body",
                     "variant": "accent-inverse",
                     "tag": "p",
                     "padding-block-start": 0,
@@ -828,7 +828,7 @@
           "type": "mionas-policy-links",
           "name": "Mionas: Policy Links",
           "settings": {
-            "color": "inverse-primary-muted", "variant": "label"
+            "color": "inverse-primary-muted", "variant": "note"
           },
           "blocks": {}
         },
@@ -876,7 +876,7 @@
               "name": "Mionas: Stamp - Newsletter",
               "settings": {
                 "text": "<p>Suscríbete a la newsletter</p>",
-                "size": "heading",
+                "size": "body",
                 "variant": "accent",
                 "tag": "p",
                 "padding-block-start": 0,

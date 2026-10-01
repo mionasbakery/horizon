@@ -123,36 +123,16 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_text_TxwLqj": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp",
+            "mionas_heading_group_Rb7mWs": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "display",
-                "variant": "accent",
-                "tag": "div",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_E74aRt": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
-              "settings": {
-                "text": "<p>10% de descuento en tu primera compra</p>",
-                "variant": "display",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "eyebrow": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>10% de descuento en tu primera compra</p>",
+                "heading_color": "default",
+                "heading_tag": "h1"
+              }
             },
             "mionas_text_PHRkcU": {
               "type": "mionas-text",
@@ -199,8 +179,7 @@
             }
           },
           "block_order": [
-            "mionas_text_TxwLqj",
-            "mionas_text_E74aRt",
+            "mionas_heading_group_Rb7mWs",
             "mionas_text_PHRkcU",
             "mionas_email_signup_AdjRU4"
           ]
@@ -361,7 +340,7 @@
                           "name": "Mionas: Stamp",
                           "settings": {
                             "text": "<p>Última newsletter,</p>",
-                            "size": "heading",
+                            "size": "body",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -376,7 +355,7 @@
                           "name": "Mionas: Newsletter Date",
                           "settings": {
                             "show_year": true,
-                            "size": "heading",
+                            "size": "body",
                             "variant": "accent-inverse",
                             "tag": "span",
                             "padding-block-start": 0,
@@ -556,7 +535,7 @@
                   "name": "Mionas: Newsletter Date",
                   "settings": {
                     "show_year": false,
-                    "size": "lead",
+                    "size": "body",
                     "variant": "accent",
                     "tag": "span",
                     "padding-block-start": 0,

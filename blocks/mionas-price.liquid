@@ -82,7 +82,7 @@
       endif
 
       if tax_note != blank
-        render 'mionas-text', content: tax_note, variant: 'label', color: 'secondary', tag: 'span', class: 'mionas-price__tax-note'
+        render 'mionas-text', content: tax_note, variant: 'note', color: 'secondary', tag: 'span', class: 'mionas-price__tax-note'
       endif
     endcapture
   -%}
@@ -140,7 +140,7 @@
     font-weight: var(--text-role-body-font-weight, 400);
   }
 
-  /* The note is always the label variant in the secondary colour, whatever Variant the price
+  /* The note is always the note variant in the secondary colour, whatever Variant the price
      uses. flex-basis: 100% puts it on its own line inside the price's wrapping flex row. Two classes
      deep to beat .text-role's margin: 0, which sits in another stylesheet. */
   .text-role.mionas-price__tax-note {
@@ -165,7 +165,8 @@
         { "value": "title", "label": "Title" },
         { "value": "lead", "label": "Lead" },
         { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" }
+        { "value": "label", "label": "Label" },
+        { "value": "note", "label": "Note" }
       ],
       "default": "body",
       "info": "The same text variants as Mionas: Text. Product cards use Title."
