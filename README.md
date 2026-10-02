@@ -70,8 +70,8 @@ Environments for this theme (`dev` and `production`) are defined in `shopify.the
 ```bash
 npm run theme:pull:dev          # pull from the dev store's Horizon theme (live there)
 npm run theme:push:dev          # push to the dev store's Horizon theme (live there — uses --allow-live)
-npm run theme:pull:production   # pull from the production store's Horizon theme (unpublished; the live theme there is Dawn)
-npm run theme:push:production   # push to the production store's Horizon theme (unpublished — does not touch the live Dawn theme)
+npm run theme:pull:production   # pull from the production store's Horizon theme (live there)
+npm run theme:push:production   # push to the production store's Horizon theme (live there — uses --allow-live)
 ```
 
 Both `theme:push:*` scripts run `shopify theme check` first and abort the push if it finds any errors — e.g. a Liquid syntax error or a schema block type that doesn't resolve. This is what would have caught the contact-form block break before it reached either store.
