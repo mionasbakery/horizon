@@ -868,37 +868,22 @@
             "padding-block-start": 48,
             "padding-block-end": 48,
             "padding-inline-start": 48,
-            "padding-inline-end": 48
+            "padding-inline-end": 48,
+            "phone_padding_top": 34,
+            "phone_padding_bottom": 18,
+            "phone_padding_left": 34,
+            "phone_padding_right": 34
           },
           "blocks": {
-            "stamp": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp - Newsletter",
-              "settings": {
-                "text": "<p>Suscríbete a la newsletter</p>",
-                "size": "body",
-                "variant": "accent",
-                "tag": "p",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "heading": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>10% de descuento en tu primera compra</p>",
-                "variant": "heading",
-                "color": "default",
-                "tag": "h2",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "eyebrow": "<p>Suscríbete a la newsletter</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>10% de descuento en tu primera compra</p>",
+                "heading_color": "default",
+                "heading_tag": "h2"
               },
               "blocks": {}
             },
@@ -947,7 +932,6 @@
             }
           },
           "block_order": [
-            "stamp",
             "heading",
             "body",
             "signup"
@@ -959,7 +943,9 @@
           "static": true,
           "settings": {
             "launcher": "after_close",
-            "text": "10% descuento en tu primera compra",
+            "figure": "10%",
+            "text": "descuento",
+            "color": "primary",
             "launcher_position": "left",
             "launcher_vertical": "bottom"
           },

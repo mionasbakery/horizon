@@ -339,23 +339,14 @@
           "name": "Mionas: Popup",
           "static": true,
           "blocks": {
-            "stamp": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp - Newsletter",
-              "settings": {
-                "text": "<p>Suscríbete a la newsletter</p>",
-                "size": "body",
-                "variant": "accent",
-                "tag": "p"
-              }
-            },
             "heading": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>10% de descuento en tu primera compra</p>",
-                "variant": "heading",
-                "tag": "h2"
+                "eyebrow": "<p>Suscríbete a la newsletter</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>10% de descuento en tu primera compra</p>",
+                "heading_tag": "h2"
               }
             },
             "body": {
@@ -379,7 +370,7 @@
               }
             }
           },
-          "block_order": ["stamp", "heading", "body", "signup"]
+          "block_order": ["heading", "body", "signup"]
         },
         "widget": {
           "type": "_mionas-widget",

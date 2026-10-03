@@ -1,5 +1,5 @@
 {%- doc -%}
-  Renders the tab or bar that opens the newsletter popup, as a fixed block of
+  Renders the folded corner that opens the newsletter popup, as a fixed block of
   sections/mionas-newsletter-popup.liquid.
 
   @param {string} popup_id - The id of the popup it opens.
@@ -8,7 +8,14 @@
   @param {boolean} wait_for_consent - Whether it waits for the cookie banner answer before it shows.
 {%- enddoc -%}
 {%- liquid
+  assign widget_figure = block.settings.figure | escape
   assign widget_text = block.settings.text | escape
+  assign widget_label = widget_figure | append: ' ' | append: widget_text | strip
+  # Peach is light, so its text is accent red; the dark fills take white text.
+  assign widget_ink = 'inverse-primary'
+  if block.settings.color == 'accent-inverse'
+    assign widget_ink = 'accent'
+  endif
   # With no automatic open there is no close to wait for, so the widget shows from the first page.
   assign widget_show = block.settings.launcher
   if auto_open == false
@@ -16,7 +23,7 @@
   endif
 -%}
 
-{%- if block.settings.launcher != 'off' and widget_text != blank -%}
+{%- if block.settings.launcher != 'off' and widget_label != blank -%}
   <script
     src="{{ 'mionas-popup-widget.js' | asset_url }}"
     type="module"
@@ -29,7 +36,12 @@
   ></script>
 
   {%- capture widget_content -%}
-    {%- render 'mionas-text', content: widget_text, variant: 'body', color: 'inverse-primary', tag: 'span' -%}
+    {%- if widget_figure != blank -%}
+      {%- render 'mionas-stamp', content: widget_figure, size: 'title', color: widget_ink, tag: 'span' -%}
+    {%- endif -%}
+    {%- if widget_text != blank -%}
+      {%- render 'mionas-stamp', content: widget_text, size: 'title', color: widget_ink, tag: 'span' -%}
+    {%- endif -%}
   {%- endcapture -%}
   {%- capture widget_attributes -%}
     data-show="{{ widget_show }}" data-wait-for-consent="{{ wait_for_consent }}" {{ block.shopify_attributes }}
@@ -40,7 +52,8 @@
     section_id: section_id,
     position: block.settings.launcher_position,
     vertical: block.settings.launcher_vertical,
-    label: widget_text,
+    color: block.settings.color,
+    label: widget_label,
     content: widget_content,
     attributes: widget_attributes
   -%}
@@ -53,7 +66,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "A small tab that opens the popup. The visitor cannot close it. Once it shows, it stays on every page, also where the popup never opens by itself, until the visitor signs up. It never shows to the A/B control group or to subscribers."
+      "content": "A folded page corner that opens the popup. The visitor cannot close it. Once it shows, it stays on every page, also where the popup never opens by itself, until the visitor signs up. It never shows to the A/B control group or to subscribers."
     },
     {
       "type": "select",
@@ -65,32 +78,53 @@
         { "value": "always", "label": "Always" }
       ],
       "default": "after_close",
-      "info": "A tab on the bottom edge on desktop and a bar at the bottom on phones. After the popup closes shows it once the visitor has closed the popup one time. Always shows it from the first page. With Open automatically off, choose Always. Never then leaves no way to open the popup, and After the popup closes works like Always."
+      "info": "A folded corner of the screen. After the popup closes shows it once the visitor has closed the popup one time. Always shows it from the first page. With Open automatically off, choose Always. Never then leaves no way to open the popup, and After the popup closes works like Always."
+    },
+    {
+      "type": "text",
+      "id": "figure",
+      "label": "Figure",
+      "info": "The first line, e.g. 10%. If Figure and Text are both empty, the widget does not show.",
+      "default": "10%",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
     },
     {
       "type": "text",
       "id": "text",
       "label": "Text",
-      "info": "If empty, the widget does not show.",
-      "default": "10% descuento en tu primera compra",
+      "info": "The second line, at the same size. Keep it to one short word so it fits the fold.",
+      "default": "descuento",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Color",
+      "options": [
+        { "value": "accent", "label": "Accent" },
+        { "value": "primary", "label": "Primary" },
+        { "value": "accent-inverse", "label": "Accent (inverse)" }
+      ],
+      "default": "accent",
+      "info": "Accent and Primary take white text, Accent (inverse) takes red text.",
       "visible_if": "{{ block.settings.launcher != 'off' }}"
     },
     {
       "type": "select",
       "id": "launcher_position",
-      "label": "Desktop position",
+      "label": "Side",
       "options": [
         { "value": "left", "label": "Left" },
         { "value": "right", "label": "Right" }
       ],
       "default": "left",
-      "info": "On phones it is always a bar at the bottom.",
+      "info": "Phones use this side too, always in a bottom corner.",
       "visible_if": "{{ block.settings.launcher != 'off' }}"
     },
     {
       "type": "select",
       "id": "launcher_vertical",
-      "label": "Desktop vertical position",
+      "label": "Desktop corner",
       "options": [
         { "value": "top", "label": "Top, under the header" },
         { "value": "bottom", "label": "Bottom" }

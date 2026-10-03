@@ -5,7 +5,8 @@
   @param {string} element - The custom element tag: mionas-popup-component, or the tag of a subclass.
   @param {string} id - The element id, which other parts use to find the popup.
   @param {string} section_id - The id of the rendering section, for the theme editor.
-  @param {object} settings - The settings with the image and the padding-* settings.
+  @param {object} settings - The settings with the image, the padding-* settings and, optionally, the
+    phone_padding_* settings that replace them on phones.
   @param {string} label - The dialog's accessible name until a heading in the content names it.
   @param {string} close_label - The accessible name of the close button and the handle.
   @param {string} content - The dialog content.
@@ -43,7 +44,7 @@
 
       <div
         class="mionas-popup__content spacing-style"
-        style="{% render 'spacing-style', settings: settings %}"
+        style="{% render 'spacing-style', settings: settings %}{% if settings.phone_padding_top != nil %} --mionas-popup-phone-padding-block: {{ settings.phone_padding_top }}px {{ settings.phone_padding_bottom }}px; --mionas-popup-phone-padding-inline: {{ settings.phone_padding_left }}px {{ settings.phone_padding_right }}px;{% endif %}"
       >
         {{ content }}
       </div>
@@ -165,7 +166,8 @@
   }
 
   /* Horizon's dialog-modal goes full screen below 750px; the design is a bottom sheet without the
-     photo, so the sheet still leaves part of the page in view. */
+     photo, floating clear of the screen edges like a current iOS or Android sheet, so the sheet still
+     leaves part of the page in view. */
   @media screen and (max-width: 749px) {
     /* The UA's modal dialog keeps inset-block-start: 0, which with height: auto stretches the sheet
        to the full max-height; releasing the top edge lets it fit its content. */
@@ -174,21 +176,24 @@
       --mionas-popup-speed-in: 0.5s;
       --mionas-popup-easing-in: var(--ease-out-quad);
       --mionas-popup-speed-out: 0.3s;
+      /* The home indicator's safe area replaces the gap below the sheet when it is larger. */
+      --mionas-popup-sheet-gap: var(--space-xs);
+      --mionas-popup-sheet-gap-end: max(var(--mionas-popup-sheet-gap), env(safe-area-inset-bottom));
 
       inset-block-start: auto;
-      width: 100%;
+      width: calc(100% - 2 * var(--mionas-popup-sheet-gap));
       height: auto;
-      max-height: 90dvh;
-      margin: 0;
+      max-height: calc(90dvh - var(--mionas-popup-sheet-gap-end));
+      margin: 0 auto var(--mionas-popup-sheet-gap-end);
       padding: 0;
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      border-radius: var(--radius-xl);
       transition: translate var(--mionas-popup-speed-in) var(--mionas-popup-easing-in);
     }
 
     /* Horizon's search styles square every open .dialog-modal on phones with the weight of the rule
        above, and the compiled stylesheet's order is not fixed; the [open] state outranks them. */
     .mionas-popup__dialog.dialog-modal[open] {
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      border-radius: var(--radius-xl);
       animation: mionas-popup-sheet-in var(--mionas-popup-speed-in) var(--mionas-popup-easing-in) forwards;
     }
 
@@ -200,13 +205,14 @@
       grid-template-columns: 1fr;
     }
 
+    .mionas-popup__content.spacing-style {
+      padding-block: var(--mionas-popup-phone-padding-block, var(--padding-block-start) var(--padding-block-end));
+      padding-inline: var(--mionas-popup-phone-padding-inline, var(--padding-inline-start) var(--padding-inline-end));
+    }
+
     .mionas-popup__media,
     .mionas-button.mionas-popup__close {
       display: none;
-    }
-
-    .mionas-popup__content.spacing-style {
-      padding-block-end: calc(var(--padding-block-end) + env(safe-area-inset-bottom));
     }
 
     /* The handle closes the sheet on a tap or a drag down; its hit area spans the top of the sheet,
@@ -270,9 +276,10 @@
     }
   }
 
+  /* The sheet floats above the bottom edge, so it travels its height plus that gap to leave the screen. */
   @keyframes mionas-popup-sheet-in {
     from {
-      transform: translateY(100%);
+      transform: translateY(calc(100% + var(--mionas-popup-sheet-gap-end)));
     }
     to {
       transform: translateY(0);
@@ -281,7 +288,7 @@
 
   @keyframes mionas-popup-sheet-out {
     to {
-      transform: translateY(100%);
+      transform: translateY(calc(100% + var(--mionas-popup-sheet-gap-end)));
     }
   }
 

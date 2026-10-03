@@ -2,7 +2,7 @@ import { Component } from '@theme/component';
 import { onAnimationEnd } from '@theme/utilities';
 
 /**
- * The tab or bar that opens the Mionas popup named by its `for` attribute. It knows the popup only
+ * The folded corner that opens the Mionas popup named by its `for` attribute. It knows the popup only
  * through the popup's public API and events, and the popup works without it. It has no close
  * control; the caller's scripts decide when it shows through show() and hide().
  */
@@ -12,7 +12,7 @@ export class MionasPopupWidget extends Component {
   /** @type {ResizeObserver | undefined} */
   #observer;
   #listeners = new AbortController();
-  /** Set while the popup is open, so a slide-out that ends after a quick close does not cover the widget. */
+  /** Set while the popup is open, so a fold that ends after a quick close does not cover the widget. */
   #popupOpen = false;
   /** Set by show() and cleared by hide(), so a popup close uncovers only a widget that was shown. */
   #shown = false;
@@ -21,9 +21,9 @@ export class MionasPopupWidget extends Component {
     super.connectedCallback();
 
     // The widget is fixed over the page end, so the page gets its height as extra room to scroll to
-    // the footer; the height changes when the text wraps on narrow phones.
+    // the footer. offsetHeight ignores transforms; the bounding box would catch the unfold mid-scale.
     this.#observer = new ResizeObserver(() => {
-      document.documentElement.style.setProperty('--mionas-popup-widget-height', `${this.getBoundingClientRect().height}px`);
+      document.documentElement.style.setProperty('--mionas-popup-widget-height', `${this.offsetHeight}px`);
     });
     this.#observer.observe(this);
 
@@ -54,7 +54,7 @@ export class MionasPopupWidget extends Component {
     this.#shown = true;
     if (this.#popupOpen || !this.hidden) return;
     this.hidden = false;
-    this.#slide('in');
+    this.#fold('in');
   }
 
   hide() {
@@ -78,14 +78,14 @@ export class MionasPopupWidget extends Component {
     this.popupConnected(popup);
   }
 
-  /** Slides the widget out, then covers it: still laid out, so the page padding under it keeps its height. */
+  /** Folds the widget away, then covers it: still laid out, so the page padding under it keeps its height. */
   #onOpen = () => {
     this.#popupOpen = true;
     if (this.hidden) {
       this.toggleAttribute('data-covered', true);
       return;
     }
-    this.#slide('out', () => this.toggleAttribute('data-covered', this.#popupOpen));
+    this.#fold('out', () => this.toggleAttribute('data-covered', this.#popupOpen));
   };
 
   #onClose = () => {
@@ -94,18 +94,19 @@ export class MionasPopupWidget extends Component {
     if (!this.#shown) return;
 
     this.hidden = false;
-    this.#slide('in');
+    this.#fold('in');
   };
 
   /**
    * @param {'in' | 'out'} direction
-   * @param {() => void} [done] - Runs in the task the slide ends in, before the next frame.
+   * @param {() => void} [done] - Runs in the task the fold ends in, before the next frame.
    */
-  #slide(direction, done) {
-    this.classList.remove('mionas-popup-widget--sliding-in', 'mionas-popup-widget--sliding-out');
-    this.classList.add(`mionas-popup-widget--sliding-${direction}`);
+  #fold(direction, done) {
+    const name = direction === 'in' ? 'mionas-popup-widget--unfolding' : 'mionas-popup-widget--folding';
+    this.classList.remove('mionas-popup-widget--unfolding', 'mionas-popup-widget--folding');
+    this.classList.add(name);
     onAnimationEnd(this, () => {
-      this.classList.remove(`mionas-popup-widget--sliding-${direction}`);
+      this.classList.remove(name);
       done?.();
     });
   }

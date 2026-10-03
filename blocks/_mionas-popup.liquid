@@ -123,7 +123,7 @@
     {
       "type": "header",
       "content": "Content padding",
-      "info": "Space around the popup's text, inside the dialog."
+      "info": "Space around the popup's text, inside the dialog, on screens 750px and wider."
     },
     {
       "type": "range",
@@ -168,6 +168,52 @@
       "step": 2,
       "unit": "px",
       "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Phone padding",
+      "info": "Space around the popup's text on phones, where it opens as a sheet from the bottom. The grab handle sits inside the top space."
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_top",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_bottom",
+      "label": "Bottom",
+      "info": "The No, thanks button already leaves about 16px of empty space under its text.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_left",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_right",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
     }
   ]
 }
