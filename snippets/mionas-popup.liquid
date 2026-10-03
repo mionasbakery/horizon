@@ -153,6 +153,9 @@
     position: absolute;
     top: var(--space-md);
     right: var(--space-md);
+    /* The design system's ghost button is brand blue and it has no neutral variant; the close is
+       chrome, not an action, so it takes the dialog's text colour. */
+    color: var(--text-color-default);
   }
 
   .mionas-popup__close:focus-visible,
