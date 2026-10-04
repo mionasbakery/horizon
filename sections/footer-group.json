@@ -286,7 +286,7 @@
                   "name": "Mionas: Text",
                   "settings": {
                     "text": "<p><strong>TIENDA</strong></p>",
-                    "variant": "label",
+                    "variant": "body",
                     "color": "inverse-primary",
                     "transform": "inherit",
                     "tag": "h3",
@@ -471,7 +471,7 @@
                   "name": "Mionas: Text",
                   "settings": {
                     "text": "<p><strong>MÁS</strong></p>",
-                    "variant": "label",
+                    "variant": "body",
                     "color": "inverse-primary",
                     "transform": "inherit",
                     "tag": "h3",
@@ -656,7 +656,7 @@
                   "name": "Mionas: Text - Visit Us Heading",
                   "settings": {
                     "text": "<p><strong>VEN A VISITARNOS</strong></p>",
-                    "variant": "label",
+                    "variant": "body",
                     "color": "inverse-primary",
                     "transform": "inherit",
                     "tag": "h3",
@@ -739,7 +739,7 @@
                   "name": "Mionas: Text",
                   "settings": {
                     "text": "<p><strong>Horario</strong></p>",
-                    "variant": "label",
+                    "variant": "body",
                     "color": "inverse-primary",
                     "transform": "inherit",
                     "tag": "h3",
