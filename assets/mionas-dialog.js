@@ -7,25 +7,25 @@ const DRAG_CLOSE_SHARE = 0.25;
 const DRAG_CLOSE_SPEED = 0.5;
 
 /**
- * The popup that is opening or open. DialogComponent opens a frame after open() runs, so an open
- * dialog alone would let two popups that arm together both open.
+ * The dialog that is opening or open. DialogComponent opens a frame after open() runs, so an open
+ * dialog alone would let two dialogs that arm together both open.
  * @type {HTMLElement | null}
  */
-let activePopup = null;
+let activeDialog = null;
 
 /**
- * A Mionas popup: a dialog on desktop and a bottom sheet with a handle on phones. It opens only
+ * A Mionas dialog: a dialog on desktop and a bottom sheet with a handle on phones. It opens only
  * through open(); the caller's scripts decide when. Other parts attach through its public API and
- * its events: `mionas-popup:open` ({ source }) and `mionas-popup:close` ({ method }).
+ * its events: `mionas-dialog:open` ({ source }) and `mionas-dialog:close` ({ method }).
  *
  * @extends DialogComponent
  */
-export class MionasPopup extends DialogComponent {
+export class MionasDialog extends DialogComponent {
   requiredRefs = ['dialog'];
 
-  /** The popup that is opening or open, so a caller can wait for it before an open of its own. */
+  /** The dialog that is opening or open, so a caller can wait for it before an open of its own. */
   static get active() {
-    return activePopup;
+    return activeDialog;
   }
 
   /** Backdrop clicks close through DialogComponent's private handler, so that is the default. */
@@ -33,12 +33,12 @@ export class MionasPopup extends DialogComponent {
   #openSource = 'api';
   /** Set by a handle drag, so the click that follows the pointer release does not close the sheet. */
   #dragMoved = false;
-  /** Set from the open until the popup's own close steps ran, to catch a close the browser made alone. */
+  /** Set from the open until the dialog's own close steps ran, to catch a close the browser made alone. */
   #isOpen = false;
   #closeDialog = this.closeDialog;
 
   /**
-   * The popup's own buttons stay clickable while it closes, so a second call is ignored. A handle drag
+   * The dialog's own buttons stay clickable while it closes, so a second call is ignored. A handle drag
    * leaves the sheet moved and its exit curve changed, which are cleared once it is closed.
    */
   closeDialog = async () => {
@@ -46,7 +46,7 @@ export class MionasPopup extends DialogComponent {
     if (!dialog.open || dialog.classList.contains('dialog-closing')) return;
     await this.#closeDialog();
     dialog.style.removeProperty('translate');
-    dialog.style.removeProperty('--mionas-popup-easing-out');
+    dialog.style.removeProperty('--mionas-bottom-sheet-exiting-easing');
   };
 
   /**
@@ -64,14 +64,14 @@ export class MionasPopup extends DialogComponent {
   }
 
   /**
-   * Opens the popup.
-   * @param {{ source?: string }} [options] - `source` goes into the `mionas-popup:open` event.
+   * Opens the dialog.
+   * @param {{ source?: string }} [options] - `source` goes into the `mionas-dialog:open` event.
    */
   open({ source = 'api' } = {}) {
     if (this.refs.dialog.open) return;
 
     this.#openSource = source;
-    activePopup = this;
+    activeDialog = this;
     this.showDialog();
   }
 
@@ -132,7 +132,7 @@ export class MionasPopup extends DialogComponent {
 
   /**
    * Chrome on Android still scrolls the page, or moves its address bar, under the scroll lock from a
-   * swipe that started before the popup opened or on the page around it. Nothing inside a popup
+   * swipe that started before the dialog opened or on the page around it. Nothing inside a dialog
    * scrolls, so every cancelable touchmove is cancelled while it is open; the handle drags through
    * pointer events, which this leaves alone.
    * @param {TouchEvent} event
@@ -143,7 +143,7 @@ export class MionasPopup extends DialogComponent {
 
   /**
    * Android's back gesture closes a modal dialog natively, past DialogComponent, which then never
-   * releases the scroll lock. The gesture is routed through the popup's own close instead.
+   * releases the scroll lock. The gesture is routed through the dialog's own close instead.
    * @param {Event} event
    */
   #onCancel = (event) => {
@@ -153,14 +153,14 @@ export class MionasPopup extends DialogComponent {
 
   /**
    * Chrome does not always let the page cancel the back gesture, and the dialog then closes alone; the
-   * scroll lock is released and the popup's close steps run here instead.
+   * scroll lock is released and the dialog's close steps run here instead.
    */
   #onNativeClose = () => {
     if (!this.#isOpen) return;
     const { dialog } = this.refs;
     dialog.classList.remove('dialog-closing');
     dialog.style.removeProperty('translate');
-    dialog.style.removeProperty('--mionas-popup-easing-out');
+    dialog.style.removeProperty('--mionas-bottom-sheet-exiting-easing');
     unlockScroll(dialog);
     this.#closeMethod = 'back';
     this.dispatchEvent(new DialogCloseEvent());
@@ -168,15 +168,15 @@ export class MionasPopup extends DialogComponent {
 
   #onOpen = () => {
     this.#isOpen = true;
-    this.dispatchEvent(new CustomEvent('mionas-popup:open', { detail: { source: this.#openSource } }));
+    this.dispatchEvent(new CustomEvent('mionas-dialog:open', { detail: { source: this.#openSource } }));
     this.#openSource = 'api';
   };
 
   #onClose = () => {
     this.#isOpen = false;
     document.removeEventListener('touchmove', this.#blockTouchScroll, { capture: true });
-    if (activePopup === this) activePopup = null;
-    this.dispatchEvent(new CustomEvent('mionas-popup:close', { detail: { method: this.#closeMethod } }));
+    if (activeDialog === this) activeDialog = null;
+    this.dispatchEvent(new CustomEvent('mionas-dialog:close', { detail: { method: this.#closeMethod } }));
     this.#closeMethod = 'backdrop';
   };
 
@@ -220,7 +220,7 @@ export class MionasPopup extends DialogComponent {
       const offset = Math.max(0, lastY - startY);
       if (this.#dragMoved && (offset > height * DRAG_CLOSE_SHARE || speed > DRAG_CLOSE_SPEED)) {
         // The exit curve starts from rest, which would stall a sheet the finger just flung.
-        dialog.style.setProperty('--mionas-popup-easing-out', 'linear');
+        dialog.style.setProperty('--mionas-bottom-sheet-exiting-easing', 'linear');
         this.closeWith('handle');
       } else {
         dialog.style.removeProperty('translate');
@@ -232,8 +232,8 @@ export class MionasPopup extends DialogComponent {
   };
 
   /**
-   * The editor sends a block select from the selected block's element, so a block outside the popup,
-   * such as the widget, closes it and is shown alone.
+   * The editor sends a block select from the selected block's element, so a block outside the dialog,
+   * such as the corner fold, closes it and is shown alone.
    * @param {CustomEvent} event
    */
   #onEditorSelect = (event) => {
@@ -252,6 +252,6 @@ export class MionasPopup extends DialogComponent {
   };
 }
 
-if (!customElements.get('mionas-popup-component')) {
-  customElements.define('mionas-popup-component', MionasPopup);
+if (!customElements.get('mionas-dialog-component')) {
+  customElements.define('mionas-dialog-component', MionasDialog);
 }

@@ -878,11 +878,11 @@
       }
     },
     "newsletter_popup": {
-      "type": "mionas-newsletter-popup",
+      "type": "mionas-newsletter-dialog",
       "blocks": {
-        "popup": {
-          "type": "_mionas-popup",
-          "name": "Mionas: Popup",
+        "dialog": {
+          "type": "_mionas-dialog",
+          "name": "Mionas: Dialog",
           "static": true,
           "settings": {
             "image": "shopify://shop_images/gif01-targeta-fidelitat.gif",
@@ -928,7 +928,7 @@
             },
             "signup": {
               "type": "mionas-email-signup",
-              "name": "Mionas: Email signup - Popup",
+              "name": "Mionas: Email signup - Dialog",
               "settings": {
                 "email_label": "Email",
                 "email_placeholder": "",
@@ -960,22 +960,21 @@
             "signup"
           ]
         },
-        "widget": {
-          "type": "_mionas-widget",
-          "name": "Mionas: Widget",
+        "corner_fold": {
+          "type": "_mionas-corner-fold",
+          "name": "Mionas: Corner Fold",
           "static": true,
           "settings": {
             "launcher": "after_close",
             "figure": "10%",
             "text": "descuento",
-            "color": "primary",
-            "launcher_position": "left",
-            "launcher_vertical": "bottom"
+            "text_size": "title",
+            "launcher_position": "left"
           },
           "blocks": {}
         }
       },
-      "name": "Mionas: Newsletter popup",
+      "name": "Mionas: Newsletter Dialog",
       "settings": {
         "audience": "testers",
         "tester_emails": "marcmarcet.bcn@gmail.com\nmariavp567@gmail.com",

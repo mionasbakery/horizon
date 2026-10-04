@@ -1,18 +1,18 @@
 import { DialogOpenEvent } from '@theme/dialog';
 
 // The base class comes from the custom element registry, not an import: Horizon's only import map is
-// native, and a relative import would load a second, unversioned copy of mionas-popup.js.
-await customElements.whenDefined('mionas-popup-component');
-const MionasPopup = /** @type {typeof import('./mionas-popup.js').MionasPopup} */ (
-  customElements.get('mionas-popup-component')
+// native, and a relative import would load a second, unversioned copy of mionas-dialog.js.
+await customElements.whenDefined('mionas-dialog-component');
+const MionasDialog = /** @type {typeof import('./mionas-dialog.js').MionasDialog} */ (
+  customElements.get('mionas-dialog-component')
 );
 
-/** Sources of an open that count as the popup being shown, for the funnel. */
+/** Sources of an open that count as the dialog being shown, for the funnel. */
 const SHOWN_SOURCES = ['auto', 'launcher'];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Console logs of the popup's rules, for testers and for a tab opened with ?popup-debug in its
+ * Console logs of the dialog's rules, for testers and for a tab opened with ?popup-debug in its
  * address; ?popup-debug=off stops them.
  */
 const DEBUG_KEY = 'mionas-popup-debug';
@@ -31,11 +31,11 @@ const debugRequested = (() => {
 const clearedOnReload = new Set();
 
 /**
- * One popup's memory in the visitor's browser: local storage, or with the testers audience a session
+ * One dialog's memory in the visitor's browser: local storage, or with the testers audience a session
  * cookie, which the browser deletes when it closes and a page reload clears, so testers can replay the
  * first visit on demand.
  */
-class PopupStore {
+class DialogStore {
   #key;
   #session;
 
@@ -54,7 +54,7 @@ class PopupStore {
 
   /**
    * @returns {Record<string, any> | null} null when the storage is unusable, since without memory a
-   *   popup would open on every page.
+   *   dialog would open on every page.
    */
   read() {
     const raw = this.#readRaw();
@@ -82,7 +82,7 @@ class PopupStore {
     try {
       localStorage.setItem(this.#key, value);
     } catch {
-      // Quota or a storage policy change mid-session: the popup only loses its memory.
+      // Quota or a storage policy change mid-session: the dialog only loses its memory.
     }
   }
 
@@ -105,33 +105,34 @@ class PopupStore {
 }
 
 /**
- * The newsletter popup: a Mionas popup with an A/B test, funnel analytics and the signup result.
+ * The newsletter dialog: a Mionas dialog with an A/B test, funnel analytics and the signup result.
  *
- * @extends MionasPopup
+ * @extends MionasDialog
  */
-class MionasNewsletterPopup extends MionasPopup {
+class MionasNewsletterDialog extends MionasDialog {
   requiredRefs = ['dialog', 'formView', 'successView'];
 
+  /** Still 'popup', not 'dialog': visitors' browsers store the group and every event reports it. */
   /** @type {'popup' | 'control' | null} */
   #group = null;
 
   decline = () => this.closeWith('button');
   continueShopping = () => this.closeWith('button');
 
-  /** False when this visitor must never get the popup. */
+  /** False when this visitor must never get the dialog. */
   available = true;
   /** True once complete() ran, on this page view or an earlier one. */
   completed = false;
-  /** True when the visitor closed the popup on an earlier page view. */
+  /** True when the visitor closed the dialog on an earlier page view. */
   closedBefore = false;
-  /** True once the popup opened, closed or completed on this page view; an automatic open then never fires. */
+  /** True once the dialog opened, closed or completed on this page view; an automatic open then never fires. */
   doneOnPage = false;
-  /** @type {PopupStore | undefined} */
+  /** @type {DialogStore | undefined} */
   store;
   #debug = false;
 
   /**
-   * Logs a rule that fired to the console, when debugging is on. The trigger and the widget log
+   * Logs a rule that fired to the console, when debugging is on. The trigger and the corner fold log
    * through it too.
    * @param {...any} parts
    */
@@ -146,13 +147,13 @@ class MionasNewsletterPopup extends MionasPopup {
     super.open(options);
   }
 
-  /** Marks the popup done for this visitor, so it never opens by itself again. */
+  /** Marks the dialog done for this visitor, so it never opens by itself again. */
   complete() {
     this.debug('done for this visitor: never opens by itself again');
     this.completed = true;
     this.doneOnPage = true;
     this.store?.write({ state: 'completed' });
-    this.dispatchEvent(new CustomEvent('mionas-newsletter-popup:complete'));
+    this.dispatchEvent(new CustomEvent('mionas-newsletter-dialog:complete'));
   }
 
   connectedCallback() {
@@ -160,12 +161,12 @@ class MionasNewsletterPopup extends MionasPopup {
     if (window.Shopify?.designMode) return;
 
     const testers = this.dataset.audience === 'testers';
-    this.store = new PopupStore(this.dataset.storageKey ?? this.id, testers);
+    this.store = new DialogStore(this.dataset.storageKey ?? this.id, testers);
     this.#debug = testers || debugRequested;
 
     const stored = this.store.read();
     if (!stored) {
-      this.debug('browser storage blocked: the popup never opens by itself');
+      this.debug('browser storage blocked: the dialog never opens by itself');
       return;
     }
     this.debug('memory:', this.#describe(stored), testers ? '(testers: cleared on reload)' : '');
@@ -181,7 +182,7 @@ class MionasNewsletterPopup extends MionasPopup {
     this.#announceGroup();
     this.available = this.#group === 'popup';
     if (!this.available) {
-      this.debug('control group: no popup and no widget');
+      this.debug('control group: no dialog and no corner fold');
       return;
     }
 
@@ -191,8 +192,8 @@ class MionasNewsletterPopup extends MionasPopup {
       this.debug('Open automatically is off');
     }
 
-    this.addEventListener('mionas-popup:open', this.#onOpen);
-    this.addEventListener('mionas-popup:close', this.#onClose);
+    this.addEventListener('mionas-dialog:open', this.#onOpen);
+    this.addEventListener('mionas-dialog:close', this.#onClose);
     this.addEventListener('submit', this.#onSubmit);
 
     const outcome = this.#takeOwnPost() ? this.#submitOutcome() : null;
@@ -205,12 +206,12 @@ class MionasNewsletterPopup extends MionasPopup {
       return;
     }
     if (outcome === 'error') {
-      this.debug('signup failed: the popup opens with the error');
+      this.debug('signup failed: the dialog opens with the error');
       this.open({ source: 'signup' });
       return;
     }
 
-    // `subscribed` is the state stored before popups shared the `completed` state.
+    // `subscribed` is the state stored before dialogs shared the `completed` state.
     if (stored.state === 'subscribed') {
       this.debug('subscribed earlier');
       this.complete();
@@ -251,13 +252,13 @@ class MionasNewsletterPopup extends MionasPopup {
 
   /**
    * A new test name draws a new group but keeps `state`, so a visitor who closed or subscribed is
-   * still never shown the popup again.
+   * still never shown the dialog again.
    * @param {{ test?: string, group?: string }} stored
    * @returns {'popup' | 'control'}
    */
   #resolveGroup(stored) {
     if (this.dataset.abTest !== 'true') {
-      this.debug('A/B test off: every visitor gets the popup');
+      this.debug('A/B test off: every visitor gets the dialog');
       return 'popup';
     }
 
@@ -270,7 +271,7 @@ class MionasNewsletterPopup extends MionasPopup {
     const share = Number(this.dataset.popupShare);
     const percent = Number.isNaN(share) ? 50 : share;
     const group = Math.random() * 100 < percent ? 'popup' : 'control';
-    this.debug(`group: ${group} (new draw, ${percent}% get the popup, test ${test})`);
+    this.debug(`group: ${group} (new draw, ${percent}% get the dialog, test ${test})`);
     this.store?.write({ test, group });
     return group;
   }
@@ -290,7 +291,7 @@ class MionasNewsletterPopup extends MionasPopup {
       // Datadog's pixel has no session outside checkout, so snippets/mionas-datadog.liquid sends it.
       if (name === 'subscribed') window.mionasDatadog?.action('sign_up', { method: 'newsletter_popup', ...payload });
     } catch {
-      // Analytics must never break the popup.
+      // Analytics must never break the dialog.
     }
 
     window.clarity?.('event', eventName);
@@ -342,7 +343,7 @@ class MionasNewsletterPopup extends MionasPopup {
   }
 
   /**
-   * Marks a post from this popup's form, since the customer endpoint gives every signup on the page
+   * Marks a post from this dialog's form, since the customer endpoint gives every signup on the page
    * the same result. It ignores defaultPrevented, because Shopify's captcha can cancel the submit
    * and post the form itself; invalid forms never get here, since the validation script stops them.
    */
@@ -350,11 +351,11 @@ class MionasNewsletterPopup extends MionasPopup {
     try {
       sessionStorage.setItem(this.#postedKey, '1');
     } catch {
-      // Without the mark the popup stays closed after its post, and the block shows the result in place.
+      // Without the mark the dialog stays closed after its post, and the block shows the result in place.
     }
   };
 
-  /** @returns {boolean} True once, on the page load after this popup's own post. */
+  /** @returns {boolean} True once, on the page load after this dialog's own post. */
   #takeOwnPost() {
     try {
       const posted = sessionStorage.getItem(this.#postedKey) === '1';
@@ -366,7 +367,7 @@ class MionasNewsletterPopup extends MionasPopup {
   }
 
   /**
-   * Reads this popup's own signup block after its own post.
+   * Reads this dialog's own signup block after its own post.
    * @returns {'success' | 'error' | null}
    */
   #submitOutcome() {
@@ -385,6 +386,6 @@ class MionasNewsletterPopup extends MionasPopup {
   }
 }
 
-if (!customElements.get('mionas-newsletter-popup-component')) {
-  customElements.define('mionas-newsletter-popup-component', MionasNewsletterPopup);
+if (!customElements.get('mionas-newsletter-dialog-component')) {
+  customElements.define('mionas-newsletter-dialog-component', MionasNewsletterDialog);
 }

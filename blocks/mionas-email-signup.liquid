@@ -32,7 +32,7 @@
 
   The customer endpoint leaves form.id blank, so the multi-instance guard below matches every
   signup on the page and all of them show the post's result, same as the native block.
-  assets/mionas-newsletter-popup.js tells its own post apart in the browser.
+  assets/mionas-newsletter-dialog.js tells its own post apart in the browser.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
@@ -188,7 +188,7 @@
 
   {%- if signup_posted and request.design_mode == false -%}
     <script
-      src="{{ 'mionas-popup.js' | asset_url }}"
+      src="{{ 'mionas-dialog.js' | asset_url }}"
       type="module"
       fetchpriority="low"
     ></script>
@@ -198,41 +198,44 @@
       fetchpriority="low"
     ></script>
     {%- liquid
-      assign success_popup_id = form_id | append: '-success'
-      assign success_close_label = 'mionas.newsletter_popup.close' | t
+      assign success_dialog_id = form_id | append: '-success'
+      assign success_close_label = 'mionas.newsletter_dialog.close' | t
     -%}
-    {%- capture success_content -%}{%- render 'mionas-signup-done' -%}{%- endcapture -%}
-    {%- render 'mionas-popup',
+    {%- capture success_content -%}
+      <div class="mionas-signup-success__content">
+        {%- render 'mionas-signup-done' -%}
+      </div>
+    {%- endcapture -%}
+    {%- render 'mionas-dialog',
       element: 'mionas-signup-success-component',
-      id: success_popup_id,
+      id: success_dialog_id,
       section_id: section.id,
-      settings: block_settings,
       label: success_title,
       close_label: success_close_label,
       content: success_content
     -%}
     {%- comment -%}
       Every signup on the page renders the post's result, so only the form whose submit left the mark
-      below opens the popup; it moves to <body> first because a dialog in a hidden section never
+      below opens the dialog; it moves to <body> first because a dialog in a hidden section never
       shows. Without the mark (blocked storage) the section stays and shows the message in place.
     {%- endcomment -%}
     <script>
       (() => {
         const script = document.currentScript;
-        const popup = document.getElementById({{ success_popup_id | json }});
+        const dialog = document.getElementById({{ success_dialog_id | json }});
 
         let posted = false;
         try {
           posted = sessionStorage.getItem('mionas-signup-posted') === {{ form_id | json }};
           if (posted) sessionStorage.removeItem('mionas-signup-posted');
         } catch {}
-        if (!posted || script.closest('mionas-newsletter-popup-component')) {
-          popup.remove();
+        if (!posted || script.closest('mionas-newsletter-dialog-component')) {
+          dialog.remove();
           return;
         }
 
-        popup.dataset.open = '';
-        document.body.append(popup);
+        dialog.dataset.open = '';
+        document.body.append(dialog);
         {%- if block_settings.hide_section_for_subscribers %}
           script.closest('.shopify-section')?.style.setProperty('display', 'none');
         {%- endif %}
@@ -243,7 +246,7 @@
   {%- if signup_posted == false and request.design_mode == false -%}
     <script>
       (() => {
-        if (document.currentScript.closest('mionas-newsletter-popup-component')) return;
+        if (document.currentScript.closest('mionas-newsletter-dialog-component')) return;
         // A failed post leaves its mark behind, which a later signup elsewhere on the page would match.
         try {
           if (sessionStorage.getItem('mionas-signup-posted') === {{ form_id | json }}) {
@@ -278,19 +281,17 @@
 </div>
 
 {% stylesheet %}
-  /* Placeholder: the design system has no dialog width. Candidate token. */
-  mionas-signup-success-component .mionas-popup__dialog.dialog-modal {
-    --mionas-popup-width: 480px;
-  }
-
-  /* The popup gets the block's own padding settings, which suit the inline form, so its padding is
-     set here. Phones keep room at the top for the sheet's handle. */
-  mionas-signup-success-component .mionas-popup__content.spacing-style {
+  /* The dialog sizes itself to its content. Phones keep room at the top for the sheet's handle. */
+  .mionas-signup-success__content {
+    box-sizing: border-box;
+    width: 480px;
+    max-width: 100%;
     padding: calc(2 * var(--space-lg));
   }
 
   @media screen and (max-width: 749px) {
-    mionas-signup-success-component .mionas-popup__content.spacing-style {
+    .mionas-signup-success__content {
+      width: auto;
       padding: calc(var(--space-lg) + var(--space-md));
     }
   }

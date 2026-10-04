@@ -1,0 +1,216 @@
+{%- doc -%}
+  Renders a Mionas corner fold: a folded page corner fixed to a bottom corner of the screen, sized by
+  its two lines of text, that opens a dialog. It ships hidden; a script shows it.
+
+  @param {string} element - The custom element tag: mionas-corner-fold, or the tag of a subclass.
+  @param {string} dialog_id - The id of the dialog it opens.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {string} label - The accessible name of its open button.
+  @param {string} figure - The first line, nearest the long edge ("10%"). Emitted unfiltered; callers sanitise it.
+  @param {string} text - The second line ("descuento"). Emitted unfiltered; callers sanitise it.
+  @param {string} [side] - left or right. Defaults to left.
+  @param {string} [variant] - The Stamp size of both lines: heading, subheading, title, lead, body or label. Defaults to body.
+  @param {string} [attributes] - Extra attributes for the custom element.
+{%- enddoc -%}
+{%- liquid
+  assign side = side | default: 'left'
+  unless side == 'right'
+    assign side = 'left'
+  endunless
+  assign variant = variant | default: 'body'
+  assign allowed_variants = 'heading|subheading|title|lead|body|label' | split: '|'
+  unless allowed_variants contains variant
+    assign variant = 'body'
+  endunless
+-%}
+{%- capture lines -%}
+  <span class="mionas-corner-fold__line">{{ figure }}</span>
+  <span class="mionas-corner-fold__line">{{ text }}</span>
+{%- endcapture -%}
+
+<{{ element }}
+  for="{{ dialog_id }}"
+  class="mionas-corner-fold mionas-corner-fold--{{ side }}"
+  data-section-id="{{ section_id }}"
+  {{ attributes }}
+  hidden
+>
+  <button
+    type="button"
+    ref="square"
+    class="mionas-corner-fold__square"
+    aria-haspopup="dialog"
+    aria-controls="{{ dialog_id }}"
+    aria-label="{{ label }}"
+    on:click="/openDialog"
+  >
+    {%- render 'mionas-stamp', content: lines, size: variant, color: 'inherit', tag: 'span' -%}
+  </button>
+</{{ element }}>
+
+{% stylesheet %}
+  /* The anchor is a zero-size point fixed at the screen corner. It carries the shadow, as a filter so
+     it doesn't turn with the square, and every scale: hover, fold, unfold. */
+  .mionas-corner-fold {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: var(--layer-sticky);
+    width: 0;
+    height: 0;
+    transform-origin: left bottom;
+    filter: drop-shadow(var(--corner-fold-base-shadow));
+    transition:
+      transform var(--corner-fold-state-hover-duration) var(--corner-fold-state-hover-easing),
+      filter var(--corner-fold-state-hover-duration) var(--corner-fold-state-hover-easing);
+  }
+
+  .mionas-corner-fold--right {
+    right: 0;
+    left: auto;
+    transform-origin: right bottom;
+  }
+
+  .mionas-corner-fold[hidden] {
+    display: none;
+  }
+
+  /* Hidden but still laid out, so the page padding keeps its height under the open dialog. */
+  .mionas-corner-fold[data-covered] {
+    visibility: hidden;
+  }
+
+  /* The script writes the fold's height, 0 while hidden, so the footer can scroll clear of it. The
+     room goes to the last footer section, not the body, so the footer's own background shows behind
+     the fold; this needs the fold's section to stay last in the footer group. */
+  .shopify-section:has(+ .shopify-section:last-child .mionas-corner-fold) {
+    padding-block-end: var(--mionas-corner-fold-height, 0px);
+  }
+
+  /* The square, turned 45° and centred on the corner; the viewport cuts the off-screen half, so the
+     hit area is exactly the visible triangle. The stamp inside sets its size. */
+  .mionas-corner-fold__square {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--corner-fold-base-background);
+    color: var(--corner-fold-base-foreground);
+    translate: -50% 50%;
+    rotate: 45deg;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mionas-corner-fold--right .mionas-corner-fold__square {
+    right: 0;
+    left: auto;
+    translate: 50% 50%;
+    rotate: -45deg;
+  }
+
+  /* As wide as the longer line plus, on each side, two line-heights and two paddings, which keeps
+     both lines inside the triangle; aspect-ratio makes it square. The padding sits on the stamp
+     because lh must read the stamp's line-height. The 3em fallback is two lines at a 1.5em
+     line-height, for browsers without the lh unit. */
+  .mionas-corner-fold__square > .mionas-stamp {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    aspect-ratio: 1;
+    padding: var(--corner-fold-base-padding) calc(3em + 2 * var(--corner-fold-base-padding)) 0;
+    white-space: nowrap;
+  }
+
+  /* lh inside @supports: with var() in the value, an unsupported unit would not fall back to the 3em
+     rule above but reset the padding to 0. */
+  @supports (width: 1lh) {
+    .mionas-corner-fold__square > .mionas-stamp {
+      padding-inline: calc(2lh + 2 * var(--corner-fold-base-padding));
+    }
+  }
+
+  .mionas-corner-fold__line {
+    display: block;
+  }
+
+  /* Only the long edge of the ring is on screen. */
+  .mionas-corner-fold__square:focus-visible {
+    outline: var(--corner-fold-state-focused-border-width) solid var(--corner-fold-state-focused-border-color);
+    outline-offset: var(--corner-fold-state-focused-border-width);
+  }
+
+  .mionas-corner-fold:has(.mionas-corner-fold__square:focus-visible) {
+    filter: drop-shadow(var(--corner-fold-state-hover-shadow));
+  }
+
+  @media (hover: hover) {
+    .mionas-corner-fold:has(.mionas-corner-fold__square:hover) {
+      transform: scale(var(--corner-fold-state-hover-scale));
+      filter: drop-shadow(var(--corner-fold-state-hover-shadow));
+    }
+  }
+
+  .mionas-corner-fold--unfolding {
+    animation: mionas-corner-fold-unfold var(--corner-fold-state-entering-duration)
+      var(--corner-fold-state-entering-easing);
+  }
+
+  .mionas-corner-fold--folding {
+    animation: mionas-corner-fold-fold var(--corner-fold-state-exiting-duration)
+      var(--corner-fold-state-exiting-easing) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-corner-fold {
+      transition: none;
+    }
+
+    .mionas-corner-fold--unfolding {
+      animation-name: mionas-corner-fold-fade-in;
+    }
+
+    .mionas-corner-fold--folding {
+      animation-name: mionas-corner-fold-fade-out;
+    }
+
+    .mionas-corner-fold.mionas-corner-fold {
+      transform: none;
+    }
+  }
+
+  @keyframes mionas-corner-fold-unfold {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mionas-corner-fold-fold {
+    to {
+      transform: scale(0);
+    }
+  }
+
+  @keyframes mionas-corner-fold-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mionas-corner-fold-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+{% endstylesheet %}

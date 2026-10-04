@@ -1,6 +1,6 @@
 {%- doc -%}
   Renders the newsletter signup's success content: an envelope, the thanks, where the discount code
-  went and a button that closes the popup around it. The popup's component must define
+  went and a button that closes the dialog around it. The dialog's component must define
   continueShopping().
 {%- enddoc -%}
 {%- liquid
@@ -34,7 +34,7 @@
     class="{{ continue_classes }}"
     on:click="/continueShopping"
   >
-    {{ 'mionas.newsletter_popup.continue' | t }}
+    {{ 'mionas.newsletter_dialog.continue' | t }}
   </button>
 </div>
 

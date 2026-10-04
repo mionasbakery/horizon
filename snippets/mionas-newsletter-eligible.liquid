@@ -1,9 +1,9 @@
 {%- doc -%}
-  Prints true when this visitor may get the newsletter popup and this page may open it by itself,
+  Prints true when this visitor may get the newsletter dialog and this page may open it by itself,
   page:{rule} when the visitor may get it but this page never opens it by itself, with {rule} the id
   of the setting that hides it, and false when the visitor never gets it.
 
-  @param {object} settings - The popup section's settings: audience, tester_emails, the hide_on_*
+  @param {object} settings - The dialog section's settings: audience, tester_emails, the hide_on_*
     checkboxes and hidden_pages_menu.
   @param {boolean} [exclude_marketing_subscribers] - Leaves out customers who already get marketing
     emails, except testers.
@@ -27,7 +27,7 @@
   if settings.audience == 'testers' and is_tester == false
     assign eligible = false
   endif
-  # A tester is often already subscribed, and would otherwise never see the popup.
+  # A tester is often already subscribed, and would otherwise never see the dialog.
   if exclude_marketing_subscribers and customer and customer.accepts_marketing and is_tester == false
     assign eligible = false
   endif

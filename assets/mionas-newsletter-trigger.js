@@ -6,11 +6,11 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const FREQUENT_LOG_MS = 1000;
 /**
  * How long the page must be still before an automatic open: longer than a fling's tail and than the
- * fade of a phone's overlay scrollbar, which otherwise still shows over the popup.
+ * fade of a phone's overlay scrollbar, which otherwise still shows over the dialog.
  */
 const SETTLE_MS = 800;
 /**
- * How long a release may wait for its click. The popup opens after that click, since a page made
+ * How long a release may wait for its click. The dialog opens after that click, since a page made
  * inert between press and click loses the click.
  */
 const CLICK_WAIT_MS = 100;
@@ -66,18 +66,18 @@ for (const type of ['touchend', 'touchcancel']) {
 window.addEventListener('scroll', () => (gesture.lastMove = performance.now()), { capture: true, passive: true });
 
 /**
- * Opens the popup once nothing is in progress, for an open the visitor did not ask for. It waits for
+ * Opens the dialog once nothing is in progress, for an open the visitor did not ask for. It waits for
  * every finger and mouse button to lift and for the click that follows, since a page made inert
- * between press and click loses the click. Then it waits for a still page and for any other popup
+ * between press and click loses the click. Then it waits for a still page and for any other dialog
  * to close, because an open mid-swipe puts the dialog under the finger and over moving content.
- * @param {any} popup
+ * @param {any} dialog
  */
-function openWhenStill(popup) {
-  if (popup.doneOnPage || popup.refs.dialog.open) return;
-  const retry = () => openWhenStill(popup);
+function openWhenStill(dialog) {
+  if (dialog.doneOnPage || dialog.refs.dialog.open) return;
+  const retry = () => openWhenStill(dialog);
 
   if (gesture.touching || gesture.mouseDown) {
-    popup.debug('waiting for the finger or mouse button to lift');
+    dialog.debug('waiting for the finger or mouse button to lift');
     const release = new AbortController();
     const onRelease = () => {
       if (gesture.touching || gesture.mouseDown) return;
@@ -97,26 +97,26 @@ function openWhenStill(popup) {
     return;
   }
 
-  const active = popup.constructor.active;
-  if (active && active !== popup && active.isConnected) {
-    popup.debug('waiting for another popup to close');
-    active.addEventListener('mionas-popup:close', retry, { once: true });
+  const active = dialog.constructor.active;
+  if (active && active !== dialog && active.isConnected) {
+    dialog.debug('waiting for another dialog to close');
+    active.addEventListener('mionas-dialog:close', retry, { once: true });
     return;
   }
 
   const wait = gesture.lastMove + SETTLE_MS - performance.now();
   if (wait > 0) {
-    popup.debug(`waiting ${Math.ceil(wait)} ms for the page to stop moving`);
+    dialog.debug(`waiting ${Math.ceil(wait)} ms for the page to stop moving`);
     setTimeout(retry, wait);
     return;
   }
 
-  popup.open({ source: 'auto' });
+  dialog.open({ source: 'auto' });
 }
 
 /**
- * Resolves once the Shopify cookie banner no longer needs an answer. An open popup makes the rest of
- * the page inert, so a popup over an unanswered banner would block it. mionas-newsletter-widget.js holds
+ * Resolves once the Shopify cookie banner no longer needs an answer. An open dialog makes the rest of
+ * the page inert, so a dialog over an unanswered banner would block it. mionas-newsletter-corner-fold.js holds
  * a copy, because scripts outside the theme's import map cannot share a module.
  * @param {() => void} onWait - Runs when the banner still needs an answer.
  * @returns {Promise<boolean>} true when the visitor answered the banner on this page.
@@ -218,9 +218,9 @@ class IdleTimer {
 }
 
 /**
- * Opens the newsletter popup named by its `for` attribute by itself, once the visitor has been idle for
- * the section's idle time, counted from the first action on the page. It knows the popup only
- * through the popup's public API and events, and the popup works without it.
+ * Opens the newsletter dialog named by its `for` attribute by itself, once the visitor has been idle for
+ * the section's idle time, counted from the first action on the page. It knows the dialog only
+ * through the dialog's public API and events, and the dialog works without it.
  */
 class MionasNewsletterTrigger extends HTMLElement {
   #listeners = new AbortController();
@@ -228,57 +228,57 @@ class MionasNewsletterTrigger extends HTMLElement {
   connectedCallback() {
     if (window.Shopify?.designMode) return;
 
-    const popup = document.getElementById(this.getAttribute('for') ?? '');
-    if (popup) customElements.whenDefined(popup.localName).then(() => this.#attach(popup));
+    const dialog = document.getElementById(this.getAttribute('for') ?? '');
+    if (dialog) customElements.whenDefined(dialog.localName).then(() => this.#attach(dialog));
   }
 
   disconnectedCallback() {
     this.#listeners.abort();
   }
 
-  /** @param {any} popup */
-  async #attach(popup) {
-    if (!popup.available || popup.completed) return;
-    if (popup.doneOnPage) {
-      popup.debug('no automatic opening: the popup already opened on this page');
+  /** @param {any} dialog */
+  async #attach(dialog) {
+    if (!dialog.available || dialog.completed) return;
+    if (dialog.doneOnPage) {
+      dialog.debug('no automatic opening: the dialog already opened on this page');
       return;
     }
-    if (!this.#due(popup)) return;
+    if (!this.#due(dialog)) return;
 
     const answered =
       this.dataset.waitForConsent === 'true' &&
-      (await waitForConsent(() => popup.debug('count waits for the cookie banner answer')));
-    if (answered) popup.debug('cookie banner answered');
-    if (this.isConnected && !popup.doneOnPage) this.#arm(popup, answered);
+      (await waitForConsent(() => dialog.debug('count waits for the cookie banner answer')));
+    if (answered) dialog.debug('cookie banner answered');
+    if (this.isConnected && !dialog.doneOnPage) this.#arm(dialog, answered);
   }
 
   /**
    * Whether this visitor may get the automatic open: never seen it, or closed it at least the
    * section's reshow days ago.
-   * @param {any} popup
+   * @param {any} dialog
    */
-  #due(popup) {
-    const stored = popup.store?.read();
+  #due(dialog) {
+    const stored = dialog.store?.read();
     if (!stored) return false;
     if (!stored.state) return true;
     if (stored.state !== 'closed') return false;
 
     const reshowDays = Number(this.dataset.reshowDays) || 0;
     if (reshowDays === 0) {
-      popup.debug('no automatic opening: closed before, and Days before showing again is 0');
+      dialog.debug('no automatic opening: closed before, and Days before showing again is 0');
       return false;
     }
     const due = Date.now() - (stored.closedAt ?? 0) >= reshowDays * DAY_MS;
-    if (!due) popup.debug(`no automatic opening: closed before, opens again ${reshowDays} days after the close`);
+    if (!due) dialog.debug(`no automatic opening: closed before, opens again ${reshowDays} days after the close`);
     return due;
   }
 
   /**
-   * @param {any} popup
+   * @param {any} dialog
    * @param {boolean} answered - The visitor answered the cookie banner on this page, which counts as
    *   the first action.
    */
-  #arm(popup, answered) {
+  #arm(dialog, answered) {
     const flag = (/** @type {string} */ name) => this.dataset[name] === 'true';
     const idle = Math.max(1, Number(this.dataset.idle) || 5) * 1000;
     const { signal } = this.#listeners;
@@ -289,7 +289,7 @@ class MionasNewsletterTrigger extends HTMLElement {
      */
     const listen = (target, type, handler) => target.addEventListener(type, handler, { signal, capture: true, passive: true });
 
-    const timer = new IdleTimer(idle, () => openWhenStill(popup), (...parts) => popup.debug(...parts));
+    const timer = new IdleTimer(idle, () => openWhenStill(dialog), (...parts) => dialog.debug(...parts));
     /** @type {Record<string, string>} */
     const causes = { click: 'click', keydown: 'key press', scroll: 'scroll', change: 'form change', input: 'typing' };
 
@@ -345,8 +345,8 @@ class MionasNewsletterTrigger extends HTMLElement {
       if (cart.hasAttribute('open')) timer.pause('cart');
     }
 
-    popup.addEventListener(
-      'mionas-popup:open',
+    dialog.addEventListener(
+      'mionas-dialog:open',
       () => {
         timer.stop();
         this.#listeners.abort();
@@ -356,7 +356,7 @@ class MionasNewsletterTrigger extends HTMLElement {
 
     if (answered) timer.start('by the cookie banner answer');
     else if (!flag('waitForInteraction')) timer.start('at page load');
-    else popup.debug('count waits for the first scroll, tap, click or key press');
+    else dialog.debug('count waits for the first scroll, tap, click or key press');
   }
 }
 

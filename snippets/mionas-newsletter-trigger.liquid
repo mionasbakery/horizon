@@ -1,15 +1,15 @@
 {%- doc -%}
-  Renders the trigger that opens the newsletter popup by itself after the visitor's idle time. It has
+  Renders the trigger that opens the newsletter dialog by itself after the visitor's idle time. It has
   no visible content; assets/mionas-newsletter-trigger.js runs it.
 
-  @param {string} popup_id - The id of the popup it opens.
+  @param {string} dialog_id - The id of the dialog it opens.
   @param {object} settings - The section settings: idle_seconds, wait_for_consent,
     wait_for_interaction, reset_on_press, reset_on_scroll, pause_while_typing, pause_while_hidden,
     pause_for_cart and reshow_days.
 {%- enddoc -%}
 
 <mionas-newsletter-trigger
-  for="{{ popup_id }}"
+  for="{{ dialog_id }}"
   data-idle="{{ settings.idle_seconds }}"
   data-wait-for-consent="{{ settings.wait_for_consent }}"
   data-wait-for-interaction="{{ settings.wait_for_interaction }}"

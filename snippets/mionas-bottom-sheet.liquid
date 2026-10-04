@@ -1,0 +1,192 @@
+{%- doc -%}
+  Renders a Mionas bottom sheet: a modal panel that floats up from the bottom edge, with a handle that
+  closes it on a tap or a drag down. It owns the surface, the handle and the motion; the content owns
+  its padding and layout. It ships closed, inside a component that opens it and defines handleTap()
+  and the handle drag (assets/mionas-dialog.js).
+
+  @param {string} label - The dialog's accessible name until a heading in the content names it.
+  @param {string} handle_label - The accessible name of the handle.
+  @param {string} content - The sheet content.
+  @param {string} [controls] - Markup after the content, positioned against the sheet (Dialog's close button).
+  @param {string} [class] - Extra classes for the dialog, for a component that composes the sheet.
+{%- enddoc -%}
+
+{% render 'dialog-styles' %}
+
+<dialog
+  ref="dialog"
+  class="mionas-bottom-sheet dialog-modal {{ class }}"
+  aria-label="{{ label }}"
+  scroll-lock
+>
+  {%- comment -%} Google honours data-nosnippet on div, span and section only, not on dialog. {%- endcomment -%}
+  <div
+    class="mionas-bottom-sheet__body"
+    data-nosnippet
+  >
+    {{ content }}
+  </div>
+  {{ controls }}
+  {%- comment -%}
+    After the content, unlike BottomSheet.tsx, so the browser's first focus on open lands in the
+    content rather than on the handle.
+  {%- endcomment -%}
+  <button
+    type="button"
+    ref="handle"
+    class="mionas-bottom-sheet__handle"
+    aria-label="{{ handle_label }}"
+    on:click="/handleTap"
+  ></button>
+</dialog>
+
+{% stylesheet %}
+  /* The <dialog> is the panel itself, not BottomSheet.tsx's full-viewport frame: Horizon's
+     DialogComponent and the handle drag animate, move and measure the dialog element. */
+  .mionas-bottom-sheet.dialog-modal {
+    /* The home indicator's safe area replaces the gap below the sheet when it is larger. */
+    --mionas-bottom-sheet-gap-end: max(var(--bottom-sheet-frame-padding), env(safe-area-inset-bottom));
+
+    /* The UA's modal dialog keeps inset-block-start: 0, which with height: auto stretches the sheet
+       to the full max-height; releasing the top edge lets it fit its content. */
+    inset-block-start: auto;
+    width: calc(100% - 2 * var(--bottom-sheet-frame-padding));
+    max-width: none;
+    height: auto;
+    max-height: calc(90dvh - var(--mionas-bottom-sheet-gap-end));
+    margin: 0 auto var(--mionas-bottom-sheet-gap-end);
+    padding: 0;
+    border-radius: var(--bottom-sheet-base-radius);
+    box-shadow: var(--bottom-sheet-base-shadow);
+    background: var(--bottom-sheet-base-background);
+    color: var(--bottom-sheet-base-foreground);
+    overflow: hidden;
+    /* Chrome on Android still scrolls the page behind Horizon's overflow lock from some touches. No
+       swipe starts on the sheet or on its backdrop, which belongs to it; taps, typing and the
+       handle's pointer events are unaffected. */
+    touch-action: none;
+    /* After a short drag the sheet springs back on the entering timing. */
+    transition: translate var(--bottom-sheet-state-entering-duration) var(--bottom-sheet-state-entering-easing);
+  }
+
+  /* A transition outranks an animation, so Horizon's opacity transition would override the fade-out
+     below. The scrim keeps the sheet's durations, since the close waits only for the dialog. */
+  .mionas-bottom-sheet.dialog-modal::backdrop {
+    background: var(--bottom-sheet-backdrop-background);
+    backdrop-filter: none;
+    transition: none;
+  }
+
+  /* Horizon's search styles square every open .dialog-modal on phones with the weight of the rule
+     above, and the compiled stylesheet's order is not fixed; the [open] state outranks them. */
+  .mionas-bottom-sheet.dialog-modal[open] {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--bottom-sheet-base-radius);
+    animation: mionas-bottom-sheet-in var(--bottom-sheet-state-entering-duration)
+      var(--bottom-sheet-state-entering-easing) forwards;
+  }
+
+  .mionas-bottom-sheet.dialog-modal[open]::backdrop {
+    animation: mionas-bottom-sheet-fade-in var(--bottom-sheet-state-entering-duration)
+      var(--bottom-sheet-state-entering-easing);
+  }
+
+  /* A flung sheet sets --mionas-bottom-sheet-exiting-easing to linear: the exit curve starts from
+     rest, which would stall it. */
+  .mionas-bottom-sheet.dialog-modal.dialog-closing {
+    animation: mionas-bottom-sheet-out var(--bottom-sheet-state-exiting-duration)
+      var(--mionas-bottom-sheet-exiting-easing, var(--bottom-sheet-state-exiting-easing)) forwards;
+  }
+
+  .mionas-bottom-sheet.dialog-modal.dialog-closing::backdrop {
+    animation: mionas-bottom-sheet-fade-out var(--bottom-sheet-state-exiting-duration)
+      var(--bottom-sheet-state-exiting-easing) forwards;
+  }
+
+  .mionas-bottom-sheet__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  /* Over the top of the content rather than above it, unlike BottomSheet.tsx, so its hit area sits
+     inside the content's top padding. */
+  .mionas-bottom-sheet__handle {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: var(--bottom-sheet-handle-height);
+    margin: 0;
+    padding: var(--bottom-sheet-handle-padding) 0 0;
+    border: 0;
+    background: none;
+    cursor: grab;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mionas-bottom-sheet__handle::before {
+    content: '';
+    width: var(--bottom-sheet-grabber-width);
+    height: var(--bottom-sheet-grabber-height);
+    border-radius: var(--bottom-sheet-grabber-radius);
+    background: var(--bottom-sheet-grabber-background);
+  }
+
+  .mionas-bottom-sheet__handle:focus-visible {
+    outline: var(--bottom-sheet-state-focused-border-width) solid var(--bottom-sheet-state-focused-border-color);
+    outline-offset: calc(-1 * var(--bottom-sheet-state-focused-border-width));
+    border-radius: var(--bottom-sheet-base-radius) var(--bottom-sheet-base-radius) 0 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-bottom-sheet.dialog-modal[open] {
+      animation-name: mionas-bottom-sheet-fade-in;
+    }
+
+    .mionas-bottom-sheet.dialog-modal.dialog-closing {
+      animation-name: mionas-bottom-sheet-fade-out;
+    }
+
+    .mionas-bottom-sheet.dialog-modal {
+      transition: none;
+    }
+  }
+
+  /* The sheet floats above the bottom edge, so it travels its height plus that gap to leave the screen. */
+  @keyframes mionas-bottom-sheet-in {
+    from {
+      transform: translateY(calc(100% + var(--mionas-bottom-sheet-gap-end)));
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mionas-bottom-sheet-out {
+    to {
+      transform: translateY(calc(100% + var(--mionas-bottom-sheet-gap-end)));
+    }
+  }
+
+  @keyframes mionas-bottom-sheet-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mionas-bottom-sheet-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+{% endstylesheet %}

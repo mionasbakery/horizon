@@ -1,8 +1,8 @@
 // The base class comes from the custom element registry, not an import: Horizon's only import map is
-// native, and a relative import would load a second, unversioned copy of mionas-popup-widget.js.
-await customElements.whenDefined('mionas-popup-widget');
-const MionasPopupWidget = /** @type {typeof import('./mionas-popup-widget.js').MionasPopupWidget} */ (
-  customElements.get('mionas-popup-widget')
+// native, and a relative import would load a second, unversioned copy of mionas-corner-fold.js.
+await customElements.whenDefined('mionas-corner-fold');
+const MionasCornerFold = /** @type {typeof import('./mionas-corner-fold.js').MionasCornerFold} */ (
+  customElements.get('mionas-corner-fold')
 );
 
 /**
@@ -30,15 +30,15 @@ function waitForConsent(onWait) {
 }
 
 /**
- * The newsletter popup's widget. It shows from the first page with Always, or once the visitor has
- * closed the popup; with Wait for the cookie banner answer on, only after that answer. It hides after
+ * The newsletter dialog's corner fold. It shows from the first page with Always, or once the visitor has
+ * closed the dialog; with Wait for the cookie banner answer on, only after that answer. It hides after
  * a signup and never shows to the A/B control group.
  *
- * @extends MionasPopupWidget
+ * @extends MionasCornerFold
  */
-class MionasNewsletterWidget extends MionasPopupWidget {
+class MionasNewsletterCornerFold extends MionasCornerFold {
   /** @type {any} */
-  #popup = null;
+  #dialog = null;
   #listeners = new AbortController();
 
   disconnectedCallback() {
@@ -48,39 +48,39 @@ class MionasNewsletterWidget extends MionasPopupWidget {
 
   /** @param {...any} parts */
   debug(...parts) {
-    this.#popup?.debug?.('widget:', ...parts);
+    this.#dialog?.debug?.('corner fold:', ...parts);
   }
 
-  /** @param {any} popup */
-  popupConnected(popup) {
-    this.#popup = popup;
-    if (window.Shopify?.designMode || !popup.available) return;
+  /** @param {any} dialog */
+  dialogConnected(dialog) {
+    this.#dialog = dialog;
+    if (window.Shopify?.designMode || !dialog.available) return;
 
     const { signal } = this.#listeners;
-    popup.addEventListener(
-      'mionas-newsletter-popup:complete',
+    dialog.addEventListener(
+      'mionas-newsletter-dialog:complete',
       () => {
         if (!this.hidden) this.debug('hidden after the signup');
         this.hide();
       },
       { signal }
     );
-    popup.addEventListener(
-      'mionas-popup:close',
+    dialog.addEventListener(
+      'mionas-dialog:close',
       () => {
-        if (popup.completed) return;
+        if (dialog.completed) return;
         if (this.hidden) this.debug('shows after the close');
         this.show();
       },
       { signal }
     );
 
-    if (popup.completed) {
+    if (dialog.completed) {
       this.debug('not shown: signed up');
       return;
     }
-    if (this.dataset.show !== 'always' && !popup.closedBefore) {
-      this.debug('waits for the first close of the popup');
+    if (this.dataset.show !== 'always' && !dialog.closedBefore) {
+      this.debug('waits for the first close of the dialog');
       return;
     }
 
@@ -88,18 +88,18 @@ class MionasNewsletterWidget extends MionasPopupWidget {
       this.dataset.waitForConsent === 'true'
         ? waitForConsent(() => this.debug('waits for the cookie banner answer'))
         : Promise.resolve(false);
-    // A popup that opens on load, after a signup reload, opens in a frame queued before this one, so
+    // A dialog that opens on load, after a signup reload, opens in a frame queued before this one, so
     // show() then finds it open and waits for its close.
     consent.then(() =>
       requestAnimationFrame(() => {
-        if (popup.completed) return;
-        this.debug(this.dataset.show === 'always' ? 'shows (Always)' : 'shows (the popup was closed before)');
+        if (dialog.completed) return;
+        this.debug(this.dataset.show === 'always' ? 'shows (Always)' : 'shows (the dialog was closed before)');
         this.show();
       })
     );
   }
 }
 
-if (!customElements.get('mionas-newsletter-widget')) {
-  customElements.define('mionas-newsletter-widget', MionasNewsletterWidget);
+if (!customElements.get('mionas-newsletter-corner-fold')) {
+  customElements.define('mionas-newsletter-corner-fold', MionasNewsletterCornerFold);
 }

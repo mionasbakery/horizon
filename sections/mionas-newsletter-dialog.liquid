@@ -1,26 +1,26 @@
 {%- comment -%}
-  Mionas newsletter popup: a first-visit signup popup with its widget, rendered on every page from
-  the footer group. The popup and the widget are fixed blocks with their own settings; this section
+  Mionas newsletter dialog: a first-visit signup dialog with its corner fold, rendered on every page from
+  the footer group. The dialog and the corner fold are fixed blocks with their own settings; this section
   holds the rules for both.
 
   The markup ships closed and the scripts decide whether to open it. The Liquid leaves out visitors the
-  scripts could never show it to; an excluded page still renders it for the widget, but never opens it
+  scripts could never show it to; an excluded page still renders it for the corner fold, but never opens it
   by itself.
 {%- endcomment -%}
-{%- capture popup_eligible -%}
+{%- capture dialog_eligible -%}
   {%- render 'mionas-newsletter-eligible', settings: section.settings, exclude_marketing_subscribers: true -%}
 {%- endcapture -%}
 {%- liquid
-  assign eligibility = popup_eligible | strip | split: ':'
-  assign popup_eligible = eligibility[0]
+  assign eligibility = dialog_eligible | strip | split: ':'
+  assign dialog_eligible = eligibility[0]
   assign page_rule = eligibility[1]
 -%}
 
-{%- if popup_eligible != 'false' or request.design_mode -%}
+{%- if dialog_eligible != 'false' or request.design_mode -%}
   {%- liquid
-    assign popup_id = 'MionasNewsletterPopup-' | append: section.id
+    assign dialog_id = 'MionasNewsletterDialog-' | append: section.id
     assign auto_open = false
-    if section.settings.auto_open and popup_eligible == 'true'
+    if section.settings.auto_open and dialog_eligible == 'true'
       assign auto_open = true
     endif
 
@@ -30,7 +30,7 @@
   -%}
 
   <script
-    src="{{ 'mionas-popup.js' | asset_url }}"
+    src="{{ 'mionas-dialog.js' | asset_url }}"
     type="module"
     fetchpriority="low"
   ></script>
@@ -42,13 +42,13 @@
     ></script>
   {%- endif -%}
   <script
-    src="{{ 'mionas-newsletter-popup.js' | asset_url }}"
+    src="{{ 'mionas-newsletter-dialog.js' | asset_url }}"
     type="module"
     fetchpriority="low"
   ></script>
 
   {%- comment -%} Shopify hides cart attributes that start with an underscore from the buyer at checkout. {%- endcomment -%}
-  {%- capture popup_attributes -%}
+  {%- capture dialog_attributes -%}
     data-ab-test="{{ section.settings.ab_test_enabled }}" data-popup-share="{{ section.settings.popup_share }}"
     data-test-name="{{ test_name }}" data-event-prefix="{{ measurement_name }}_"
     data-clarity-tag="{{ measurement_name }}" data-cart-attribute="_{{ measurement_name }}"
@@ -56,22 +56,22 @@
   {%- endcapture -%}
 
   {% content_for 'block',
-    type: '_mionas-popup',
-    id: 'popup',
-    popup_id: popup_id,
+    type: '_mionas-dialog',
+    id: 'dialog',
+    dialog_id: dialog_id,
     section_id: section.id,
     audience: section.settings.audience,
-    popup_attributes: popup_attributes
+    dialog_attributes: dialog_attributes
   %}
 
   {%- if auto_open -%}
-    {%- render 'mionas-newsletter-trigger', popup_id: popup_id, settings: section.settings -%}
+    {%- render 'mionas-newsletter-trigger', dialog_id: dialog_id, settings: section.settings -%}
   {%- endif -%}
 
   {% content_for 'block',
-    type: '_mionas-widget',
-    id: 'widget',
-    popup_id: popup_id,
+    type: '_mionas-corner-fold',
+    id: 'corner_fold',
+    dialog_id: dialog_id,
     section_id: section.id,
     auto_open: section.settings.auto_open,
     wait_for_consent: section.settings.wait_for_consent
@@ -80,7 +80,7 @@
 
 {% schema %}
 {
-  "name": "Mionas: Newsletter popup",
+  "name": "Mionas: Newsletter Dialog",
   "tag": "div",
   "enabled_on": {
     "groups": ["footer"]
@@ -89,13 +89,13 @@
     {
       "type": "select",
       "id": "audience",
-      "label": "Who sees the popup",
+      "label": "Who sees the dialog",
       "options": [
         { "value": "everyone", "label": "Everyone" },
         { "value": "testers", "label": "Only testers" }
       ],
       "default": "everyone",
-      "info": "With Testers, the A/B test is off and only testers see the popup. Testers see it even when they already get marketing emails. The popup forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
+      "info": "With Testers, the A/B test is off and only testers see the dialog. Testers see it even when they already get marketing emails. The dialog forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
     },
     {
       "type": "textarea",
@@ -107,7 +107,7 @@
     {
       "type": "header",
       "content": "Pages",
-      "info": "The popup never opens by itself on the pages in the menu or on the checked page types. The checkboxes cover whole page types and pages a menu cannot hold. The widget still shows there and still opens the popup. The checkout, the order status page and the storefront password page never show the popup, because they are outside the theme or have no footer."
+      "info": "The dialog never opens by itself on the pages in the menu or on the checked page types. The checkboxes cover whole page types and pages a menu cannot hold. The corner fold still shows there and still opens the dialog. The checkout, the order status page and the storefront password page never show the dialog, because they are outside the theme or have no footer."
     },
     {
       "type": "checkbox",
@@ -155,19 +155,19 @@
       "type": "link_list",
       "id": "hidden_pages_menu",
       "label": "Hide on the pages in this menu",
-      "info": "Create a menu in Online Store → Navigation and add the home page, search, pages, products, collections, the list of all collections, blogs, articles or policies where the popup must not show. A blog also hides its articles. Works in every language."
+      "info": "Create a menu in Online Store → Navigation and add the home page, search, pages, products, collections, the list of all collections, blogs, articles or policies where the dialog must not show. A blog also hides its articles. Works in every language."
     },
     {
       "type": "header",
       "content": "Automatic opening",
-      "info": "The popup opens when the visitor has been idle for the idle time, counted from the first action on the page. The settings below say what starts, restarts and pauses that count."
+      "info": "The dialog opens when the visitor has been idle for the idle time, counted from the first action on the page. The settings below say what starts, restarts and pauses that count."
     },
     {
       "type": "checkbox",
       "id": "auto_open",
       "label": "Open automatically",
       "default": true,
-      "info": "Turn off only if the newsletter widget is on: the widget is then the only way to open the popup."
+      "info": "Turn off only if the newsletter corner fold is on: the corner fold is then the only way to open the dialog."
     },
     {
       "type": "range",
@@ -178,7 +178,7 @@
       "step": 1,
       "unit": "s",
       "default": 5,
-      "info": "The popup opens when the visitor has done nothing for this long. The count starts at the first action on the page, as set below. If a finger or mouse button is still down at that moment, the popup opens after the release, and the click still works. Each page starts the count again.",
+      "info": "The dialog opens when the visitor has done nothing for this long. The count starts at the first action on the page, as set below. If a finger or mouse button is still down at that moment, the dialog opens after the release, and the click still works. Each page starts the count again.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -186,14 +186,14 @@
       "id": "wait_for_consent",
       "label": "Wait for the cookie banner answer",
       "default": true,
-      "info": "Nothing counts until the visitor answers the cookie banner. The widget waits too. When off, the popup can open over the banner and block it until the visitor closes the popup. Pages with no banner skip this."
+      "info": "Nothing counts until the visitor answers the cookie banner. The corner fold waits too. When off, the dialog can open over the banner and block it until the visitor closes the dialog. Pages with no banner skip this."
     },
     {
       "type": "checkbox",
       "id": "wait_for_interaction",
       "label": "Start the count at the first scroll, tap, click or key press",
       "default": true,
-      "info": "The count starts at the first scroll, tap, click or key press. With the cookie banner, its answer is the first action. Moving the mouse does not start it. When off, the count starts when the page loads. Keep on for SEO. A popup that opens on an untouched page can count as the page's largest element in Google's page speed data, and Google's crawler never sees a popup that waits for an action.",
+      "info": "The count starts at the first scroll, tap, click or key press. With the cookie banner, its answer is the first action. Moving the mouse does not start it. When off, the count starts when the page loads. Keep on for SEO. A dialog that opens on an untouched page can count as the page's largest element in Google's page speed data, and Google's crawler never sees a dialog that waits for an action.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -208,7 +208,7 @@
       "type": "checkbox",
       "id": "reset_on_scroll",
       "label": "Restart the count on scroll and mouse movement",
-      "info": "When on, every page scroll and every mouse movement start the count again, so the popup waits for a real pause. When off, the count keeps running while the visitor scrolls or moves the mouse.",
+      "info": "When on, every page scroll and every mouse movement start the count again, so the dialog waits for a real pause. When off, the count keeps running while the visitor scrolls or moves the mouse.",
       "default": false,
       "visible_if": "{{ section.settings.auto_open }}"
     },
@@ -217,7 +217,7 @@
       "id": "pause_while_typing",
       "label": "Pause while the visitor types in a field",
       "default": true,
-      "info": "The count stops while a text, email, search, phone, password or number field has focus. When the field loses focus, the count starts again from the full idle time. Other controls only restart the count. When off, the popup can open while the visitor types.",
+      "info": "The count stops while a text, email, search, phone, password or number field has focus. When the field loses focus, the count starts again from the full idle time. Other controls only restart the count. When off, the dialog can open while the visitor types.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -225,7 +225,7 @@
       "id": "pause_while_hidden",
       "label": "Pause while the tab is hidden",
       "default": true,
-      "info": "The count stops while the visitor is in another tab or app. When the tab shows again, the count starts again from the full idle time. When off, the count runs in the background, and the popup can be open when the visitor comes back.",
+      "info": "The count stops while the visitor is in another tab or app. When the tab shows again, the count starts again from the full idle time. When off, the count runs in the background, and the dialog can be open when the visitor comes back.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -233,7 +233,7 @@
       "id": "pause_for_cart",
       "label": "Wait while the cart drawer is open",
       "default": true,
-      "info": "The count stops while the cart drawer is open. When the drawer closes, the count starts again from the full idle time. When off, the popup can open over the cart drawer.",
+      "info": "The count stops while the cart drawer is open. When the drawer closes, the count starts again from the full idle time. When off, the dialog can open over the cart drawer.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -245,27 +245,27 @@
       "step": 1,
       "unit": "d",
       "default": 7,
-      "info": "After a close, the popup opens by itself again only after this many days. No thanks counts as a close. 0 never opens it by itself again. After a signup it never opens by itself again.",
+      "info": "After a close, the dialog opens by itself again only after this many days. No thanks counts as a close. 0 never opens it by itself again. After a signup it never opens by itself again.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
       "type": "header",
       "content": "A/B test",
-      "info": "Splits new visitors into a group that gets the popup and a control group that never does, to measure the popup's effect on signups and orders."
+      "info": "Splits new visitors into a group that gets the dialog and a control group that never does, to measure the dialog's effect on signups and orders."
     },
     {
       "type": "checkbox",
       "id": "ab_test_enabled",
       "label": "A/B test on",
       "default": true,
-      "info": "Visitors in the control group never see the popup. Turn off to show it to every new visitor.",
+      "info": "Visitors in the control group never see the dialog. Turn off to show it to every new visitor.",
       "visible_if": "{{ section.settings.audience == 'everyone' }}"
     },
     {
       "type": "range",
       "id": "popup_share",
-      "label": "Share of visitors who see the popup",
-      "info": "The other visitors form the control group. They never see the popup or the widget.",
+      "label": "Share of visitors who see the dialog",
+      "info": "The other visitors form the control group. They never see the dialog or the corner fold.",
       "min": 10,
       "max": 90,
       "step": 5,
@@ -278,7 +278,7 @@
       "id": "test_name",
       "label": "Test name",
       "default": "newsletter-popup",
-      "info": "Sent with every event, the Clarity tag and the order attribute. A new name puts every visitor in a new group; visitors who closed or subscribed still don't see the popup again."
+      "info": "Sent with every event, the Clarity tag and the order attribute. A new name puts every visitor in a new group; visitors who closed or subscribed still don't see the dialog again."
     },
     {
       "type": "text",
@@ -290,11 +290,11 @@
   ],
   "presets": [
     {
-      "name": "Mionas: Newsletter popup",
+      "name": "Mionas: Newsletter Dialog",
       "blocks": {
-        "popup": {
-          "type": "_mionas-popup",
-          "name": "Mionas: Popup",
+        "dialog": {
+          "type": "_mionas-dialog",
+          "name": "Mionas: Dialog",
           "static": true,
           "blocks": {
             "heading": {
@@ -319,7 +319,7 @@
             },
             "signup": {
               "type": "mionas-email-signup",
-              "name": "Mionas: Email signup - Popup",
+              "name": "Mionas: Email signup - Dialog",
               "settings": {
                 "button_width": "fill",
                 "submit_variant": "primary",
@@ -331,9 +331,9 @@
           },
           "block_order": ["heading", "body", "signup"]
         },
-        "widget": {
-          "type": "_mionas-widget",
-          "name": "Mionas: Widget",
+        "corner_fold": {
+          "type": "_mionas-corner-fold",
+          "name": "Mionas: Corner Fold",
           "static": true
         }
       }

@@ -279,10 +279,53 @@ export const EXPECTED_TOKENS = {
   "--button-state-focused-border-width": "2px",
   "--button-state-focused-border-color": "#0b078c",
   "--button-state-focused-inverse-border-color": "#ffffff",
-  // The IconButton sizes the theme spends: sm on the popup close and the social links, md on the
-  // popup widget close. Their box heights are the Button heights.
+  // The IconButton sizes the theme spends: sm on the dialog close and the social links, md as the
+  // Mionas: Icon Button default. Their box heights are the Button heights.
   "--icon-button-size-sm-icon-size": "20px",
   "--icon-button-size-md-icon-size": "24px",
+  // BottomSheet, Dialog and CornerFold, spent by snippets/mionas-bottom-sheet.liquid,
+  // mionas-dialog.liquid and mionas-corner-fold.liquid, which the newsletter dialog, the signup
+  // confirmation and the newsletter's corner fold render. Pinned because a block that loses one of
+  // these does not error: the dialog or the fold just renders without its surface or its motion.
+  "--bottom-sheet-base-background": "#f7f2e3",
+  "--bottom-sheet-base-foreground": "#101413",
+  "--bottom-sheet-base-radius": "16px",
+  "--bottom-sheet-base-shadow": "0 18px 36px rgba(17, 24, 28, 0.14)",
+  "--bottom-sheet-frame-padding": "8px",
+  "--bottom-sheet-backdrop-background": "rgba(16, 20, 19, 0.66)",
+  "--bottom-sheet-handle-height": "40px",
+  "--bottom-sheet-handle-padding": "4px",
+  "--bottom-sheet-grabber-width": "36px",
+  "--bottom-sheet-grabber-height": "5px",
+  "--bottom-sheet-grabber-radius": "999px",
+  "--bottom-sheet-grabber-background": "#cfcac2",
+  "--bottom-sheet-state-focused-border-width": "2px",
+  "--bottom-sheet-state-focused-border-color": "#0b078c",
+  "--bottom-sheet-state-entering-duration": "500ms",
+  "--bottom-sheet-state-entering-easing": "cubic-bezier(0.2, 0, 0, 1)",
+  "--bottom-sheet-state-exiting-duration": "300ms",
+  "--bottom-sheet-state-exiting-easing": "cubic-bezier(0.5, 0, 0.75, 0)",
+  "--dialog-close-padding": "16px",
+  "--dialog-close-foreground": "#101413",
+  "--dialog-state-entering-duration": "300ms",
+  "--dialog-state-entering-easing": "cubic-bezier(0.2, 0, 0, 1)",
+  "--dialog-state-entering-scale": "0.96",
+  "--dialog-state-exiting-duration": "220ms",
+  "--dialog-state-exiting-easing": "cubic-bezier(0.5, 0, 0.75, 0)",
+  "--corner-fold-base-background": "#0b078c",
+  "--corner-fold-base-foreground": "#ffffff",
+  "--corner-fold-base-padding": "8px",
+  "--corner-fold-base-shadow": "0 4px 8px rgba(17, 24, 28, 0.11)",
+  "--corner-fold-state-hover-scale": "1.1",
+  "--corner-fold-state-hover-shadow": "0 18px 36px rgba(17, 24, 28, 0.14)",
+  "--corner-fold-state-hover-duration": "220ms",
+  "--corner-fold-state-hover-easing": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+  "--corner-fold-state-focused-border-width": "2px",
+  "--corner-fold-state-focused-border-color": "#0b078c",
+  "--corner-fold-state-entering-duration": "500ms",
+  "--corner-fold-state-entering-easing": "cubic-bezier(0.2, 0, 0, 1)",
+  "--corner-fold-state-exiting-duration": "300ms",
+  "--corner-fold-state-exiting-easing": "cubic-bezier(0.5, 0, 0.75, 0)",
 };
 
 export const REQUIRED_TOKENS = Object.keys(EXPECTED_TOKENS);

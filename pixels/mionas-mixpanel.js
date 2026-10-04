@@ -152,7 +152,7 @@ analytics.subscribe('checkout_completed', (event) => {
   );
 });
 
-// Published by assets/mionas-newsletter-popup.js; the prefix is the section's "Measurement name".
+// Published by assets/mionas-newsletter-dialog.js; the prefix is the section's "Measurement name".
 analytics.subscribe('newsletter_popup_subscribed', (event) => {
   const { test, group } = event.customData ?? {};
   track('sign_up', event, { method: 'newsletter_popup', test, group }, customerId);

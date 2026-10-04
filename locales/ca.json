@@ -34,7 +34,7 @@
       "next": "Següent",
       "label": "Altres articles"
     },
-    "newsletter_popup": {
+    "newsletter_dialog": {
       "label": "Newsletter",
       "decline": "No, gràcies",
       "continue": "Continua comprant",

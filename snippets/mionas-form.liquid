@@ -5,7 +5,7 @@
   @param {string} content - The fields' markup, built with capture before rendering
   @param {string} [class] - Extra classes
   @param {string} [attributes] - Raw string appended to the wrapper tag
-  @param {string} [gap] - CSS length overriding the column's gap between fields (default: --space-lg)
+  @param {string} [gap] - CSS length overriding the column's gap between fields (default: --space-md)
   @param {boolean} [validate] - Show client-side validation errors in design-system markup (opt-in)
 
   @example
@@ -18,7 +18,7 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/components/Form/Form.tsx. Form.tsx is `<form>` wrapping `<Box gap="lg">`;
+  Mirrors ../design-system/src/components/Form/Form.tsx. Form.tsx is `<form>` wrapping `<Box gap="md">`;
   this snippet is only the Box half, since on a Shopify storefront the `<form>` itself comes from
   Liquid's {% form %} tag, which owns the action URL, CSRF token, and form_type. Callers render
   {% form %} themselves and put this immediately inside it.
@@ -67,13 +67,13 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* Form.tsx's <Box gap="lg">. --space-lg is what Box's gap="lg" resolves to, and is the fallback
+  /* Form.tsx's <Box gap="md">. --space-md is what Box's gap="md" resolves to, and is the fallback
      when a caller passes no `gap` -- see the `gap` param above. */
   .mionas-form {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    gap: var(--mionas-form-gap, var(--space-lg));
+    gap: var(--mionas-form-gap, var(--space-md));
   }
 
   /* `display: contents` is load-bearing: an unstyled custom element defaults to `inline`, which

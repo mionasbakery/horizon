@@ -1,0 +1,125 @@
+{%- doc -%}
+  Renders a Mionas dialog: a bottom sheet on phones and, from 750px, a centred modal with a close
+  button. It knows nothing about the content, which owns its padding, layout and width. It ships
+  closed; the caller's scripts open it.
+
+  @param {string} element - The custom element tag: mionas-dialog-component, or the tag of a subclass.
+  @param {string} id - The element id, which other parts use to find the dialog.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {string} label - The dialog's accessible name until a heading in the content names it.
+  @param {string} close_label - The accessible name of the close button and the handle.
+  @param {string} content - The dialog content.
+  @param {string} [attributes] - Extra attributes for the custom element.
+{%- enddoc -%}
+
+{%- capture close_button -%}
+  <div class="mionas-dialog__close">
+    {%- assign close_icon = 'icon-close.svg' | inline_asset_content -%}
+    {%- render 'mionas-icon-button',
+      tag: 'button',
+      variant: 'ghost',
+      size: 'sm',
+      svg: close_icon,
+      aria_label: close_label,
+      attributes: 'type="button" on:click="/dismiss"',
+      class: 'mionas-dialog__close-button'
+    -%}
+  </div>
+{%- endcapture -%}
+
+<{{ element }}
+  id="{{ id }}"
+  data-section-id="{{ section_id }}"
+  {{ attributes }}
+>
+  {%- render 'mionas-bottom-sheet',
+    label: label,
+    handle_label: close_label,
+    content: content,
+    controls: close_button,
+    class: 'mionas-dialog'
+  -%}
+</{{ element }}>
+
+{% stylesheet %}
+  /* Positioned against the dialog, so it stays put while the content scrolls. */
+  .mionas-dialog__close {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    padding: var(--dialog-close-padding);
+  }
+
+  /* Two classes deep: .mionas-button sets its colour at one class, in a stylesheet whose order
+     against this one isn't fixed. The ghost variant is brand blue; the close button takes the ink. */
+  .mionas-button.mionas-dialog__close-button {
+    color: var(--dialog-close-foreground);
+  }
+
+  /* Three classes deep, to outrank the bottom sheet's two-class rules whatever the stylesheet order. */
+  @media screen and (min-width: 750px) {
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal {
+      inset-block-start: 0;
+      width: fit-content;
+      height: fit-content;
+      max-width: min(960px, 100vw - 48px);
+      margin: auto;
+    }
+
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal[open] {
+      animation: mionas-dialog-in var(--dialog-state-entering-duration) var(--dialog-state-entering-easing) forwards;
+    }
+
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal[open]::backdrop {
+      animation-duration: var(--dialog-state-entering-duration);
+      animation-timing-function: var(--dialog-state-entering-easing);
+    }
+
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal.dialog-closing {
+      animation: mionas-dialog-out var(--dialog-state-exiting-duration) var(--dialog-state-exiting-easing) forwards;
+    }
+
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal.dialog-closing::backdrop {
+      animation-duration: var(--dialog-state-exiting-duration);
+      animation-timing-function: var(--dialog-state-exiting-easing);
+    }
+
+    .mionas-dialog .mionas-bottom-sheet__handle {
+      display: none;
+    }
+
+    .mionas-dialog__close {
+      display: flex;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (prefers-reduced-motion: reduce) {
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal[open] {
+      animation-name: mionas-bottom-sheet-fade-in;
+    }
+
+    .mionas-dialog.mionas-bottom-sheet.dialog-modal.dialog-closing {
+      animation-name: mionas-bottom-sheet-fade-out;
+    }
+  }
+
+  @keyframes mionas-dialog-in {
+    from {
+      opacity: 0;
+      transform: scale(var(--dialog-state-entering-scale));
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes mionas-dialog-out {
+    to {
+      opacity: 0;
+      transform: scale(var(--dialog-state-entering-scale));
+    }
+  }
+{% endstylesheet %}

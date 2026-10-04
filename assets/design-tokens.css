@@ -3,6 +3,9 @@
  */
 
 :root {
+  --bottom-sheet-handle-height: 40px;
+  --bottom-sheet-grabber-width: 36px;
+  --bottom-sheet-grabber-height: 5px;
   --button-size-sm-height: 40px;
   --button-size-sm-icon-size: 16px;
   --button-size-md-height: 48px;
@@ -14,6 +17,8 @@
   --button-state-disabled-opacity: 0.5;
   --card-state-pressed-opacity: 0.92;
   --checkbox-state-disabled-opacity: 0.5;
+  --corner-fold-state-hover-scale: 1.1;
+  --dialog-state-entering-scale: 0.96;
   --faq-question-header-icon-size: 16px;
   --feature-card-base-aspect-ratio: 1.6;
   --feature-card-subtitle-opacity: 0.9;
@@ -53,8 +58,11 @@
   --shadow-lg: 0 18px 36px rgba(17, 24, 28, 0.14);
   --duration-fast: 80ms;
   --duration-base: 220ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
   --easing-standard: cubic-bezier(0.2, 0, 0, 1);
   --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --easing-accelerate: cubic-bezier(0.5, 0, 0.75, 0);
   --space-3xs: 3px;
   --space-2xs: 4px;
   --space-xs: 8px;
@@ -110,6 +118,18 @@
   --border-default: rgba(11, 7, 140, 0.14);
   --brand-tint: rgba(11, 7, 140, 0.08);
   --brand-scrim: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.82) 100%);
+  --surface-backdrop: rgba(16, 20, 19, 0.66);
+  --bottom-sheet-base-radius: 16px;
+  --bottom-sheet-base-shadow: 0 18px 36px rgba(17, 24, 28, 0.14);
+  --bottom-sheet-frame-padding: 8px;
+  --bottom-sheet-backdrop-background: rgba(16, 20, 19, 0.66);
+  --bottom-sheet-handle-padding: 4px;
+  --bottom-sheet-grabber-radius: 999px;
+  --bottom-sheet-state-focused-border-width: 2px;
+  --bottom-sheet-state-entering-duration: 500ms;
+  --bottom-sheet-state-entering-easing: cubic-bezier(0.2, 0, 0, 1);
+  --bottom-sheet-state-exiting-duration: 300ms;
+  --bottom-sheet-state-exiting-easing: cubic-bezier(0.5, 0, 0.75, 0);
   --breadcrumb-link-state-active-font-weight: 700;
   --breadcrumbs-base-gap: 4px;
   --button-base-radius: 999px;
@@ -147,6 +167,21 @@
   --checkbox-base-padding: 4px;
   --checkbox-row-padding: 8px;
   --checkbox-start-padding: 16px;
+  --corner-fold-base-padding: 8px;
+  --corner-fold-base-shadow: 0 4px 8px rgba(17, 24, 28, 0.11);
+  --corner-fold-state-hover-shadow: 0 18px 36px rgba(17, 24, 28, 0.14);
+  --corner-fold-state-hover-duration: 220ms;
+  --corner-fold-state-hover-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --corner-fold-state-focused-border-width: 2px;
+  --corner-fold-state-entering-duration: 500ms;
+  --corner-fold-state-entering-easing: cubic-bezier(0.2, 0, 0, 1);
+  --corner-fold-state-exiting-duration: 300ms;
+  --corner-fold-state-exiting-easing: cubic-bezier(0.5, 0, 0.75, 0);
+  --dialog-close-padding: 16px;
+  --dialog-state-entering-duration: 300ms;
+  --dialog-state-entering-easing: cubic-bezier(0.2, 0, 0, 1);
+  --dialog-state-exiting-duration: 220ms;
+  --dialog-state-exiting-easing: cubic-bezier(0.5, 0, 0.75, 0);
   --faq-base-divider-color: #ece8e2;
   --faq-base-divider-width: 1px;
   --faq-question-header-font-weight: 600;
@@ -226,6 +261,7 @@
   --color-blau-sitges: #0b078c;
   --color-beige-vainilla: #f7f2e3;
   --color-vermell-segell: #af200b;
+  --border-strong: #cfcac2;
   --brand-accent-inverse: #ffd9b0;
   --feedback-danger: #af200b;
   --surface-default: #ffffff;
@@ -269,6 +305,8 @@
   --text-role-note-line-height: 14px;
   --text-role-note-font-weight: 500;
   --text-role-note-letter-spacing: 0.02em;
+  --bottom-sheet-base-foreground: #101413;
+  --bottom-sheet-grabber-background: #cfcac2;
   --breadcrumb-link-base-foreground: #687076;
   --breadcrumb-link-state-hover-foreground: #101413;
   --breadcrumb-link-state-active-foreground: #101413;
@@ -284,6 +322,8 @@
   --card-description-foreground: #687076;
   --checkbox-base-background: #ffffff;
   --checkbox-checked-foreground: #ffffff;
+  --corner-fold-base-foreground: #ffffff;
+  --dialog-close-foreground: #101413;
   --form-error-base-foreground: #af200b;
   --form-label-base-foreground: #687076;
   --form-label-state-error-foreground: #af200b;
@@ -322,6 +362,7 @@
   --brand-accent: #af200b;
   --surface-accent: #f7f2e3;
   --text-color-accent-inverse: #ffd9b0;
+  --bottom-sheet-base-background: #f7f2e3;
   --button-primary-background: #0b078c;
   --button-secondary-foreground: #0b078c;
   --button-outline-foreground: #0b078c;
@@ -330,6 +371,7 @@
   --card-note-background: #f7f2e3;
   --checkbox-checked-background: #0b078c;
   --checkbox-checked-border-color: #0b078c;
+  --corner-fold-base-background: #0b078c;
   --form-field-state-focused-foreground: #0b078c;
   --form-field-state-error-border-color: #af200b;
   --form-label-state-focused-foreground: #0b078c;
@@ -342,8 +384,10 @@
   --border-focus: #0b078c;
   --text-color-primary: #0b078c;
   --text-color-accent: #af200b;
+  --bottom-sheet-state-focused-border-color: #0b078c;
   --button-state-focused-border-color: #0b078c;
   --checkbox-state-focused-border-color: #0b078c;
+  --corner-fold-state-focused-border-color: #0b078c;
   --form-field-state-focused-border-color: #0b078c;
   --stat-value-foreground: #0b078c;
 }

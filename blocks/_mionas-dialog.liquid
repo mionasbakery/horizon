@@ -1,0 +1,248 @@
+{%- doc -%}
+  Renders the newsletter dialog's dialog and its content blocks, as a fixed block of
+  sections/mionas-newsletter-dialog.liquid.
+
+  @param {string} dialog_id - The element id, which the trigger and the corner fold use to find the dialog.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {string} audience - The section's audience setting: everyone or testers.
+  @param {string} dialog_attributes - The section's A/B test, measurement and page rule attributes.
+{%- enddoc -%}
+{%- capture decline_classes -%}
+  {%- render 'mionas-button-class', variant: 'ghost', full_width: true -%}
+{%- endcapture -%}
+
+{%- capture dialog_content -%}
+  <div class="mionas-newsletter-dialog__layout">
+    {%- if block.settings.image != blank -%}
+      <div class="mionas-newsletter-dialog__media">
+        {{-
+          block.settings.image
+          | image_url: width: 960
+          | image_tag: loading: 'lazy', widths: '480, 960', sizes: '480px', class: 'mionas-newsletter-dialog__image'
+        -}}
+      </div>
+    {%- endif -%}
+
+    <div
+      class="mionas-newsletter-dialog__content spacing-style"
+      style="{% render 'spacing-style', settings: block.settings %} --mionas-newsletter-dialog-phone-padding-block: {{ block.settings.phone_padding_top }}px {{ block.settings.phone_padding_bottom }}px; --mionas-newsletter-dialog-phone-padding-inline: {{ block.settings.phone_padding_left }}px {{ block.settings.phone_padding_right }}px;"
+    >
+      <div
+        ref="formView"
+        class="mionas-newsletter-dialog__view"
+      >
+        {% content_for 'blocks' %}
+
+        <button
+          type="button"
+          class="{{ decline_classes }} mionas-newsletter-dialog__decline"
+          on:click="/decline"
+        >
+          {{ 'mionas.newsletter_dialog.decline' | t }}
+        </button>
+      </div>
+
+      <div
+        ref="successView"
+        class="mionas-newsletter-dialog__view"
+        role="status"
+        tabindex="-1"
+        hidden
+      >
+        {%- render 'mionas-signup-done' -%}
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- liquid
+  assign element_attributes = 'data-storage-key="newsletter-popup" data-audience="' | append: audience | append: '" ' | append: dialog_attributes | append: ' ' | append: block.shopify_attributes
+  assign dialog_label = 'mionas.newsletter_dialog.label' | t
+  assign close_label = 'mionas.newsletter_dialog.close' | t
+-%}
+
+{%- render 'mionas-dialog',
+  element: 'mionas-newsletter-dialog-component',
+  id: dialog_id,
+  section_id: section_id,
+  label: dialog_label,
+  close_label: close_label,
+  content: dialog_content,
+  attributes: element_attributes
+-%}
+
+{% stylesheet %}
+  /* The dialog sizes itself to its content, so the two columns set its width. */
+  .mionas-newsletter-dialog__layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 960px;
+    max-width: 100%;
+  }
+
+  .mionas-newsletter-dialog__layout:not(:has(.mionas-newsletter-dialog__media)) {
+    grid-template-columns: 1fr;
+  }
+
+  .mionas-newsletter-dialog__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mionas-newsletter-dialog__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-newsletter-dialog__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .mionas-newsletter-dialog__media {
+      display: none;
+    }
+
+    .mionas-newsletter-dialog__content.spacing-style {
+      padding-block: var(--mionas-newsletter-dialog-phone-padding-block);
+      padding-inline: var(--mionas-newsletter-dialog-phone-padding-inline);
+    }
+  }
+
+  .mionas-newsletter-dialog__view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .mionas-newsletter-dialog__view[hidden] {
+    display: none;
+  }
+
+  .mionas-newsletter-dialog__view:focus {
+    outline: none;
+  }
+
+  /* The design sets the two buttons 8px apart, closer than the column's 16px gap. */
+  .mionas-newsletter-dialog__decline {
+    margin-top: calc(var(--space-xs) - var(--space-md));
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Dialog",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "@theme"
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Beside the text on screens 750px and wider. Phones do not show it."
+    },
+    {
+      "type": "header",
+      "content": "Content padding",
+      "info": "Space around the dialog's text, inside the dialog, on screens 750px and wider."
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "info": "Space above the dialog's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "info": "Space below the dialog's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "info": "Space left of the dialog's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "info": "Space right of the dialog's text, inside the dialog.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Phone padding",
+      "info": "Space around the dialog's text on phones, where it opens as a sheet from the bottom. The grab handle sits inside the top space."
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_top",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_bottom",
+      "label": "Bottom",
+      "info": "The No, thanks button already leaves about 16px of empty space under its text.",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_left",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "phone_padding_right",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    }
+  ]
+}
+{% endschema %}

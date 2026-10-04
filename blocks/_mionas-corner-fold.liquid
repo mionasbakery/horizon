@@ -1,0 +1,116 @@
+{%- doc -%}
+  Renders the folded corner that opens the newsletter dialog, as a fixed block of
+  sections/mionas-newsletter-dialog.liquid.
+
+  @param {string} dialog_id - The id of the dialog it opens.
+  @param {string} section_id - The id of the rendering section, for the theme editor.
+  @param {boolean} auto_open - The section's Open automatically setting.
+  @param {boolean} wait_for_consent - Whether it waits for the cookie banner answer before it shows.
+{%- enddoc -%}
+{%- liquid
+  assign fold_figure = block.settings.figure | escape
+  assign fold_text = block.settings.text | escape
+  assign fold_label = fold_figure | append: ' ' | append: fold_text | strip
+  # With no automatic open there is no close to wait for, so the corner fold shows from the first page.
+  assign fold_show = block.settings.launcher
+  if auto_open == false
+    assign fold_show = 'always'
+  endif
+-%}
+
+{%- if block.settings.launcher != 'off' and fold_label != blank -%}
+  <script
+    src="{{ 'mionas-corner-fold.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'mionas-newsletter-corner-fold.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+
+  {%- capture fold_attributes -%}
+    data-show="{{ fold_show }}" data-wait-for-consent="{{ wait_for_consent }}" {{ block.shopify_attributes }}
+  {%- endcapture -%}
+  {%- render 'mionas-corner-fold',
+    element: 'mionas-newsletter-corner-fold',
+    dialog_id: dialog_id,
+    section_id: section_id,
+    side: block.settings.launcher_position,
+    variant: block.settings.text_size,
+    label: fold_label,
+    figure: fold_figure,
+    text: fold_text,
+    attributes: fold_attributes
+  -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mionas: Corner Fold",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A folded page corner that opens the dialog. The visitor cannot close it. Once it shows, it stays on every page, also where the dialog never opens by itself, until the visitor signs up. It never shows to the A/B control group or to subscribers."
+    },
+    {
+      "type": "select",
+      "id": "launcher",
+      "label": "Show newsletter corner fold",
+      "options": [
+        { "value": "off", "label": "Never (needs Open automatically)" },
+        { "value": "after_close", "label": "After the dialog closes (needs Open automatically)" },
+        { "value": "always", "label": "Always" }
+      ],
+      "default": "after_close",
+      "info": "A folded corner of the screen. After the dialog closes shows it once the visitor has closed the dialog one time. Always shows it from the first page. With Open automatically off, choose Always. Never then leaves no way to open the dialog, and After the dialog closes works like Always."
+    },
+    {
+      "type": "text",
+      "id": "figure",
+      "label": "Figure",
+      "info": "The first line, e.g. 10%. If Figure and Text are both empty, the corner fold does not show.",
+      "default": "10%",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "info": "The second line, at the same size. The fold grows with the longer line, so keep it short.",
+      "default": "descuento",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "Text size",
+      "options": [
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
+      ],
+      "default": "body",
+      "info": "Both lines take this text variant's size, and the fold grows with it.",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "launcher_position",
+      "label": "Side",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "info": "The fold always sits in a bottom corner. At the bottom right it can overlap the Shopify Inbox chat button.",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    }
+  ]
+}
+{% endschema %}
