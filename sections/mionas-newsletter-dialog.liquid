@@ -23,10 +23,6 @@
     if section.settings.auto_open and dialog_eligible == 'true'
       assign auto_open = true
     endif
-
-    # GA4 accepts only letters, digits and underscores in event names, so hyphens and spaces become underscores.
-    assign test_name = section.settings.test_name | default: 'newsletter-popup' | handleize
-    assign measurement_name = section.settings.measurement_name | default: 'newsletter_popup' | handleize | replace: '-', '_'
   -%}
 
   <script
@@ -47,12 +43,8 @@
     fetchpriority="low"
   ></script>
 
-  {%- comment -%} Shopify hides cart attributes that start with an underscore from the buyer at checkout. {%- endcomment -%}
   {%- capture dialog_attributes -%}
-    data-ab-test="{{ section.settings.ab_test_enabled }}" data-popup-share="{{ section.settings.popup_share }}"
-    data-test-name="{{ test_name }}" data-event-prefix="{{ measurement_name }}_"
-    data-clarity-tag="{{ measurement_name }}" data-cart-attribute="_{{ measurement_name }}"
-    {%- if page_rule != blank %} data-page-rule="{{ page_rule }}"{% endif -%}
+    {%- if page_rule != blank %}data-page-rule="{{ page_rule }}"{% endif -%}
   {%- endcapture -%}
 
   {% content_for 'block',
@@ -73,8 +65,7 @@
     id: 'corner_fold',
     dialog_id: dialog_id,
     section_id: section.id,
-    auto_open: section.settings.auto_open,
-    wait_for_consent: section.settings.wait_for_consent
+    auto_open: section.settings.auto_open
   %}
 {%- endif -%}
 
@@ -95,7 +86,7 @@
         { "value": "testers", "label": "Only testers" }
       ],
       "default": "everyone",
-      "info": "With Testers, the A/B test is off and only testers see the dialog. Testers see it even when they already get marketing emails. The dialog forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
+      "info": "With Testers, only testers see the dialog. Testers see it even when they already get marketing emails. The dialog forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
     },
     {
       "type": "textarea",
@@ -160,7 +151,7 @@
     {
       "type": "header",
       "content": "Automatic opening",
-      "info": "The dialog opens when the visitor has been idle for the idle time, counted from the first action on the page. The settings below say what starts, restarts and pauses that count."
+      "info": "On a page with the cookie banner, the dialog opens as soon as the visitor answers it. On a page with no banner to answer, such as a visit after the banner was answered, it opens when the visitor has been idle for the idle time. That count starts at the first scroll, tap, click or key press, never at page load, which keeps it out of Google's page speed data and away from Google's crawler. The settings below say what restarts and pauses the count."
     },
     {
       "type": "checkbox",
@@ -178,22 +169,7 @@
       "step": 1,
       "unit": "s",
       "default": 5,
-      "info": "The dialog opens when the visitor has done nothing for this long. The count starts at the first action on the page, as set below. If a finger or mouse button is still down at that moment, the dialog opens after the release, and the click still works. Each page starts the count again.",
-      "visible_if": "{{ section.settings.auto_open }}"
-    },
-    {
-      "type": "checkbox",
-      "id": "wait_for_consent",
-      "label": "Wait for the cookie banner answer",
-      "default": true,
-      "info": "Nothing counts until the visitor answers the cookie banner. The corner fold waits too. When off, the dialog can open over the banner and block it until the visitor closes the dialog. Pages with no banner skip this."
-    },
-    {
-      "type": "checkbox",
-      "id": "wait_for_interaction",
-      "label": "Start the count at the first scroll, tap, click or key press",
-      "default": true,
-      "info": "The count starts at the first scroll, tap, click or key press. With the cookie banner, its answer is the first action. Moving the mouse does not start it. When off, the count starts when the page loads. Keep on for SEO. A dialog that opens on an untouched page can count as the page's largest element in Google's page speed data, and Google's crawler never sees a dialog that waits for an action.",
+      "info": "Only on pages with no cookie banner to answer. The dialog opens when the visitor has done nothing for this long, counted from the first scroll, tap, click or key press. Moving the mouse does not start the count. If a finger or mouse button is still down at that moment, the dialog opens after the release, and the click still works. Each page starts the count again.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -247,45 +223,6 @@
       "default": 7,
       "info": "After a close, the dialog opens by itself again only after this many days. No thanks counts as a close. 0 never opens it by itself again. After a signup it never opens by itself again.",
       "visible_if": "{{ section.settings.auto_open }}"
-    },
-    {
-      "type": "header",
-      "content": "A/B test",
-      "info": "Splits new visitors into a group that gets the dialog and a control group that never does, to measure the dialog's effect on signups and orders."
-    },
-    {
-      "type": "checkbox",
-      "id": "ab_test_enabled",
-      "label": "A/B test on",
-      "default": true,
-      "info": "Visitors in the control group never see the dialog. Turn off to show it to every new visitor.",
-      "visible_if": "{{ section.settings.audience == 'everyone' }}"
-    },
-    {
-      "type": "range",
-      "id": "popup_share",
-      "label": "Share of visitors who see the dialog",
-      "info": "The other visitors form the control group. They never see the dialog or the corner fold.",
-      "min": 10,
-      "max": 90,
-      "step": 5,
-      "unit": "%",
-      "default": 50,
-      "visible_if": "{{ section.settings.audience == 'everyone' and section.settings.ab_test_enabled }}"
-    },
-    {
-      "type": "text",
-      "id": "test_name",
-      "label": "Test name",
-      "default": "newsletter-popup",
-      "info": "Sent with every event, the Clarity tag and the order attribute. A new name puts every visitor in a new group; visitors who closed or subscribed still don't see the dialog again."
-    },
-    {
-      "type": "text",
-      "id": "measurement_name",
-      "label": "Measurement name",
-      "default": "newsletter_popup",
-      "info": "Used for the GA4 and Clarity events (newsletter_popup_shown, …), the Clarity tag and the order attribute (_newsletter_popup). Their value is <test name>:<group>. If you change it, change it in the GA4 and Mixpanel custom pixels too."
     }
   ],
   "presets": [

@@ -48,7 +48,10 @@ test('sends GA4 names and parameters', () => {
   handlers.page_viewed(base);
   handlers.product_viewed({ ...base, data: { productVariant: variant } });
   handlers.product_added_to_cart({ ...base, data: { cartLine: { quantity: 2, merchandise: variant } } });
-  handlers.newsletter_popup_subscribed({ ...base, customData: { test: 't1', group: 'popup' } });
+  const promotion = { promotion_id: 'newsletter_popup', promotion_name: 'Newsletter popup' };
+  handlers.newsletter_popup_shown({ ...base, customData: { ...promotion, trigger: 'auto' } });
+  handlers.newsletter_popup_closed({ ...base, customData: { ...promotion, method: 'button' } });
+  handlers.newsletter_popup_subscribed({ ...base, customData: { method: 'newsletter_popup' } });
 
   const events = sent.map(({ event, properties }) => {
     const { token, distinct_id, $device_id, time, $insert_id, ...rest } = properties;
@@ -66,7 +69,9 @@ test('sends GA4 names and parameters', () => {
     ],
     ['view_item', { platform: 'web', locale: 'ca', currency: 'EUR', value: 4.2, items: [{ ...item, quantity: 1 }] }],
     ['add_to_cart', { platform: 'web', locale: 'ca', currency: 'EUR', value: 8.4, items: [{ ...item, quantity: 2 }] }],
-    ['sign_up', { platform: 'web', locale: 'ca', method: 'newsletter_popup', test: 't1', group: 'popup' }],
+    ['view_promotion', { platform: 'web', locale: 'ca', ...promotion, trigger: 'auto' }],
+    ['close_promotion', { platform: 'web', locale: 'ca', ...promotion, method: 'button' }],
+    ['sign_up', { platform: 'web', locale: 'ca', method: 'newsletter_popup' }],
   ]);
 });
 

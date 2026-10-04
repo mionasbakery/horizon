@@ -152,8 +152,12 @@ analytics.subscribe('checkout_completed', (event) => {
   );
 });
 
-// Published by assets/mionas-newsletter-dialog.js; the prefix is the section's "Measurement name".
-analytics.subscribe('newsletter_popup_subscribed', (event) => {
-  const { test, group } = event.customData ?? {};
-  track('sign_up', event, { method: 'newsletter_popup', test, group }, customerId);
-});
+// Published by assets/mionas-newsletter-dialog.js with their GA4 parameters already set.
+const NEWSLETTER_POPUP_EVENTS = {
+  newsletter_popup_shown: 'view_promotion',
+  newsletter_popup_closed: 'close_promotion',
+  newsletter_popup_subscribed: 'sign_up',
+};
+for (const [shopifyName, name] of Object.entries(NEWSLETTER_POPUP_EVENTS)) {
+  analytics.subscribe(shopifyName, (event) => track(name, event, event.customData ?? {}, customerId));
+}

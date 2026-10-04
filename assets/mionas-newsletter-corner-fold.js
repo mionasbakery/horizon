@@ -31,8 +31,7 @@ function waitForConsent(onWait) {
 
 /**
  * The newsletter dialog's corner fold. It shows from the first page with Always, or once the visitor has
- * closed the dialog; with Wait for the cookie banner answer on, only after that answer. It hides after
- * a signup and never shows to the A/B control group.
+ * closed the dialog, and never before the cookie banner answer. It hides after a signup.
  *
  * @extends MionasCornerFold
  */
@@ -54,7 +53,7 @@ class MionasNewsletterCornerFold extends MionasCornerFold {
   /** @param {any} dialog */
   dialogConnected(dialog) {
     this.#dialog = dialog;
-    if (window.Shopify?.designMode || !dialog.available) return;
+    if (window.Shopify?.designMode) return;
 
     const { signal } = this.#listeners;
     dialog.addEventListener(
@@ -84,10 +83,7 @@ class MionasNewsletterCornerFold extends MionasCornerFold {
       return;
     }
 
-    const consent =
-      this.dataset.waitForConsent === 'true'
-        ? waitForConsent(() => this.debug('waits for the cookie banner answer'))
-        : Promise.resolve(false);
+    const consent = waitForConsent(() => this.debug('waits for the cookie banner answer'));
     // A dialog that opens on load, after a signup reload, opens in a frame queued before this one, so
     // show() then finds it open and waits for its close.
     consent.then(() =>

@@ -5,7 +5,6 @@
   @param {string} dialog_id - The id of the dialog it opens.
   @param {string} section_id - The id of the rendering section, for the theme editor.
   @param {boolean} auto_open - The section's Open automatically setting.
-  @param {boolean} wait_for_consent - Whether it waits for the cookie banner answer before it shows.
 {%- enddoc -%}
 {%- liquid
   assign fold_figure = block.settings.figure | escape
@@ -31,7 +30,7 @@
   ></script>
 
   {%- capture fold_attributes -%}
-    data-show="{{ fold_show }}" data-wait-for-consent="{{ wait_for_consent }}" {{ block.shopify_attributes }}
+    data-show="{{ fold_show }}" {{ block.shopify_attributes }}
   {%- endcapture -%}
   {%- render 'mionas-corner-fold',
     element: 'mionas-newsletter-corner-fold',
@@ -53,7 +52,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "A folded page corner that opens the dialog. The visitor cannot close it. Once it shows, it stays on every page, also where the dialog never opens by itself, until the visitor signs up. It never shows to the A/B control group or to subscribers."
+      "content": "A folded page corner that opens the dialog. The visitor cannot close it. Once it shows, it stays on every page, also where the dialog never opens by itself, until the visitor signs up. It never shows to subscribers."
     },
     {
       "type": "select",

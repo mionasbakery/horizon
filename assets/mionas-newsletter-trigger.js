@@ -218,8 +218,9 @@ class IdleTimer {
 }
 
 /**
- * Opens the newsletter dialog named by its `for` attribute by itself, once the visitor has been idle for
- * the section's idle time, counted from the first action on the page. It knows the dialog only
+ * Opens the newsletter dialog named by its `for` attribute by itself: right after the visitor answers
+ * the cookie banner, or, on a page with no banner to answer, once the visitor has been idle for the
+ * section's idle time, counted from the first action on the page. It knows the dialog only
  * through the dialog's public API and events, and the dialog works without it.
  */
 class MionasNewsletterTrigger extends HTMLElement {
@@ -238,18 +239,23 @@ class MionasNewsletterTrigger extends HTMLElement {
 
   /** @param {any} dialog */
   async #attach(dialog) {
-    if (!dialog.available || dialog.completed) return;
+    if (dialog.completed) return;
     if (dialog.doneOnPage) {
       dialog.debug('no automatic opening: the dialog already opened on this page');
       return;
     }
     if (!this.#due(dialog)) return;
 
-    const answered =
-      this.dataset.waitForConsent === 'true' &&
-      (await waitForConsent(() => dialog.debug('count waits for the cookie banner answer')));
-    if (answered) dialog.debug('cookie banner answered');
-    if (this.isConnected && !dialog.doneOnPage) this.#arm(dialog, answered);
+    const answered = await waitForConsent(() => dialog.debug('waits for the cookie banner answer'));
+    if (!this.isConnected || dialog.doneOnPage) return;
+    // The answer is a click that has already landed and ended Chrome's LCP measurement, on a page the
+    // banner held still, so the safety waits of openWhenStill have nothing to guard.
+    if (answered) {
+      dialog.debug('cookie banner answered');
+      dialog.open({ source: 'auto' });
+      return;
+    }
+    this.#arm(dialog);
   }
 
   /**
@@ -273,12 +279,8 @@ class MionasNewsletterTrigger extends HTMLElement {
     return due;
   }
 
-  /**
-   * @param {any} dialog
-   * @param {boolean} answered - The visitor answered the cookie banner on this page, which counts as
-   *   the first action.
-   */
-  #arm(dialog, answered) {
+  /** @param {any} dialog */
+  #arm(dialog) {
     const flag = (/** @type {string} */ name) => this.dataset[name] === 'true';
     const idle = Math.max(1, Number(this.dataset.idle) || 5) * 1000;
     const { signal } = this.#listeners;
@@ -354,9 +356,9 @@ class MionasNewsletterTrigger extends HTMLElement {
       { once: true, signal }
     );
 
-    if (answered) timer.start('by the cookie banner answer');
-    else if (!flag('waitForInteraction')) timer.start('at page load');
-    else dialog.debug('count waits for the first scroll, tap, click or key press');
+    // The count never starts at page load: a dialog on an untouched page can become its LCP element,
+    // and Google's crawler, which never acts, would see it.
+    dialog.debug('count waits for the first scroll, tap, click or key press');
   }
 }
 

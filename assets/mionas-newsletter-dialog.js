@@ -7,8 +7,11 @@ const MionasDialog = /** @type {typeof import('./mionas-dialog.js').MionasDialog
   customElements.get('mionas-dialog-component')
 );
 
-/** Sources of an open that count as the dialog being shown, for the funnel. */
-const SHOWN_SOURCES = ['auto', 'launcher'];
+/** Sources of an open that count as the dialog being shown, for the funnel, as their GA4 `trigger`. */
+const SHOWN_TRIGGERS = { auto: 'auto', launcher: 'corner_fold' };
+/** The GA4 name of each funnel step. GA4 has no recommended event for a close, so close_promotion is custom. */
+const FUNNEL_EVENTS = { shown: 'view_promotion', closed: 'close_promotion', subscribed: 'sign_up' };
+const PROMOTION = { promotion_id: 'newsletter_popup', promotion_name: 'Newsletter popup' };
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
@@ -105,22 +108,16 @@ class DialogStore {
 }
 
 /**
- * The newsletter dialog: a Mionas dialog with an A/B test, funnel analytics and the signup result.
+ * The newsletter dialog: a Mionas dialog with funnel analytics and the signup result.
  *
  * @extends MionasDialog
  */
 class MionasNewsletterDialog extends MionasDialog {
   requiredRefs = ['dialog', 'formView', 'successView'];
 
-  /** Still 'popup', not 'dialog': visitors' browsers store the group and every event reports it. */
-  /** @type {'popup' | 'control' | null} */
-  #group = null;
-
   decline = () => this.closeWith('button');
   continueShopping = () => this.closeWith('button');
 
-  /** False when this visitor must never get the dialog. */
-  available = true;
   /** True once complete() ran, on this page view or an earlier one. */
   completed = false;
   /** True when the visitor closed the dialog on an earlier page view. */
@@ -173,18 +170,6 @@ class MionasNewsletterDialog extends MionasDialog {
 
     this.completed = stored.state === 'completed';
     this.closedBefore = stored.state === 'closed';
-    if (testers) {
-      this.#group = 'popup';
-      this.debug('audience: testers, so no A/B test');
-    } else {
-      this.#group = this.#resolveGroup(stored);
-    }
-    this.#announceGroup();
-    this.available = this.#group === 'popup';
-    if (!this.available) {
-      this.debug('control group: no dialog and no corner fold');
-      return;
-    }
 
     if (this.dataset.pageRule) {
       this.debug(`this page never opens it by itself: ${this.dataset.pageRule}`);
@@ -199,7 +184,7 @@ class MionasNewsletterDialog extends MionasDialog {
     const outcome = this.#takeOwnPost() ? this.#submitOutcome() : null;
     if (outcome === 'success') {
       this.debug('signup succeeded');
-      this.#track('subscribed');
+      this.#track('subscribed', { method: 'newsletter_popup' });
       this.#showSuccess();
       this.complete();
       this.open({ source: 'signup' });
@@ -221,17 +206,13 @@ class MionasNewsletterDialog extends MionasDialog {
     }
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    document.removeEventListener('shopify:cart:lines-update', this.#onCartUpdate);
-  }
-
   /** @param {CustomEvent} event */
   #onOpen = (event) => {
     const { source } = event.detail;
     this.debug(`opened by ${source}`);
     this.doneOnPage = true;
-    if (SHOWN_SOURCES.includes(source)) this.#track('shown', { source });
+    const trigger = SHOWN_TRIGGERS[/** @type {keyof typeof SHOWN_TRIGGERS} */ (source)];
+    if (trigger) this.#track('shown', { ...PROMOTION, trigger });
   };
 
   /** @param {CustomEvent} event */
@@ -241,7 +222,7 @@ class MionasNewsletterDialog extends MionasDialog {
     this.doneOnPage = true;
     if (this.completed) return;
     this.store?.write({ state: 'closed', closedAt: Date.now() });
-    this.#track('closed', { method });
+    this.#track('closed', { ...PROMOTION, method });
   };
 
   /** @param {Record<string, any>} stored */
@@ -251,92 +232,23 @@ class MionasNewsletterDialog extends MionasDialog {
   }
 
   /**
-   * A new test name draws a new group but keeps `state`, so a visitor who closed or subscribed is
-   * still never shown the dialog again.
-   * @param {{ test?: string, group?: string }} stored
-   * @returns {'popup' | 'control'}
+   * Sends a funnel step with its GA4 name and parameters. Shopify customer events carry it as
+   * newsletter_popup_{step}, which the GA4 and Mixpanel custom pixels rename.
+   * @param {keyof typeof FUNNEL_EVENTS} step
+   * @param {Record<string, string>} params
    */
-  #resolveGroup(stored) {
-    if (this.dataset.abTest !== 'true') {
-      this.debug('A/B test off: every visitor gets the dialog');
-      return 'popup';
-    }
-
-    const test = this.dataset.testName;
-    if (stored.test === test && (stored.group === 'popup' || stored.group === 'control')) {
-      this.debug(`group: ${stored.group} (kept from an earlier visit, test ${test})`);
-      return stored.group;
-    }
-
-    const share = Number(this.dataset.popupShare);
-    const percent = Number.isNaN(share) ? 50 : share;
-    const group = Math.random() * 100 < percent ? 'popup' : 'control';
-    this.debug(`group: ${group} (new draw, ${percent}% get the dialog, test ${test})`);
-    this.store?.write({ test, group });
-    return group;
-  }
-
-  /**
-   * Publishes a funnel event to Shopify customer events (read by the GA4 custom pixel, and by
-   * pixels/mionas-mixpanel.js for `subscribed`), to Clarity, and the signup to Datadog.
-   * @param {string} name - Without the event prefix.
-   * @param {Record<string, string>} [data]
-   */
-  #track(name, data = {}) {
-    const eventName = `${this.dataset.eventPrefix}${name}`;
-    const payload = { test: this.dataset.testName, group: this.#group, ...data };
-
+  #track(step, params) {
+    const name = FUNNEL_EVENTS[step];
     try {
-      window.Shopify?.analytics?.publish?.(eventName, payload);
+      window.Shopify?.analytics?.publish?.(`newsletter_popup_${step}`, params);
       // Datadog's pixel has no session outside checkout, so snippets/mionas-datadog.liquid sends it.
-      if (name === 'subscribed') window.mionasDatadog?.action('sign_up', { method: 'newsletter_popup', ...payload });
+      window.mionasDatadog?.action(name, params);
     } catch {
       // Analytics must never break the dialog.
     }
 
-    window.clarity?.('event', eventName);
+    window.clarity?.('event', name);
   }
-
-  /** The group qualified by the test, so orders and Clarity sessions from different tests stay apart. */
-  get #groupLabel() {
-    return `${this.dataset.testName}:${this.#group}`;
-  }
-
-  /**
-   * Runs on every eligible page view: events published before cookie consent never reach a pixel,
-   * so a once-per-browser event could be lost.
-   */
-  #announceGroup() {
-    if (!this.#group) return;
-
-    window.clarity?.('set', this.dataset.clarityTag, this.#groupLabel);
-    this.#track('eligible');
-    document.addEventListener('shopify:cart:lines-update', this.#onCartUpdate);
-  }
-
-  /**
-   * Stamps the group on each cart, so every order carries it. Shopify starts a new cart after each
-   * order, and stamping on page view instead would create a cart for every visitor and bot.
-   * @param {Event & { promise?: Promise<unknown> }} event
-   */
-  #onCartUpdate = async (event) => {
-    try {
-      await event.promise;
-
-      const root = window.Shopify?.routes?.root ?? '/';
-      const cart = await (await fetch(`${root}cart.js`)).json();
-      const attribute = this.dataset.cartAttribute;
-      if (!cart.item_count || !attribute || cart.attributes?.[attribute] === this.#groupLabel) return;
-
-      await fetch(`${root}cart/update.js`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ attributes: { [attribute]: this.#groupLabel } }),
-      });
-    } catch {
-      // A failed stamp loses one order's attribution, never the cart itself.
-    }
-  };
 
   get #postedKey() {
     return `${this.dataset.storageKey ?? this.id}-posted`;

@@ -4,7 +4,7 @@ import test from 'node:test';
 
 const source = await readFile(new URL('../snippets/mionas-datadog.liquid', import.meta.url), 'utf8');
 const layout = await readFile(new URL('../layout/theme.liquid', import.meta.url), 'utf8');
-const popup = await readFile(new URL('../assets/mionas-newsletter-popup.js', import.meta.url), 'utf8');
+const popup = await readFile(new URL('../assets/mionas-newsletter-dialog.js', import.meta.url), 'utf8');
 
 /** The snippet's script with its Liquid output replaced, as a logged-in or anonymous page would render it. */
 function renderScript({ customerId = null } = {}) {
@@ -116,7 +116,7 @@ test('a visitor who never allows analytics is never recorded', async () => {
 test('holds actions until consent, then sends them; a withdrawal stops collection', async () => {
   const { calls, loadFeatures, privacy, emit, window } = runSnippet();
   emit('shopify:product:view', productView('page'));
-  window.mionasDatadog.action('sign_up', { method: 'newsletter_popup', test: 't1', group: 'popup' });
+  window.mionasDatadog.action('sign_up', { method: 'newsletter_popup' });
   assert.deepEqual(actions(calls), []);
 
   privacy.allowed = true;
@@ -133,7 +133,7 @@ test('holds actions until consent, then sends them; a withdrawal stops collectio
         items: [{ item_id: '9', item_name: 'Cookie', item_variant: 'Caja de 6', price: 4.2, quantity: 1 }],
       },
     ],
-    ['sign_up', { platform: 'web', locale: 'ca', method: 'newsletter_popup', test: 't1', group: 'popup' }],
+    ['sign_up', { platform: 'web', locale: 'ca', method: 'newsletter_popup' }],
   ]);
 
   privacy.allowed = false;
@@ -195,6 +195,7 @@ test('identifies a logged-in customer by ID only and clears the user otherwise',
   assert.doesNotMatch(source, /email/);
 });
 
-test('the newsletter popup sends its signup through the snippet', () => {
-  assert.match(popup, /window\.mionasDatadog\?\.action\('sign_up', \{ method: 'newsletter_popup'/);
+test('the newsletter dialog sends its funnel through the snippet with GA4 names', () => {
+  assert.match(popup, /window\.mionasDatadog\?\.action\(name, params\)/);
+  assert.match(popup, /shown: 'view_promotion', closed: 'close_promotion', subscribed: 'sign_up'/);
 });
