@@ -277,7 +277,7 @@ class MionasNewsletterPopup extends MionasPopup {
 
   /**
    * Publishes a funnel event to Shopify customer events (read by the GA4 custom pixel, and by
-   * pixels/mionas-mixpanel.js for `subscribed`) and to Clarity.
+   * pixels/mionas-mixpanel.js and pixels/mionas-datadog.js for `subscribed`) and to Clarity.
    * @param {string} name - Without the event prefix.
    * @param {Record<string, string>} [data]
    */

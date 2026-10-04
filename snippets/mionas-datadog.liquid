@@ -1,0 +1,71 @@
+{% doc %}
+  Loads Datadog RUM on the storefront, collecting only after the visitor allows analytics cookies.
+{% enddoc %}
+{%- liquid
+  assign application_id = ''
+  assign client_token = ''
+  if request.host == shop.domain
+    assign env = 'production'
+  else
+    assign env = 'preview'
+  endif
+-%}
+{%- comment -%}
+  layout/theme.liquid renders this after content_for_header, which defines the consent API; an upstream
+  Horizon merge that rewrites the layout can drop that line. The checkout half lives in
+  pixels/mionas-datadog.js, with the same application ID and client token.
+{%- endcomment -%}
+{%- unless request.design_mode -%}
+  {%- if application_id != blank and client_token != blank -%}
+    <script>
+      (function (h, o, u, n, d) {
+        h = h[d] = h[d] || { q: [], onReady: function (c) { h.q.push(c); } };
+        d = o.createElement(u); d.async = 1; d.src = n;
+        d.crossOrigin = 'anonymous';
+        n = o.getElementsByTagName(u)[0]; n.parentNode.insertBefore(d, n);
+      })(window, document, 'script', 'https://www.datadoghq-browser-agent.com/eu1/v7/datadog-rum-shopify.js', 'DD_RUM');
+
+      (function () {
+        var rum = window.DD_RUM;
+
+        // Starts with collection off, so a visitor who never answers the cookie banner is never recorded.
+        rum.onReady(function () {
+          rum.init({
+            applicationId: '{{ application_id }}',
+            clientToken: '{{ client_token }}',
+            site: 'datadoghq.eu',
+            service: 'mionas-storefront',
+            env: '{{ env }}',
+            sessionSampleRate: 100,
+            sessionReplaySampleRate: 100,
+            trackUserInteractions: true,
+            trackResources: true,
+            trackLongTasks: true,
+            defaultPrivacyLevel: 'mask-user-input',
+            trackingConsent: 'not-granted',
+          });
+          {% if customer -%}
+            rum.setUser({ id: '{{ customer.id }}' });
+          {%- else -%}
+            rum.clearUser();
+          {%- endif %}
+          rum.startSessionReplayRecording();
+        });
+
+        function applyConsent() {
+          var allowed = window.Shopify?.customerPrivacy?.analyticsProcessingAllowed?.() === true;
+          rum.onReady(function () {
+            rum.setTrackingConsent(allowed ? 'granted' : 'not-granted');
+          });
+        }
+
+        window.Shopify?.loadFeatures?.([{ name: 'consent-tracking-api', version: '0.1' }], function (error) {
+          if (!error) applyConsent();
+        });
+        document.addEventListener('visitorConsentCollected', function () {
+          applyConsent();
+        });
+      })();
+    </script>
+  {%- endif -%}
+{%- endunless -%}
