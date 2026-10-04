@@ -1,7 +1,7 @@
 {%- doc -%}
   Renders block content for mionas-group and mionas-card: a fork of snippets/group.liquid (the
-  native group block's own renderer) that additionally supports `wrap_children`, `min_width` and
-  `max_width`.
+  native group block's own renderer) that additionally supports `wrap_children`, `min_width`,
+  `max_width` and `sticky`.
 
   @param {string} children - The DOM content of the group block.
   @param {object} settings - The settings of the group block.
@@ -39,6 +39,7 @@
     border-style
     spacing-style
     size-style
+    {% if settings.sticky %} group-block--sticky{% endif %}
     {{ class }}
     {% if background_color != blank %} color-custom-{{ block_id }}{% endif %}
   "
@@ -132,6 +133,19 @@
      wrapped line, not just its own -- height: auto lets it size to its own line instead. */
   .mionas-group-content--wrap > .group-block--height-fill {
     height: auto;
+  }
+
+  /* Desktop only, matching the breakpoint assets/base.css uses for .mobile-column, since a sticky
+     column inside a stacked mobile layout has nothing to stick within. Sticky only takes effect
+     when the flex parent doesn't stretch this item (e.g. vertical_alignment: center stretches it,
+     leaving no room to scroll past). The offset follows --header-height (kept live by
+     assets/header.js) instead of a fixed number, so it doesn't go stale if the header's height
+     changes. */
+  @media screen and (min-width: 750px) {
+    .group-block--sticky {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-sm));
+    }
   }
 
 {% endstylesheet %}

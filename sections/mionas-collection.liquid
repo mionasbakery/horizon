@@ -16,6 +16,9 @@
   There's no built-in heading or "see all" setting: the section opens a free content_for 'blocks'
   region above the grid for that, the same way product-list opens one below its grid.
 
+  An empty collection setting falls back to the page's own collection, so the section works
+  unchanged on a collection template.
+
   Layout is delegated to snippets/resource-list.liquid, exactly as product-list does it: every
   card is captured into one string separated by <!--@list/split-->, split into an array, and both
   handed over so resource-list owns grid/carousel/editorial rendering and the mobile-carousel
@@ -23,7 +26,9 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign collection = section.settings.collection
+  if section.settings.collection != blank
+    assign collection = section.settings.collection
+  endif
   assign max_items = section.settings.max_products
 
   if section.settings.background_color != blank
@@ -137,7 +142,8 @@
     {
       "type": "collection",
       "id": "collection",
-      "label": "t:settings.collection"
+      "label": "t:settings.collection",
+      "info": "Leave empty on a collection template to show that collection's own products."
     },
     {
       "type": "range",

@@ -41,6 +41,49 @@
     border-top: var(--list-base-border-width) solid var(--list-base-border-color);
   }
 
+  /* flex-start instead of the default center: a marker sits beside the content and lines up with
+     its first line, not the vertical middle of a multi-line item. */
+  .mionas-list[data-marker="check"] .mionas-list-item,
+  .mionas-list[data-marker="number"] .mionas-list-item {
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .mionas-list[data-marker="check"] .mionas-list-item::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    background-color: var(--color-success);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  .mionas-list[data-marker="number"] {
+    counter-reset: mionas-list-marker;
+  }
+
+  .mionas-list[data-marker="number"] .mionas-list-item {
+    counter-increment: mionas-list-marker;
+  }
+
+  .mionas-list[data-marker="number"] .mionas-list-item::before {
+    content: counter(mionas-list-marker);
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--color-success);
+    color: var(--color-white);
+    font-size: var(--font-size--sm);
+    line-height: 1;
+  }
+
   .mionas-list-item--pressable {
     background: none;
     border: 0;

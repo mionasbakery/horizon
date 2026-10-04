@@ -4,8 +4,9 @@
 
 {%- comment -%}
   Forked from blocks/group.liquid: identical settings and rendering, plus `wrap_children`,
-  `min_width` and `max_width` (handled by snippets/mionas-group.liquid, a fork of the native group
-  renderer) so a group can wrap its own children onto a new line instead of squeezing them --
+  `min_width`, `max_width` and `sticky` (handled by snippets/mionas-group.liquid, a fork of the
+  native group renderer) so a group can wrap its own children onto a new line instead of squeezing
+  them --
   Horizon's native group hardcodes `flex-wrap: nowrap` above 749px and has no per-child minimum
   width. `max_width` caps a text column: the native width setting is a percentage, which drifts
   with the viewport instead of holding a fixed measure.
@@ -302,6 +303,13 @@
       "visible_if": "{{ block.settings.height == 'custom' }}"
     },
     {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky",
+      "default": false,
+      "info": "Sticks the block to the top of its scroll container on desktop, just below the header. Only works when its flex parent does not stretch it (e.g. a row with vertical alignment other than stretch/center)."
+    },
+    {
       "type": "header",
       "content": "t:content.appearance"
     },
@@ -441,6 +449,10 @@
         {
           "value": "solid",
           "label": "t:options.solid"
+        },
+        {
+          "value": "dashed",
+          "label": "Dashed"
         }
       ],
       "default": "none"

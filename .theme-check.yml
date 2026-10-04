@@ -18,8 +18,8 @@ JSONMissingBlock:
 #   templates/page.contacto.json, templates/page.faq.json), which Theme Check cannot see.
 # - mionas-box, mionas-checkbox and mionas-form-actions are design-system primitives kept as a
 #   library for future components (mionas-design-component skill).
-# - The native header-drawer, mega-menu-list and util-mega-menu-img-sizes-attr are superseded by
-#   mionas forks but must stay untouched so upstream merges keep working.
+# - The native header-drawer, mega-menu-list, util-mega-menu-img-sizes-attr and link-featured-image
+#   are superseded by mionas forks but must stay untouched so upstream merges keep working.
 OrphanedSnippet:
   ignore:
     - 'snippets/mionas-footer-bridge.liquid'
@@ -31,6 +31,7 @@ OrphanedSnippet:
     - 'snippets/header-drawer.liquid'
     - 'snippets/mega-menu-list.liquid'
     - 'snippets/util-mega-menu-img-sizes-attr.liquid'
+    - 'snippets/link-featured-image.liquid'
 
 # Native files we never edit; their cross-file class warnings are upstream's to fix.
 ValidScopedCSSClass:

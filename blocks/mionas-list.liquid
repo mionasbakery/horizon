@@ -1,5 +1,5 @@
 {%- doc -%}
-  Renders a vertical list container that draws dividers between child blocks.
+  Renders a vertical list container that draws dividers and markers between child blocks.
 {%- enddoc -%}
 
 {%- comment -%}
@@ -9,7 +9,12 @@
   `separator` setting reaches those children through a `data-separator` attribute here, since child
   blocks don't inherit parent settings automatically.
 {%- endcomment -%}
-<div class="mionas-list" data-separator="{{ block.settings.separator }}" {{ block.shopify_attributes }}>
+<div
+  class="mionas-list"
+  data-separator="{{ block.settings.separator }}"
+  data-marker="{{ block.settings.marker }}"
+  {{ block.shopify_attributes }}
+>
   {% content_for 'blocks' %}
 </div>
 
@@ -34,6 +39,26 @@
       "id": "separator",
       "label": "Show dividers between items",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "marker",
+      "label": "Marker",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "check",
+          "label": "Check mark"
+        },
+        {
+          "value": "number",
+          "label": "Number"
+        }
+      ],
+      "default": "none"
     }
   ],
   "presets": [

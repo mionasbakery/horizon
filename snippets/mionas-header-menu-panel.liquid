@@ -14,6 +14,10 @@
     its __card                                <-  MegaMenuItem   (--mega-menu-item-*)
     the top-level bar in the header block     <-  Navbar/NavbarItem (NOT spent - see below)
 
+  Tile images come from snippets/mionas-link-featured-image.liquid, not the native
+  link-featured-image: the native one resolves nothing for a page link, and the Ocasiones
+  children are pages.
+
   Note __item is the <li> and __card is the <a> inside it; MegaMenuItem maps to __card, not to
   __item. The theme deliberately spends no --navbar-item-* or --mega-menu-link-* tokens: the
   top-level bar and the drawer's plain link rows run on Horizon's own --menu-* settings so
@@ -115,7 +119,7 @@
       <li class="mionas-header-menu-panel__item">
         <a class="mionas-header-menu-panel__card" href="{{ link.url }}">
           <span class="mionas-header-menu-panel__media">
-            {%- render 'link-featured-image',
+            {%- render 'mionas-link-featured-image',
               link: link,
               class: 'mionas-header-menu-panel__image',
               sizes: image_sizes
