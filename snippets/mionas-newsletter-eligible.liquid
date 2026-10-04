@@ -3,32 +3,14 @@
   page:{rule} when the visitor may get it but this page never opens it by itself, with {rule} the id
   of the setting that hides it, and false when the visitor never gets it.
 
-  @param {object} settings - The dialog section's settings: audience, tester_emails, the hide_on_*
-    checkboxes and hidden_pages_menu.
+  @param {object} settings - The dialog section's settings: the hide_on_* checkboxes and
+    hidden_pages_menu.
   @param {boolean} [exclude_marketing_subscribers] - Leaves out customers who already get marketing
-    emails, except testers.
+    emails.
 {%- enddoc -%}
 {%- liquid
-  assign is_tester = false
-  if customer
-    assign customer_email = customer.email | downcase
-    # newline_to_br is the only way to split on line breaks, since Liquid has no newline literal.
-    assign tester_emails = settings.tester_emails | downcase | newline_to_br | split: '<br />'
-    for tester_email in tester_emails
-      assign trimmed_email = tester_email | strip
-      if trimmed_email != blank and trimmed_email == customer_email
-        assign is_tester = true
-        break
-      endif
-    endfor
-  endif
-
   assign eligible = true
-  if settings.audience == 'testers' and is_tester == false
-    assign eligible = false
-  endif
-  # A tester is often already subscribed, and would otherwise never see the dialog.
-  if exclude_marketing_subscribers and customer and customer.accepts_marketing and is_tester == false
+  if exclude_marketing_subscribers and customer and customer.accepts_marketing
     assign eligible = false
   endif
 

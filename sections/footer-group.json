@@ -976,8 +976,7 @@
       },
       "name": "Mionas: Newsletter Dialog",
       "settings": {
-        "audience": "testers",
-        "tester_emails": "marcmarcet.bcn@gmail.com\nmariavp567@gmail.com",
+        "enabled": true,
         "hide_on_product": false,
         "hide_on_collection": false,
         "hide_on_cart": true,

@@ -8,10 +8,9 @@ const MionasCornerFold = /** @type {typeof import('./mionas-corner-fold.js').Mio
 /**
  * Resolves once the Shopify cookie banner no longer needs an answer. mionas-newsletter-trigger.js holds a
  * copy, because scripts outside the theme's import map cannot share a module.
- * @param {() => void} onWait - Runs when the banner still needs an answer.
  * @returns {Promise<boolean>} true when the visitor answered the banner on this page.
  */
-function waitForConsent(onWait) {
+function waitForConsent() {
   return new Promise((resolve) => {
     const shopify = window.Shopify;
     if (typeof shopify?.loadFeatures !== 'function') return resolve(false);
@@ -23,7 +22,6 @@ function waitForConsent(onWait) {
       const undecided = privacy.shouldShowBanner?.() && privacy.currentVisitorConsent?.()?.marketing === '';
       if (!undecided) return resolve(false);
 
-      onWait();
       document.addEventListener('visitorConsentCollected', () => resolve(true), { once: true });
     });
   });
@@ -36,8 +34,6 @@ function waitForConsent(onWait) {
  * @extends MionasCornerFold
  */
 class MionasNewsletterCornerFold extends MionasCornerFold {
-  /** @type {any} */
-  #dialog = null;
   #listeners = new AbortController();
 
   disconnectedCallback() {
@@ -45,51 +41,34 @@ class MionasNewsletterCornerFold extends MionasCornerFold {
     this.#listeners.abort();
   }
 
-  /** @param {...any} parts */
-  debug(...parts) {
-    this.#dialog?.debug?.('corner fold:', ...parts);
-  }
-
   /** @param {any} dialog */
   dialogConnected(dialog) {
-    this.#dialog = dialog;
     if (window.Shopify?.designMode) return;
 
     const { signal } = this.#listeners;
     dialog.addEventListener(
       'mionas-newsletter-dialog:complete',
-      () => {
-        if (!this.hidden) this.debug('hidden after the signup');
-        this.hide();
-      },
+      () => this.hide(),
       { signal }
     );
     dialog.addEventListener(
       'mionas-dialog:close',
       () => {
         if (dialog.completed) return;
-        if (this.hidden) this.debug('shows after the close');
         this.show();
       },
       { signal }
     );
 
-    if (dialog.completed) {
-      this.debug('not shown: signed up');
-      return;
-    }
-    if (this.dataset.show !== 'always' && !dialog.closedBefore) {
-      this.debug('waits for the first close of the dialog');
-      return;
-    }
+    if (dialog.completed) return;
+    if (this.dataset.show !== 'always' && !dialog.closedBefore) return;
 
-    const consent = waitForConsent(() => this.debug('waits for the cookie banner answer'));
+    const consent = waitForConsent();
     // A dialog that opens on load, after a signup reload, opens in a frame queued before this one, so
     // show() then finds it open and waits for its close.
     consent.then(() =>
       requestAnimationFrame(() => {
         if (dialog.completed) return;
-        this.debug(this.dataset.show === 'always' ? 'shows (Always)' : 'shows (the dialog was closed before)');
         this.show();
       })
     );

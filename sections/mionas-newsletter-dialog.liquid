@@ -16,6 +16,10 @@
   assign page_rule = eligibility[1]
 -%}
 
+{%- if section.settings.enabled == false -%}
+  {%- assign dialog_eligible = 'false' -%}
+{%- endif -%}
+
 {%- if dialog_eligible != 'false' or request.design_mode -%}
   {%- liquid
     assign dialog_id = 'MionasNewsletterDialog-' | append: section.id
@@ -52,7 +56,6 @@
     id: 'dialog',
     dialog_id: dialog_id,
     section_id: section.id,
-    audience: section.settings.audience,
     dialog_attributes: dialog_attributes
   %}
 
@@ -78,22 +81,11 @@
   },
   "settings": [
     {
-      "type": "select",
-      "id": "audience",
-      "label": "Who sees the dialog",
-      "options": [
-        { "value": "everyone", "label": "Everyone" },
-        { "value": "testers", "label": "Only testers" }
-      ],
-      "default": "everyone",
-      "info": "With Testers, only testers see the dialog. Testers see it even when they already get marketing emails. The dialog forgets a close or a signup when the tester reloads the page or closes the browser, so each reload is a first visit again."
-    },
-    {
-      "type": "textarea",
-      "id": "tester_emails",
-      "label": "Tester emails",
-      "info": "One email on each line. A tester must log in to their customer account with that email.",
-      "visible_if": "{{ section.settings.audience == 'testers' }}"
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Enable the dialog",
+      "default": true,
+      "info": "When off, no visitor sees the dialog or its corner fold. The theme editor still shows them, so you can edit them."
     },
     {
       "type": "header",

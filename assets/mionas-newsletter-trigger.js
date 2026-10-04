@@ -2,8 +2,6 @@ import { getScrollContainer } from '@theme/scroll-container';
 import { DrawerCloseEvent, DrawerOpenEvent } from '@theme/theme-drawer';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-/** Restarts from scroll and mouse movement come many times a second, so they log at most this often. */
-const FREQUENT_LOG_MS = 1000;
 /**
  * How long the page must be still before an automatic open: longer than a fling's tail and than the
  * fade of a phone's overlay scrollbar, which otherwise still shows over the dialog.
@@ -77,7 +75,6 @@ function openWhenStill(dialog) {
   const retry = () => openWhenStill(dialog);
 
   if (gesture.touching || gesture.mouseDown) {
-    dialog.debug('waiting for the finger or mouse button to lift');
     const release = new AbortController();
     const onRelease = () => {
       if (gesture.touching || gesture.mouseDown) return;
@@ -99,14 +96,12 @@ function openWhenStill(dialog) {
 
   const active = dialog.constructor.active;
   if (active && active !== dialog && active.isConnected) {
-    dialog.debug('waiting for another dialog to close');
     active.addEventListener('mionas-dialog:close', retry, { once: true });
     return;
   }
 
   const wait = gesture.lastMove + SETTLE_MS - performance.now();
   if (wait > 0) {
-    dialog.debug(`waiting ${Math.ceil(wait)} ms for the page to stop moving`);
     setTimeout(retry, wait);
     return;
   }
@@ -118,10 +113,9 @@ function openWhenStill(dialog) {
  * Resolves once the Shopify cookie banner no longer needs an answer. An open dialog makes the rest of
  * the page inert, so a dialog over an unanswered banner would block it. mionas-newsletter-corner-fold.js holds
  * a copy, because scripts outside the theme's import map cannot share a module.
- * @param {() => void} onWait - Runs when the banner still needs an answer.
  * @returns {Promise<boolean>} true when the visitor answered the banner on this page.
  */
-function waitForConsent(onWait) {
+function waitForConsent() {
   return new Promise((resolve) => {
     const shopify = window.Shopify;
     if (typeof shopify?.loadFeatures !== 'function') return resolve(false);
@@ -133,7 +127,6 @@ function waitForConsent(onWait) {
       const undecided = privacy.shouldShowBanner?.() && privacy.currentVisitorConsent?.()?.marketing === '';
       if (!undecided) return resolve(false);
 
-      onWait();
       document.addEventListener('visitorConsentCollected', () => resolve(true), { once: true });
     });
   });
@@ -146,9 +139,6 @@ function waitForConsent(onWait) {
 class IdleTimer {
   #ms;
   #onDone;
-  #log;
-  /** @type {Record<string, number>} */
-  #loggedAt = {};
   #timeout = 0;
   #running = false;
   /** @type {Set<string>} */
@@ -157,39 +147,27 @@ class IdleTimer {
   /**
    * @param {number} ms
    * @param {() => void} onDone
-   * @param {(...parts: any[]) => void} log
    */
-  constructor(ms, onDone, log) {
+  constructor(ms, onDone) {
     this.#ms = ms;
     this.#onDone = onDone;
-    this.#log = log;
   }
 
   get started() {
     return this.#running;
   }
 
-  /** @param {string} cause */
-  start(cause) {
-    this.#log(`count started ${cause} (${this.#ms / 1000} s)`);
+  start() {
     this.#running = true;
     this.#schedule();
   }
 
-  /** @param {string} cause */
-  reset(cause) {
-    const frequent = cause === 'scroll' || cause === 'mouse movement';
-    const now = performance.now();
-    if (!frequent || now - (this.#loggedAt[cause] ?? -Infinity) >= FREQUENT_LOG_MS) {
-      this.#loggedAt[cause] = now;
-      this.#log(`count restarted by ${cause}`);
-    }
+  reset() {
     this.#schedule();
   }
 
   /** @param {string} reason */
   pause(reason) {
-    if (!this.#pauses.has(reason)) this.#log(`count paused: ${reason}`);
     this.#pauses.add(reason);
     clearTimeout(this.#timeout);
   }
@@ -197,7 +175,6 @@ class IdleTimer {
   /** @param {string} reason */
   resume(reason) {
     if (!this.#pauses.delete(reason)) return;
-    this.#log(`count resumed after ${reason}${this.#pauses.size ? `, still paused: ${[...this.#pauses].join(', ')}` : ''}`);
     this.#schedule();
   }
 
@@ -210,7 +187,6 @@ class IdleTimer {
     clearTimeout(this.#timeout);
     if (!this.#running || this.#pauses.size) return;
     this.#timeout = setTimeout(() => {
-      this.#log('idle time up');
       this.stop();
       this.#onDone();
     }, this.#ms);
@@ -239,19 +215,13 @@ class MionasNewsletterTrigger extends HTMLElement {
 
   /** @param {any} dialog */
   async #attach(dialog) {
-    if (dialog.completed) return;
-    if (dialog.doneOnPage) {
-      dialog.debug('no automatic opening: the dialog already opened on this page');
-      return;
-    }
-    if (!this.#due(dialog)) return;
+    if (dialog.completed || dialog.doneOnPage || !this.#due(dialog)) return;
 
-    const answered = await waitForConsent(() => dialog.debug('waits for the cookie banner answer'));
+    const answered = await waitForConsent();
     if (!this.isConnected || dialog.doneOnPage) return;
     // The answer is a click that has already landed and ended Chrome's LCP measurement, on a page the
     // banner held still, so the safety waits of openWhenStill have nothing to guard.
     if (answered) {
-      dialog.debug('cookie banner answered');
       dialog.open({ source: 'auto' });
       return;
     }
@@ -270,13 +240,8 @@ class MionasNewsletterTrigger extends HTMLElement {
     if (stored.state !== 'closed') return false;
 
     const reshowDays = Number(this.dataset.reshowDays) || 0;
-    if (reshowDays === 0) {
-      dialog.debug('no automatic opening: closed before, and Days before showing again is 0');
-      return false;
-    }
-    const due = Date.now() - (stored.closedAt ?? 0) >= reshowDays * DAY_MS;
-    if (!due) dialog.debug(`no automatic opening: closed before, opens again ${reshowDays} days after the close`);
-    return due;
+    if (reshowDays === 0) return false;
+    return Date.now() - (stored.closedAt ?? 0) >= reshowDays * DAY_MS;
   }
 
   /** @param {any} dialog */
@@ -291,9 +256,7 @@ class MionasNewsletterTrigger extends HTMLElement {
      */
     const listen = (target, type, handler) => target.addEventListener(type, handler, { signal, capture: true, passive: true });
 
-    const timer = new IdleTimer(idle, () => openWhenStill(dialog), (...parts) => dialog.debug(...parts));
-    /** @type {Record<string, string>} */
-    const causes = { click: 'click', keydown: 'key press', scroll: 'scroll', change: 'form change', input: 'typing' };
+    const timer = new IdleTimer(idle, () => openWhenStill(dialog));
 
     /** @param {Event} event */
     const isPageScroll = (event) =>
@@ -302,27 +265,26 @@ class MionasNewsletterTrigger extends HTMLElement {
     /** @param {Event} event */
     const onAction = (event) => {
       if (!event.isTrusted) return;
-      const cause = causes[event.type] ?? event.type;
       if (!timer.started) {
-        timer.start(`by ${cause}`);
+        timer.start();
         return;
       }
       if (event.type === 'scroll' && isPageScroll(event)) {
-        if (flag('resetOnScroll')) timer.reset(cause);
+        if (flag('resetOnScroll')) timer.reset();
         return;
       }
-      if (flag('resetOnPress')) timer.reset(cause);
+      if (flag('resetOnPress')) timer.reset();
     };
 
     // Before the count starts these begin it; afterwards they reset it. A finger's pointerdown is left
     // out, because every touch scroll starts with one and a page scroll must not reset.
     for (const type of ['click', 'keydown', 'scroll', 'change', 'input']) listen(window, type, onAction);
     listen(window, 'touchend', (event) => {
-      if (event.isTrusted && !timer.started) timer.start('by tap');
+      if (event.isTrusted && !timer.started) timer.start();
     });
     if (flag('resetOnScroll')) {
       listen(window, 'pointermove', (event) => {
-        if (event.pointerType === 'mouse' && timer.started) timer.reset('mouse movement');
+        if (event.pointerType === 'mouse' && timer.started) timer.reset();
       });
     }
 
@@ -358,7 +320,6 @@ class MionasNewsletterTrigger extends HTMLElement {
 
     // The count never starts at page load: a dialog on an untouched page can become its LCP element,
     // and Google's crawler, which never acts, would see it.
-    dialog.debug('count waits for the first scroll, tap, click or key press');
   }
 }
 

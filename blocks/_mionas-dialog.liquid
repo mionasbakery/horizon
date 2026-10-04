@@ -4,7 +4,6 @@
 
   @param {string} dialog_id - The element id, which the trigger and the corner fold use to find the dialog.
   @param {string} section_id - The id of the rendering section, for the theme editor.
-  @param {string} audience - The section's audience setting: everyone or testers.
   @param {string} dialog_attributes - The section's page rule attribute.
 {%- enddoc -%}
 {%- capture decline_classes -%}
@@ -56,7 +55,7 @@
 {%- endcapture -%}
 
 {%- liquid
-  assign element_attributes = 'data-storage-key="newsletter-popup" data-audience="' | append: audience | append: '" ' | append: dialog_attributes | append: ' ' | append: block.shopify_attributes
+  assign element_attributes = 'data-storage-key="newsletter-popup" ' | append: dialog_attributes | append: ' ' | append: block.shopify_attributes
   assign dialog_label = 'mionas.newsletter_dialog.label' | t
   assign close_label = 'mionas.newsletter_dialog.close' | t
 -%}
