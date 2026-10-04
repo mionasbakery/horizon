@@ -132,7 +132,8 @@
                 "heading": "<p>COOKIES RECIÉN HECHAS,<br/>DE SITGES A TU CASA</p>",
                 "heading_color": "default",
                 "heading_tag": "h1"
-              }
+              },
+              "blocks": {}
             },
             "mionas_text_H8dqtJ": {
               "type": "mionas-text",
@@ -141,6 +142,7 @@
                 "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la Península.</p>",
                 "variant": "lead",
                 "color": "default",
+                "transform": "inherit",
                 "tag": "p",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
@@ -209,7 +211,7 @@
                   "type": "mionas-button",
                   "name": "Mionas: Button - About Us",
                   "settings": {
-                    "label": "Sobre nosotros →",
+                    "label": "Sobre nosotros",
                     "link": "shopify://pages/sobre-nosotros",
                     "open_in_new_tab": false,
                     "variant": "ghost",
@@ -297,6 +299,7 @@
                 "text": "<p>LO MÁS VENDIDO</p>",
                 "variant": "heading",
                 "color": "primary",
+                "transform": "inherit",
                 "tag": "h2",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
@@ -421,6 +424,7 @@
                     "text": "<p>{{ closest.product.title }}</p>",
                     "variant": "title",
                     "color": "default",
+                    "transform": "inherit",
                     "tag": "h3",
                     "text_wrap": "normal",
                     "padding-block-start": 0,
@@ -553,6 +557,7 @@
                 "text": "<p>Que dicen nuestros clientes</p>",
                 "variant": "heading",
                 "color": "primary",
+                "transform": "inherit",
                 "tag": "h2",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
@@ -746,6 +751,7 @@
                 "text": "<p>10% de descuento en tu primera compra</p>",
                 "variant": "heading",
                 "color": "primary",
+                "transform": "inherit",
                 "tag": "h2",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
@@ -762,6 +768,7 @@
                 "text": "<p>Suscríbete y consigue un <strong>10% de descuento</strong> en tu primera compra. Además, sé el primero en enterarte de ofertas exclusivas, nuevos cursos, lanzamientos y mucho más.</p>",
                 "variant": "lead",
                 "color": "default",
+                "transform": "inherit",
                 "tag": "p",
                 "text_wrap": "normal",
                 "padding-block-start": 0,
