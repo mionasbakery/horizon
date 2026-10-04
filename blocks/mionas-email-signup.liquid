@@ -97,6 +97,12 @@
       # would leave the field empty after a failed submit. Unconfirmed whether the customer
       # endpoint echoes email back at all; if not, this is simply blank.
       assign email_value = form.email
+
+      # The field's own error messages, read by assets/mionas-form-validation.js before the
+      # form-wide fallback, plus each password manager's opt-out (see below).
+      assign email_required = 'mionas.form.email_required' | t | escape | prepend: 'data-message-required="' | append: '"'
+      assign email_invalid = 'mionas.form.email_invalid' | t | escape | prepend: ' data-message-invalid="' | append: '"'
+      assign email_attributes = 'data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" data-protonpass-ignore="true" ' | append: email_required | append: email_invalid
     %}
 
     {%- assign signup_posted = false -%}
@@ -125,7 +131,7 @@
         spellcheck: 'false',
         autocapitalize: 'off',
         error: email_error,
-        attributes: 'data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" data-protonpass-ignore="true"'
+        attributes: email_attributes
       -%}
     {%- endcapture -%}
 

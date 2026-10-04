@@ -12,6 +12,9 @@
     "form": {
       "email_required": "Escriu el teu correu electrònic.",
       "email_invalid": "Escriu una adreça de correu electrònic vàlida.",
+      "name_required": "Escriu el teu nom.",
+      "phone_required": "Escriu el teu telèfon.",
+      "message_required": "Escriu el teu missatge.",
       "field_required": "Omple aquest camp.",
       "field_invalid": "Revisa aquest camp.",
       "optional": "opcional"

@@ -218,7 +218,9 @@ class MionasFormValidation extends HTMLElement {
     let node = field.querySelector(`#${CSS.escape(errorId)}`);
     if (!node) {
       node = document.createElement('p');
-      node.className = 'mionas-form-error';
+      // The classes snippets/mionas-text.liquid emits for the label role; the error rule's
+      // `.text-role.mionas-form-error` selector matches nothing without them.
+      node.className = 'text-role text-role--label mionas-form-error';
       node.id = errorId;
       field.append(node);
     }

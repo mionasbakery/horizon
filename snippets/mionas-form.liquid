@@ -43,9 +43,9 @@
 {%- if validate -%}
   {%- comment -%}
     The messages are locale keys, not schema settings -- see blocks/mionas-email-signup.liquid for why
-    merchant-settable error copy was rejected. Both current callers have exactly one required field
-    (email), so the copy names it directly; a form with a different required field passes
-    data-message-required via mionas-text-field.liquid's `attributes` param instead.
+    merchant-settable error copy was rejected. Only generic fallbacks live here: each field passes
+    its own data-message-required/-invalid through mionas-text-field.liquid's `attributes` param,
+    so no field can borrow another field's message.
 
     The script tag repeats per form instance safely: the browser dedupes a module by URL, and the
     customElements.define in the asset is guarded.
@@ -56,8 +56,6 @@
   {%- endcomment -%}
   <mionas-form-validation
     class="mionas-form-validation"
-    data-message-required="{{ 'mionas.form.email_required' | t }}"
-    data-message-invalid="{{ 'mionas.form.email_invalid' | t }}"
     data-message-required-fallback="{{ 'mionas.form.field_required' | t }}"
     data-message-invalid-fallback="{{ 'mionas.form.field_invalid' | t }}"
   >

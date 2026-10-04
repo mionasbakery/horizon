@@ -97,8 +97,11 @@
   /* The label's error colour is NOT set from here. It comes from the `error` prop this snippet
      forwards to mionas-form-label, exactly as FormField.tsx passes `error={!!error}`. Routing it
      through --form-label-focus-color instead would lose to the :focus-within rule above on
-     specificity, turning an errored field's label blue the moment it took focus. */
-  .mionas-form-field--error {
+     specificity, turning an errored field's label blue the moment it took focus.
+
+     Two classes, like FormField.module.css's `.root.error`: a single class loses to :focus-within
+     above, and the field an error focuses would get a blue underline. */
+  .mionas-form-field.mionas-form-field--error {
     border-bottom-color: var(--form-field-state-error-border-color);
   }
 

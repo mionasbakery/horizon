@@ -12,6 +12,9 @@
     "form": {
       "email_required": "Enter your email.",
       "email_invalid": "Enter a valid email address.",
+      "name_required": "Enter your name.",
+      "phone_required": "Enter your phone number.",
+      "message_required": "Enter your message.",
       "field_required": "Complete this field.",
       "field_invalid": "Check this field.",
       "optional": "optional"

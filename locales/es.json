@@ -12,6 +12,9 @@
     "form": {
       "email_required": "Escribe tu email.",
       "email_invalid": "Escribe un email válido.",
+      "name_required": "Escribe tu nombre.",
+      "phone_required": "Escribe tu teléfono.",
+      "message_required": "Escribe tu mensaje.",
       "field_required": "Completa este campo.",
       "field_invalid": "Revisa este campo.",
       "optional": "opcional"
