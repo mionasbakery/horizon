@@ -903,8 +903,8 @@
                 "eyebrow": "<p>Suscríbete a la newsletter</p>",
                 "eyebrow_color": "accent",
                 "heading": "<p>10% de descuento en tu primera compra</p>",
-                "heading_color": "default",
                 "heading_variant": "heading",
+                "heading_color": "default",
                 "heading_tag": "h2"
               },
               "blocks": {}
@@ -968,7 +968,7 @@
             "launcher": "after_close",
             "figure": "10%",
             "text": "descuento",
-            "text_size": "title",
+            "text_size": "body",
             "launcher_position": "left"
           },
           "blocks": {}
@@ -986,18 +986,12 @@
         "hidden_pages_menu": "pop-up-de-la-newsletter-paginas-excluidas",
         "auto_open": true,
         "idle_seconds": 5,
-        "wait_for_consent": true,
-        "wait_for_interaction": true,
         "reset_on_press": true,
         "reset_on_scroll": false,
         "pause_while_typing": true,
         "pause_while_hidden": true,
         "pause_for_cart": true,
-        "reshow_days": 7,
-        "ab_test_enabled": true,
-        "popup_share": 50,
-        "test_name": "newsletter-popup",
-        "measurement_name": "newsletter_popup"
+        "reshow_days": 7
       }
     }
   },

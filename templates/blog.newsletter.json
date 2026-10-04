@@ -130,6 +130,7 @@
                 "eyebrow": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
                 "eyebrow_color": "accent",
                 "heading": "<p>10% de descuento en tu primera compra</p>",
+                "heading_variant": "display",
                 "heading_color": "default",
                 "heading_tag": "h1"
               },
@@ -158,7 +159,7 @@
               "settings": {
                 "email_label": "Email",
                 "email_placeholder": "",
-                "button_label": "Activar mi descuento",
+                "button_label": "Suscribirme",
                 "button_width": "fit",
                 "submit_variant": "primary",
                 "submit_size": "md",
