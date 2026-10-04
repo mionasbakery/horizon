@@ -15,22 +15,96 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out the full history and tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
         with:
           node-version: 22
       # Pinned to the CLI version the theme is developed with.
-      - run: npm install --global @shopify/cli@4.8.4
-      - run: npm run theme:check
+      - name: Install the Shopify CLI
+        run: npm install --global @shopify/cli@4.8.4
+      - name: Run Theme Check
+        run: npm run theme:check
       - name: Package theme
         run: |
           mkdir -p dist
           zip -qr "dist/${GITHUB_REF_NAME}.zip" assets blocks config layout locales sections snippets templates
-      - uses: actions/upload-artifact@v4
+      - name: Save the packaged theme
+        uses: actions/upload-artifact@v4
         with:
           name: theme-${{ github.ref_name }}
           path: dist/${{ github.ref_name }}.zip
+      - name: Find the last released tag
+        id: baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # A failed lookup counts as a first release, so a GitHub API error can't block the release.
+        # The tag is peeled to its commit, since an annotated tag otherwise compares as a different object.
+        run: |
+          sha="$(git rev-parse "$GITHUB_SHA^{commit}")"
+          baseline="$(gh run list --workflow=release.yml --status=success --limit 1 --json headBranch --jq '.[0].headBranch // empty' || true)"
+          range=""
+          if [ -z "$baseline" ] || ! git rev-parse -q --verify "$baseline^{commit}" >/dev/null; then
+            kind=first; baseline=""; range="--max-count=30 $sha"
+          elif [ "$(git rev-parse "$baseline^{commit}")" = "$sha" ]; then
+            kind=empty
+          elif git merge-base --is-ancestor "$sha" "$baseline"; then
+            kind=rollback
+          else
+            kind=normal; range="$baseline..$sha"
+          fi
+          printf 'sha=%s\nkind=%s\nbaseline=%s\nrange=%s\n' "$sha" "$kind" "$baseline" "$range" >> "$GITHUB_OUTPUT"
+      # Notes must never block a release, so a failure here falls back to the subject list below.
+      # Runs Claude Code directly because the Claude GitHub app's action rejects push events.
+      - name: Write release notes with Claude
+        if: steps.baseline.outputs.kind == 'normal' || steps.baseline.outputs.kind == 'first'
+        continue-on-error: true
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          KIND: ${{ steps.baseline.outputs.kind }}
+          RANGE: ${{ steps.baseline.outputs.range }}
+          SCHEMA: '{"type":"object","properties":{"store_changes":{"type":"array","items":{"type":"string"},"minItems":1},"technical_changes":{"type":"array","items":{"type":"string"},"minItems":1}},"required":["store_changes","technical_changes"],"additionalProperties":false}'
+        run: |
+          npm install --global @anthropic-ai/claude-code@2.1.289
+          claude -p "Follow .github/release-notes-prompt.md. Release tag: $GITHUB_REF_NAME. Release kind: $KIND. Commit range: $RANGE." \
+            --permission-mode dontAsk \
+            --allowedTools "Read,Bash(git log *),Bash(git show *),Bash(git diff *)" \
+            --max-turns 20 \
+            --output-format json \
+            --json-schema "$SCHEMA" > claude-output.json
+      # Claude's text is read from a file by jq and never interpolated into a script, so it can't run.
+      - name: Format the release notes and show them in the run summary
+        env:
+          KIND: ${{ steps.baseline.outputs.kind }}
+          SHA: ${{ steps.baseline.outputs.sha }}
+          BASELINE: ${{ steps.baseline.outputs.baseline }}
+          RANGE: ${{ steps.baseline.outputs.range }}
+        run: |
+          NOTES_JSON="$(jq -c '.structured_output // empty' claude-output.json 2>/dev/null || true)"
+          case "$KIND" in
+            rollback) printf 'Rolled back to commit %s.\n' "$(git rev-parse --short "$SHA")" > notes.md ;;
+            empty) printf 'No code changes, re-release of %s.\n' "$BASELINE" > notes.md ;;
+            *)
+              if printf '%s' "$NOTES_JSON" | jq -e '(.store_changes | length > 0) and (.technical_changes | length > 0)' >/dev/null 2>&1; then
+                printf '%s' "$NOTES_JSON" | jq -r '"## What changed in the store", (.store_changes[] | "- " + .), "", "## Technical changes", (.technical_changes[] | "- " + .)' > notes.md
+              else
+                # RANGE holds git log arguments, so it is split on purpose.
+                { echo 'Notes generated without Claude.'; echo; git log --first-parent --format='- %s (%h)' $RANGE; } > notes.md
+              fi ;;
+          esac
+          cat notes.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Save the release notes for publishing after deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: notes-${{ github.ref_name }}
+          path: notes.md
 
   deploy:
     needs: check
@@ -38,11 +112,14 @@ jobs:
     # The production environment's required reviewer is the manual gate before the live push.
     environment: production
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out the tagged commit
+        uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --global @shopify/cli@4.8.4
+      - name: Install the Shopify CLI
+        run: npm install --global @shopify/cli@4.8.4
       # Outside the checkout so the push's Theme Check doesn't lint the copy; the CLI reads
       # shopify.theme.toml from --path, and --nodelete keeps it there.
       - name: Back up the live theme
@@ -52,7 +129,8 @@ jobs:
           npm run theme:pull:production -- --path "$RUNNER_TEMP/remote-before" --nodelete
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
-      - uses: actions/upload-artifact@v4
+      - name: Save the live theme backup
+        uses: actions/upload-artifact@v4
         with:
           name: remote-before-${{ github.ref_name }}
           path: ${{ runner.temp }}/remote-before
@@ -60,3 +138,27 @@ jobs:
         run: npm run theme:push:production
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+
+  # Runs after deploy, so a release rejected at the gate never gets a GitHub Release. A failure
+  # here keeps the run successful, because the next release takes its baseline from successful runs.
+  publish-release-notes:
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: write
+    steps:
+      - name: Get the release notes saved before the gate
+        uses: actions/download-artifact@v4
+        with:
+          name: notes-${{ github.ref_name }}
+      - name: Publish the release notes as a GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --notes-file notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --notes-file notes.md
+          fi

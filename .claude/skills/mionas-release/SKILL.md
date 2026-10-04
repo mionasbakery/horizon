@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Mionas Release
 
-A release is a `release-*` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, then pushes the tagged commit to the live theme. The pipeline is the only route to the live theme: this skill reconciles, tags and watches, and leaves the push to the pipeline.
+A release is a `release-*` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check and writes the release notes, waits at the `production` environment's manual gate, pushes the tagged commit to the live theme, then publishes the notes as a GitHub Release. The pipeline is the only route to the live theme: this skill reconciles, tags and watches, and leaves the push to the pipeline.
 
 Read `shopify.theme.toml`, `package.json` and the workflow first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
 
@@ -76,7 +76,7 @@ gh run list --workflow=release.yml --branch <tag> --json databaseId,status
 gh run view <run-id> --json status,jobs
 ```
 
-When `check` passes, the run waits on the `production` gate. Tell the user to approve it in the run's GitHub page; approval is theirs alone. Then poll `gh run view`, or run `gh run watch <run-id>` in the background, until the run completes. A failed `check` means fixing on `main` and tagging again with the next suffix.
+When `check` passes, the run waits on the `production` gate. Tell the user to read the release notes in the run summary, then approve the gate in the run's GitHub page; approval is theirs alone. A summary that starts `Notes generated without Claude.` means the "Write release notes with Claude" step failed; the release can still go ahead. Then poll `gh run view`, or run `gh run watch <run-id>` in the background, until the run completes. A failed `check` means fixing on `main` and tagging again with the next suffix.
 
 ## 5. Verify the live theme
 
