@@ -44,12 +44,12 @@
 
       <div
         ref="successView"
-        class="mionas-newsletter-dialog__view"
+        class="mionas-newsletter-dialog__view mionas-newsletter-dialog__view--success"
         role="status"
         tabindex="-1"
         hidden
       >
-        {%- render 'mionas-signup-done' -%}
+        {%- render 'mionas-email-signup-success' -%}
       </div>
     </div>
   </div>
@@ -82,6 +82,17 @@
 
   .mionas-newsletter-dialog__layout:not(:has(.mionas-newsletter-dialog__media)) {
     grid-template-columns: 1fr;
+  }
+
+  /* The thanks shows without the image, as wide as the signup success dialog on the page forms. */
+  .mionas-newsletter-dialog__layout:has(.mionas-newsletter-dialog__view--success:not([hidden])) {
+    grid-template-columns: 1fr;
+    width: 480px;
+  }
+
+  .mionas-newsletter-dialog__layout:has(.mionas-newsletter-dialog__view--success:not([hidden]))
+    .mionas-newsletter-dialog__media {
+    display: none;
   }
 
   .mionas-newsletter-dialog__image {

@@ -11,8 +11,8 @@
   {%- render 'mionas-button-class', variant: 'primary', full_width: true -%}
 {%- endcapture -%}
 
-<div class="mionas-signup-done">
-  <span class="mionas-signup-done__icon">
+<div class="mionas-email-signup-success">
+  <span class="mionas-email-signup-success__icon">
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -39,7 +39,7 @@
 </div>
 
 {% stylesheet %}
-  .mionas-signup-done {
+  .mionas-email-signup-success {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,17 +47,17 @@
     text-align: center;
   }
 
-  .mionas-signup-done .mionas-button {
+  .mionas-email-signup-success .mionas-button {
     align-self: stretch;
   }
 
-  .mionas-signup-done__icon {
+  .mionas-email-signup-success__icon {
     display: flex;
     color: var(--brand-primary);
   }
 
   /* Placeholder: the design system has no icon size this large. Candidate token. */
-  .mionas-signup-done__icon svg {
+  .mionas-email-signup-success__icon svg {
     width: 48px;
     height: 48px;
   }

@@ -203,7 +203,7 @@
     -%}
     {%- capture success_content -%}
       <div class="mionas-signup-success__content">
-        {%- render 'mionas-signup-done' -%}
+        {%- render 'mionas-email-signup-success' -%}
       </div>
     {%- endcapture -%}
     {%- render 'mionas-dialog',
@@ -236,9 +236,6 @@
 
         dialog.dataset.open = '';
         document.body.append(dialog);
-        {%- if block_settings.hide_section_for_subscribers %}
-          script.closest('.shopify-section')?.style.setProperty('display', 'none');
-        {%- endif %}
       })();
     </script>
   {%- endif -%}
@@ -262,11 +259,11 @@
     </script>
   {%- endif -%}
 
-  {%- if block_settings.hide_section_for_subscribers and signup_posted == false and request.design_mode == false -%}
+  {%- if block_settings.hide_section_for_subscribers and request.design_mode == false -%}
     {%- comment -%}
       Inline and at the end of the block, so the section hides as the page parses, before it paints.
       The browser mark covers visitors who are not logged in; it stays in the browser where they
-      signed up.
+      signed up. It also runs after a post, so a signup in another form on the page hides this one.
     {%- endcomment -%}
     <script>
       (() => {
