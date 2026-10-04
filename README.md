@@ -65,16 +65,14 @@ There are a number of really useful tools that the Shopify Themes team uses duri
 
 You can follow this [quick start guide for theme developers](https://shopify.dev/docs/themes/tools/cli) to get started.
 
-Environments for this theme (`dev` and `production`) are defined in `shopify.theme.toml`, pinned to specific theme IDs so pull/push resolve a single theme non-interactively — no "select a theme" or live-theme confirmation prompt. `npm run` shortcuts wrap the CLI's `--environment` flag for each:
+Environments for this theme are defined in `shopify.theme.toml`. `default` points every command without `--environment` at the production store, so `shopify theme dev` previews there on a development theme. `production` is pinned to the live theme's ID so pull/push resolve a single theme non-interactively — no "select a theme" or live-theme confirmation prompt. `npm run` shortcuts wrap the CLI's `--environment` flag:
 
 ```bash
-npm run theme:pull:dev          # pull from the dev store's Horizon theme (live there)
-npm run theme:push:dev          # push to the dev store's Horizon theme (live there — uses --allow-live)
 npm run theme:pull:production   # pull from the production store's Horizon theme (live there)
 npm run theme:push:production   # push to the production store's Horizon theme (live there — uses --allow-live)
 ```
 
-Both `theme:push:*` scripts run `shopify theme check` first and abort the push if it finds any errors — e.g. a Liquid syntax error or a schema block type that doesn't resolve. This is what would have caught the contact-form block break before it reached either store.
+`theme:push:production` runs `shopify theme check` first and aborts the push if it finds any errors — e.g. a Liquid syntax error or a schema block type that doesn't resolve. This is what would have caught the contact-form block break before it reached the store.
 
 ### Theme Check
 

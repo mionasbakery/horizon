@@ -3,9 +3,10 @@
 # match risked resolving ambiguously or hitting the wrong theme. IDs make
 # `theme pull`/`theme push` fully non-interactive.
 
-[environments.dev]
-store = "mionasbakery-dev"
-theme = "202080944462" # Horizon (live on the dev store)
+# Used when no --environment is given, so `shopify theme dev` always opens a development theme on the
+# production store. It pins no theme on purpose: the live theme would make `theme dev` edit it live.
+[environments.default]
+store = "mionasbakery"
 
 [environments.production]
 store = "mionasbakery"

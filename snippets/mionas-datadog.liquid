@@ -52,12 +52,97 @@
           rum.startSessionReplayRecording();
         });
 
-        function applyConsent() {
-          var allowed = window.Shopify?.customerPrivacy?.analyticsProcessingAllowed?.() === true;
+        // Consent arrives after the page's first events, which Datadog would drop while collection is
+        // off, so actions wait here until the visitor allows analytics.
+        var granted = false;
+        var waiting = [];
+
+        function send(name, context) {
           rum.onReady(function () {
-            rum.setTrackingConsent(allowed ? 'granted' : 'not-granted');
+            rum.addAction(name, context);
           });
         }
+
+        function action(name, properties) {
+          var context = { platform: 'web', locale: '{{ request.locale.iso_code }}' };
+          for (var key in properties) if (properties[key] != null) context[key] = properties[key];
+          if (granted) send(name, context);
+          else waiting.push([name, context]);
+        }
+
+        function applyConsent() {
+          granted = window.Shopify?.customerPrivacy?.analyticsProcessingAllowed?.() === true;
+          rum.onReady(function () {
+            rum.setTrackingConsent(granted ? 'granted' : 'not-granted');
+          });
+          if (!granted) return;
+          waiting.forEach(function (entry) {
+            send(entry[0], entry[1]);
+          });
+          waiting = [];
+        }
+
+        /** Shopify IDs arrive as gid://shopify/Product/123 or as numbers; the Mixpanel pixel sends the bare number. */
+        function numericId(id) {
+          return id == null ? undefined : String(id).split('/').pop();
+        }
+
+        /** One GA4 item. Shopify names a product's only variant "Default Title", which says nothing. */
+        function item(fields) {
+          if (fields.item_variant === 'Default Title') delete fields.item_variant;
+          for (var key in fields) if (fields[key] == null) delete fields[key];
+          return fields;
+        }
+
+        // GA4 names and parameters, as the Mixpanel pixel sends them, so all three tools answer the same questions.
+        window.mionasDatadog = { action: action };
+
+        document.addEventListener('shopify:product:view', function (event) {
+          // Product cards fire this too; only the product page counts as viewing the product.
+          if (event.context !== 'page') return;
+          var variant = event.product?.selectedVariant;
+          var price = variant ? Number(variant.price.amount) : undefined;
+          action('view_item', {
+            currency: variant?.price.currencyCode,
+            value: price,
+            items: [
+              item({
+                item_id: numericId(event.product?.id),
+                item_name: event.product?.title,
+                item_variant: variant?.title,
+                price: price,
+                quantity: 1,
+              }),
+            ],
+          });
+        });
+
+        document.addEventListener('shopify:cart:lines-update', function (event) {
+          if (event.action !== 'add') return;
+          event.promise?.then(function (result) {
+            if (!result?.cart || result.userErrors?.length) return;
+            event.lines.forEach(function (line) {
+              var variantId = numericId(line.merchandiseId);
+              var added = (result.detail?.items || []).find(function (entry) {
+                return String(entry.variant_id) === variantId;
+              });
+              var price = added ? added.price / 100 : undefined;
+              action('add_to_cart', {
+                currency: window.Shopify?.currency?.active,
+                value: price == null ? undefined : Math.round(price * line.quantity * 100) / 100,
+                items: [
+                  item({
+                    item_id: numericId(added?.product_id),
+                    item_name: added?.product_title,
+                    item_variant: added?.variant_title,
+                    price: price,
+                    quantity: line.quantity,
+                  }),
+                ],
+              });
+            });
+          }, function () {});
+        });
 
         window.Shopify?.loadFeatures?.([{ name: 'consent-tracking-api', version: '0.1' }], function (error) {
           if (!error) applyConsent();

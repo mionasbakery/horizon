@@ -1,6 +1,7 @@
 // Datadog custom pixel. Shopify runs this file from admin → Settings → Customer events, not from the
 // theme: paste it there after every change, with permission "Required → Analytics" and "Data
-// collected does not qualify as data sale". snippets/mionas-datadog.liquid covers the storefront.
+// collected does not qualify as data sale". It sends only the checkout events: Datadog's Shopify plugin
+// starts a session only on checkout pages, so snippets/mionas-datadog.liquid sends the storefront ones.
 
 const APPLICATION_ID = '';
 const CLIENT_TOKEN = '';
@@ -21,22 +22,38 @@ function pathLocale(event) {
   return STORE_LOCALES.includes(first) ? first : 'es';
 }
 
-function variantProperties(variant) {
-  return {
-    product_id: numericId(variant?.product?.id),
-    product_title: variant?.product?.title,
-    variant_id: numericId(variant?.id),
-    price: amount(variant?.price),
+/** One GA4 item. Shopify names a product's only variant "Default Title", which says nothing. */
+function item(product, variant, price, quantity) {
+  const fields = {
+    item_id: numericId(product?.id),
+    item_name: product?.title,
+    item_variant: variant?.title === 'Default Title' ? undefined : variant?.title,
+    price,
+    quantity,
   };
+  for (const key of Object.keys(fields)) if (fields[key] == null) delete fields[key];
+  return fields;
 }
 
 function checkoutProperties(checkout) {
   return {
-    item_count: (checkout?.lineItems ?? []).reduce((sum, line) => sum + (line.quantity ?? 0), 0),
     currency: checkout?.currencyCode ?? checkout?.totalPrice?.currencyCode,
+    value: amount(checkout?.totalPrice),
+    items: (checkout?.lineItems ?? []).map((line) =>
+      item(
+        { id: line.variant?.product?.id, title: line.title },
+        line.variant,
+        amount(line.variant?.price),
+        line.quantity
+      )
+    ),
     // Checkout URLs carry no language prefix, so the storefront's path rule would always say "es".
     locale: checkout?.localization?.language?.isoCode?.toLowerCase(),
   };
+}
+
+function consent(customerPrivacy) {
+  return customerPrivacy?.analyticsProcessingAllowed ? 'granted' : 'not-granted';
 }
 
 function start() {
@@ -71,28 +88,18 @@ function start() {
       env: 'production',
       sessionSampleRate: 100,
       plugins: [rum.shopifyPlugin({ shopifyAnalytics: analytics })],
+      trackingConsent: consent(init.customerPrivacy),
     })
   );
+  // Shopify stops delivering events after a withdrawal, but the plugin's own click and error
+  // collection only stops when the SDK is told.
+  api.customerPrivacy.subscribe('visitorConsentCollected', (event) => {
+    rum.onReady(() => rum.setTrackingConsent(consent(event.customerPrivacy)));
+  });
   setUser(numericId(init.data?.customer?.id));
 
-  analytics.subscribe('product_viewed', (event) => {
-    action('product_viewed', event, variantProperties(event.data?.productVariant));
-  });
-
-  analytics.subscribe('product_added_to_cart', (event) => {
-    const line = event.data?.cartLine;
-    action('product_added_to_cart', event, {
-      ...variantProperties(line?.merchandise),
-      quantity: line?.quantity,
-    });
-  });
-
   analytics.subscribe('checkout_started', (event) => {
-    const checkout = event.data?.checkout;
-    action('checkout_started', event, {
-      cart_total: amount(checkout?.totalPrice),
-      ...checkoutProperties(checkout),
-    });
+    action('begin_checkout', event, checkoutProperties(event.data?.checkout));
   });
 
   analytics.subscribe('checkout_completed', (event) => {
@@ -100,19 +107,10 @@ function start() {
     const order = checkout?.order;
     // A guest checkout still creates a Shopify customer, so the order ties this session to them.
     setUser(numericId(order?.customer?.id));
-    action('checkout_completed', event, {
-      order_id: numericId(order?.id),
-      order_total: amount(checkout?.totalPrice),
+    action('purchase', event, {
+      transaction_id: numericId(order?.id),
       is_first_order: order?.customer?.isFirstOrder,
       ...checkoutProperties(checkout),
-    });
-  });
-
-  // Published by assets/mionas-newsletter-popup.js; the prefix is the section's "Measurement name".
-  analytics.subscribe('newsletter_popup_subscribed', (event) => {
-    action('newsletter_subscribed', event, {
-      test: event.customData?.test,
-      group: event.customData?.group,
     });
   });
 }

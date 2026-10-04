@@ -8,9 +8,11 @@ const configured = source
   .replace(/const CLIENT_TOKEN = '';/, "const CLIENT_TOKEN = 'client-token';");
 
 /** Runs the pixel against stub Shopify and Datadog globals, recording every Datadog call. */
-function runPixel(pixelSource, customer = null) {
+function runPixel(pixelSource, customer = null, analyticsProcessingAllowed = true) {
   const calls = [];
   const handlers = {};
+  const privacyHandlers = {};
+  const api = { customerPrivacy: { subscribe: (name, handler) => (privacyHandlers[name] = handler) } };
   const analytics = {
     subscribe: (name, handler) => (handlers[name] = handler),
   };
@@ -25,6 +27,7 @@ function runPixel(pixelSource, customer = null) {
       setUser: record('setUser'),
       clearUser: record('clearUser'),
       addAction: record('addAction'),
+      setTrackingConsent: record('setTrackingConsent'),
       shopifyPlugin: (options) => ({ shopifyPlugin: options }),
     },
   };
@@ -32,13 +35,14 @@ function runPixel(pixelSource, customer = null) {
     createElement: () => ({}),
     getElementsByTagName: () => [{ parentNode: { insertBefore: record('loadScript') } }],
   };
-  new Function('analytics', 'init', 'window', 'document', pixelSource)(
+  new Function('analytics', 'init', 'api', 'window', 'document', pixelSource)(
     analytics,
-    { data: { customer } },
+    { data: { customer }, customerPrivacy: { analyticsProcessingAllowed } },
+    api,
     window,
     document
   );
-  return { calls, handlers, analytics };
+  return { calls, handlers, privacyHandlers, analytics };
 }
 
 const base = {
@@ -71,50 +75,49 @@ test('starts Datadog on the EU site with the Shopify plugin and the logged-in cu
   assert.deepEqual(calls.find((call) => call.method === 'setUser').args, [{ id: '42' }]);
 });
 
-test('sends the Mixpanel tracking plan as Datadog actions', () => {
+test('follows the page consent at start and when the visitor changes it in checkout', () => {
+  const allowed = runPixel(configured);
+  assert.equal(allowed.calls.find((call) => call.method === 'init').args[0].trackingConsent, 'granted');
+
+  const { calls, privacyHandlers } = runPixel(configured, null, false);
+  assert.equal(calls.find((call) => call.method === 'init').args[0].trackingConsent, 'not-granted');
+  privacyHandlers.visitorConsentCollected({ customerPrivacy: { analyticsProcessingAllowed: true } });
+  privacyHandlers.visitorConsentCollected({ customerPrivacy: { analyticsProcessingAllowed: false } });
+  assert.deepEqual(
+    calls.filter((call) => call.method === 'setTrackingConsent').map((call) => call.args[0]),
+    ['granted', 'not-granted']
+  );
+});
+
+test('handles only checkout events, since the plugin starts a session only on checkout pages', () => {
   const { calls, handlers } = runPixel(configured);
-  const variant = {
-    id: 'gid://shopify/ProductVariant/5',
-    price: { amount: 4.2 },
-    product: { id: '9', title: 'Cookie' },
-  };
-  handlers.product_viewed({ ...base, data: { productVariant: variant } });
-  handlers.product_added_to_cart({
-    ...base,
-    data: { cartLine: { quantity: 2, merchandise: variant } },
+  assert.deepEqual(Object.keys(handlers).sort(), ['checkout_completed', 'checkout_started']);
+  const line = (title, variantTitle, productId, price, quantity) => ({
+    title,
+    quantity,
+    variant: { title: variantTitle, price: { amount: price }, product: { id: `gid://shopify/Product/${productId}` } },
   });
   const checkout = {
     currencyCode: 'EUR',
     totalPrice: { amount: '12.5' },
-    lineItems: [{ quantity: 2 }, { quantity: 1 }],
+    lineItems: [line('Cookie', 'Default Title', 9, 4.2, 2), line('Brownie', 'Grande', 10, 4.1, 1)],
     localization: { language: { isoCode: 'EN' } },
   };
   handlers.checkout_started({ ...base, data: { checkout } });
-  handlers.newsletter_popup_subscribed({
-    ...base,
-    customData: { test: 't1', group: 'popup' },
-  });
-
-  const product = {
-    product_id: '9',
-    product_title: 'Cookie',
-    variant_id: '5',
-    price: 4.2,
-  };
   assert.deepEqual(actions(calls), [
-    ['product_viewed', { platform: 'web', locale: 'ca', ...product }],
-    ['product_added_to_cart', { platform: 'web', locale: 'ca', ...product, quantity: 2 }],
     [
-      'checkout_started',
+      'begin_checkout',
       {
         platform: 'web',
         locale: 'en',
-        cart_total: 12.5,
-        item_count: 3,
         currency: 'EUR',
+        value: 12.5,
+        items: [
+          { item_id: '9', item_name: 'Cookie', price: 4.2, quantity: 2 },
+          { item_id: '10', item_name: 'Brownie', item_variant: 'Grande', price: 4.1, quantity: 1 },
+        ],
       },
     ],
-    ['newsletter_subscribed', { platform: 'web', locale: 'ca', test: 't1', group: 'popup' }],
   ]);
 });
 
@@ -130,7 +133,7 @@ test('a guest order sets the user from the order customer and omits absent field
         currencyCode: 'EUR',
         email: 'guest@example.com',
         totalPrice: { amount: '20' },
-        lineItems: [{ quantity: 1 }],
+        lineItems: [{ title: 'Cookie', quantity: 1, variant: { price: { amount: '20' }, product: { id: '9' } } }],
         order: {
           id: 'gid://shopify/Order/77',
           customer: { id: 'gid://shopify/Customer/43', isFirstOrder: null },
@@ -141,14 +144,14 @@ test('a guest order sets the user from the order customer and omits absent field
   assert.deepEqual(calls.find((call) => call.method === 'setUser').args, [{ id: '43' }]);
   assert.deepEqual(actions(calls), [
     [
-      'checkout_completed',
+      'purchase',
       {
         platform: 'web',
         locale: 'es',
-        order_id: '77',
-        order_total: 20,
-        item_count: 1,
+        transaction_id: '77',
         currency: 'EUR',
+        value: 20,
+        items: [{ item_id: '9', item_name: 'Cookie', price: 20, quantity: 1 }],
       },
     ],
   ]);

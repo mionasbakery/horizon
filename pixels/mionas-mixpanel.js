@@ -28,12 +28,14 @@ function amount(money) {
 }
 
 function pageProperties(event) {
-  const path = event.context?.document?.location?.pathname ?? '/';
+  const location = event.context?.document?.location;
+  const path = location?.pathname ?? '/';
   const first = path.split('/')[1];
   const locale = STORE_LOCALES.includes(first) ? first : 'es';
   const rest = locale === 'es' ? path : path.slice(first.length + 1) || '/';
   const pageType = rest === '/' ? 'home' : (PAGE_TYPES[rest.split('/')[1]] ?? 'other');
-  return { locale, url_path: rest, page_type: pageType };
+  // The query string is left out: a visitor can type anything into it, an email included.
+  return { locale, page_location: `${location?.origin ?? ''}${path}`, page_type: pageType };
 }
 
 /**
@@ -70,19 +72,44 @@ function track(name, event, properties, userId) {
   }).catch(() => {});
 }
 
-function variantProperties(variant) {
+function cents(value) {
+  return Number.isFinite(value) ? Math.round(value * 100) / 100 : undefined;
+}
+
+/** One GA4 item. Shopify names a product's only variant "Default Title", which says nothing. */
+function item(product, variant, price, quantity) {
+  const fields = {
+    item_id: numericId(product?.id),
+    item_name: product?.title,
+    item_variant: variant?.title === 'Default Title' ? undefined : variant?.title,
+    price,
+    quantity,
+  };
+  for (const key of Object.keys(fields)) if (fields[key] == null) delete fields[key];
+  return fields;
+}
+
+function variantProperties(variant, quantity) {
+  const price = amount(variant?.price);
   return {
-    product_id: numericId(variant?.product?.id),
-    product_title: variant?.product?.title,
-    variant_id: numericId(variant?.id),
-    price: amount(variant?.price),
+    currency: variant?.price?.currencyCode,
+    value: cents(price * quantity),
+    items: [item(variant?.product, variant, price, quantity)],
   };
 }
 
 function checkoutProperties(checkout) {
   return {
-    item_count: (checkout?.lineItems ?? []).reduce((sum, line) => sum + (line.quantity ?? 0), 0),
     currency: checkout?.currencyCode ?? checkout?.totalPrice?.currencyCode,
+    value: amount(checkout?.totalPrice),
+    items: (checkout?.lineItems ?? []).map((line) =>
+      item(
+        { id: line.variant?.product?.id, title: line.title },
+        line.variant,
+        amount(line.variant?.price),
+        line.quantity
+      )
+    ),
     // Checkout URLs carry no language prefix, so the storefront's path rule would always say "es".
     locale: checkout?.localization?.language?.isoCode?.toLowerCase(),
   };
@@ -91,35 +118,21 @@ function checkoutProperties(checkout) {
 const customerId = numericId(init.data?.customer?.id);
 
 analytics.subscribe('page_viewed', (event) => {
-  const { url_path, page_type } = pageProperties(event);
-  track('page_viewed', event, { url_path, page_type }, customerId);
+  const { page_location, page_type } = pageProperties(event);
+  track('page_view', event, { page_location, page_type }, customerId);
 });
 
 analytics.subscribe('product_viewed', (event) => {
-  track('product_viewed', event, variantProperties(event.data?.productVariant), customerId);
+  track('view_item', event, variantProperties(event.data?.productVariant, 1), customerId);
 });
 
 analytics.subscribe('product_added_to_cart', (event) => {
   const line = event.data?.cartLine;
-  track(
-    'product_added_to_cart',
-    event,
-    { ...variantProperties(line?.merchandise), quantity: line?.quantity },
-    customerId
-  );
+  track('add_to_cart', event, variantProperties(line?.merchandise, line?.quantity), customerId);
 });
 
 analytics.subscribe('checkout_started', (event) => {
-  const checkout = event.data?.checkout;
-  track(
-    'checkout_started',
-    event,
-    {
-      cart_total: amount(checkout?.totalPrice),
-      ...checkoutProperties(checkout),
-    },
-    customerId
-  );
+  track('begin_checkout', event, checkoutProperties(event.data?.checkout), customerId);
 });
 
 analytics.subscribe('checkout_completed', (event) => {
@@ -128,11 +141,10 @@ analytics.subscribe('checkout_completed', (event) => {
   // A guest checkout still creates a Shopify customer, so the order ties this browser to them.
   const userId = numericId(order?.customer?.id) ?? customerId;
   track(
-    'checkout_completed',
+    'purchase',
     { ...event, id: `order-${numericId(order?.id) ?? event.id}` },
     {
-      order_id: numericId(order?.id),
-      order_total: amount(checkout?.totalPrice),
+      transaction_id: numericId(order?.id),
       is_first_order: order?.customer?.isFirstOrder,
       ...checkoutProperties(checkout),
     },
@@ -142,5 +154,6 @@ analytics.subscribe('checkout_completed', (event) => {
 
 // Published by assets/mionas-newsletter-popup.js; the prefix is the section's "Measurement name".
 analytics.subscribe('newsletter_popup_subscribed', (event) => {
-  track('newsletter_subscribed', event, { test: event.customData?.test, group: event.customData?.group }, customerId);
+  const { test, group } = event.customData ?? {};
+  track('sign_up', event, { method: 'newsletter_popup', test, group }, customerId);
 });

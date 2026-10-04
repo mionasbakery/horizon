@@ -37,10 +37,10 @@
 
   {%- capture widget_content -%}
     {%- if widget_figure != blank -%}
-      {%- render 'mionas-stamp', content: widget_figure, size: 'title', color: widget_ink, tag: 'span' -%}
+      {%- render 'mionas-stamp', content: widget_figure, size: block.settings.text_size, color: widget_ink, tag: 'span' -%}
     {%- endif -%}
     {%- if widget_text != blank -%}
-      {%- render 'mionas-stamp', content: widget_text, size: 'title', color: widget_ink, tag: 'span' -%}
+      {%- render 'mionas-stamp', content: widget_text, size: block.settings.text_size, color: widget_ink, tag: 'span' -%}
     {%- endif -%}
   {%- endcapture -%}
   {%- capture widget_attributes -%}
@@ -55,6 +55,7 @@
     color: block.settings.color,
     label: widget_label,
     content: widget_content,
+    size: block.settings.size,
     attributes: widget_attributes
   -%}
 {%- endif -%}
@@ -94,6 +95,34 @@
       "label": "Text",
       "info": "The second line, at the same size. Keep it to one short word so it fits the fold.",
       "default": "descuento",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "Text size",
+      "options": [
+        { "value": "heading", "label": "Heading" },
+        { "value": "subheading", "label": "Subheading" },
+        { "value": "title", "label": "Title" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "body", "label": "Body" },
+        { "value": "label", "label": "Label" }
+      ],
+      "default": "title",
+      "info": "Both lines take this text variant's size. A larger text size needs a larger Size to fit the fold.",
+      "visible_if": "{{ block.settings.launcher != 'off' }}"
+    },
+    {
+      "type": "range",
+      "id": "size",
+      "label": "Size",
+      "min": 120,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 152,
+      "info": "The width and height of the folded corner.",
       "visible_if": "{{ block.settings.launcher != 'off' }}"
     },
     {

@@ -10,12 +10,16 @@
   @param {string} color - The fold's fill: accent, primary or accent-inverse. The caller colours the content to match.
   @param {string} label - The accessible name of its open button.
   @param {string} content - The visible content of its open button.
+  @param {number} [size] - The fold's width and height in px. Defaults to 152.
   @param {string} [attributes] - Extra attributes for the custom element.
 {%- enddoc -%}
 
 <{{ element }}
   for="{{ popup_id }}"
   class="mionas-popup-widget mionas-popup-widget--{{ position }} mionas-popup-widget--{{ vertical }} mionas-popup-widget--{{ color }}"
+  {% if size %}
+    style="--mionas-popup-widget-size: {{ size | times: 1 }}px;"
+  {% endif %}
   data-section-id="{{ section_id }}"
   {{ attributes }}
   hidden
@@ -45,8 +49,8 @@
        stamp lines inside it. */
     --mionas-popup-widget-size: 152px;
     /* How far the text sits from the fold's middle toward the corner, so its gap to the fold edge
-       matches its gap to the screen edges. Change it together with the size or the text size. */
-    --mionas-popup-widget-inset: 21px;
+       matches its gap to the screen edges. It scales with the size; 21px at 152px. */
+    --mionas-popup-widget-inset: calc(var(--mionas-popup-widget-size) * 0.138);
     --mionas-popup-widget-clip: polygon(0 0, 0 100%, 100% 100%);
     --mionas-popup-widget-turn: 45deg;
     --mionas-popup-widget-toward: top right;

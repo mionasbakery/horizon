@@ -277,15 +277,18 @@ class MionasNewsletterPopup extends MionasPopup {
 
   /**
    * Publishes a funnel event to Shopify customer events (read by the GA4 custom pixel, and by
-   * pixels/mionas-mixpanel.js and pixels/mionas-datadog.js for `subscribed`) and to Clarity.
+   * pixels/mionas-mixpanel.js for `subscribed`), to Clarity, and the signup to Datadog.
    * @param {string} name - Without the event prefix.
    * @param {Record<string, string>} [data]
    */
   #track(name, data = {}) {
     const eventName = `${this.dataset.eventPrefix}${name}`;
+    const payload = { test: this.dataset.testName, group: this.#group, ...data };
 
     try {
-      window.Shopify?.analytics?.publish?.(eventName, { test: this.dataset.testName, group: this.#group, ...data });
+      window.Shopify?.analytics?.publish?.(eventName, payload);
+      // Datadog's pixel has no session outside checkout, so snippets/mionas-datadog.liquid sends it.
+      if (name === 'subscribed') window.mionasDatadog?.action('sign_up', { method: 'newsletter_popup', ...payload });
     } catch {
       // Analytics must never break the popup.
     }
