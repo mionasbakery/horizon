@@ -176,9 +176,9 @@
     pointer-events: none;
   }
 
-  /* The design system tints with currentColor on ::after and scales only its fill layers. The fill
-     stays on the element here, since Horizon's .button rules paint it on add-to-cart, so the whole
-     button scales, ring and label included; the tints and the timings match. */
+  /* The design system tints with currentColor on ::after and scales only its fill layers on a touch
+     press. The fill stays on the element here, since Horizon's .button rules paint it on add-to-cart,
+     so the whole button sinks, ring and label included; the tints and the timings match. */
   .mionas-button {
     position: relative;
     isolation: isolate;
@@ -210,10 +210,6 @@
 
   /* Mouse only, so a tap leaves no sticky hover. Before the press rules, which tie and must win. */
   @media (hover: hover) {
-    .mionas-button:hover:not(:disabled) {
-      transform: scale(var(--button-state-hover-scale));
-    }
-
     .mionas-button:hover:not(:disabled)::after {
       opacity: var(--button-state-hover-opacity);
     }
@@ -229,14 +225,8 @@
     transition-duration: var(--button-state-pressed-duration);
   }
 
-  /* A mouse press drops the hover swell back to rest; a touch screen has no swell, so it sinks. */
-  @media (hover: hover) {
-    .mionas-button:active:not(:disabled) {
-      transform: none;
-    }
-  }
-
-  @media (hover: none) {
+  /* A mouse press is tint only; on touch a finger covers the tint, so the button also sinks. */
+  @media (hover: none) and (prefers-reduced-motion: no-preference) {
     .mionas-button:active:not(:disabled) {
       transform: scale(var(--button-state-pressed-scale));
     }
@@ -246,11 +236,6 @@
     .mionas-button,
     .mionas-button::after {
       transition: none;
-    }
-
-    .mionas-button:hover:not(:disabled),
-    .mionas-button:active:not(:disabled) {
-      transform: none;
     }
   }
 

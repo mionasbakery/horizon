@@ -729,35 +729,16 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "mionas_text_TxwLqj": {
-              "type": "mionas-stamp",
-              "name": "Mionas: Stamp",
+            "mionas_heading_group_Nw7sLp": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
-                "size": "body",
-                "variant": "accent",
-                "tag": "div",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_E74aRt": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
-              "settings": {
-                "text": "<p>10% de descuento en tu primera compra</p>",
-                "variant": "heading",
-                "color": "primary",
-                "transform": "inherit",
-                "tag": "h2",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "eyebrow": "<p>SUSCRÍBETE A LA NEWSLETTER</p>",
+                "eyebrow_color": "accent",
+                "heading": "<p>10% de descuento en tu primera compra</p>",
+                "heading_variant": "heading",
+                "heading_color": "primary",
+                "heading_tag": "h2"
               },
               "blocks": {}
             },
@@ -808,8 +789,7 @@
             }
           },
           "block_order": [
-            "mionas_text_TxwLqj",
-            "mionas_text_E74aRt",
+            "mionas_heading_group_Nw7sLp",
             "mionas_text_PHRkcU",
             "mionas_email_signup_AdjRU4"
           ]

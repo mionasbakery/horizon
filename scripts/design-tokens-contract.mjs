@@ -276,7 +276,6 @@ export const EXPECTED_TOKENS = {
   "--button-base-duration": "220ms",
   // Hover and focus, spent by the same snippet. The hover opacity is the same currentColor tint.
   "--button-state-hover-opacity": "0.08",
-  "--button-state-hover-scale": "1.03",
   "--button-state-focused-border-width": "2px",
   "--button-state-focused-border-color": "#0b078c",
   "--button-state-focused-inverse-border-color": "#ffffff",
