@@ -1,0 +1,74 @@
+{%- doc -%}
+  Places the Mionas cart blocks in sections/main-cart.liquid's grid. Rendered by
+  blocks/mionas-free-shipping.liquid and blocks/mionas-cart-suggestions.liquid.
+{%- enddoc -%}
+
+{% stylesheet %}
+  /* main-cart prints its block slot after the summary; flattening the slot lets each block take its
+     own place in the grid, so the card can sit above the items without forking main-cart. Shopify
+     wraps every theme block in a .shopify-block div, so the placement goes on that wrapper. */
+  .cart-page:has(.mionas-free-shipping, .mionas-cart-suggestions) .cart-page__more-blocks {
+    display: contents;
+  }
+
+  .cart-page:has(.mionas-free-shipping, .mionas-cart-suggestions) {
+    /* main-cart's 1fr column grows to the suggestions row's full width; the row scrolls instead. */
+    grid-template-columns: minmax(0, 1fr);
+
+    .cart-page__title {
+      order: 1;
+    }
+
+    .shopify-block:has(> .mionas-free-shipping) {
+      order: 2;
+      margin-block-start: var(--space-lg);
+    }
+
+    .cart-page__items {
+      order: 3;
+    }
+
+    .shopify-block:has(> .mionas-cart-suggestions) {
+      order: 4;
+      margin-block-start: var(--space-lg);
+    }
+
+    .cart-page__summary {
+      order: 5;
+    }
+  }
+
+  /* main-cart's empty-cart template is printed while the cart still has items, so it carries both
+     blocks; only the live cart has a summary, and the clone shown on removing the last line must not
+     flash them. */
+  .cart-page:not(:has(.cart-page__summary)) :is(.mionas-free-shipping, .mionas-cart-suggestions) {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cart-page:has(.mionas-free-shipping, .mionas-cart-suggestions) {
+      grid-template-rows: min-content min-content min-content 1fr;
+
+      .cart-page__title {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .shopify-block:has(> .mionas-free-shipping) {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .cart-page__items {
+        grid-column: 1;
+        grid-row: 3;
+      }
+
+      .shopify-block:has(> .mionas-cart-suggestions) {
+        grid-column: 1 / -1;
+        grid-row: 5;
+        margin-block-start: var(--space-lg);
+      }
+    }
+  }
+{% endstylesheet %}

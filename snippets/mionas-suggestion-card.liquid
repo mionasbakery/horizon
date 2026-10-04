@@ -1,0 +1,63 @@
+{%- doc -%}
+  Renders one product card for the cart suggestions: image, title, price and the add-to-cart row the
+  caller passes in.
+
+  @param {product} product - The suggested product.
+  @param {string} button - The rendered add-to-cart row; a snippet can't render a block itself.
+
+  @example
+  {% render 'mionas-suggestion-card', product: product, button: button %}
+{%- enddoc -%}
+
+<div class="mionas-suggestion-card" data-price="{{ product.price }}">
+  <a class="mionas-suggestion-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 480 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 160px', alt: '' }}
+    {%- endif -%}
+  </a>
+  <div class="mionas-suggestion-card__text">
+    {%- capture title_link -%}<a href="{{ product.url }}">{{ product.title | escape }}</a>{%- endcapture -%}
+    {% render 'mionas-text', content: title_link, variant: 'body', tag: 'p', class: 'mionas-suggestion-card__title' %}
+    {%- assign price = product.price | money -%}
+    {% render 'mionas-text', content: price, variant: 'title', tag: 'p' %}
+  </div>
+  {{ button }}
+</div>
+
+{% stylesheet %}
+  .mionas-suggestion-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-xs) var(--space-sm);
+    background: var(--surface-default);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mionas-suggestion-card__media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  .mionas-suggestion-card__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    flex: 1;
+    padding-inline: var(--space-2xs);
+  }
+
+  .text-role.mionas-suggestion-card__title {
+    font-weight: 600;
+  }
+
+  .mionas-suggestion-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+{% endstylesheet %}

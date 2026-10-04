@@ -1,0 +1,282 @@
+{%- doc -%}
+  Renders the free-shipping progress card on the cart page: the amount left to reach the threshold,
+  or that it has been reached. Renders nothing for an empty cart.
+{%- enddoc -%}
+
+{%- comment -%}
+  The threshold is a setting because Liquid can't read shipping rates, so it must match the store's
+  free-shipping rate by hand. assets/mionas-cart-suggestions.js reads it from data-threshold.
+{%- endcomment -%}
+
+{%- liquid
+  assign threshold = block.settings.threshold | default: 30
+  assign threshold_cents = threshold | times: 100
+  assign total = cart.total_price
+  assign gap = threshold_cents | minus: total
+  assign reached = false
+  if gap <= 0
+    assign reached = true
+  endif
+  assign progress = total | times: 1.0 | divided_by: threshold_cents | at_most: 1
+-%}
+
+{%- if cart.item_count > 0 -%}
+  {% render 'mionas-cart-bridge' %}
+  <script src="{{ 'mionas-free-shipping.js' | asset_url }}" type="module"></script>
+
+  {%- liquid
+    assign title = 'mionas.free_shipping.title' | t
+    if reached
+      assign description = 'mionas.free_shipping.reached_html' | t
+    else
+      assign threshold_text = threshold_cents | money_without_trailing_zeros
+      assign amount_text = gap | money
+      assign description = 'mionas.free_shipping.under_html' | t: threshold: threshold_text, amount: amount_text
+    endif
+  -%}
+
+  <mionas-free-shipping
+    class="mionas-free-shipping"
+    data-reached="{{ reached }}"
+    data-threshold="{{ threshold_cents }}"
+    style="--mionas-free-shipping-progress: {{ progress }};"
+    {{ block.shopify_attributes }}
+  >
+    <div class="mionas-free-shipping__card" role="status">
+      {% render 'mionas-text', content: title, variant: 'title', tag: 'h2', transform: 'none' %}
+      {% render 'mionas-text',
+        content: description,
+        variant: 'body',
+        color: 'secondary',
+        tag: 'p',
+        class: 'mionas-free-shipping__description'
+      %}
+
+      <div class="mionas-free-shipping__bar{% if reached %} mionas-free-shipping__bar--reached{% endif %}">
+        {%- unless reached -%}
+          {%- assign total_text = total | money -%}
+          <div class="mionas-free-shipping__bubble">
+            {% render 'mionas-text', content: total_text, variant: 'label', color: 'inverse-primary', tag: 'span' %}
+          </div>
+        {%- endunless -%}
+        <div class="mionas-free-shipping__track"><div class="mionas-free-shipping__fill"></div></div>
+        {%- if reached -%}
+          <span class="mionas-free-shipping__goal" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          </span>
+          {%- for i in (1..6) -%}
+            <span class="mionas-free-shipping__confetti" aria-hidden="true"></span>
+          {%- endfor -%}
+        {%- else -%}
+          <span class="mionas-free-shipping__marker" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+  </mionas-free-shipping>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-free-shipping {
+    display: block;
+  }
+
+  .mionas-free-shipping__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    background: var(--surface-default);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+  }
+
+  .text-role.mionas-free-shipping__description strong {
+    color: var(--text-color-primary);
+  }
+
+  /* The bubble rides above the track, so the bar reserves its height; the reached state has none. */
+  .mionas-free-shipping__bar {
+    --mionas-free-shipping-marker: 40px;
+    position: relative;
+    height: calc(26px + var(--mionas-free-shipping-marker));
+    margin-block-start: var(--space-xs);
+  }
+
+  .mionas-free-shipping__bar--reached {
+    height: var(--mionas-free-shipping-marker);
+  }
+
+  .mionas-free-shipping__track {
+    position: absolute;
+    inset-inline: 0;
+    bottom: calc((var(--mionas-free-shipping-marker) - 12px) / 2);
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: var(--brand-tint);
+    overflow: hidden;
+  }
+
+  .mionas-free-shipping__bar--reached .mionas-free-shipping__track {
+    inset-inline-end: calc(var(--mionas-free-shipping-marker) / 2);
+  }
+
+  .mionas-free-shipping__fill {
+    height: 100%;
+    width: calc(var(--mionas-free-shipping-progress) * 100%);
+    border-radius: inherit;
+    background-color: var(--brand-primary);
+    background-image: repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.16) 0 8px, transparent 8px 16px);
+    background-size: 22.6px 22.6px;
+    transition: width 500ms cubic-bezier(0.2, 0, 0, 1);
+    animation: mionas-free-shipping-stripes 1.2s linear infinite;
+  }
+
+  .mionas-free-shipping__bar--reached .mionas-free-shipping__fill {
+    background-image: none;
+    animation: none;
+  }
+
+  .mionas-free-shipping__marker,
+  .mionas-free-shipping__goal {
+    position: absolute;
+    bottom: 0;
+    width: var(--mionas-free-shipping-marker);
+    height: var(--mionas-free-shipping-marker);
+    box-sizing: border-box;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mionas-free-shipping__marker {
+    left: clamp(
+      0px,
+      calc(100% * var(--mionas-free-shipping-progress) - var(--mionas-free-shipping-marker) / 2),
+      calc(100% - var(--mionas-free-shipping-marker))
+    );
+    background: var(--surface-default);
+    border: var(--border-width-thick) solid var(--brand-primary);
+    color: var(--brand-primary);
+    box-shadow: var(--shadow-sm);
+    transition: left 500ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .mionas-free-shipping__goal {
+    right: 0;
+    background: var(--brand-primary);
+    color: var(--text-color-inverse-primary);
+  }
+
+  .mionas-free-shipping__bubble {
+    position: absolute;
+    top: 0;
+    left: clamp(40px, calc(100% * var(--mionas-free-shipping-progress)), calc(100% - 40px));
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: left 500ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .mionas-free-shipping__bubble > .text-role {
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    background: var(--brand-primary);
+    white-space: nowrap;
+  }
+
+  .mionas-free-shipping__bubble::after {
+    content: '';
+    border-inline: 5px solid transparent;
+    border-block-start: 5px solid var(--brand-primary);
+  }
+
+  .mionas-free-shipping__confetti {
+    position: absolute;
+    right: calc(var(--mionas-free-shipping-marker) / 2);
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    opacity: 0;
+    background: var(--brand-primary);
+  }
+
+  .mionas-free-shipping__confetti:nth-of-type(odd) {
+    background: var(--brand-accent-inverse);
+  }
+
+  .mionas-free-shipping__confetti:nth-of-type(1) { --dx: -60px; --dy: -70px; }
+  .mionas-free-shipping__confetti:nth-of-type(2) { --dx: -20px; --dy: -90px; animation-delay: 60ms; }
+  .mionas-free-shipping__confetti:nth-of-type(3) { --dx: -100px; --dy: -50px; animation-delay: 120ms; }
+  .mionas-free-shipping__confetti:nth-of-type(4) { --dx: 10px; --dy: -60px; animation-delay: 30ms; }
+  .mionas-free-shipping__confetti:nth-of-type(5) { --dx: -80px; --dy: -30px; animation-delay: 90ms; }
+  .mionas-free-shipping__confetti:nth-of-type(6) { --dx: -40px; --dy: -80px; animation-delay: 150ms; }
+
+  .mionas-free-shipping.is-celebrating .mionas-free-shipping__confetti {
+    animation: mionas-free-shipping-confetti 1.1s cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .mionas-free-shipping.is-celebrating .mionas-free-shipping__goal {
+    animation: mionas-free-shipping-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes mionas-free-shipping-stripes {
+    to {
+      background-position: 22.6px 0;
+    }
+  }
+
+  @keyframes mionas-free-shipping-pop {
+    from {
+      transform: scale(0.6);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mionas-free-shipping-confetti {
+    from {
+      opacity: 1;
+      transform: translate(0, 0) rotate(0);
+    }
+    to {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) rotate(220deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-free-shipping__fill,
+    .mionas-free-shipping__marker,
+    .mionas-free-shipping__bubble,
+    .mionas-free-shipping.is-celebrating .mionas-free-shipping__goal {
+      animation: none;
+      transition: none;
+    }
+
+    .mionas-free-shipping__confetti {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Free Shipping",
+  "settings": [
+    {
+      "type": "number",
+      "id": "threshold",
+      "label": "Free shipping from (€)",
+      "info": "Whole euros. Must match the store's free-shipping rate; the theme can't read it.",
+      "default": 30
+    }
+  ],
+  "presets": [{ "name": "Mionas: Free Shipping" }]
+}
+{% endschema %}

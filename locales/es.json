@@ -9,6 +9,15 @@
  */
 {
   "mionas": {
+    "free_shipping": {
+      "title": "Envío gratis",
+      "under_html": "A partir de {{ threshold }}, los gastos de envío son gratuitos. Te faltan <strong>{{ amount }}</strong>.",
+      "reached_html": "<strong>¡Perfecto!</strong> Tu pedido no paga gastos de envío."
+    },
+    "cart_suggestions": {
+      "heading_under": "Para llegar al envío gratis",
+      "heading_reached": "Para completar el pedido"
+    },
     "form": {
       "email_required": "Escribe tu email.",
       "email_invalid": "Escribe un email válido.",

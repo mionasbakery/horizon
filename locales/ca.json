@@ -9,6 +9,15 @@
  */
 {
   "mionas": {
+    "free_shipping": {
+      "title": "Enviament gratuït",
+      "under_html": "A partir de {{ threshold }}, les despeses d'enviament són gratuïtes. Et falten <strong>{{ amount }}</strong>.",
+      "reached_html": "<strong>Perfecte!</strong> La teva comanda no paga despeses d'enviament."
+    },
+    "cart_suggestions": {
+      "heading_under": "Per arribar a l'enviament gratuït",
+      "heading_reached": "Per completar la comanda"
+    },
     "form": {
       "email_required": "Escriu el teu correu electrònic.",
       "email_invalid": "Escriu una adreça de correu electrònic vàlida.",
