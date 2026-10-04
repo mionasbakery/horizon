@@ -937,7 +937,6 @@
                 "submit_variant": "primary",
                 "submit_size": "md",
                 "field_surface": true,
-                "success_text": "¡Gracias! Ya estás suscrito.",
                 "hide_section_for_subscribers": false,
                 "customer_tag": "newsletter-popup",
                 "consent_text": "",

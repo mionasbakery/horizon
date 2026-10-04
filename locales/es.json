@@ -40,6 +40,10 @@
       "continue": "Seguir comprando",
       "close": "Cerrar",
       "dismiss_widget": "Cerrar aviso de la newsletter"
+    },
+    "newsletter_success": {
+      "title": "Gracias por suscribirte",
+      "text": "Te hemos enviado un email con tu código de descuento. Introdúcelo al pagar tu primera compra para aplicarlo."
     }
   },
   "blocks": {

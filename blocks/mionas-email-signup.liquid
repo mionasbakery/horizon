@@ -107,8 +107,12 @@
 
     {%- assign signup_posted = false -%}
     {%- if form.posted_successfully? and form_matches -%}
-      {%- assign signup_posted = true -%}
-      {%- render 'mionas-form-success', title: block_settings.success_text, class: 'mionas-email-signup__success' -%}
+      {%- liquid
+        assign signup_posted = true
+        assign success_title = 'mionas.newsletter_success.title' | t
+        assign success_text = 'mionas.newsletter_success.text' | t
+      -%}
+      {%- render 'mionas-form-success', title: success_title, text: success_text, class: 'mionas-email-signup__success' -%}
       <script>
         try {
           localStorage.setItem('mionas-newsletter-subscribed', '1');
@@ -182,6 +186,79 @@
     {%- endif -%}
   {%- endform -%}
 
+  {%- if signup_posted and request.design_mode == false -%}
+    <script
+      src="{{ 'mionas-popup.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
+    <script
+      src="{{ 'mionas-signup-success.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
+    {%- liquid
+      assign success_popup_id = form_id | append: '-success'
+      assign success_close_label = 'mionas.newsletter_popup.close' | t
+    -%}
+    {%- capture success_content -%}{%- render 'mionas-signup-done' -%}{%- endcapture -%}
+    {%- render 'mionas-popup',
+      element: 'mionas-signup-success-component',
+      id: success_popup_id,
+      section_id: section.id,
+      settings: block_settings,
+      label: success_title,
+      close_label: success_close_label,
+      content: success_content
+    -%}
+    {%- comment -%}
+      Every signup on the page renders the post's result, so only the form whose submit left the mark
+      below opens the popup; it moves to <body> first because a dialog in a hidden section never
+      shows. Without the mark (blocked storage) the section stays and shows the message in place.
+    {%- endcomment -%}
+    <script>
+      (() => {
+        const script = document.currentScript;
+        const popup = document.getElementById({{ success_popup_id | json }});
+
+        let posted = false;
+        try {
+          posted = sessionStorage.getItem('mionas-signup-posted') === {{ form_id | json }};
+          if (posted) sessionStorage.removeItem('mionas-signup-posted');
+        } catch {}
+        if (!posted || script.closest('mionas-newsletter-popup-component')) {
+          popup.remove();
+          return;
+        }
+
+        popup.dataset.open = '';
+        document.body.append(popup);
+        {%- if block_settings.hide_section_for_subscribers %}
+          script.closest('.shopify-section')?.style.setProperty('display', 'none');
+        {%- endif %}
+      })();
+    </script>
+  {%- endif -%}
+
+  {%- if signup_posted == false and request.design_mode == false -%}
+    <script>
+      (() => {
+        if (document.currentScript.closest('mionas-newsletter-popup-component')) return;
+        // A failed post leaves its mark behind, which a later signup elsewhere on the page would match.
+        try {
+          if (sessionStorage.getItem('mionas-signup-posted') === {{ form_id | json }}) {
+            sessionStorage.removeItem('mionas-signup-posted');
+          }
+        } catch {}
+        document.getElementById({{ form_id | json }})?.addEventListener('submit', () => {
+          try {
+            sessionStorage.setItem('mionas-signup-posted', {{ form_id | json }});
+          } catch {}
+        });
+      })();
+    </script>
+  {%- endif -%}
+
   {%- if block_settings.hide_section_for_subscribers and signup_posted == false and request.design_mode == false -%}
     {%- comment -%}
       Inline and at the end of the block, so the section hides as the page parses, before it paints.
@@ -201,6 +278,23 @@
 </div>
 
 {% stylesheet %}
+  /* Placeholder: the design system has no dialog width. Candidate token. */
+  mionas-signup-success-component .mionas-popup__dialog.dialog-modal {
+    --mionas-popup-width: 480px;
+  }
+
+  /* The popup gets the block's own padding settings, which suit the inline form, so its padding is
+     set here. Phones keep room at the top for the sheet's handle. */
+  mionas-signup-success-component .mionas-popup__content.spacing-style {
+    padding: calc(2 * var(--space-lg));
+  }
+
+  @media screen and (max-width: 749px) {
+    mionas-signup-success-component .mionas-popup__content.spacing-style {
+      padding: calc(var(--space-lg) + var(--space-md));
+    }
+  }
+
   /* The block itself has no surface -- see the header comment.
 
      flex: 1 1 auto with width: 100% keeps the block from collapsing when a parent section stacks to
@@ -357,12 +451,6 @@
       "label": "Card-style field surface",
       "default": true,
       "info": "Wraps just the email field in the design system's card surface, with the button rendered outside it. Turn off if you're already wrapping this whole block in a Mionas: Card, to avoid boxing the field twice."
-    },
-    {
-      "type": "text",
-      "id": "success_text",
-      "label": "Success message",
-      "default": "¡Gracias! Ya estás suscrito."
     },
     {
       "type": "checkbox",

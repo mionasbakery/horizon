@@ -376,10 +376,6 @@ class MionasNewsletterPopup extends MionasPopup {
   }
 
   #showSuccess() {
-    const title = this.querySelector('.mionas-email-signup__success .mionas-form-success__title');
-    const heading = this.refs.successView.querySelector('h2');
-    if (title && heading) heading.textContent = title.textContent.trim();
-
     this.refs.formView.hidden = true;
     this.refs.successView.hidden = false;
     this.labelFrom(this.refs.successView, 'success');

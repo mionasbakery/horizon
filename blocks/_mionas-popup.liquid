@@ -10,9 +10,6 @@
 {%- capture decline_classes -%}
   {%- render 'mionas-button-class', variant: 'ghost', full_width: true -%}
 {%- endcapture -%}
-{%- capture continue_classes -%}
-  {%- render 'mionas-button-class', variant: 'primary', full_width: true -%}
-{%- endcapture -%}
 
 {%- capture popup_content -%}
   <div
@@ -37,21 +34,7 @@
     tabindex="-1"
     hidden
   >
-    <span class="mionas-newsletter-popup__check">
-      {{- 'icon-checkmark.svg' | inline_asset_content -}}
-    </span>
-    {%- comment -%}
-      Empty on purpose: the script copies the signup block's success message into it, because a
-      theme block's settings are not readable from its parent.
-    {%- endcomment -%}
-    {%- render 'mionas-text', content: '', variant: 'heading', tag: 'h2' -%}
-    <button
-      type="button"
-      class="{{ continue_classes }}"
-      on:click="/continueShopping"
-    >
-      {{ 'mionas.newsletter_popup.continue' | t }}
-    </button>
+    {%- render 'mionas-signup-done' -%}
   </div>
 {%- endcapture -%}
 
@@ -90,17 +73,6 @@
   /* The design sets the two buttons 8px apart, closer than the column's 16px gap. */
   .mionas-newsletter-popup__decline {
     margin-top: calc(var(--space-xs) - var(--space-md));
-  }
-
-  .mionas-newsletter-popup__check {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--button-size-sm-height);
-    height: var(--button-size-sm-height);
-    border-radius: var(--radius-full);
-    background: var(--brand-primary);
-    color: var(--text-color-inverse-primary);
   }
 {% endstylesheet %}
 

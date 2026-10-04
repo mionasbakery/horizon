@@ -40,6 +40,10 @@
       "continue": "Continua comprant",
       "close": "Tanca",
       "dismiss_widget": "Tanca l'avís de la newsletter"
+    },
+    "newsletter_success": {
+      "title": "Gràcies per subscriure't",
+      "text": "T'hem enviat un correu electrònic amb el teu codi de descompte. Introdueix-lo en pagar la teva primera compra per aplicar-lo."
     }
   },
   "accessibility": {

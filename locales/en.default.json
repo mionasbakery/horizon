@@ -40,6 +40,10 @@
       "continue": "Keep shopping",
       "close": "Close",
       "dismiss_widget": "Close newsletter notice"
+    },
+    "newsletter_success": {
+      "title": "Thanks for subscribing",
+      "text": "We've sent you an email with your discount code. Enter it at checkout on your first order to apply it."
     }
   },
   "accessibility": {
