@@ -8,8 +8,9 @@ Use the Shopify CLI; there is no build step, and files under `assets/`, `blocks/
 `snippets/` and `templates/` are served as-is.
 
 - Preview with `shopify theme dev`. A change is done when `shopify theme check` passes.
-- The live store changes only through the release pipeline (`.github/workflows/release.yml`),
-  started by a `release-*` tag; the user releases with `/mionas-release`.
+- The live store changes through the release pipeline (`.github/workflows/release.yml`), started
+  by a `release-*` tag with `/mionas-release`, or through a direct push with `/mionas-live-theme`.
+  Push or release only when explicitly asked.
 
 ## Verification
 
@@ -43,4 +44,5 @@ in upstream theme changes.
 Use `mcp__jbcontext__*` semantic search to locate code when you don't know the name (it also
 searches other repos, but indexes committed code, so confirm a hit still exists). Use `mcp__idea__*`
 to verify and change code you can name; it reads the working tree and needs the IDE open. A hook
-blocks Bash discovery (`find`, `grep`, `git log`) until a jbcontext search has run this session.
+blocks Bash discovery (`find`, `grep`) until a jbcontext search has run this session; git commands
+pass.

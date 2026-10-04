@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Mionas Release
 
-A release is a `release-*` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, then pushes the tagged commit to the live theme. The pipeline is the only route to the live theme: this skill reconciles, tags and watches, and leaves the push to the pipeline.
+A release is a `release-*` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, then pushes the tagged commit to the live theme. This skill reconciles, tags and watches, and leaves the push to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
 
 Read `shopify.theme.toml`, `package.json` and the workflow first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
 
