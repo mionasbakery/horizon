@@ -1,0 +1,103 @@
+{%- doc -%}
+  Renders the product suggestions on the cart page. The cards come from
+  sections/mionas-suggestion-list.liquid through assets/mionas-cart-suggestions.js; this block holds
+  the cart data the script ranks by, and takes the threshold from blocks/mionas-free-shipping.liquid
+  on the same page. Renders nothing for an empty cart.
+{%- enddoc -%}
+
+{%- assign latest_product = cart.items.first.product -%}
+
+{%- if cart.item_count > 0 -%}
+  {% render 'mionas-cart-bridge' %}
+  <script src="{{ 'mionas-cart-suggestions.js' | asset_url }}" type="module"></script>
+
+  <div
+    class="mionas-cart-suggestions"
+    data-product-id="{{ latest_product.id }}"
+    data-total="{{ cart.total_price }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- comment -%}
+      The recommendations response carries no stylesheet, so one inert card is rendered here to put
+      the card and add-to-cart files in the page's render tree, which is what ships their CSS.
+    {%- endcomment -%}
+    <template>
+      {%- capture button -%}
+        {% content_for 'block', type: 'mionas-add-to-cart', id: 'static-add-to-cart', closest.product: latest_product %}
+      {%- endcapture -%}
+      {% render 'mionas-suggestion-card', product: latest_product, button: button %}
+    </template>
+
+    <mionas-cart-suggestions
+      data-skip-node-update
+      hidden
+      data-url="{{ routes.product_recommendations_url }}"
+      data-limit="{{ block.settings.limit }}"
+      data-heading-under="{{ 'mionas.cart_suggestions.heading_under' | t }}"
+      data-heading-reached="{{ 'mionas.cart_suggestions.heading_reached' | t }}"
+    >
+      {% render 'mionas-text', content: '', variant: 'subheading', tag: 'h2', transform: 'none', attributes: 'data-heading' %}
+      <div class="mionas-cart-suggestions__list" data-list></div>
+    </mionas-cart-suggestions>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  mionas-cart-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  mionas-cart-suggestions[hidden] {
+    display: none;
+  }
+
+  /* The add-to-cart button's animation layers are absolutely positioned; without a positioned list
+     they escape the scrolling row and widen the page. */
+  .mionas-cart-suggestions__list {
+    position: relative;
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-block: var(--space-2xs) var(--space-xs);
+  }
+
+  .mionas-cart-suggestions__list > .mionas-suggestion-card {
+    flex: 0 0 160px;
+    scroll-snap-align: start;
+  }
+
+  @media screen and (min-width: 750px) {
+    .mionas-cart-suggestions__list {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-lg);
+      overflow: visible;
+    }
+
+    .mionas-cart-suggestions__list > .mionas-suggestion-card:nth-child(n + 5) {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Suggestions",
+  "settings": [
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Products",
+      "info": "The phone row shows them all; desktop shows the first four.",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 6
+    }
+  ],
+  "presets": [{ "name": "Mionas: Cart Suggestions" }]
+}
+{% endschema %}
