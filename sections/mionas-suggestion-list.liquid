@@ -1,0 +1,30 @@
+{%- comment -%}
+  Renders the cart suggestion cards for one product's Shopify recommendations.
+
+  Requested only through the recommendations endpoint by assets/mionas-cart-suggestions.js, and has
+  no preset, so it can't be added to a template. Single-variant products only, so the button adds
+  straight away instead of opening a variant picker. The response carries no stylesheet; the CSS
+  ships from blocks/mionas-cart-suggestions.liquid.
+{%- endcomment -%}
+
+{%- assign cart_product_ids = cart.items | map: 'product_id' -%}
+<div class="mionas-suggestion-list">
+  {%- if recommendations.performed -%}
+    {%- for product in recommendations.products -%}
+      {%- if cart_product_ids contains product.id or product.available == false or product.has_only_default_variant == false -%}
+        {%- continue -%}
+      {%- endif -%}
+      {%- capture button -%}
+        {% content_for 'block', type: 'mionas-add-to-cart', id: 'static-add-to-cart', closest.product: product %}
+      {%- endcapture -%}
+      {% render 'mionas-suggestion-card', product: product, button: button %}
+    {%- endfor -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Mionas: Suggestion List",
+  "settings": []
+}
+{% endschema %}

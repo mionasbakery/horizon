@@ -9,6 +9,15 @@
  */
 {
   "mionas": {
+    "free_shipping": {
+      "title": "Free shipping",
+      "under_html": "From {{ threshold }}, shipping is free. You need <strong>{{ amount }}</strong> more.",
+      "reached_html": "<strong>Great!</strong> Your order has no shipping costs."
+    },
+    "cart_suggestions": {
+      "heading_under": "To reach free shipping",
+      "heading_reached": "To complete your order"
+    },
     "form": {
       "email_required": "Enter your email.",
       "email_invalid": "Enter a valid email address.",
