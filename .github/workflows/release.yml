@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags: ['release-*']
+
+permissions:
+  contents: read
+
+# A second tag waits for the first release instead of racing it to the live theme.
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Pinned to the CLI version the theme is developed with.
+      - run: npm install --global @shopify/cli@4.8.4
+      - run: npm run theme:check
+      - name: Package theme
+        run: |
+          mkdir -p dist
+          zip -qr "dist/${GITHUB_REF_NAME}.zip" assets blocks config layout locales sections snippets templates
+      - uses: actions/upload-artifact@v4
+        with:
+          name: theme-${{ github.ref_name }}
+          path: dist/${{ github.ref_name }}.zip
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    # The production environment's required reviewer is the manual gate before the live push.
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --global @shopify/cli@4.8.4
+      # Outside the checkout so the push's Theme Check doesn't lint the copy; the CLI reads
+      # shopify.theme.toml from --path, and --nodelete keeps it there.
+      - name: Back up the live theme
+        run: |
+          mkdir -p "$RUNNER_TEMP/remote-before"
+          cp shopify.theme.toml "$RUNNER_TEMP/remote-before/"
+          npm run theme:pull:production -- --path "$RUNNER_TEMP/remote-before" --nodelete
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: remote-before-${{ github.ref_name }}
+          path: ${{ runner.temp }}/remote-before
+      - name: Push to the live theme
+        run: npm run theme:push:production
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}

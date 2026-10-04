@@ -8,8 +8,10 @@
   --button-size-md-height: 48px;
   --button-size-lg-height: 56px;
   --button-size-lg-icon-size: 24px;
+  --button-state-hover-opacity: 0.08;
+  --button-state-hover-scale: 1.03;
   --button-state-pressed-scale: 0.97;
-  --button-state-pressed-opacity: 0.14;
+  --button-state-pressed-opacity: 0.16;
   --button-state-disabled-opacity: 0.5;
   --card-state-pressed-opacity: 0.92;
   --checkbox-state-disabled-opacity: 0.5;
@@ -116,7 +118,7 @@
   --button-base-font-weight: 500;
   --button-base-gap: 8px;
   --button-base-duration: 220ms;
-  --button-base-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --button-base-easing: cubic-bezier(0.2, 0, 0, 1);
   --button-secondary-background: rgba(11, 7, 140, 0.08);
   --button-outline-shadow: inset 0 0 0 2px #0b078c;
   --button-inverse-outline-shadow: inset 0 0 0 2px #ffffff;
@@ -129,6 +131,7 @@
   --button-size-lg-font-size: 18px;
   --button-state-pressed-duration: 80ms;
   --button-state-pressed-easing: cubic-bezier(0.2, 0, 0, 1);
+  --button-state-focused-border-width: 2px;
   --card-base-radius: 16px;
   --card-base-border-width: 1px;
   --card-base-border-color: #ece8e2;
@@ -276,6 +279,7 @@
   --button-inverse-primary-background: #ffffff;
   --button-inverse-ghost-foreground: #ffffff;
   --button-inverse-outline-foreground: #ffffff;
+  --button-state-focused-inverse-border-color: #ffffff;
   --card-base-background: #ffffff;
   --card-title-foreground: #101413;
   --card-description-foreground: #687076;
@@ -339,6 +343,7 @@
   --border-focus: #0b078c;
   --text-color-primary: #0b078c;
   --text-color-accent: #af200b;
+  --button-state-focused-border-color: #0b078c;
   --checkbox-state-focused-border-color: #0b078c;
   --form-field-state-focused-border-color: #0b078c;
   --stat-value-foreground: #0b078c;

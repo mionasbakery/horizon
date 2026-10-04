@@ -102,7 +102,7 @@ export const EXPECTED_TOKENS = {
   // Form surface, spent by the snippets/mionas-form*.liquid, mionas-text-field.liquid and
   // mionas-checkbox.liquid family (blocks/mionas-contact-form.liquid composes them and no longer
   // spends these directly). Every one of Form, FormField, FormLabel, FormError, FormActions,
-  // TextField and Checkbox in ../design-system/src/react/ now has a mirror here, so the whole
+  // TextField and Checkbox in ../design-system/src/components/ now has a mirror here, so the whole
   // --form-* / --text-field-* / --checkbox-* group is spent rather than the subset one block needed.
   //
   // --form-field-state-focused-foreground is no longer "redundant with the label's focused
@@ -270,10 +270,16 @@ export const EXPECTED_TOKENS = {
   // Button press, spent by snippets/mionas-button-class.liquid, which every button and icon button
   // renders. Pinned because the opacity's meaning depends on the model: it is the
   // strength of a currentColor tint, and was once the whole button's opacity at 0.92.
-  "--button-state-pressed-opacity": "0.14",
+  "--button-state-pressed-opacity": "0.16",
   "--button-state-pressed-scale": "0.97",
   "--button-state-pressed-duration": "80ms",
   "--button-base-duration": "220ms",
+  // Hover and focus, spent by the same snippet. The hover opacity is the same currentColor tint.
+  "--button-state-hover-opacity": "0.08",
+  "--button-state-hover-scale": "1.03",
+  "--button-state-focused-border-width": "2px",
+  "--button-state-focused-border-color": "#0b078c",
+  "--button-state-focused-inverse-border-color": "#ffffff",
   // The IconButton sizes the theme spends: sm on the popup close and the social links, md on the
   // popup widget close. Their box heights are the Button heights.
   "--icon-button-size-sm-icon-size": "20px",

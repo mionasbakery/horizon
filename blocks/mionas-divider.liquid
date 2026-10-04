@@ -11,7 +11,7 @@
   sibling blocks it doesn't control. See docs/superpowers/specs/2026-08-12-contacto-page-design.md.
 
   Text renders through snippets/mionas-text.liquid so Variant/Size reuse the same
-  ../design-system/src/react/Text/Text.tsx role vocabulary every other Mionas text block does,
+  ../design-system/src/components/Text/Text.tsx role vocabulary every other Mionas text block does,
   rather than this block inventing its own type scale. Colour is NOT one of the exposed settings,
   though: this always spends --card-description-foreground (the same muted secondary-text token
   blocks/mionas-map.liquid's empty state and the old inline divider both used), not Text's own

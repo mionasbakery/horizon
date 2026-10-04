@@ -8,7 +8,8 @@ Use the Shopify CLI; there is no build step, and files under `assets/`, `blocks/
 `snippets/` and `templates/` are served as-is.
 
 - Preview with `shopify theme dev`. A change is done when `shopify theme check` passes.
-- `shopify theme push` changes the live store: run it only when explicitly asked.
+- The live store changes only through the release pipeline (`.github/workflows/release.yml`),
+  started by a `release-*` tag; the user releases with `/mionas-release`.
 
 ## Verification
 

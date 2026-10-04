@@ -11,6 +11,9 @@
   The one home of the card surface. blocks/mionas-card.liquid and every form or row that sits on a
   card render these classes, so a new Card variant reaches all of them at once. Padding is left to
   each caller: the Card block takes it from its Padding settings, the forms from --card-base-padding.
+
+  `default` is the editor's name for Card.tsx's unset variant, which a select cannot leave empty; it
+  adds no class.
 {%- endcomment -%}
 {%- liquid
   assign allowed_variants = 'default|outline|plain|note' | split: '|'

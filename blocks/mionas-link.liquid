@@ -2,7 +2,7 @@
   An inline text link, distinct from Button's CTA vocabulary.
 {%- enddoc -%}
 {%- comment -%}
-  Mirrors ../design-system/src/react/Link/Link.tsx's inline-text vocabulary, distinct from Button's
+  Mirrors ../design-system/src/components/Link/Link.tsx's inline-text vocabulary, distinct from Button's
   CTA styling (no background, underline only on hover). Horizon's native "button-unstyled" style
   renders a plain <a> too, but still carries Button's width settings rather than this vocabulary.
 
@@ -84,7 +84,7 @@
         { "value": "label", "label": "Label" },
         { "value": "note", "label": "Note" }
       ],
-      "default": "body",
+      "default": "inherit",
       "info": "Inherited takes its size from the surrounding text."
     },
     {

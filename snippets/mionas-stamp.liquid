@@ -20,7 +20,7 @@
     assign size = 'heading'
   endunless
   assign color = color | default: settings.variant
-  assign tag = tag | default: settings.tag
+  assign tag = tag | default: settings.tag | default: 'span'
   assign stamp_class = 'mionas-stamp mionas-stamp--' | append: size | append: ' spacing-style'
 -%}
 {%- capture stamp_style -%}

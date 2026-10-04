@@ -5,13 +5,14 @@
   @param {string} text - The label copy. Blank renders a height-preserving placeholder, not a <label>.
   @param {string} [for] - The id of the control this labels. Optional but strongly preferred.
   @param {boolean} [required] - Defaults to true. Pass false to append the " (optional)" suffix.
+  @param {boolean} [focused] - Pass true for the focus colour without a focused field; error wins over it.
   @param {boolean} [error] - Pass true for the error colour.
   @param {string} [optional_text] - Word inside the " (optional)" suffix's parentheses.
   @param {string} [class] - Extra classes to append.
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/FormLabel/FormLabel.tsx.
+  Mirrors ../design-system/src/components/FormLabel/FormLabel.tsx.
 
   Blank text never renders a real <label>: an empty `<label for="...">` outranks the placeholder in
   the accessible-name algorithm and suppresses the input's name entirely (confirmed in Chrome as
@@ -21,7 +22,7 @@
   `required` uses an explicit `== false` check because Liquid's `default` filter treats false as
   empty and would flip it back to true.
 
-  Focus colour is not set here: FormLabel.module.css's `.root` reads
+  A focused field's colour is not set here: FormLabel.module.css's `.root` reads
   `var(--form-label-focus-color, var(--form-label-base-foreground))`, and
   FormField.module.css's `.root:focus-within` assigns that variable -- the indirection that lets
   colour reach a label that precedes the input in the DOM, where no sibling combinator could.
@@ -35,6 +36,8 @@
   assign label_classes = 'mionas-form-label'
   if error == true
     assign label_classes = label_classes | append: ' mionas-form-label--error'
+  elsif focused == true
+    assign label_classes = label_classes | append: ' mionas-form-label--focused'
   endif
   if class
     assign label_classes = label_classes | append: ' ' | append: class
@@ -75,6 +78,10 @@
   .text-role.mionas-form-label {
     padding-left: var(--form-label-base-padding);
     color: var(--form-label-focus-color, var(--form-label-base-foreground));
+  }
+
+  .text-role.mionas-form-label--focused {
+    color: var(--form-label-state-focused-foreground);
   }
 
   .text-role.mionas-form-label--error {

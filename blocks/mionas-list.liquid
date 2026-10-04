@@ -3,7 +3,7 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  Mirrors ../design-system/src/react/List/List.tsx's divider-between-children behaviour. Shopify's
+  Mirrors ../design-system/src/components/List/List.tsx's divider-between-children behaviour. Shopify's
   `{% content_for 'blocks' %}` renders children in order but gives the parent no way to inject markup
   between them, so each child draws its own top border via `:not(:first-child)` in CSS instead. The
   `separator` setting reaches those children through a `data-separator` attribute here, since child

@@ -1,5 +1,5 @@
 {%- doc -%}
-  Builds the class list for a ../design-system/src/react/Button/Button.tsx button. Extracted from
+  Builds the class list for a ../design-system/src/components/Button/Button.tsx button. Extracted from
   blocks/mionas-button.liquid so that block is not the only place the vocabulary is spelled out:
   blocks/mionas-add-to-cart.liquid needs the same classes on a <button> it cannot render itself, and
   used to rebuild the same `mionas-button--<variant>` string by hand -- two copies that had to be
@@ -163,11 +163,6 @@
     color: var(--button-inverse-ghost-foreground);
   }
 
-  /* The theme's focus ring uses the text colour, which is the primary blue of the band this sits on. */
-  .mionas-button--inverse-primary:focus-visible {
-    outline-color: var(--button-inverse-primary-background);
-  }
-
   .mionas-button--inverse-outline {
     background: transparent;
     color: var(--button-inverse-outline-foreground);
@@ -181,9 +176,9 @@
     pointer-events: none;
   }
 
-  /* The design system presses with a currentColor tint on ::after and scales only its fill layers. The
-     fill stays on the element here, since Horizon's .button rules paint it on add-to-cart, so the
-     whole button scales; the tint and the timings match. */
+  /* The design system tints with currentColor on ::after and scales only its fill layers. The fill
+     stays on the element here, since Horizon's .button rules paint it on add-to-cart, so the whole
+     button scales, ring and label included; the tints and the timings match. */
   .mionas-button {
     position: relative;
     isolation: isolate;
@@ -202,15 +197,49 @@
     transition: opacity var(--button-base-duration) var(--button-state-pressed-easing);
   }
 
-  .mionas-button:active {
-    transform: scale(var(--button-state-pressed-scale));
+  .mionas-button:focus-visible {
+    outline: var(--button-state-focused-border-width) solid var(--button-state-focused-border-color);
+    outline-offset: var(--button-state-focused-border-width);
+  }
+
+  .mionas-button--inverse-primary:focus-visible,
+  .mionas-button--inverse-ghost:focus-visible,
+  .mionas-button--inverse-outline:focus-visible {
+    outline-color: var(--button-state-focused-inverse-border-color);
+  }
+
+  /* Mouse only, so a tap leaves no sticky hover. Before the press rules, which tie and must win. */
+  @media (hover: hover) {
+    .mionas-button:hover:not(:disabled) {
+      transform: scale(var(--button-state-hover-scale));
+    }
+
+    .mionas-button:hover:not(:disabled)::after {
+      opacity: var(--button-state-hover-opacity);
+    }
+  }
+
+  .mionas-button:active:not(:disabled) {
     transition-duration: var(--button-state-pressed-duration);
     transition-timing-function: var(--button-state-pressed-easing);
   }
 
-  .mionas-button:active::after {
+  .mionas-button:active:not(:disabled)::after {
     opacity: var(--button-state-pressed-opacity);
     transition-duration: var(--button-state-pressed-duration);
+  }
+
+  /* A mouse press drops the hover swell back to rest; a touch screen has no swell, so it sinks. */
+  @media (hover: hover) {
+    .mionas-button:active:not(:disabled) {
+      transform: none;
+    }
+  }
+
+  @media (hover: none) {
+    .mionas-button:active:not(:disabled) {
+      transform: scale(var(--button-state-pressed-scale));
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -219,7 +248,8 @@
       transition: none;
     }
 
-    .mionas-button:active {
+    .mionas-button:hover:not(:disabled),
+    .mionas-button:active:not(:disabled) {
       transform: none;
     }
   }
