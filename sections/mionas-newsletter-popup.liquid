@@ -107,14 +107,7 @@
     {
       "type": "header",
       "content": "Pages",
-      "info": "The popup never opens by itself on the checked page types or on the pages in the menu. The widget still shows there and still opens the popup. The checkout, the order status page and the storefront password page never show the popup, because they are outside the theme or have no footer."
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_on_home",
-      "label": "Hide on the home page",
-      "info": "The front page of the store.",
-      "default": false
+      "info": "The popup never opens by itself on the pages in the menu or on the checked page types. The checkboxes cover whole page types and pages a menu cannot hold. The widget still shows there and still opens the popup. The checkout, the order status page and the storefront password page never show the popup, because they are outside the theme or have no footer."
     },
     {
       "type": "checkbox",
@@ -139,45 +132,17 @@
     },
     {
       "type": "checkbox",
-      "id": "hide_on_search",
-      "label": "Hide on search results",
-      "info": "The search results page.",
-      "default": true
-    },
-    {
-      "type": "checkbox",
       "id": "hide_on_blog",
       "label": "Hide on blogs and articles",
-      "info": "Every blog and article, except the newsletter blog, which has its own setting.",
+      "info": "Every blog and article.",
       "default": false
     },
     {
       "type": "checkbox",
       "id": "hide_on_page",
       "label": "Hide on content pages",
-      "info": "Every page made in Online Store → Pages, except the contact page, which has its own setting.",
+      "info": "Every page made in Online Store → Pages.",
       "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_on_account",
-      "label": "Hide on customer account pages",
-      "info": "Login, register, password reset and account pages. This store uses Shopify's new customer accounts, which are outside the theme, so this setting has no effect there.",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_on_policy",
-      "label": "Hide on policy pages",
-      "default": true,
-      "info": "Privacy, cookies, terms, legal notice, shipping and refunds, which Shopify builds from Settings → Policies."
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_on_contact",
-      "label": "Hide on the contact page",
-      "default": true,
-      "info": "The page with the contact template. It does not follow Hide on content pages."
     },
     {
       "type": "checkbox",
@@ -187,17 +152,10 @@
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "hide_on_newsletter",
-      "label": "Hide on the newsletter blog",
-      "default": true,
-      "info": "The blog and articles with the newsletter template. They do not follow Hide on blogs and articles."
-    },
-    {
       "type": "link_list",
       "id": "hidden_pages_menu",
       "label": "Hide on the pages in this menu",
-      "info": "Create a menu in Online Store → Navigation and add the pages, products, collections, blogs or articles where the popup must not show. A blog also hides its articles. Works in every language."
+      "info": "Create a menu in Online Store → Navigation and add the home page, search, pages, products, collections, the list of all collections, blogs, articles or policies where the popup must not show. A blog also hides its articles. Works in every language."
     },
     {
       "type": "header",

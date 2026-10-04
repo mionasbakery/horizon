@@ -35,17 +35,10 @@
   assign page_hidden = false
   assign page_rule = ''
   assign page_type = template.name
-  if template.directory == 'customers'
-    assign page_type = 'customers'
-  endif
   if request.page_type == 'policy'
     assign page_type = 'policy'
   endif
-  # Template suffixes, unlike handles, stay the same in every language.
   case page_type
-    when 'index'
-      assign page_hidden = settings.hide_on_home
-      assign page_rule = 'hide_on_home'
     when 'product'
       assign page_hidden = settings.hide_on_product
       assign page_rule = 'hide_on_product'
@@ -55,31 +48,12 @@
     when 'cart'
       assign page_hidden = settings.hide_on_cart
       assign page_rule = 'hide_on_cart'
-    when 'search'
-      assign page_hidden = settings.hide_on_search
-      assign page_rule = 'hide_on_search'
     when 'blog', 'article'
-      if template.suffix == 'newsletter'
-        assign page_hidden = settings.hide_on_newsletter
-        assign page_rule = 'hide_on_newsletter'
-      else
-        assign page_hidden = settings.hide_on_blog
-        assign page_rule = 'hide_on_blog'
-      endif
+      assign page_hidden = settings.hide_on_blog
+      assign page_rule = 'hide_on_blog'
     when 'page'
-      if template.suffix == 'contact' or template.suffix == 'contacto'
-        assign page_hidden = settings.hide_on_contact
-        assign page_rule = 'hide_on_contact'
-      else
-        assign page_hidden = settings.hide_on_page
-        assign page_rule = 'hide_on_page'
-      endif
-    when 'customers'
-      assign page_hidden = settings.hide_on_account
-      assign page_rule = 'hide_on_account'
-    when 'policy'
-      assign page_hidden = settings.hide_on_policy
-      assign page_rule = 'hide_on_policy'
+      assign page_hidden = settings.hide_on_page
+      assign page_rule = 'hide_on_page'
     when '404'
       assign page_hidden = settings.hide_on_404
       assign page_rule = 'hide_on_404'
@@ -105,6 +79,11 @@
           endif
         when 'catalog_link'
           if page_type == 'collection' and collection.handle == 'all'
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
+          endif
+        when 'collections_link'
+          if page_type == 'list-collections'
             assign page_hidden = true
             assign page_rule = 'hidden_pages_menu'
           endif
@@ -135,6 +114,14 @@
           endif
         when 'article_link'
           if page_type == 'article' and current_link.object.id == article.id
+            assign page_hidden = true
+            assign page_rule = 'hidden_pages_menu'
+          endif
+        when 'policy_link'
+          # A policy page has no policy object to compare, and its URL carries a language prefix only in some languages.
+          assign link_handle = current_link.url | split: '/' | last
+          assign page_handle = request.path | split: '/' | last
+          if page_type == 'policy' and link_handle == page_handle
             assign page_hidden = true
             assign page_rule = 'hidden_pages_menu'
           endif
