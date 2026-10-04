@@ -904,6 +904,7 @@
                 "eyebrow_color": "accent",
                 "heading": "<p>10% de descuento en tu primera compra</p>",
                 "heading_color": "default",
+                "heading_variant": "heading",
                 "heading_tag": "h2"
               },
               "blocks": {}

@@ -1,5 +1,5 @@
 {%- doc -%}
-  Renders a page's display heading with a short stamp above it, as one <hgroup>.
+  Renders a heading with a short stamp above it, as one <hgroup>.
 {%- enddoc -%}
 {%- comment -%}
   Mirrors ../design-system/src/components/HeadingGroup/HeadingGroup.tsx. One block, not a group of
@@ -27,7 +27,7 @@
     {%- endif -%}
     {%- render 'mionas-text',
       content: heading,
-      variant: 'display',
+      variant: block_settings.heading_variant,
       color: block_settings.heading_color,
       tag: block_settings.heading_tag
     -%}
@@ -81,6 +81,17 @@
     },
     {
       "type": "select",
+      "id": "heading_variant",
+      "label": "Heading variant",
+      "options": [
+        { "value": "display", "label": "Display" },
+        { "value": "heading", "label": "Heading" }
+      ],
+      "default": "display",
+      "info": "Display for a page heading. Heading suits a popup or a card."
+    },
+    {
+      "type": "select",
       "id": "heading_color",
       "label": "Heading color",
       "options": [
@@ -108,7 +119,7 @@
         { "value": "h6", "label": "h6" }
       ],
       "default": "h1",
-      "info": "Pick the level from the page outline. The heading stays display size at every level."
+      "info": "Pick the level from the page outline. The size comes from Heading variant at every level."
     }
   ],
   "presets": [
