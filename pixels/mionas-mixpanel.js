@@ -158,6 +158,6 @@ const NEWSLETTER_POPUP_EVENTS = {
   newsletter_popup_closed: 'close_promotion',
   newsletter_popup_subscribed: 'sign_up',
 };
-for (const [shopifyName, name] of Object.entries(NEWSLETTER_POPUP_EVENTS)) {
+Object.entries(NEWSLETTER_POPUP_EVENTS).forEach(([shopifyName, name]) => {
   analytics.subscribe(shopifyName, (event) => track(name, event, event.customData ?? {}, customerId));
-}
+});

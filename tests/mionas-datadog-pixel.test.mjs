@@ -2,10 +2,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-const source = await readFile(new URL('../pixels/mionas-datadog.js', import.meta.url), 'utf8');
-const configured = source
-  .replace(/const APPLICATION_ID = '';/, "const APPLICATION_ID = 'app-id';")
-  .replace(/const CLIENT_TOKEN = '';/, "const CLIENT_TOKEN = 'client-token';");
+const pixel = await readFile(new URL('../pixels/mionas-datadog.js', import.meta.url), 'utf8');
+const withKeys = (applicationId, clientToken) =>
+  pixel
+    .replace(/const APPLICATION_ID = '[^']*';/, `const APPLICATION_ID = '${applicationId}';`)
+    .replace(/const CLIENT_TOKEN = '[^']*';/, `const CLIENT_TOKEN = '${clientToken}';`);
+const source = withKeys('', '');
+const configured = withKeys('app-id', 'client-token');
 
 /** Runs the pixel against stub Shopify and Datadog globals, recording every Datadog call. */
 function runPixel(pixelSource, customer = null, analyticsProcessingAllowed = true) {

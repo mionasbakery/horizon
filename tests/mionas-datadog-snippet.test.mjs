@@ -12,6 +12,7 @@ function renderScript({ customerId = null } = {}) {
   const values = {
     application_id: 'app-id',
     client_token: 'client-token',
+    remote_configuration_id: 'remote-config',
     env: 'preview',
     'request.locale.iso_code': 'ca',
   };
@@ -91,13 +92,13 @@ test('the layout renders it after content_for_header, which defines the consent 
   assert.match(layout, /\{\{ content_for_header \}\}\s*\{%- render 'mionas-datadog' -%\}/);
 });
 
-test('starts on the EU site with collection off and replay masking typed input', () => {
+test('starts on the EU site with collection off and its settings from remote configuration', () => {
   const { calls } = runSnippet();
   const init = calls.find((call) => call.method === 'init').args[0];
   assert.equal(init.site, 'datadoghq.eu');
   assert.equal(init.trackingConsent, 'not-granted');
-  assert.equal(init.defaultPrivacyLevel, 'mask-user-input');
-  assert.equal(init.sessionReplaySampleRate, 100);
+  assert.deepEqual(init.remoteConfiguration, { id: 'remote-config' });
+  assert.equal(init.defaultPrivacyLevel, undefined);
   assert.equal(init.env, 'preview');
   assert.match(source, /eu1\/v7\/datadog-rum-shopify\.js/);
   assert.match(source, /request\.host == shop\.domain/);

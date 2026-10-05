@@ -2,8 +2,9 @@
   Loads Datadog RUM on the storefront, collecting only after the visitor allows analytics cookies.
 {% enddoc %}
 {%- liquid
-  assign application_id = ''
-  assign client_token = ''
+  assign application_id = '3cfcdfbf-c542-4a44-984c-86817696fa70'
+  assign client_token = 'pub59bd54eb9ba2058b8cefef1f0cf0ed78'
+  assign remote_configuration_id = '924379f5-1d49-4513-911f-9f8187d8be0a'
   if request.host == shop.domain
     assign env = 'production'
   else
@@ -37,11 +38,9 @@
             service: 'mionas-storefront',
             env: '{{ env }}',
             sessionSampleRate: 100,
-            sessionReplaySampleRate: 100,
-            trackUserInteractions: true,
-            trackResources: true,
-            trackLongTasks: true,
-            defaultPrivacyLevel: 'mask-user-input',
+            // Replay sampling, privacy level and interaction, resource and long-task tracking are set in
+            // Datadog under RUM → the application → SDK Configuration.
+            remoteConfiguration: { id: '{{ remote_configuration_id }}' },
             trackingConsent: 'not-granted',
           });
           {% if customer -%}

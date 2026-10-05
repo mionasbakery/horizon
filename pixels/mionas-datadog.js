@@ -3,8 +3,9 @@
 // collected does not qualify as data sale". It sends only the checkout events: Datadog's Shopify plugin
 // starts a session only on checkout pages, so snippets/mionas-datadog.liquid sends the storefront ones.
 
-const APPLICATION_ID = '';
-const CLIENT_TOKEN = '';
+const APPLICATION_ID = '3cfcdfbf-c542-4a44-984c-86817696fa70';
+const CLIENT_TOKEN = 'pub59bd54eb9ba2058b8cefef1f0cf0ed78';
+const REMOTE_CONFIGURATION_ID = '924379f5-1d49-4513-911f-9f8187d8be0a';
 const STORE_LOCALES = ['ca', 'en'];
 
 /** Shopify IDs arrive as numbers or as gid://shopify/Customer/123; Datadog needs one stable form. */
@@ -87,6 +88,7 @@ function start() {
       service: 'mionas-storefront',
       env: 'production',
       sessionSampleRate: 100,
+      remoteConfiguration: { id: REMOTE_CONFIGURATION_ID },
       plugins: [rum.shopifyPlugin({ shopifyAnalytics: analytics })],
       trackingConsent: consent(init.customerPrivacy),
     })
