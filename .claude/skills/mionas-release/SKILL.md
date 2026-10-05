@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Mionas Release
 
-A release is a `YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, pushes the tagged commit to the live theme, then publishes a GitHub release from the tag message. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
+A release is a `YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, publishes a GitHub release from the tag message, then waits at the `production` environment's manual gate and pushes the tagged commit to the live theme. The release exists once `check` passes, whether or not the gate is approved. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
 
 Read `shopify.theme.toml`, `package.json` and both workflows first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
 
@@ -90,7 +90,9 @@ gh run list -R mionasbakery/horizon --workflow=<release.yml|release-candidate.ym
 gh run view <run-id> -R mionasbakery/horizon --json status,jobs
 ```
 
-When `check` passes, the run waits on the `production` gate. Tell the user to approve it in the run's GitHub page; approval is theirs alone. Then poll `gh run view`, or run `gh run watch <run-id>` in the background, until the run completes. A failed `check` means fixing on `main` and tagging again with the next suffix. A release candidate's run has no gate and ends after the staging push.
+When `check` passes, the `release` job publishes the GitHub release and the run waits on the `production` gate. Tell the user to approve it in the run's GitHub page; approval is theirs alone. Then poll `gh run view`, or run `gh run watch <run-id>` in the background, until the run completes. A failed `check` means fixing on `main` and tagging again with the next suffix. A release candidate's run has no gate and ends after the staging push.
+
+Every message about a release, from the tag push through the final report, links both the pipeline run (its `url`) and the GitHub release, `https://github.com/mionasbakery/horizon/releases/tag/<tag>`. A release candidate has no GitHub release, so it links the run and the staging preview instead.
 
 ## 5. Verify the live theme
 
