@@ -3,15 +3,18 @@
 # match risked resolving ambiguously or hitting the wrong theme. IDs make
 # `theme pull`/`theme push` fully non-interactive.
 
+# The store is its original myshopify domain: a Theme Access password, which the pipeline uses,
+# gets a 401 through the mionasbakery.myshopify.com alias.
+
 # Used when no --environment is given, so `shopify theme dev` always opens a development theme on the
 # production store. It pins no theme on purpose: the live theme would make `theme dev` edit it live.
 [environments.default]
-store = "mionasbakery"
+store = "bx1hrh-d2"
 
 [environments.production]
-store = "mionasbakery"
+store = "bx1hrh-d2"
 theme = "203594301771" # horizon/main (live on production; a push needs --allow-live)
 
 [environments.staging]
-store = "mionasbakery"
+store = "bx1hrh-d2"
 theme = "209356521803" # horizon/staging (unpublished; release candidates land here)
