@@ -17,7 +17,6 @@
   --button-state-disabled-opacity: 0.5;
   --card-state-pressed-opacity: 0.92;
   --checkbox-state-disabled-opacity: 0.5;
-  --corner-fold-state-hover-scale: 1.1;
   --dialog-state-entering-scale: 0.96;
   --faq-question-header-icon-size: 16px;
   --feature-card-base-aspect-ratio: 1.6;
@@ -169,9 +168,8 @@
   --checkbox-start-padding: 16px;
   --corner-fold-base-padding: 8px;
   --corner-fold-base-shadow: 0 4px 8px rgba(17, 24, 28, 0.11);
-  --corner-fold-state-hover-shadow: 0 18px 36px rgba(17, 24, 28, 0.14);
-  --corner-fold-state-hover-duration: 220ms;
-  --corner-fold-state-hover-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --corner-fold-state-hover-opacity: 0.08;
+  --corner-fold-state-pressed-opacity: 0.16;
   --corner-fold-state-focused-border-width: 2px;
   --corner-fold-state-entering-duration: 500ms;
   --corner-fold-state-entering-easing: cubic-bezier(0.2, 0, 0, 1);
@@ -323,6 +321,10 @@
   --checkbox-base-background: #ffffff;
   --checkbox-checked-foreground: #ffffff;
   --corner-fold-base-foreground: #ffffff;
+  --corner-fold-state-hover-duration: 220ms;
+  --corner-fold-state-hover-easing: cubic-bezier(0.2, 0, 0, 1);
+  --corner-fold-state-pressed-duration: 80ms;
+  --corner-fold-state-pressed-easing: cubic-bezier(0.2, 0, 0, 1);
   --dialog-close-foreground: #101413;
   --form-error-base-foreground: #af200b;
   --form-label-base-foreground: #687076;

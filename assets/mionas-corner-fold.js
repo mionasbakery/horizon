@@ -24,7 +24,7 @@ export class MionasCornerFold extends Component {
 
     // The fold is fixed over the page end, so the page gets its height as extra room to scroll to the
     // footer. The square is turned 45° about the corner, so the visible triangle is its side over √2
-    // tall. offsetWidth ignores transforms; the bounding box would catch the unfold mid-scale.
+    // tall. offsetWidth ignores transforms; the bounding box would catch the unfold mid-slide.
     const { square } = this.refs;
     this.#observer = new ResizeObserver(() => {
       const height = Math.ceil(square.offsetWidth / Math.SQRT2);

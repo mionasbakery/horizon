@@ -50,7 +50,7 @@
 
 {% stylesheet %}
   /* The anchor is a zero-size point fixed at the screen corner. It carries the shadow, as a filter so
-     it doesn't turn with the square, and every scale: hover, fold, unfold. */
+     it doesn't turn with the square. */
   .mionas-corner-fold {
     position: fixed;
     bottom: 0;
@@ -58,17 +58,12 @@
     z-index: var(--layer-sticky);
     width: 0;
     height: 0;
-    transform-origin: left bottom;
     filter: drop-shadow(var(--corner-fold-base-shadow));
-    transition:
-      transform var(--corner-fold-state-hover-duration) var(--corner-fold-state-hover-easing),
-      filter var(--corner-fold-state-hover-duration) var(--corner-fold-state-hover-easing);
   }
 
   .mionas-corner-fold--right {
     right: 0;
     left: auto;
-    transform-origin: right bottom;
   }
 
   .mionas-corner-fold[hidden] {
@@ -104,6 +99,18 @@
     rotate: 45deg;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* The state tint, as on Button. The square's rotate makes it a stacking context, so z-index -1
+     paints the tint over the fill and under the text. */
+  .mionas-corner-fold__square::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--corner-fold-state-hover-duration) var(--corner-fold-state-hover-easing);
   }
 
   .mionas-corner-fold--right .mionas-corner-fold__square {
@@ -145,57 +152,71 @@
     outline-offset: var(--corner-fold-state-focused-border-width);
   }
 
-  .mionas-corner-fold:has(.mionas-corner-fold__square:focus-visible) {
-    filter: drop-shadow(var(--corner-fold-state-hover-shadow));
-  }
-
+  /* Hover is mouse-only, so a tap leaves no sticky tint. It sits before the press rule, which must win. */
   @media (hover: hover) {
-    .mionas-corner-fold:has(.mionas-corner-fold__square:hover) {
-      transform: scale(var(--corner-fold-state-hover-scale));
-      filter: drop-shadow(var(--corner-fold-state-hover-shadow));
+    .mionas-corner-fold__square:hover::after {
+      opacity: var(--corner-fold-state-hover-opacity);
     }
   }
 
-  .mionas-corner-fold--unfolding {
-    animation: mionas-corner-fold-unfold var(--corner-fold-state-entering-duration)
+  .mionas-corner-fold__square:active::after {
+    opacity: var(--corner-fold-state-pressed-opacity);
+    transition-duration: var(--corner-fold-state-pressed-duration);
+    transition-timing-function: var(--corner-fold-state-pressed-easing);
+  }
+
+  .mionas-corner-fold--unfolding .mionas-corner-fold__square {
+    animation: mionas-corner-fold-unfold-left var(--corner-fold-state-entering-duration)
       var(--corner-fold-state-entering-easing);
   }
 
-  .mionas-corner-fold--folding {
-    animation: mionas-corner-fold-fold var(--corner-fold-state-exiting-duration)
+  .mionas-corner-fold--folding .mionas-corner-fold__square {
+    animation: mionas-corner-fold-fold-left var(--corner-fold-state-exiting-duration)
       var(--corner-fold-state-exiting-easing) forwards;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .mionas-corner-fold {
-      transition: none;
-    }
+  .mionas-corner-fold--right.mionas-corner-fold--unfolding .mionas-corner-fold__square {
+    animation-name: mionas-corner-fold-unfold-right;
+  }
 
-    .mionas-corner-fold--unfolding {
+  .mionas-corner-fold--right.mionas-corner-fold--folding .mionas-corner-fold__square {
+    animation-name: mionas-corner-fold-fold-right;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-corner-fold.mionas-corner-fold--unfolding .mionas-corner-fold__square {
       animation-name: mionas-corner-fold-fade-in;
     }
 
-    .mionas-corner-fold--folding {
+    .mionas-corner-fold.mionas-corner-fold--folding .mionas-corner-fold__square {
       animation-name: mionas-corner-fold-fade-out;
     }
-
-    .mionas-corner-fold.mionas-corner-fold {
-      transform: none;
-    }
   }
 
-  @keyframes mionas-corner-fold-unfold {
+  /* Unfold and fold slide the square along the diagonal, on top of its centring translate. 35.355% is
+     half its side over √2 on each axis: the distance from the corner to the long edge, so at the far
+     end the fold is just off screen. */
+  @keyframes mionas-corner-fold-unfold-left {
     from {
-      transform: scale(0);
-    }
-    to {
-      transform: none;
+      translate: -85.355% 85.355%;
     }
   }
 
-  @keyframes mionas-corner-fold-fold {
+  @keyframes mionas-corner-fold-unfold-right {
+    from {
+      translate: 85.355% 85.355%;
+    }
+  }
+
+  @keyframes mionas-corner-fold-fold-left {
     to {
-      transform: scale(0);
+      translate: -85.355% 85.355%;
+    }
+  }
+
+  @keyframes mionas-corner-fold-fold-right {
+    to {
+      translate: 85.355% 85.355%;
     }
   }
 
