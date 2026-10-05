@@ -50,7 +50,7 @@ for d in assets blocks config layout locales sections snippets templates; do
 done
 ```
 
-Editor edits land in `config/settings_data.json`, `templates/*.json` and the section-group JSON in `sections/`. Label every differing file against `git show <baseline>:<file>`:
+Skip `snippets/mionas-version.liquid`: the pipeline writes the release into it on every push, so it always differs and stays `dev` in the repository. Editor edits land in `config/settings_data.json`, `templates/*.json` and the section-group JSON in `sections/`. Label every differing file against `git show <baseline>:<file>`:
 
 - **Store-changed**: the remote copy differs from the baseline and the local one matches it. Copy exactly that file from `remote-before` into the worktree.
 - **Local-changed**: the local copy differs and the remote matches. It is part of the release; leave it.
@@ -108,7 +108,7 @@ for d in assets blocks config layout locales sections snippets templates; do
 done
 ```
 
-Done when the diff is empty, or every remaining difference is explained to the user, and `gh release view <tag> -R mionasbakery/horizon` shows the release with its name and notes. The run also keeps a `remote-before-<tag>` artifact: the live theme as the pipeline found it.
+Done when the only difference is `snippets/mionas-version.liquid` reading `<tag>` instead of `dev`, or every other difference is explained to the user, and `gh release view <tag> -R mionasbakery/horizon` shows the release with its name and notes. The run also keeps a `remote-before-<tag>` artifact: the live theme as the pipeline found it.
 
 ## Pull only
 

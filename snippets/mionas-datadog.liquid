@@ -10,6 +10,10 @@
   else
     assign env = 'preview'
   endif
+  capture version
+    render 'mionas-version'
+  endcapture
+  assign version = version | strip
 -%}
 {%- comment -%}
   layout/theme.liquid renders this after content_for_header, which defines the consent API; an upstream
@@ -37,6 +41,7 @@
             site: 'datadoghq.eu',
             service: 'mionas-storefront',
             env: '{{ env }}',
+            version: {{ version | json }},
             sessionSampleRate: 100,
             // Replay sampling, privacy level and interaction, resource and long-task tracking are set in
             // Datadog under RUM → the application → SDK Configuration.

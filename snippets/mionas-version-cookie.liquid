@@ -1,0 +1,14 @@
+{% doc %}
+  Leaves the theme's release in the mionas_theme_version cookie for the analytics pixels, which can't
+  read the theme.
+{% enddoc %}
+{%- liquid
+  capture version
+    render 'mionas-version'
+  endcapture
+  assign version = version | strip
+-%}
+<script>
+  // Written before consent on purpose, so the first event after the visitor accepts already has it.
+  document.cookie = 'mionas_theme_version=' + encodeURIComponent({{ version | json }}) + '; path=/; samesite=lax';
+</script>

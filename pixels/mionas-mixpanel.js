@@ -44,6 +44,17 @@ function post(path, record) {
   }).catch(() => {});
 }
 
+/**
+ * The release snippets/mionas-version-cookie.liquid leaves in a cookie on every storefront page; a checkout
+ * opened without visiting the store has none. Read per event, so a release mid-visit shows up at once.
+ */
+function themeVersion() {
+  return browser.cookie
+    .get('mionas_theme_version')
+    .then((value) => decodeURIComponent(value) || 'unknown')
+    .catch(() => 'unknown');
+}
+
 function pageProperties(event) {
   const location = event.context?.document?.location;
   const path = location?.pathname ?? '/';
@@ -79,7 +90,7 @@ function track(name, event, properties, userId) {
   for (const [key, value] of Object.entries(properties)) if (value != null) payload[key] = value;
   for (const key of Object.keys(payload)) if (payload[key] == null) delete payload[key];
 
-  post('/track', { event: name, properties: payload });
+  themeVersion().then((theme_version) => post('/track', { event: name, properties: { ...payload, theme_version } }));
 }
 
 /** Mixpanel shows a person's name and email from their profile, not from their events. */

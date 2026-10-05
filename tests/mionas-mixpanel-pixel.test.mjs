@@ -5,7 +5,7 @@ import test from 'node:test';
 const source = await readFile(new URL('../pixels/mionas-mixpanel.js', import.meta.url), 'utf8');
 
 /** Runs the pixel against stub Shopify globals and returns the events and profile updates it posts. */
-function runPixel(customer = null) {
+function runPixel(customer = null, cookies = {}) {
   const sent = [];
   const profiles = [];
   const handlers = {};
@@ -15,7 +15,8 @@ function runPixel(customer = null) {
     (url.includes('/engage') ? profiles : sent).push(record);
     return Promise.resolve();
   };
-  new Function('analytics', 'init', 'fetch', source)(analytics, { data: { customer } }, fetch);
+  const browser = { cookie: { get: async (name) => cookies[name] ?? '' } };
+  new Function('analytics', 'init', 'browser', 'fetch', source)(analytics, { data: { customer } }, browser, fetch);
   return { sent, profiles, handlers };
 }
 
@@ -33,19 +34,21 @@ const variant = {
   price: { amount: 4.2, currencyCode: 'EUR' },
   product: { id: '9', title: 'Cookie' },
 };
+const flush = () => new Promise((resolve) => setTimeout(resolve));
 const item = { item_id: '9', item_name: 'Cookie', item_variant: 'Caja de 6', price: 4.2 };
 
-test('posts to the EU host with Simplified ID Merge identity and a short insert ID', () => {
+test('posts to the EU host with Simplified ID Merge identity and a short insert ID', async () => {
   const { sent, handlers } = runPixel();
   const location = { origin: 'https://mionasbakery.com', pathname: '/ca/products/cookie-box', search: '?email=a@b.c' };
   handlers.page_viewed({ ...base, context: { document: { location } } });
+  await flush();
   assert.equal(sent[0].properties.page_location, 'https://mionasbakery.com/ca/products/cookie-box');
   assert.match(sent[0].url, /^https:\/\/api-eu\.mixpanel\.com\/track/);
   assert.equal(sent[0].properties.distinct_id, '$device:client-1');
   assert.equal(sent[0].properties.$insert_id.length, 36);
 });
 
-test('sends GA4 names and parameters', () => {
+test('sends GA4 names and parameters', async () => {
   const { sent, handlers } = runPixel();
   handlers.page_viewed(base);
   handlers.product_viewed({ ...base, data: { productVariant: variant } });
@@ -54,9 +57,10 @@ test('sends GA4 names and parameters', () => {
   handlers.newsletter_popup_shown({ ...base, customData: { ...promotion, trigger: 'auto' } });
   handlers.newsletter_popup_closed({ ...base, customData: { ...promotion, method: 'button' } });
   handlers.newsletter_popup_subscribed({ ...base, customData: { method: 'newsletter_popup' } });
+  await flush();
 
   const events = sent.map(({ event, properties }) => {
-    const { token, distinct_id, $device_id, time, $insert_id, ...rest } = properties;
+    const { token, distinct_id, $device_id, time, $insert_id, theme_version, ...rest } = properties;
     return [event, rest];
   });
   assert.deepEqual(events, [
@@ -77,7 +81,7 @@ test('sends GA4 names and parameters', () => {
   ]);
 });
 
-test('a purchase carries the order as transaction_id and identifies the order customer', () => {
+test('a purchase carries the order as transaction_id and identifies the order customer', async () => {
   const { sent, handlers } = runPixel();
   handlers.checkout_completed({
     ...base,
@@ -99,6 +103,7 @@ test('a purchase carries the order as transaction_id and identifies the order cu
       },
     },
   });
+  await flush();
   const { event, properties } = sent[0];
   assert.equal(event, 'purchase');
   assert.equal(properties.$user_id, '43');
@@ -111,7 +116,7 @@ test('a purchase carries the order as transaction_id and identifies the order cu
   assert.doesNotMatch(JSON.stringify(sent), /@/);
 });
 
-test('a purchase sets the order customer\'s name and email on their profile', () => {
+test('a purchase sets the order customer\'s name and email on their profile', async () => {
   const { profiles, handlers } = runPixel();
   handlers.checkout_completed({
     ...base,
@@ -129,10 +134,36 @@ test('a purchase sets the order customer\'s name and email on their profile', ()
   assert.deepEqual(profiles[0].$set, { $name: 'Laia Puig', $email: 'guest@example.com' });
 });
 
-test('a logged-in customer\'s profile is set once per page, and an anonymous visitor gets none', () => {
+test('a logged-in customer\'s profile is set once per page, and an anonymous visitor gets none', async () => {
   const { profiles } = runPixel({ id: 'gid://shopify/Customer/42', firstName: 'Laia', email: 'a@b.c' });
   assert.equal(profiles.length, 1);
   assert.equal(profiles[0].$distinct_id, '42');
   assert.deepEqual(profiles[0].$set, { $name: 'Laia', $email: 'a@b.c' });
   assert.deepEqual(runPixel().profiles, []);
+});
+
+test('every event carries the theme version the storefront left in its cookie, or unknown without one', async () => {
+  const versionOf = async (cookies) => {
+    const { sent, handlers } = runPixel(null, cookies);
+    handlers.page_viewed(base);
+    handlers.product_viewed({ ...base, data: { productVariant: variant } });
+    await flush();
+    return sent.map(({ properties }) => properties.theme_version);
+  };
+  assert.deepEqual(await versionOf({ mionas_theme_version: '2026.10.06-rc.1' }), ['2026.10.06-rc.1', '2026.10.06-rc.1']);
+  assert.deepEqual(await versionOf({}), ['unknown', 'unknown']);
+});
+
+test('reads the version for each event, so a release mid-visit shows up at once', async () => {
+  const cookies = {};
+  const { sent, handlers } = runPixel(null, cookies);
+  handlers.page_viewed(base);
+  await flush();
+  cookies.mionas_theme_version = '2026.10.06';
+  handlers.page_viewed(base);
+  await flush();
+  assert.deepEqual(
+    sent.map(({ properties }) => properties.theme_version),
+    ['unknown', '2026.10.06']
+  );
 });

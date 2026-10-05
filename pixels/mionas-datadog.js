@@ -61,6 +61,14 @@ function profile(firstName, lastName, email) {
   return fields;
 }
 
+/** The release snippets/mionas-version-cookie.liquid leaves in a cookie; a checkout opened without visiting the store has none. */
+function themeVersion() {
+  return browser.cookie
+    .get('mionas_theme_version')
+    .then((value) => decodeURIComponent(value) || 'unknown')
+    .catch(() => 'unknown');
+}
+
 function consent(customerPrivacy) {
   return customerPrivacy?.analyticsProcessingAllowed ? 'granted' : 'not-granted';
 }
@@ -81,20 +89,24 @@ function start() {
   })(window, document, 'script', 'https://www.datadoghq-browser-agent.com/eu1/v7/datadog-rum-shopify.js', 'DD_RUM');
 
   const rum = window.DD_RUM;
-  const setUser = (id, fields) => id && rum.onReady(() => rum.setUser({ id, ...fields }));
+  const versionRead = themeVersion();
+  // Every call waits on the same version read, so they still reach Datadog in order, init first.
+  const ready = (callback) => rum.onReady(() => versionRead.then(callback));
+  const setUser = (id, fields) => id && ready(() => rum.setUser({ id, ...fields }));
   const action = (name, event, properties) => {
     const context = { platform: 'web', locale: pathLocale(event) };
     for (const [key, value] of Object.entries(properties)) if (value != null) context[key] = value;
-    rum.onReady(() => rum.addAction(name, context));
+    ready(() => rum.addAction(name, context));
   };
 
-  rum.onReady(() =>
+  ready((version) =>
     rum.init({
       applicationId: APPLICATION_ID,
       clientToken: CLIENT_TOKEN,
       site: 'datadoghq.eu',
       service: 'mionas-storefront',
       env: 'production',
+      version,
       sessionSampleRate: 100,
       remoteConfiguration: { id: REMOTE_CONFIGURATION_ID },
       plugins: [rum.shopifyPlugin({ shopifyAnalytics: analytics })],
@@ -104,7 +116,7 @@ function start() {
   // Shopify stops delivering events after a withdrawal, but the plugin's own click and error
   // collection only stops when the SDK is told.
   api.customerPrivacy.subscribe('visitorConsentCollected', (event) => {
-    rum.onReady(() => rum.setTrackingConsent(consent(event.customerPrivacy)));
+    ready(() => rum.setTrackingConsent(consent(event.customerPrivacy)));
   });
   const customer = init.data?.customer;
   const customerId = numericId(customer?.id);

@@ -25,6 +25,7 @@ jobs:
           node-version: 22
       # Pinned to the CLI version the theme is developed with.
       - run: npm install --global @shopify/cli@4.8.4
+      - run: npm run theme:version -- "$GITHUB_REF_NAME"
       - name: Push to the staging theme
         run: npm run theme:push:staging
         env:

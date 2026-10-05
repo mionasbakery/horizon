@@ -47,7 +47,7 @@ for d in assets blocks config layout locales sections snippets templates; do
 done
 ```
 
-The diff covers only the theme folders, because the remote copy holds nothing else. The files most likely to differ are the ones the theme editor writes on the store: `config/settings_data.json`, `templates/*.json`, and the section-group JSON files in `sections/`. A remote-only change there is an editor edit a push would overwrite.
+The diff covers only the theme folders, because the remote copy holds nothing else. `snippets/mionas-version.liquid` always differs: the store holds the release and the repository holds `dev`. Never copy it either way. The other files most likely to differ are the ones the theme editor writes on the store: `config/settings_data.json`, `templates/*.json`, and the section-group JSON files in `sections/`. A remote-only change there is an editor edit a push would overwrite.
 
 Treat a nonempty worktree as unsynchronized local work. Treat differences between the two recovery copies as information to reconcile, not permission to overwrite either side. If the origin of a conflicting change is uncertain, stop after preserving the copies and show the relevant diff; do not pull or push over it. The recovery directory is the source for an explicit merge or restoration after the user chooses the intended result.
 
@@ -65,10 +65,11 @@ Review `git diff --binary` and `git status --short` afterward. Keep the pre-pull
 
 After preserving the current remote copy, identify changes made on the remote since the last known synchronized version. If the repository does not contain an authoritative baseline, do not infer that remote differences are safe to replace: compare the recovery copies, reconcile intentional remote edits into the local source, and preserve the result before proceeding.
 
-The push wrapper runs Theme Check first and aborts on any error; never push around a failed check:
+The push wrapper runs Theme Check first and aborts on any error; never push around a failed check. Set the theme version first, so analytics reports the push as the last tag plus the commits since, then restore the file whether or not the push succeeded:
 
 ```bash
-npm run theme:push:production
+npm run theme:version
+npm run theme:push:production; git checkout snippets/mionas-version.liquid
 ```
 
 After a successful push, verify it into the same recovery directory and compare the theme folders as above, `remote-after` against the local source:

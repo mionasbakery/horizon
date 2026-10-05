@@ -25,6 +25,8 @@ jobs:
           node-version: 22
       # Pinned to the CLI version the theme is developed with.
       - run: npm install --global @shopify/cli@4.8.4
+      # Set before the check and the zip, so the packaged theme carries its release too.
+      - run: npm run theme:version -- "$GITHUB_REF_NAME"
       - run: npm run theme:check
       - name: Package theme
         run: |
@@ -78,6 +80,7 @@ jobs:
         with:
           name: remote-before-${{ github.ref_name }}
           path: ${{ runner.temp }}/remote-before
+      - run: npm run theme:version -- "$GITHUB_REF_NAME"
       - name: Push to the live theme
         run: npm run theme:push:production
         env:

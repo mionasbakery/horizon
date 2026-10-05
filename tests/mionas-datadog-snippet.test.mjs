@@ -23,6 +23,7 @@ function renderScript({ customerId = null } = {}) {
     .replace(/\{\{ customer\.id \}\}/g, String(customerId))
     .replace(/\{\{ customer\.name \| json \}\}/g, JSON.stringify('Laia Puig'))
     .replace(/\{\{ customer\.email \| json \}\}/g, JSON.stringify(''))
+    .replace(/\{\{ version \| json \}\}/g, JSON.stringify('2026.10.06'))
     .replace(/\{\{ ([\w.]+) \}\}/g, (_, name) => values[name]);
 }
 
@@ -91,7 +92,7 @@ test('outputs nothing in the theme editor or before the credentials are filled i
 });
 
 test('the layout renders it after content_for_header, which defines the consent API', () => {
-  assert.match(layout, /\{\{ content_for_header \}\}\s*\{%- render 'mionas-datadog' -%\}/);
+  assert.match(layout, /\{\{ content_for_header \}\}\s*\{%- render 'mionas-version-cookie' -%\}\s*\{%- render 'mionas-datadog' -%\}/);
 });
 
 test('starts on the EU site with collection off and its settings from remote configuration', () => {
@@ -102,8 +103,13 @@ test('starts on the EU site with collection off and its settings from remote con
   assert.deepEqual(init.remoteConfiguration, { id: 'remote-config' });
   assert.equal(init.defaultPrivacyLevel, undefined);
   assert.equal(init.env, 'preview');
+  assert.equal(init.version, '2026.10.06');
   assert.match(source, /eu1\/v7\/datadog-rum-shopify\.js/);
   assert.match(source, /request\.host == shop\.domain/);
+});
+
+test('reads the theme version from its own snippet', () => {
+  assert.match(source, /capture version\s+render 'mionas-version'\s+endcapture\s+assign version = version \| strip/);
 });
 
 test('a visitor who never allows analytics is never recorded', async () => {
