@@ -977,21 +977,23 @@
       "name": "Mionas: Newsletter Dialog",
       "settings": {
         "enabled": true,
+        "hide_for_ordered_customers": true,
         "hide_on_product": false,
         "hide_on_collection": false,
         "hide_on_cart": true,
         "hide_on_blog": false,
         "hide_on_page": false,
         "hide_on_404": true,
+        "hide_on_search": true,
         "hidden_pages_menu": "pop-up-de-la-newsletter-paginas-excluidas",
         "auto_open": true,
-        "idle_seconds": 5,
+        "idle_seconds": 8,
         "reset_on_press": true,
         "reset_on_scroll": false,
         "pause_while_typing": true,
         "pause_while_hidden": true,
         "pause_for_cart": true,
-        "reshow_days": 7
+        "reshow_days": 30
       }
     }
   },

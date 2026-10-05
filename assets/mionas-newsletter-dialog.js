@@ -12,6 +12,40 @@ const SHOWN_TRIGGERS = { auto: 'auto', launcher: 'corner_fold' };
 /** The GA4 name of each funnel step. GA4 has no recommended event for a close, so close_promotion is custom. */
 const FUNNEL_EVENTS = { shown: 'view_promotion', closed: 'close_promotion', subscribed: 'sign_up' };
 const PROMOTION = { promotion_id: 'newsletter_popup', promotion_name: 'Newsletter popup' };
+/** Plain words for the debug log. */
+const OPEN_NAMES = {
+  auto: 'by itself after the idle time',
+  launcher: 'from the corner tab',
+  signup: 'to show the signup result',
+  api: 'from theme code',
+};
+const CLOSE_NAMES = {
+  button: 'No thanks or Continue shopping button',
+  close: 'close (×) button',
+  escape: 'Escape key',
+  backdrop: 'click or tap outside the popup',
+  handle: 'dragged down by its handle',
+  back: 'phone back gesture',
+};
+const STATE_NAMES = { completed: 'signed up', closed: 'closed without signing up' };
+/** @param {number} [ms] */
+const formatDate = (ms) => (ms ? new Date(ms).toLocaleString() : 'never');
+
+const DEBUG_KEY = 'mionas-newsletter-debug';
+/**
+ * Console logs for the automatic open, kept in the browser so they survive navigation: ?newsletter_debug=1
+ * turns them on and ?newsletter_debug=0 off. Customers never see them.
+ */
+const DEBUG = (() => {
+  try {
+    const param = new URLSearchParams(location.search).get('newsletter_debug');
+    if (param === '1') localStorage.setItem(DEBUG_KEY, '1');
+    if (param === '0') localStorage.removeItem(DEBUG_KEY);
+    return localStorage.getItem(DEBUG_KEY) === '1';
+  } catch {
+    return false;
+  }
+})();
 
 /** One dialog's memory in the visitor's local storage. */
 class DialogStore {
@@ -82,6 +116,20 @@ class MionasNewsletterDialog extends MionasDialog {
   /** @type {DialogStore | undefined} */
   store;
 
+  /**
+   * Logs `[newsletter] {area}: {event}` and its details to the console when debugging is on; the
+   * trigger logs through it too.
+   * @param {string} area
+   * @param {string} event
+   * @param {Record<string, any>} [details]
+   */
+  log(area, event, details) {
+    if (!DEBUG) return;
+    const line = `[newsletter] ${area}: ${event}`;
+    if (details) console.info(line, details);
+    else console.info(line);
+  }
+
   /** @param {{ source?: string }} [options] */
   open(options) {
     this.doneOnPage = true;
@@ -93,6 +141,7 @@ class MionasNewsletterDialog extends MionasDialog {
     this.completed = true;
     this.doneOnPage = true;
     this.store?.write({ state: 'completed' });
+    this.log('signup', 'visitor signed up, the popup never opens by itself again in this browser');
     this.dispatchEvent(new CustomEvent('mionas-newsletter-dialog:complete'));
   }
 
@@ -104,10 +153,23 @@ class MionasNewsletterDialog extends MionasDialog {
 
     // Without memory the dialog would open on every page, so blocked storage keeps it from opening by itself.
     const stored = this.store.read();
-    if (!stored) return;
+    if (!stored) {
+      this.log('memory', 'browser storage is blocked, the popup never opens by itself');
+      return;
+    }
 
     this.completed = stored.state === 'completed';
     this.closedBefore = stored.state === 'closed';
+    this.log('memory', 'what this browser remembers', {
+      state: STATE_NAMES[/** @type {keyof typeof STATE_NAMES} */ (stored.state)] ?? 'never shown',
+      lastShown: formatDate(stored.shownAt),
+      lastClosed: formatDate(stored.closedAt),
+    });
+    if (this.dataset.pageRule) {
+      this.log('page', 'the popup never opens by itself on this page, only the corner tab opens it', {
+        hiddenBySetting: this.dataset.pageRule,
+      });
+    }
 
     this.addEventListener('mionas-dialog:open', this.#onOpen);
     this.addEventListener('mionas-dialog:close', this.#onClose);
@@ -133,14 +195,18 @@ class MionasNewsletterDialog extends MionasDialog {
   #onOpen = (event) => {
     const { source } = event.detail;
     this.doneOnPage = true;
+    this.log('dialog', 'popup opened', { how: OPEN_NAMES[/** @type {keyof typeof OPEN_NAMES} */ (source)] ?? source });
     const trigger = SHOWN_TRIGGERS[/** @type {keyof typeof SHOWN_TRIGGERS} */ (source)];
-    if (trigger) this.#track('shown', { ...PROMOTION, trigger });
+    if (!trigger) return;
+    this.store?.write({ shownAt: Date.now() });
+    this.#track('shown', { ...PROMOTION, trigger });
   };
 
   /** @param {CustomEvent} event */
   #onClose = (event) => {
     const { method } = event.detail;
     this.doneOnPage = true;
+    this.log('dialog', 'popup closed', { how: CLOSE_NAMES[/** @type {keyof typeof CLOSE_NAMES} */ (method)] ?? method });
     if (this.completed) return;
     this.store?.write({ state: 'closed', closedAt: Date.now() });
     this.#track('closed', { ...PROMOTION, method });

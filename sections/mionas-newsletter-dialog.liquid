@@ -88,9 +88,16 @@
       "info": "When off, no visitor sees the dialog or its corner fold. The theme editor still shows them, so you can edit them."
     },
     {
+      "type": "checkbox",
+      "id": "hide_for_ordered_customers",
+      "label": "Hide from customers who have ordered",
+      "default": true,
+      "info": "Logged-in customers with at least one order never see the dialog or its corner fold, since the offer is for a first purchase. A visitor who is not logged in cannot be recognised and still sees it. Customers subscribed to marketing emails never see it."
+    },
+    {
       "type": "header",
       "content": "Pages",
-      "info": "The dialog never opens by itself on the pages in the menu or on the checked page types. The checkboxes cover whole page types and pages a menu cannot hold. The corner fold still shows there and still opens the dialog. The checkout, the order status page and the storefront password page never show the dialog, because they are outside the theme or have no footer."
+      "info": "The dialog never opens by itself on the pages in the menu or on the checked page types. The checkboxes cover whole page types and pages a menu cannot hold. The corner fold still shows there and still opens the dialog. The checkout, the order status page, the customer account and login pages and the storefront password page never show the dialog, because they are outside the theme or have no footer."
     },
     {
       "type": "checkbox",
@@ -135,6 +142,13 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "hide_on_search",
+      "label": "Hide on search results",
+      "info": "The search results page.",
+      "default": true
+    },
+    {
       "type": "link_list",
       "id": "hidden_pages_menu",
       "label": "Hide on the pages in this menu",
@@ -143,7 +157,7 @@
     {
       "type": "header",
       "content": "Automatic opening",
-      "info": "On a page with the cookie banner, the dialog opens as soon as the visitor answers it. On a page with no banner to answer, such as a visit after the banner was answered, it opens when the visitor has been idle for the idle time. That count starts at the first scroll, tap, click or key press, never at page load, which keeps it out of Google's page speed data and away from Google's crawler. The settings below say what restarts and pauses the count."
+      "info": "The dialog opens when the visitor has been idle for the idle time. That count starts at the first scroll, tap, click or key press, and on a page with the cookie banner at the first one after the visitor answers it. It never opens over the banner or at page load, which keeps it out of Google's page speed data and away from Google's crawler. The settings below say what restarts and pauses the count."
     },
     {
       "type": "checkbox",
@@ -160,8 +174,8 @@
       "max": 30,
       "step": 1,
       "unit": "s",
-      "default": 5,
-      "info": "Only on pages with no cookie banner to answer. The dialog opens when the visitor has done nothing for this long, counted from the first scroll, tap, click or key press. Moving the mouse does not start the count. If a finger or mouse button is still down at that moment, the dialog opens after the release, and the click still works. Each page starts the count again.",
+      "default": 8,
+      "info": "The dialog opens when the visitor has done nothing for this long, counted from the first scroll, tap, click or key press, and on a page with the cookie banner from the first one after the answer. Moving the mouse does not start the count. If a finger or mouse button is still down at that moment, the dialog opens after the release, and the click still works. Each page starts the count again.",
       "visible_if": "{{ section.settings.auto_open }}"
     },
     {
@@ -207,13 +221,13 @@
     {
       "type": "range",
       "id": "reshow_days",
-      "label": "Days before showing again after a close",
+      "label": "Days between automatic opens",
       "min": 0,
       "max": 90,
       "step": 1,
       "unit": "d",
-      "default": 7,
-      "info": "After a close, the dialog opens by itself again only after this many days. No thanks counts as a close. 0 never opens it by itself again. After a signup it never opens by itself again.",
+      "default": 30,
+      "info": "The dialog opens by itself at most once in this many days, counted from the last time it opened, whether the visitor closed it or left the page. 0 opens it by itself only once. After a signup it never opens by itself again.",
       "visible_if": "{{ section.settings.auto_open }}"
     }
   ],

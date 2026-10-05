@@ -3,14 +3,17 @@
   page:{rule} when the visitor may get it but this page never opens it by itself, with {rule} the id
   of the setting that hides it, and false when the visitor never gets it.
 
-  @param {object} settings - The dialog section's settings: the hide_on_* checkboxes and
-    hidden_pages_menu.
+  @param {object} settings - The dialog section's settings: hide_for_ordered_customers, the hide_on_*
+    checkboxes and hidden_pages_menu.
   @param {boolean} [exclude_marketing_subscribers] - Leaves out customers who already get marketing
     emails.
 {%- enddoc -%}
 {%- liquid
   assign eligible = true
   if exclude_marketing_subscribers and customer and customer.accepts_marketing
+    assign eligible = false
+  endif
+  if settings.hide_for_ordered_customers and customer and customer.orders_count > 0
     assign eligible = false
   endif
 
@@ -39,6 +42,9 @@
     when '404'
       assign page_hidden = settings.hide_on_404
       assign page_rule = 'hide_on_404'
+    when 'search'
+      assign page_hidden = settings.hide_on_search
+      assign page_rule = 'hide_on_search'
   endcase
 
   # Menu links store the resource itself, so each entry holds in every language, unlike a URL list:
