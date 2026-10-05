@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Mionas Release
 
-A release is a `release-YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, pushes the tagged commit to the live theme, then publishes a GitHub release from the tag message. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
+A release is a `YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, pushes the tagged commit to the live theme, then publishes a GitHub release from the tag message. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
 
 Read `shopify.theme.toml`, `package.json` and both workflows first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
 
@@ -64,7 +64,7 @@ Show the user the resulting `git diff` and wait for them to ask for a commit. Do
 
 Preconditions, each checked by command: worktree clean, on `main`, `git fetch origin` then `HEAD` equal to `origin/main`. If `main` is ahead, ask the user before pushing it.
 
-Name the tag `release-YYYY.MM.DD` with today's date, adding `.2`, `.3` for further releases that day; `git tag --list 'release-*'` shows the names taken, and `-rc.N` tags don't count. The `production` environment only accepts `release-????.??.??` and `release-????.??.??.?`, so a tenth release in a day needs that rule widened first.
+Name the tag `YYYY.MM.DD` with today's date, adding `.2`, `.3` for further releases that day; `git tag --list '[0-9]*'` shows the names taken, and `-rc.N` tags don't count. The `production` environment and the trigger in `release.yml` only accept `????.??.??` and `????.??.??.?`, so a tenth release in a day needs both widened first.
 
 Write the tag message in three parts, from the commit subjects and the diff since the baseline:
 
@@ -75,13 +75,13 @@ Write the tag message in three parts, from the commit subjects and the diff sinc
 Show the message to the user and wait for approval before tagging. Write it to a file in the scratchpad so the blank lines survive:
 
 ```bash
-git tag -a release-2026.10.06 -F <message-file>
-git push origin release-2026.10.06
+git tag -a 2026.10.06 -F <message-file>
+git push origin 2026.10.06
 ```
 
 ### Release candidate
 
-To review a release on the staging theme first, tag the same message as `release-YYYY.MM.DD-rc.1`, with the date of the planned release and the next free `rc.N`. The run deploys without a gate. Give the user the preview link `https://mionasbakery.myshopify.com?preview_theme_id=209356521803`. The staging theme keeps its own editor settings, so pushes overwrite them with the repository's and it can differ from the live theme's. A fix on `main` gets the next `rc.N`. Once the user approves the candidate, tag its commit `release-YYYY.MM.DD` with the same message (`git tag -a <name> <rc-tag>^{} -F <message-file>`) and continue with step 4.
+To review a release on the staging theme first, tag the same message as `YYYY.MM.DD-rc.1`, with the date of the planned release and the next free `rc.N`. The run deploys without a gate. Give the user the preview link `https://mionasbakery.myshopify.com?preview_theme_id=209356521803`. The staging theme keeps its own editor settings, so pushes overwrite them with the repository's and it can differ from the live theme's. A fix on `main` gets the next `rc.N`. Once the user approves the candidate, tag its commit `YYYY.MM.DD` with the same message (`git tag -a <name> <rc-tag>^{} -F <message-file>`) and continue with step 4.
 
 ## 4. Watch the pipeline
 
