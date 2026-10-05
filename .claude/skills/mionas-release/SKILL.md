@@ -1,14 +1,16 @@
 ---
 name: mionas-release
-description: Release the theme to the live store by tagging it for the release pipeline, or pull editor edits from the live theme.
+description: Release the theme to the live store by tagging it for the release pipeline, tag a release candidate for the staging theme, or pull editor edits from the live theme.
 disable-model-invocation: true
 ---
 
 # Mionas Release
 
-A release is a `release-*` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, then pushes the tagged commit to the live theme. This skill reconciles, tags and watches, and leaves the push to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
+A release is a `release-YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, waits at the `production` environment's manual gate, pushes the tagged commit to the live theme, then publishes a GitHub release from the tag message. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
 
-Read `shopify.theme.toml`, `package.json` and the workflow first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
+Read `shopify.theme.toml`, `package.json` and both workflows first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
+
+The local `gh` default repository resolves to `upstream` (`Shopify/horizon`), so pass `-R mionasbakery/horizon` to every `gh` command.
 
 ## 1. Preserve both sides
 
@@ -36,7 +38,7 @@ The pipeline overwrites the live theme with the tagged commit, so any edit made 
 The **baseline** is the tag the last successful release pushed:
 
 ```bash
-gh run list --workflow=release.yml --status=success --limit 1 --json headBranch --jq '.[0].headBranch'
+gh run list -R mionasbakery/horizon --workflow=release.yml --status=success --limit 1 --json headBranch --jq '.[0].headBranch'
 ```
 
 List the differing files:
@@ -62,21 +64,33 @@ Show the user the resulting `git diff` and wait for them to ask for a commit. Do
 
 Preconditions, each checked by command: worktree clean, on `main`, `git fetch origin` then `HEAD` equal to `origin/main`. If `main` is ahead, ask the user before pushing it.
 
-Name the tag `release-YYYY.MM.DD` with today's date, adding `.2`, `.3` for further releases that day (`git tag --list 'release-*'`). Write an annotated tag whose message lists the commit subjects since the baseline, or `First pipeline release` when there is none:
+Name the tag `release-YYYY.MM.DD` with today's date, adding `.2`, `.3` for further releases that day; `git tag --list 'release-*'` shows the names taken, and `-rc.N` tags don't count. The `production` environment only accepts `release-????.??.??` and `release-????.??.??.?`, so a tenth release in a day needs that rule widened first.
+
+Write the tag message in three parts, from the commit subjects and the diff since the baseline:
+
+1. A release name of a few plain words saying what changes for the store, such as `Newsletter popup opens on idle, customer details in analytics`. It becomes the GitHub release title after the tag.
+2. After a blank line, a short paragraph of one to three sentences saying what a shopper or the team will notice.
+3. After a blank line, the changelog: `git log --format='- %s' <baseline>..HEAD`, or `- First pipeline release` when there is no baseline.
+
+Show the message to the user and wait for approval before tagging. Write it to a file in the scratchpad so the blank lines survive:
 
 ```bash
-git tag -a release-2026.10.04 -m "$(git log --format='- %s' <baseline>..HEAD)"
-git push origin release-2026.10.04
+git tag -a release-2026.10.06 -F <message-file>
+git push origin release-2026.10.06
 ```
+
+### Release candidate
+
+To review a release on the staging theme first, tag the same message as `release-YYYY.MM.DD-rc.1`, with the date of the planned release and the next free `rc.N`. The run deploys without a gate. Give the user the preview link `https://mionasbakery.myshopify.com?preview_theme_id=209356521803`. The staging theme keeps its own editor settings, so pushes overwrite them with the repository's and it can differ from the live theme's. A fix on `main` gets the next `rc.N`. Once the user approves the candidate, tag its commit `release-YYYY.MM.DD` with the same message (`git tag -a <name> <rc-tag>^{} -F <message-file>`) and continue with step 4.
 
 ## 4. Watch the pipeline
 
 ```bash
-gh run list --workflow=release.yml --branch <tag> --json databaseId,status
-gh run view <run-id> --json status,jobs
+gh run list -R mionasbakery/horizon --workflow=<release.yml|release-candidate.yml> --branch <tag> --json databaseId,status,url
+gh run view <run-id> -R mionasbakery/horizon --json status,jobs
 ```
 
-When `check` passes, the run waits on the `production` gate. Tell the user to approve it in the run's GitHub page; approval is theirs alone. Then poll `gh run view`, or run `gh run watch <run-id>` in the background, until the run completes. A failed `check` means fixing on `main` and tagging again with the next suffix.
+When `check` passes, the run waits on the `production` gate. Tell the user to approve it in the run's GitHub page; approval is theirs alone. Then poll `gh run view`, or run `gh run watch <run-id>` in the background, until the run completes. A failed `check` means fixing on `main` and tagging again with the next suffix. A release candidate's run has no gate and ends after the staging push.
 
 ## 5. Verify the live theme
 
@@ -92,7 +106,7 @@ for d in assets blocks config layout locales sections snippets templates; do
 done
 ```
 
-Done when the diff is empty, or every remaining difference is explained to the user. The run also keeps a `remote-before-<tag>` artifact: the live theme as the pipeline found it.
+Done when the diff is empty, or every remaining difference is explained to the user, and `gh release view <tag> -R mionasbakery/horizon` shows the release with its name and notes. The run also keeps a `remote-before-<tag>` artifact: the live theme as the pipeline found it.
 
 ## Pull only
 

@@ -5,6 +5,7 @@
     "tokens:sync": "node scripts/sync-design-tokens.mjs",
     "theme:check": "shopify theme check",
     "theme:pull:production": "shopify theme pull --environment=production",
-    "theme:push:production": "shopify theme check && shopify theme push --environment=production --allow-live"
+    "theme:push:production": "shopify theme check && shopify theme push --environment=production --allow-live",
+    "theme:push:staging": "shopify theme check && shopify theme push --environment=staging"
   }
 }

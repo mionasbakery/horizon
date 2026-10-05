@@ -1,8 +1,10 @@
 name: Release
+run-name: Release ${{ github.ref_name }}
 
 on:
   push:
-    tags: ['release-*']
+    # Release candidates (release-*-rc.N) go to the staging theme through release-candidate.yml.
+    tags: ['release-*', '!release-*-rc.*']
 
 permissions:
   contents: read
@@ -37,6 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     # The production environment's required reviewer is the manual gate before the live push.
     environment: production
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -60,3 +64,13 @@ jobs:
         run: npm run theme:push:production
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+      # The checkout can leave the tag without its message, so it is fetched again. The message's
+      # first line is the release name and the rest its notes.
+      - name: Publish the GitHub release
+        run: |
+          git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          git tag -l --format='%(contents:body)' "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+          gh release create "$GITHUB_REF_NAME" --verify-tag --notes-file "$RUNNER_TEMP/notes.md" \
+            --title "$GITHUB_REF_NAME · $(git tag -l --format='%(contents:subject)' "$GITHUB_REF_NAME")"
+        env:
+          GH_TOKEN: ${{ github.token }}

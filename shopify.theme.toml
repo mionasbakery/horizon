@@ -11,3 +11,7 @@ store = "mionasbakery"
 [environments.production]
 store = "mionasbakery"
 theme = "203594301771" # horizon/main (live on production; a push needs --allow-live)
+
+[environments.staging]
+store = "mionasbakery"
+theme = "209356521803" # horizon/staging (unpublished; release candidates land here)

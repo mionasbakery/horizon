@@ -1,0 +1,31 @@
+name: Release candidate
+run-name: Release candidate ${{ github.ref_name }}
+
+on:
+  push:
+    tags: ['release-*-rc.*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://mionasbakery.myshopify.com?preview_theme_id=209356521803
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Pinned to the CLI version the theme is developed with.
+      - run: npm install --global @shopify/cli@4.8.4
+      - name: Push to the staging theme
+        run: npm run theme:push:staging
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
