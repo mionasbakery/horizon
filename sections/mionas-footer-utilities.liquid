@@ -1,4 +1,5 @@
 {% comment %}
+  Renders the footer's bottom row: copyright, policy and language links, and the release version.
   Fork of footer-utilities.liquid: same policies/copyright bar, plus a mionas-language-links block
   slot. The native section's block list is closed (no @theme/@app), so it can't take a custom
   block without this fork.
@@ -13,19 +14,37 @@
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <div
-  class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="section section--{{ section.settings.section_width }} utilities-section{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="--border-width: {{ section.settings.divider_thickness }}px;{% if section.settings.divider_color != blank %} --divider-color: {{ section.settings.divider_color }};{% endif %}"
   {{ section.shopify_attributes }}
 >
   <div
     class="utilities utilities--blocks-{{ section.blocks.size }} spacing-style"
-    style="{% render 'spacing-style', settings: section.settings %} --border-width: {{ section.settings.divider_thickness }}px;{% if section.settings.divider_color != blank %} --divider-color: {{ section.settings.divider_color }};{% endif %} --gap: {{ section.settings.gap }}px;"
+    style="{% render 'spacing-style', settings: section.settings %} --gap: {{ section.settings.gap }}px;"
     data-testid="footer-utilities"
   >
     {% content_for 'blocks' %}
+    {%- if section.settings.show_version -%}
+      {%- capture version -%}{%- render 'mionas-version' -%}{%- endcapture -%}
+      {%- assign version = version | strip | prepend: 'v' | escape -%}
+      {%- render 'mionas-text',
+        content: version,
+        variant: 'note',
+        color: 'inverse-primary-muted',
+        tag: 'p',
+        class: 'utilities__version'
+      -%}
+    {%- endif -%}
   </div>
 </div>
 
 {% stylesheet %}
+  /* The divider runs the full window width while the row keeps the page width, unlike the design
+     system's footer, which caps it at the content column. */
+  .utilities-section {
+    border-top: var(--border-width) solid var(--divider-color, var(--color-border));
+  }
+
   .utilities {
     width: 100%;
     display: flex;
@@ -33,7 +52,6 @@
     align-items: center;
     gap: var(--gap);
     text-wrap: nowrap;
-    border-top: var(--border-width) solid var(--divider-color, var(--color-border));
     color: var(--color-foreground-muted);
 
     @media screen and (min-width: 750px) {
@@ -58,6 +76,15 @@
       text-align: left;
       justify-self: start;
     }
+  }
+
+  /* The version spans the whole row under the blocks, so the column layout below still counts only them.
+     The links get their colour from `.utilities a`, which beats their text role, so the version copies it. */
+  .utilities .utilities__version {
+    color: var(--color-utilities, var(--color-foreground-muted));
+    grid-column: 1 / -1;
+    justify-self: center;
+    text-align: center;
   }
 
   /* Dynamic positioning based on number of blocks */
@@ -110,6 +137,13 @@
     "groups": ["footer"]
   },
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_version",
+      "label": "Show release version",
+      "info": "Shows the live release, such as v2026.10.06.2, under the row so the team can check which release a page runs.",
+      "default": true
+    },
     {
       "type": "select",
       "id": "section_width",
