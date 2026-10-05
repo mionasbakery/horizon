@@ -62,10 +62,13 @@ test('loads nothing until the application ID and client token are filled in', ()
   assert.deepEqual(Object.keys(handlers), []);
 });
 
-test('starts Datadog on the EU site with the Shopify plugin and the logged-in customer ID only', () => {
+test('starts Datadog on the EU site with the Shopify plugin and the logged-in customer', () => {
   const { calls, analytics } = runPixel(configured, {
     id: 'gid://shopify/Customer/42',
+    firstName: 'Laia',
+    lastName: 'Puig',
     email: 'a@b.c',
+    phone: '+34600000000',
   });
   const init = calls.filter((call) => call.method === 'init');
   assert.equal(init.length, 1);
@@ -75,7 +78,9 @@ test('starts Datadog on the EU site with the Shopify plugin and the logged-in cu
   assert.equal(init[0].args[0].service, 'mionas-storefront');
   assert.equal(init[0].args[0].env, 'production');
   assert.deepEqual(init[0].args[0].plugins, [{ shopifyPlugin: { shopifyAnalytics: analytics } }]);
-  assert.deepEqual(calls.find((call) => call.method === 'setUser').args, [{ id: '42' }]);
+  assert.deepEqual(calls.find((call) => call.method === 'setUser').args, [
+    { id: '42', name: 'Laia Puig', email: 'a@b.c' },
+  ]);
 });
 
 test('follows the page consent at start and when the visitor changes it in checkout', () => {
@@ -124,7 +129,7 @@ test('handles only checkout events, since the plugin starts a session only on ch
   ]);
 });
 
-test('a guest order sets the user from the order customer and omits absent fields', () => {
+test('a guest order sets the user from the order customer and checkout, omitting absent fields', () => {
   const { calls, handlers } = runPixel(configured);
   handlers.checkout_completed({
     ...base,
@@ -144,7 +149,7 @@ test('a guest order sets the user from the order customer and omits absent field
       },
     },
   });
-  assert.deepEqual(calls.find((call) => call.method === 'setUser').args, [{ id: '43' }]);
+  assert.deepEqual(calls.find((call) => call.method === 'setUser').args, [{ id: '43', email: 'guest@example.com' }]);
   assert.deepEqual(actions(calls), [
     [
       'purchase',
@@ -158,5 +163,15 @@ test('a guest order sets the user from the order customer and omits absent field
       },
     ],
   ]);
-  assert.doesNotMatch(JSON.stringify(calls), /@/);
+  assert.doesNotMatch(JSON.stringify(actions(calls)), /@/);
+});
+
+test('a purchase without an order customer keeps the logged-in customer as the user', () => {
+  const { calls, handlers } = runPixel(configured, { id: 'gid://shopify/Customer/42' });
+  handlers.checkout_completed({
+    ...base,
+    data: { checkout: { email: 'a@b.c', billingAddress: { firstName: 'Laia' }, order: { id: '77' } } },
+  });
+  const users = calls.filter((call) => call.method === 'setUser').map((call) => call.args[0]);
+  assert.deepEqual(users.at(-1), { id: '42', name: 'Laia', email: 'a@b.c' });
 });

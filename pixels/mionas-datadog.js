@@ -53,6 +53,14 @@ function checkoutProperties(checkout) {
   };
 }
 
+/** A customer's name and email, leaving out whatever Shopify didn't provide. */
+function profile(firstName, lastName, email) {
+  const name = [firstName, lastName].filter(Boolean).join(' ');
+  const fields = { name: name || undefined, email: email || undefined };
+  for (const key of Object.keys(fields)) if (fields[key] == null) delete fields[key];
+  return fields;
+}
+
 function consent(customerPrivacy) {
   return customerPrivacy?.analyticsProcessingAllowed ? 'granted' : 'not-granted';
 }
@@ -73,7 +81,7 @@ function start() {
   })(window, document, 'script', 'https://www.datadoghq-browser-agent.com/eu1/v7/datadog-rum-shopify.js', 'DD_RUM');
 
   const rum = window.DD_RUM;
-  const setUser = (id) => id && rum.onReady(() => rum.setUser({ id }));
+  const setUser = (id, fields) => id && rum.onReady(() => rum.setUser({ id, ...fields }));
   const action = (name, event, properties) => {
     const context = { platform: 'web', locale: pathLocale(event) };
     for (const [key, value] of Object.entries(properties)) if (value != null) context[key] = value;
@@ -98,7 +106,9 @@ function start() {
   api.customerPrivacy.subscribe('visitorConsentCollected', (event) => {
     rum.onReady(() => rum.setTrackingConsent(consent(event.customerPrivacy)));
   });
-  setUser(numericId(init.data?.customer?.id));
+  const customer = init.data?.customer;
+  const customerId = numericId(customer?.id);
+  setUser(customerId, profile(customer?.firstName, customer?.lastName, customer?.email));
 
   analytics.subscribe('checkout_started', (event) => {
     action('begin_checkout', event, checkoutProperties(event.data?.checkout));
@@ -108,7 +118,11 @@ function start() {
     const checkout = event.data?.checkout;
     const order = checkout?.order;
     // A guest checkout still creates a Shopify customer, so the order ties this session to them.
-    setUser(numericId(order?.customer?.id));
+    const billing = checkout?.billingAddress;
+    setUser(
+      numericId(order?.customer?.id) ?? customerId,
+      profile(billing?.firstName, billing?.lastName, checkout?.email)
+    );
     action('purchase', event, {
       transaction_id: numericId(order?.id),
       is_first_order: order?.customer?.isFirstOrder,

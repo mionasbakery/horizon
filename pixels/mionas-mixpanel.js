@@ -4,7 +4,7 @@
 
 const TOKEN = '273df65673c4c4ddd67d25a8b5ceb539';
 // The project stores its data in the EU, so events must go to the EU host.
-const ENDPOINT = 'https://api-eu.mixpanel.com/track?ip=1';
+const HOST = 'https://api-eu.mixpanel.com';
 const STORE_LOCALES = ['ca', 'en'];
 const PAGE_TYPES = {
   products: 'product',
@@ -25,6 +25,23 @@ function numericId(id) {
 function amount(money) {
   const value = Number(money?.amount);
   return Number.isFinite(value) ? value : undefined;
+}
+
+/** A customer's name and email, leaving out whatever Shopify didn't provide. */
+function profile(firstName, lastName, email) {
+  const name = [firstName, lastName].filter(Boolean).join(' ');
+  const fields = { $name: name || undefined, $email: email || undefined };
+  for (const key of Object.keys(fields)) if (fields[key] == null) delete fields[key];
+  return fields;
+}
+
+function post(path, record) {
+  fetch(`${HOST}${path}?ip=1`, {
+    method: 'POST',
+    mode: 'no-cors',
+    keepalive: true,
+    body: new URLSearchParams({ data: JSON.stringify([record]) }),
+  }).catch(() => {});
 }
 
 function pageProperties(event) {
@@ -62,14 +79,12 @@ function track(name, event, properties, userId) {
   for (const [key, value] of Object.entries(properties)) if (value != null) payload[key] = value;
   for (const key of Object.keys(payload)) if (payload[key] == null) delete payload[key];
 
-  fetch(ENDPOINT, {
-    method: 'POST',
-    mode: 'no-cors',
-    keepalive: true,
-    body: new URLSearchParams({
-      data: JSON.stringify([{ event: name, properties: payload }]),
-    }),
-  }).catch(() => {});
+  post('/track', { event: name, properties: payload });
+}
+
+/** Mixpanel shows a person's name and email from their profile, not from their events. */
+function identify(userId, fields) {
+  if (userId && Object.keys(fields).length) post('/engage', { $token: TOKEN, $distinct_id: userId, $set: fields });
 }
 
 function cents(value) {
@@ -115,7 +130,9 @@ function checkoutProperties(checkout) {
   };
 }
 
-const customerId = numericId(init.data?.customer?.id);
+const customer = init.data?.customer;
+const customerId = numericId(customer?.id);
+identify(customerId, profile(customer?.firstName, customer?.lastName, customer?.email));
 
 analytics.subscribe('page_viewed', (event) => {
   const { page_location, page_type } = pageProperties(event);
@@ -140,6 +157,8 @@ analytics.subscribe('checkout_completed', (event) => {
   const order = checkout?.order;
   // A guest checkout still creates a Shopify customer, so the order ties this browser to them.
   const userId = numericId(order?.customer?.id) ?? customerId;
+  const billing = checkout?.billingAddress;
+  identify(userId, profile(billing?.firstName, billing?.lastName, checkout?.email));
   track(
     'purchase',
     { ...event, id: `order-${numericId(order?.id) ?? event.id}` },

@@ -4,17 +4,19 @@ import test from 'node:test';
 
 const source = await readFile(new URL('../pixels/mionas-mixpanel.js', import.meta.url), 'utf8');
 
-/** Runs the pixel against stub Shopify globals and returns the events it posts to Mixpanel. */
+/** Runs the pixel against stub Shopify globals and returns the events and profile updates it posts. */
 function runPixel(customer = null) {
   const sent = [];
+  const profiles = [];
   const handlers = {};
   const analytics = { subscribe: (name, handler) => (handlers[name] = handler) };
   const fetch = (url, options) => {
-    sent.push({ url, ...JSON.parse(new URLSearchParams(options.body.toString()).get('data'))[0] });
+    const record = { url, ...JSON.parse(new URLSearchParams(options.body.toString()).get('data'))[0] };
+    (url.includes('/engage') ? profiles : sent).push(record);
     return Promise.resolve();
   };
   new Function('analytics', 'init', 'fetch', source)(analytics, { data: { customer } }, fetch);
-  return { sent, handlers };
+  return { sent, profiles, handlers };
 }
 
 const base = {
@@ -107,4 +109,30 @@ test('a purchase carries the order as transaction_id and identifies the order cu
   assert.equal(properties.is_first_order, true);
   assert.deepEqual(properties.items, [{ item_id: '9', item_name: 'Cookie', price: 4.2, quantity: 2 }]);
   assert.doesNotMatch(JSON.stringify(sent), /@/);
+});
+
+test('a purchase sets the order customer\'s name and email on their profile', () => {
+  const { profiles, handlers } = runPixel();
+  handlers.checkout_completed({
+    ...base,
+    data: {
+      checkout: {
+        email: 'guest@example.com',
+        billingAddress: { firstName: 'Laia', lastName: 'Puig' },
+        order: { id: 'gid://shopify/Order/77', customer: { id: 'gid://shopify/Customer/43' } },
+      },
+    },
+  });
+  assert.equal(profiles.length, 1);
+  assert.match(profiles[0].url, /^https:\/\/api-eu\.mixpanel\.com\/engage/);
+  assert.equal(profiles[0].$distinct_id, '43');
+  assert.deepEqual(profiles[0].$set, { $name: 'Laia Puig', $email: 'guest@example.com' });
+});
+
+test('a logged-in customer\'s profile is set once per page, and an anonymous visitor gets none', () => {
+  const { profiles } = runPixel({ id: 'gid://shopify/Customer/42', firstName: 'Laia', email: 'a@b.c' });
+  assert.equal(profiles.length, 1);
+  assert.equal(profiles[0].$distinct_id, '42');
+  assert.deepEqual(profiles[0].$set, { $name: 'Laia', $email: 'a@b.c' });
+  assert.deepEqual(runPixel().profiles, []);
 });

@@ -44,7 +44,9 @@
             trackingConsent: 'not-granted',
           });
           {% if customer -%}
-            rum.setUser({ id: '{{ customer.id }}' });
+            var user = { id: '{{ customer.id }}', name: {{ customer.name | json }}, email: {{ customer.email | json }} };
+            for (var key in user) if (!user[key]) delete user[key];
+            rum.setUser(user);
           {%- else -%}
             rum.clearUser();
           {%- endif %}

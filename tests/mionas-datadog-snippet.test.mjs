@@ -21,6 +21,8 @@ function renderScript({ customerId = null } = {}) {
       customerId ? loggedIn : anonymous
     )
     .replace(/\{\{ customer\.id \}\}/g, String(customerId))
+    .replace(/\{\{ customer\.name \| json \}\}/g, JSON.stringify('Laia Puig'))
+    .replace(/\{\{ customer\.email \| json \}\}/g, JSON.stringify(''))
     .replace(/\{\{ ([\w.]+) \}\}/g, (_, name) => values[name]);
 }
 
@@ -190,10 +192,12 @@ test('sends a successful cart add with the added item, and ignores removals and 
   ]);
 });
 
-test('identifies a logged-in customer by ID only and clears the user otherwise', () => {
-  assert.deepEqual(runSnippet({ customerId: 42 }).calls.find((call) => call.method === 'setUser').args, [{ id: '42' }]);
+test('identifies a logged-in customer by ID, name and email, leaving out blank fields', () => {
+  assert.deepEqual(runSnippet({ customerId: 42 }).calls.find((call) => call.method === 'setUser').args, [
+    { id: '42', name: 'Laia Puig' },
+  ]);
+  assert.match(source, /email: \{\{ customer\.email \| json \}\}/);
   assert.ok(runSnippet().calls.some((call) => call.method === 'clearUser'));
-  assert.doesNotMatch(source, /email/);
 });
 
 test('the newsletter dialog sends its funnel through the snippet with GA4 names', () => {
