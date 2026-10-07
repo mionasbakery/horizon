@@ -10,7 +10,6 @@ const MionasDialog = /** @type {typeof import('./mionas-dialog.js').MionasDialog
 /** Sources of an open that count as the dialog being shown, for the funnel, as their GA4 `trigger`. */
 const SHOWN_TRIGGERS = { auto: 'auto', launcher: 'corner_fold' };
 /** The GA4 name of each funnel step. GA4 has no recommended event for a close, so close_promotion is custom. */
-const FUNNEL_EVENTS = { shown: 'view_promotion', closed: 'close_promotion', subscribed: 'sign_up' };
 const PROMOTION = { promotion_id: 'newsletter_popup', promotion_name: 'Newsletter popup' };
 /** Plain words for the debug log. */
 const OPEN_NAMES = {
@@ -213,22 +212,17 @@ class MionasNewsletterDialog extends MionasDialog {
   };
 
   /**
-   * Sends a funnel step with its GA4 name and parameters. Shopify customer events carry it as
-   * newsletter_popup_{step}, which the GA4 and Mixpanel custom pixels rename.
-   * @param {keyof typeof FUNNEL_EVENTS} step
+   * Sends a funnel step as the newsletter_popup_{step} customer event, which the GA4 and Mixpanel
+   * custom pixels rename.
+   * @param {'shown' | 'closed' | 'subscribed'} step
    * @param {Record<string, string>} params
    */
   #track(step, params) {
-    const name = FUNNEL_EVENTS[step];
     try {
       window.Shopify?.analytics?.publish?.(`newsletter_popup_${step}`, params);
-      // Datadog's pixel has no session outside checkout, so snippets/mionas-datadog.liquid sends it.
-      window.mionasDatadog?.action(name, params);
     } catch {
       // Analytics must never break the dialog.
     }
-
-    window.clarity?.('event', name);
   }
 
   get #postedKey() {

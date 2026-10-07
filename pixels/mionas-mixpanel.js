@@ -66,12 +66,27 @@ function pageProperties(event) {
   return { locale, page_location: `${location?.origin ?? ''}${path}`, page_type: pageType };
 }
 
+let clientIdShared = false;
+
+/**
+ * Leaves clientId in a cookie for snippets/mionas-mixpanel-replay.liquid, which can't read it, so each
+ * replay joins the same visitor as these events.
+ */
+function shareClientId(clientId) {
+  if (clientIdShared || !clientId) return;
+  clientIdShared = true;
+  browser.cookie
+    .set(`mionas_client_id=${encodeURIComponent(clientId)}; path=/; max-age=31536000; samesite=lax`)
+    .catch(() => {});
+}
+
 /**
  * Sends one event over HTTP with Shopify's clientId as the device, rather than through the browser
  * SDK: clientId is the one visitor ID the storefront, the pixel and checkout all share.
  */
 function track(name, event, properties, userId) {
   const deviceId = event.clientId;
+  shareClientId(deviceId);
   const page = pageProperties(event);
   const payload = {
     token: TOKEN,

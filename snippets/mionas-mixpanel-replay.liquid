@@ -1,0 +1,72 @@
+{% doc %}
+  Records Mixpanel session replays and heatmap clicks on the storefront once the visitor allows analytics.
+{% enddoc %}
+{%- comment -%}
+  It sends no events; pixels/mionas-mixpanel.js tracks those. Recording can't live in the pixel, whose
+  sandbox can't see the page.
+  layout/theme.liquid renders this after content_for_header, which defines the consent API; an upstream
+  Horizon merge that rewrites the layout can drop that line. The token matches the pixel's.
+{%- endcomment -%}
+{%- unless request.design_mode -%}
+  <script>
+    (function () {
+      var token = '273df65673c4c4ddd67d25a8b5ceb539';
+      var userId = {{ customer.id | json }};
+      var started = false;
+
+      function readClientId() {
+        var match = document.cookie.match(/(?:^|;\s*)mionas_client_id=([^;]*)/);
+        return match ? decodeURIComponent(match[1]) : '';
+      }
+
+      // The pixel writes the cookie on its first event after consent, so a new visitor's first page waits
+      // for it, and goes unrecorded if it never comes.
+      function whenClientId(callback, triesLeft) {
+        var clientId = readClientId();
+        if (clientId) return callback(clientId);
+        if (triesLeft > 0) {
+          setTimeout(function () {
+            whenClientId(callback, triesLeft - 1);
+          }, 500);
+        }
+      }
+
+      function record(clientId) {
+        var config = {
+          // The project stores its data in the EU, and replays go to the same host as events.
+          api_host: 'https://api-eu.mixpanel.com',
+          // Recording starts by hand below, once the visitor matches the pixel's, so a replay never
+          // changes visitor partway.
+          record_sessions_percent: 0,
+          record_heatmap_data: true,
+          // The SDK hides all text and images by default; the storefront shows only the shop's own
+          // copy and product photos. Form fields stay masked.
+          record_mask_all_text: false,
+          record_block_selector: 'video, audio',
+          loaded: function (mixpanel) {
+            mixpanel.register({ distinct_id: userId ? String(userId) : '$device:' + clientId, $device_id: clientId });
+            if (userId) mixpanel.register({ $user_id: String(userId) });
+            else mixpanel.unregister('$user_id');
+            mixpanel.start_session_recording();
+          },
+        };
+        window.mixpanel = { __SV: 1.2, _i: [[token, config, 'mixpanel']] };
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://cdn.jsdelivr.net/npm/mixpanel-browser@2.83.0/dist/mixpanel.min.js';
+        document.head.appendChild(script);
+      }
+
+      function applyConsent() {
+        if (started || window.Shopify?.customerPrivacy?.analyticsProcessingAllowed?.() !== true) return;
+        started = true;
+        whenClientId(record, 20);
+      }
+
+      window.Shopify?.loadFeatures?.([{ name: 'consent-tracking-api', version: '0.1' }], function (error) {
+        if (!error) applyConsent();
+      });
+      document.addEventListener('visitorConsentCollected', applyConsent);
+    })();
+  </script>
+{%- endunless -%}

@@ -7,6 +7,7 @@ const source = await readFile(new URL('../pixels/mionas-mixpanel.js', import.met
 /** Runs the pixel against stub Shopify globals and returns the events and profile updates it posts. */
 function runPixel(customer = null, cookies = {}) {
   const sent = [];
+  const cookieWrites = [];
   const profiles = [];
   const handlers = {};
   const analytics = { subscribe: (name, handler) => (handlers[name] = handler) };
@@ -15,9 +16,11 @@ function runPixel(customer = null, cookies = {}) {
     (url.includes('/engage') ? profiles : sent).push(record);
     return Promise.resolve();
   };
-  const browser = { cookie: { get: async (name) => cookies[name] ?? '' } };
+  const browser = {
+    cookie: { get: async (name) => cookies[name] ?? '', set: async (cookie) => cookieWrites.push(cookie) },
+  };
   new Function('analytics', 'init', 'browser', 'fetch', source)(analytics, { data: { customer } }, browser, fetch);
-  return { sent, profiles, handlers };
+  return { sent, profiles, handlers, cookieWrites };
 }
 
 const base = {
@@ -166,4 +169,12 @@ test('reads the version for each event, so a release mid-visit shows up at once'
     sent.map(({ properties }) => properties.theme_version),
     ['unknown', '2026.10.06']
   );
+});
+
+test('leaves clientId in a cookie once, for the storefront replay', async () => {
+  const { handlers, cookieWrites } = runPixel();
+  handlers.page_viewed(base);
+  handlers.product_viewed({ ...base, data: { productVariant: variant } });
+  await flush();
+  assert.deepEqual(cookieWrites, ['mionas_client_id=client-1; path=/; max-age=31536000; samesite=lax']);
 });
