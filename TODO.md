@@ -35,6 +35,9 @@ Clarity and records no Mixpanel replays.
   - If the popup funnel in Mixpanel is enough, fix that comment and close this.
   - If GA4 should have it too, add a small GA4 custom pixel in `pixels/` that sends only those three
     events. Page views must stay with the Google app, or GA4 counts them twice.
+- [ ] **Uninstall the Shopify Inbox app** under Settings → Apps. The chat runs from the app, not
+  from the theme: its embed is already gone from `config/settings_data.json`, yet the chat still shows
+  until the app is removed. Horizon's own `snippets/chat-drawer.liquid` stays, inert without Inbox.
 - [ ] **Check the other admin tracking spots** for anything left over:
   - Customer events: app pixels for Meta, TikTok or Pinterest.
   - Online Store → Preferences: an old Google Analytics or Facebook Pixel field.

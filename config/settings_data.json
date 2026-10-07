@@ -117,28 +117,6 @@
         "type": "shopify://apps/calla-delivery-pickup-date/blocks/cart_drawer/3613d08c-d180-43c4-8f66-9aca9e0d28fc",
         "disabled": true,
         "settings": {}
-      },
-      "15683396631634586217": {
-        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
-        "disabled": false,
-        "settings": {
-          "greeting_message": "Hola, ¿en qué podemos ayudarte? Pregúntanos por sabores, packs, envíos, tu pedido o cualquier otra cosa que necesites.",
-          "show_featured_products": true,
-          "featured_products": [],
-          "background_color": "#fff8f0",
-          "font_color": "#11181c",
-          "agent_invert_activator_colors": false,
-          "button_color": "#000000",
-          "button_icon": "no_icon",
-          "button_text": "need_help",
-          "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "lowest",
-          "agent_inherit_fonts": true,
-          "agent_font": "system_ui_n4",
-          "agent_font_size": 14,
-          "agent_activator_font_size": 16,
-          "agent_border_radius": 24
-        }
       }
     },
     "color_palette": {
