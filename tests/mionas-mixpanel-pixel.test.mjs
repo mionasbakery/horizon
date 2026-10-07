@@ -178,3 +178,55 @@ test('leaves clientId in a cookie once, for the storefront replay', async () => 
   await flush();
   assert.deepEqual(cookieWrites, ['mionas_client_id=client-1; path=/; max-age=31536000; samesite=lax']);
 });
+
+/** A page view landing on `search`, arriving from `referrer`. */
+function landing(search, referrer = '') {
+  const location = { origin: 'https://mionasbakery.com', hostname: 'mionasbakery.com', pathname: '/', search };
+  return { ...base, context: { document: { location, referrer } } };
+}
+
+test('the page view carries UTM tags, the click ID network and the referring site, and nothing else', async () => {
+  const { sent, handlers } = runPixel();
+  handlers.page_viewed(
+    landing(
+      '?utm_source=instagram&utm_medium=social&utm_campaign=panellets&utm_content=bio&email=a@b.c&fbclid=XYZ',
+      'https://l.instagram.com/?u=https%3A%2F%2Fmionasbakery.com'
+    )
+  );
+  await flush();
+  const { utm_source, utm_medium, utm_campaign, utm_content, click_id_network, $referring_domain } = sent[0].properties;
+  assert.deepEqual(
+    { utm_source, utm_medium, utm_campaign, utm_content, click_id_network, $referring_domain },
+    {
+      utm_source: 'instagram',
+      utm_medium: 'social',
+      utm_campaign: 'panellets',
+      utm_content: 'bio',
+      click_id_network: 'meta',
+      $referring_domain: 'l.instagram.com',
+    }
+  );
+  assert.doesNotMatch(JSON.stringify(sent[0]), /XYZ|a@b\.c/);
+});
+
+test('leaves out internal, checkout and payment referrers', async () => {
+  const { sent, handlers } = runPixel();
+  handlers.page_viewed(landing('', 'https://mionasbakery.com/collections/all'));
+  handlers.page_viewed(landing('', 'https://mionas-bakery.myshopify.com/checkouts/1'));
+  handlers.page_viewed(landing('', 'https://www.paypal.com/checkoutnow'));
+  handlers.page_viewed(landing('', 'not a url'));
+  await flush();
+  assert.deepEqual(
+    sent.map(({ properties }) => properties.$referring_domain),
+    [undefined, undefined, undefined, undefined]
+  );
+});
+
+test('only the page view carries traffic', async () => {
+  const { sent, handlers } = runPixel();
+  const event = landing('?utm_source=newsletter&gclid=1');
+  handlers.product_viewed({ ...event, data: { productVariant: variant } });
+  await flush();
+  assert.equal(sent[0].properties.utm_source, undefined);
+  assert.equal(sent[0].properties.click_id_network, undefined);
+});

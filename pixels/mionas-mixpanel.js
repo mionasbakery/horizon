@@ -17,6 +17,20 @@ const PAGE_TYPES = {
   account: 'account',
 };
 
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id'];
+// fbclid rides on organic Instagram and Facebook links too, so a click ID names the network, not paid traffic.
+const CLICK_ID_NETWORKS = {
+  gclid: 'google',
+  gbraid: 'google',
+  wbraid: 'google',
+  dclid: 'google',
+  fbclid: 'meta',
+  ttclid: 'tiktok',
+  msclkid: 'microsoft',
+};
+// Checkout and PayPal send visitors back here; GA4 would count them as referrals unless excluded too.
+const OWN_REFERRERS = /(^|\.)(myshopify\.com|shopify\.com|paypal\.com)$/;
+
 /** Shopify IDs arrive as numbers or as gid://shopify/Customer/123; Mixpanel needs one stable form. */
 function numericId(id) {
   return id == null ? undefined : String(id).split('/').pop();
@@ -78,6 +92,30 @@ function shareClientId(clientId) {
   browser.cookie
     .set(`mionas_client_id=${encodeURIComponent(clientId)}; path=/; max-age=31536000; samesite=lax`)
     .catch(() => {});
+}
+
+/**
+ * How the visitor reached the page, for Mixpanel's attribution: UTM tags as GA4 reads them, the network
+ * behind a click ID and the referring site. The rest of the query string and the click ID itself stay out.
+ */
+function trafficProperties(event) {
+  const document = event.context?.document;
+  const params = new URLSearchParams(document?.location?.search ?? '');
+  const properties = {};
+  for (const key of UTM_KEYS) if (params.get(key)) properties[key] = params.get(key);
+  const clickId = Object.keys(CLICK_ID_NETWORKS).find((key) => params.has(key));
+  if (clickId) properties.click_id_network = CLICK_ID_NETWORKS[clickId];
+
+  let referrer;
+  try {
+    referrer = new URL(document?.referrer).hostname;
+  } catch {
+    referrer = undefined;
+  }
+  if (referrer && referrer !== document?.location?.hostname && !OWN_REFERRERS.test(referrer)) {
+    properties.$referring_domain = referrer;
+  }
+  return properties;
 }
 
 /**
@@ -162,7 +200,8 @@ identify(customerId, profile(customer?.firstName, customer?.lastName, customer?.
 
 analytics.subscribe('page_viewed', (event) => {
   const { page_location, page_type } = pageProperties(event);
-  track('page_view', event, { page_location, page_type }, customerId);
+  // Only the page view carries traffic: Mixpanel's attribution reads each one as a touchpoint.
+  track('page_view', event, { page_location, page_type, ...trafficProperties(event) }, customerId);
 });
 
 analytics.subscribe('product_viewed', (event) => {
