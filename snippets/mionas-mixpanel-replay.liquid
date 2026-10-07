@@ -2,16 +2,18 @@
   Records Mixpanel session replays and heatmap clicks on the storefront once the visitor allows analytics.
 {% enddoc %}
 {%- comment -%}
-  It sends no events; pixels/mionas-mixpanel.js tracks those. Recording can't live in the pixel, whose
+  Shop events come from pixels/mionas-mixpanel.js; the SDK adds only Mixpanel's heatmap data
+  ($mp_click, $mp_web_page_view). Recording can't live in the pixel, whose
   sandbox can't see the page.
   layout/theme.liquid renders this after content_for_header, which defines the consent API; an upstream
   Horizon merge that rewrites the layout can drop that line. The token matches the pixel's.
 {%- endcomment -%}
-{%- unless request.design_mode -%}
+{%- unless request.design_mode or settings.mionas_replay_sessions_percent == 0 -%}
   <script>
     (function () {
       var token = '273df65673c4c4ddd67d25a8b5ceb539';
       var userId = {{ customer.id | json }};
+      var recordSessionsPercent = {{ settings.mionas_replay_sessions_percent | json }};
       var started = false;
 
       function readClientId() {
@@ -32,29 +34,24 @@
       }
 
       function record(clientId) {
-        var config = {
-          // The project stores its data in the EU, and replays go to the same host as events.
-          api_host: 'https://api-eu.mixpanel.com',
-          // Recording starts by hand below, once the visitor matches the pixel's, so a replay never
-          // changes visitor partway.
-          record_sessions_percent: 0,
-          record_heatmap_data: true,
-          // The SDK hides all text and images by default; the storefront shows only the shop's own
-          // copy and product photos. Form fields stay masked.
-          record_mask_all_text: false,
-          record_block_selector: 'video, audio',
-          loaded: function (mixpanel) {
-            mixpanel.register({ distinct_id: userId ? String(userId) : '$device:' + clientId, $device_id: clientId });
-            if (userId) mixpanel.register({ $user_id: String(userId) });
-            else mixpanel.unregister('$user_id');
-            mixpanel.start_session_recording();
-          },
-        };
-        window.mixpanel = { __SV: 1.2, _i: [[token, config, 'mixpanel']] };
-        var script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://cdn.jsdelivr.net/npm/mixpanel-browser@2.83.0/dist/mixpanel.min.js';
-        document.head.appendChild(script);
+        import('https://cdn.jsdelivr.net/npm/mixpanel-browser@2.83.0/dist/mixpanel.module.min.js').then(function (sdk) {
+          var mixpanel = sdk.default;
+          mixpanel.init(token, {
+            // The project stores its data in the EU, and replays go to the same host as events.
+            api_host: 'https://api-eu.mixpanel.com',
+            // Mixpanel samples each page load, but a recording already running resumes on every page.
+            record_sessions_percent: recordSessionsPercent,
+            record_heatmap_data: true,
+            // The SDK hides all text and images by default; the storefront shows only the shop's own
+            // copy and product photos. Form fields stay masked.
+            record_mask_all_text: false,
+            record_block_selector: 'video, audio',
+          });
+          // Set straight after init: the recorder reads the visitor on each upload, not when it starts.
+          mixpanel.register({ distinct_id: userId ? String(userId) : '$device:' + clientId, $device_id: clientId });
+          if (userId) mixpanel.register({ $user_id: String(userId) });
+          else mixpanel.unregister('$user_id');
+        });
       }
 
       function applyConsent() {

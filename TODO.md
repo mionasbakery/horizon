@@ -10,7 +10,7 @@ else tags links).
 
 ## 1. Release the theme
 
-- [ ] Release the theme with `/mionas-release`.
+- [x] Release the theme with `/mionas-release`. Released as `2026.10.08` on 2026-10-08.
 
 That release removes the Datadog snippet, turns off the Clarity app embed and adds
 `snippets/mionas-mixpanel-replay.liquid`. Until it is live, the store still loads Datadog and
@@ -18,22 +18,23 @@ Clarity and records no Mixpanel replays.
 
 ## 2. Shopify admin
 
-- [ ] **Paste the updated Mixpanel pixel.** Settings → Customer events → the Mixpanel custom pixel:
+- [x] **Paste the updated Mixpanel pixel.** Done 2026-10-08. Settings → Customer events → the Mixpanel custom pixel:
   replace its code with `pixels/mionas-mixpanel.js`. Keep its permission at "Required → Analytics"
   and "Data collected does not qualify as data sale". This one paste brings two changes:
   - It saves Shopify's visitor ID in the `mionas_client_id` cookie. The replay snippet needs that
     ID to tie each recording to the visitor's events. Without it, nothing gets recorded.
   - Page views where a visit lands carry the UTM tags, the click-ID network (`click_id_network`)
     and the referring site (`$referring_domain`).
-- [ ] **Delete the Datadog custom pixel**, in the same Customer events list. Its code is no longer in
-  the repo.
-- [ ] **Uninstall the Microsoft Clarity app** under Settings → Apps. The release only turns off its
+- [x] **Delete the Datadog custom pixel**, in the same Customer events list. Done 2026-10-08.
+- [x] **Uninstall the Microsoft Clarity app** (done 2026-10-08) under Settings → Apps. The release only turns off its
   embed; the app stays installed until you remove it.
-- [ ] **Look for a GA4 custom pixel** in Customer events. `assets/mionas-newsletter-dialog.js` says
-  one renames the newsletter popup events for GA4, but it isn't in the repo.
-  - If it exists, copy its code into `pixels/` so it's tracked like the Mixpanel one.
-  - Make sure it only sends the popup events. Page views already come from the Google & YouTube
-    app, and sending them from the pixel too would count them twice.
+- [ ] **Decide whether GA4 should get the newsletter popup events.** GA4 runs through the Google &
+  YouTube app, which sends only Shopify's standard events (page views, cart, checkout). The popup's
+  own events (`view_promotion`, `close_promotion`, `sign_up`) therefore reach Mixpanel only, although
+  the comment in `assets/mionas-newsletter-dialog.js` says a GA4 custom pixel renames them.
+  - If the popup funnel in Mixpanel is enough, fix that comment and close this.
+  - If GA4 should have it too, add a small GA4 custom pixel in `pixels/` that sends only those three
+    events. Page views must stay with the Google app, or GA4 counts them twice.
 - [ ] **Check the other admin tracking spots** for anything left over:
   - Customer events: app pixels for Meta, TikTok or Pinterest.
   - Online Store → Preferences: an old Google Analytics or Facebook Pixel field.

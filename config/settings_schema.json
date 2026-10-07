@@ -2116,5 +2116,21 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Mionas: Analytics",
+    "settings": [
+      {
+        "type": "range",
+        "id": "mionas_replay_sessions_percent",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "label": "Pages That Start a Mixpanel Recording",
+        "info": "Share of page loads, after analytics consent, that start a session replay with heatmaps. A recording that has started continues on the visitor's next pages. 0 turns recording off.",
+        "default": 100
+      }
+    ]
   }
 ]
