@@ -149,7 +149,7 @@
     endcomment
     assign tooltip = block_settings.tooltip
     if tooltip == blank and block_settings.icon_only
-      assign tooltip = add_to_cart_text
+      assign tooltip = 'actions.add_to_cart' | t
     endif
     if block_settings.icon_only
       assign wrapper_classes = wrapper_classes | append: ' mionas-add-to-cart--icon-only'
@@ -314,10 +314,14 @@
 
      (0,2,0) specificity is needed to outrank whichever size class is selected; aspect-ratio squares
      the button to the height that size sets, rather than naming a fixed width. */
+  /* gap 0: the collapsed label is still a flex item, and the button's gap would push the icon off
+     centre. */
   .mionas-add-to-cart--icon-only .mionas-button {
     font-size: 0;
     padding-inline: 0;
     aspect-ratio: 1;
+    gap: 0;
+    justify-content: center;
   }
 
   .mionas-add-to-cart__quick-add {
@@ -399,7 +403,7 @@
       "type": "text",
       "id": "tooltip",
       "label": "Tooltip",
-      "info": "Shown when the pointer rests on the button. Leave empty for none, or for the label when the button shows only its icon."
+      "info": "Shown when the pointer rests on the button. Leave empty for none, or for the theme's translated \"Add to cart\" when the button shows only its icon."
     },
     {
       "type": "checkbox",

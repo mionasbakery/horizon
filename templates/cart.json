@@ -9,21 +9,81 @@
  */
 {
   "sections": {
-    "cart": {
-      "type": "mionas-cart",
-      "name": "Mionas: Cart",
+    "heading": {
+      "type": "section",
+      "name": "Section - Heading",
       "blocks": {
         "breadcrumbs": {
           "type": "mionas-breadcrumbs",
-          "static": true,
+          "name": "Mionas: Breadcrumbs",
           "settings": {
             "menu": "",
             "padding-block-start": 0,
             "padding-block-end": 0
-          },
-          "name": "Mionas: Breadcrumbs",
-          "blocks": {}
+          }
         },
+        "title_row": {
+          "type": "mionas-group",
+          "name": "Mionas: Group - Title and Count",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "wrap_children": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "gap": 8,
+            "width": "fill",
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "title": {
+              "type": "mionas-text",
+              "name": "Mionas: Text - Title",
+              "settings": {
+                "text": "<p>Tu cesta</p>",
+                "variant": "display",
+                "color": "default",
+                "tag": "h1"
+              }
+            },
+            "count": {
+              "type": "mionas-cart-count",
+              "name": "Mionas: Cart Count",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "title",
+            "count"
+          ]
+        }
+      },
+      "block_order": [
+        "breadcrumbs",
+        "title_row"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "background_media": "none",
+        "border": "none",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 24
+      }
+    },
+    "cart": {
+      "type": "mionas-cart",
+      "name": "Mionas: Cart",
+      "blocks": {
         "free-shipping": {
           "type": "mionas-card",
           "static": true,
@@ -69,7 +129,28 @@
                   "comprar-cookies"
                 ]
               },
-              "blocks": {}
+              "blocks": {
+                "upsell": {
+                  "type": "_mionas-product-upsell",
+                  "static": true,
+                  "name": "Mionas: Product Upsell",
+                  "settings": {},
+                  "blocks": {
+                    "upsell-add-to-cart": {
+                      "type": "mionas-add-to-cart",
+                      "static": true,
+                      "name": "Mionas: Add to Cart",
+                      "settings": {
+                        "variant": "secondary",
+                        "size": "sm",
+                        "icon_only": true,
+                        "full_width": false
+                      },
+                      "blocks": {}
+                    }
+                  }
+                }
+              }
             }
           },
           "block_order": [
@@ -145,13 +226,13 @@
       "settings": {
         "free_shipping_threshold": 30,
         "free_shipping_position": "top",
-        "shop_collection": "comprar-cookies",
-        "padding-block-start": 48,
+        "padding-block-start": 0,
         "padding-block-end": 48
       }
     }
   },
   "order": [
+    "heading",
     "cart"
   ]
 }

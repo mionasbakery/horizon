@@ -51,7 +51,6 @@
       "text": "T'hem enviat un correu electrònic amb el teu codi de descompte. Introdueix-lo en pagar la teva primera compra per aplicar-lo."
     },
     "cart": {
-      "title": "La teva cistella",
       "count": {
         "one": "{{ count }} producte",
         "other": "{{ count }} productes"

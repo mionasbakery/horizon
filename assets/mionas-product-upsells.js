@@ -69,7 +69,7 @@ class MionasProductUpsells extends HTMLElement {
     const params = new URLSearchParams({
       product_id: productId,
       limit: '10',
-      section_id: 'mionas-upsell-list',
+      section_id: this.dataset.sectionId ?? '',
       intent: 'related',
       // The section filters out what is already in the cart, so the URL varies with the cart to
       // avoid a cached response from before the last change.
@@ -95,7 +95,7 @@ class MionasProductUpsells extends HTMLElement {
     const found = new Map();
 
     for (const doc of docs) {
-      [...doc.querySelectorAll('.mionas-product-upsell-card')].forEach((element, position) => {
+      [...doc.querySelectorAll('.mionas-product-upsell')].forEach((element, position) => {
         const card = /** @type {HTMLElement} */ (element);
         const handles = (card.dataset.collections ?? '').split(',');
         if (allowed.length > 0 && !handles.some((handle) => allowed.includes(handle))) return;
@@ -122,16 +122,6 @@ class MionasProductUpsells extends HTMLElement {
       )
       .slice(0, 4)
       .map(({ card }) => card);
-
-    // The cards' add-to-cart block renders with its default settings, so the card look and the
-    // tooltip from this block's settings are set here.
-    for (const card of shown) {
-      const wrapper = card.querySelector('.mionas-add-to-cart');
-      if (wrapper && this.dataset.buttonTooltip) wrapper.setAttribute('title', this.dataset.buttonTooltip);
-      const button = card.querySelector('.mionas-button');
-      button?.classList.remove('mionas-button--primary');
-      button?.classList.add('mionas-button--secondary', 'mionas-button--sm');
-    }
 
     this.#show(shown);
   }

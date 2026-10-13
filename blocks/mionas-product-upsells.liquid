@@ -1,22 +1,34 @@
 {%- doc -%}
-  Renders the upsell cards inside the cart page's free-shipping card while the cart is under
-  the threshold. The upsell cards come from sections/mionas-upsell-list.liquid through
-  assets/mionas-product-upsells.js; this block holds the cart data the script ranks by, and takes
-  the threshold from blocks/mionas-free-shipping-bar.liquid on the same page. Renders nothing for an
-  empty cart.
+  Renders up to four products to add to the cart while it is under the free-shipping threshold, each
+  a blocks/_mionas-product-upsell.liquid card. Renders nothing for an empty cart.
 {%- enddoc -%}
+
+{%- comment -%}
+  Shopify only returns related products to the recommendations endpoint, so
+  assets/mionas-product-upsells.js asks it to render this cart section (section.id) for each cart
+  item. In that request recommendations.performed is true, sections/mionas-cart.liquid renders just
+  its free-shipping card, and this block renders the cards with the settings placed in the editor.
+  On the page itself it renders one inert card, which puts the card's CSS in the page and shows
+  the editor what the cards look like.
+{%- endcomment -%}
 
 {%- liquid
   assign latest_product = cart.items.first.product
-  assign source_ids = cart.items | map: 'product_id' | uniq | slice: 0, 3 | join: ','
+  assign cart_product_ids = cart.items | map: 'product_id'
+  assign source_ids = cart_product_ids | uniq | slice: 0, 3 | join: ','
   assign collection_handles = block.settings.collections | map: 'handle' | join: ','
-  assign button_tooltip = block.settings.button_tooltip
-  if button_tooltip == blank
-    assign button_tooltip = 'actions.add_to_cart' | t
-  endif
 -%}
 
-{%- if cart.item_count > 0 -%}
+{%- if recommendations.performed -%}
+  <div class="mionas-product-upsells__results">
+    {%- for product in recommendations.products -%}
+      {%- if cart_product_ids contains product.id or product.available == false or product.has_only_default_variant == false -%}
+        {%- continue -%}
+      {%- endif -%}
+      {% content_for 'block', type: '_mionas-product-upsell', id: 'upsell', closest.product: product %}
+    {%- endfor -%}
+  </div>
+{%- elsif cart.item_count > 0 -%}
   <script src="{{ 'mionas-product-upsells.js' | asset_url }}" type="module"></script>
 
   <div
@@ -25,24 +37,16 @@
     data-total="{{ cart.total_price }}"
     {{ block.shopify_attributes }}
   >
-    {%- comment -%}
-      The recommendations response carries no stylesheet, so one inert card is rendered here to put
-      the card and add-to-cart files in the page's render tree, which is what ships their CSS.
-    {%- endcomment -%}
     <template>
-      {%- capture button -%}
-        {% content_for 'block', type: 'mionas-add-to-cart', id: 'static-add-to-cart', closest.product: latest_product %}
-      {%- endcapture -%}
-      {% render 'mionas-product-upsell-card', product: latest_product, button: button %}
-      {% render 'mionas-button-class', variant: 'secondary', size: 'sm' %}
+      {% content_for 'block', type: '_mionas-product-upsell', id: 'upsell', closest.product: latest_product %}
     </template>
 
     <mionas-product-upsells
       data-skip-node-update
       hidden
       data-url="{{ routes.product_recommendations_url }}"
+      data-section-id="{{ section.id }}"
       data-collections="{{ collection_handles }}"
-      data-button-tooltip="{{ button_tooltip | escape }}"
     >
       <div class="mionas-product-upsells__list" data-list></div>
     </mionas-product-upsells>
@@ -127,12 +131,6 @@
       "id": "collections",
       "label": "Suggest from",
       "info": "Only related products in these collections are suggested. Leave empty to suggest any related product."
-    },
-    {
-      "type": "text",
-      "id": "button_tooltip",
-      "label": "Button tooltip",
-      "info": "Shown when the pointer rests on a card's cart button. Leave empty to use the theme's own wording, which stays translated per language."
     }
   ],
   "presets": [{ "name": "Mionas: Product Upsells" }]

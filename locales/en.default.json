@@ -51,7 +51,6 @@
       "text": "We've sent you an email with your discount code. Enter it at checkout on your first order to apply it."
     },
     "cart": {
-      "title": "Your cart",
       "count": {
         "one": "{{ count }} item",
         "other": "{{ count }} items"

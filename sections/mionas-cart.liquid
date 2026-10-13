@@ -1,6 +1,7 @@
 {%- comment -%}
-  Renders the cart page: breadcrumbs, title, the items card, the free-shipping card with its
-  suggestions and the summary card, or the empty cart.
+  Renders the cart page's content: the items card, the free-shipping card with its suggestions and
+  the summary card, or the empty cart. The breadcrumbs and title live in the template's heading
+  section, like other pages.
 
   Forks sections/main-cart.liquid and the cart-page half of snippets/cart-products.liquid, so the
   layout and the lines are Mionas markup rather than a bridge over Horizon's. Each line is a
@@ -8,7 +9,7 @@
   cart line to a nested block. assets/component-cart-items.js still drives quantity, removal and
   re-rendering: the refs, ids, table and on:click paths follow cart-products.liquid and need porting
   on upstream merges.
-  The script morphs the whole section on every change, so the count and totals stay current.
+  The script morphs the whole section on every change, so the totals stay current.
 {%- endcomment -%}
 
 <script src="{{ 'component-cart-items.js' | asset_url }}" type="module" fetchpriority="low"></script>
@@ -19,7 +20,6 @@
 {% render 'text-component-shimmer-styles' %}
 
 {%- liquid
-  assign shop_url = section.settings.shop_collection.url | default: routes.all_products_collection_url
   assign threshold = section.settings.free_shipping_threshold | default: 30
   assign threshold_text = threshold | times: 100 | money_without_trailing_zeros
 
@@ -29,18 +29,24 @@
     else
       assign position = 'top'
   endcase
-
-  assign title = 'mionas.cart.title' | t
 -%}
 
+{%- comment -%}
+  assets/mionas-product-upsells.js renders this section through the recommendations endpoint to get
+  the upsell cards with their editor settings; then only the free-shipping card is needed.
+{%- endcomment -%}
+{%- capture free_shipping_card -%}
+  {%- content_for 'block', type: 'mionas-card', id: 'free-shipping' -%}
+{%- endcapture -%}
+{%- if recommendations.performed -%}
+  {{ free_shipping_card }}
+{%- else -%}
 {%- capture primary_classes -%}
   {%- render 'mionas-button-class', variant: 'primary' -%}
 {%- endcapture -%}
 
 {% capture empty_state %}
   <div class="mionas-cart__layout mionas-cart__layout--empty">
-    {% render 'mionas-text', content: title, variant: 'display', transform: 'uppercase', tag: 'h1' %}
-
     <div class="mionas-cart__empty">
       <span class="mionas-cart__empty-icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
@@ -49,7 +55,7 @@
       {% render 'mionas-text', content: empty_title, variant: 'subheading', transform: 'uppercase', tag: 'h2' %}
       {%- assign empty_note = 'mionas.cart.empty_note' | t: threshold: threshold_text -%}
       {% render 'mionas-text', content: empty_note, variant: 'body', color: 'secondary', tag: 'p', class: 'mionas-cart__empty-note' %}
-      <a class="{{ primary_classes }}" href="{{ shop_url }}">{{ 'mionas.cart.empty_button' | t }}</a>
+      <a class="{{ primary_classes }}" href="{{ routes.collections_url }}">{{ 'mionas.cart.empty_button' | t }}</a>
     </div>
   </div>
 {% endcapture %}
@@ -61,12 +67,7 @@
   {%- if cart.empty? -%}
     {{ empty_state }}
   {%- else -%}
-    {%- assign count_text = 'mionas.cart.count' | t: count: cart.item_count -%}
     <div class="mionas-cart__layout mionas-cart__layout--{{ position }}">
-      <div class="mionas-cart__title">
-        {% render 'mionas-text', content: title, variant: 'display', transform: 'uppercase', tag: 'h1' %}
-        {% render 'mionas-text', content: count_text, variant: 'lead', color: 'secondary', tag: 'p', class: 'mionas-cart__count' %}
-      </div>
 
       <div class="mionas-cart__main">
         <span class="visually-hidden" ref="cartItemCount" aria-hidden="true">{{- cart.item_count -}}</span>
@@ -109,7 +110,7 @@
       {%- endcomment -%}
       <div class="mionas-cart__side">
         <div class="mionas-cart__free-shipping">
-          {%- content_for 'block', type: 'mionas-card', id: 'free-shipping' -%}
+          {{ free_shipping_card }}
         </div>
 
         <div class="mionas-cart__summary">
@@ -124,17 +125,11 @@
 
 <div class="section section--page-width">
   <div class="mionas-cart spacing-style" style="{% render 'spacing-style', settings: section.settings %}">
-    {%- comment -%}
-      Cart changes re-render this section outside the cart template, where the breadcrumbs would
-      fall back to the shop's SEO title, so the section names the last crumb itself.
-    {%- endcomment -%}
-    {%- assign breadcrumb_title = 'content.cart_title' | t -%}
-    <div class="mionas-cart__breadcrumbs">
-      {%- content_for 'block', type: 'mionas-breadcrumbs', id: 'breadcrumbs', current_title: breadcrumb_title -%}
-    </div>
     {% render 'cart-items-component', children: cart_content, section_id: section.id %}
   </div>
 </div>
+
+{%- endif -%}
 
 {% stylesheet %}
   .mionas-cart {
@@ -143,14 +138,10 @@
     gap: var(--space-sm);
   }
 
-  .mionas-cart__breadcrumbs {
-    display: none;
-  }
-
   .mionas-cart__layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'title' 'main' 'free-shipping' 'summary';
+    grid-template-areas: 'main' 'free-shipping' 'summary';
     gap: var(--space-md);
   }
 
@@ -159,13 +150,6 @@
     display: contents;
   }
 
-  .mionas-cart__title {
-    grid-area: title;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-2xs) var(--space-sm);
-  }
 
 
   .mionas-cart__main {
@@ -291,10 +275,6 @@
 
 
   @media screen and (min-width: 750px) {
-    .mionas-cart__breadcrumbs {
-      display: block;
-    }
-
     .mionas-cart__layout:not(.mionas-cart__layout--empty) {
       gap: var(--space-lg);
     }
@@ -320,7 +300,6 @@
 
     .mionas-cart__layout--top {
       grid-template-areas:
-        'title title'
         'free-shipping free-shipping'
         'main summary';
     }
@@ -328,17 +307,14 @@
     /* The summary spans both rows; the flexible last row takes its extra height so the free-shipping
        card stays right under the items. */
     .mionas-cart__layout--main {
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: auto 1fr;
       grid-template-areas:
-        'title title'
         'main summary'
         'free-shipping summary';
     }
 
     .mionas-cart__layout--side {
-      grid-template-areas:
-        'title title'
-        'main side';
+      grid-template-areas: 'main side';
     }
 
     .mionas-cart__layout--side .mionas-cart__side {
@@ -377,12 +353,6 @@
         { "value": "main", "label": "Under the products" }
       ],
       "default": "top"
-    },
-    {
-      "type": "collection",
-      "id": "shop_collection",
-      "label": "Shop collection",
-      "info": "The empty cart's button goes to this collection."
     },
     {
       "type": "header",

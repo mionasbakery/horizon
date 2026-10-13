@@ -1,0 +1,96 @@
+{%- doc -%}
+  Renders one product to add on top of what's in the cart: photo, name, price and its add-to-cart
+  button. Placed inside blocks/mionas-product-upsells.liquid, which renders one per suggestion.
+
+  @param {product} [closest.product] - The suggested product; renders nothing without one.
+{%- enddoc -%}
+
+{%- comment -%}
+  data-collections lets assets/mionas-product-upsells.js keep only products from the list's chosen
+  collections, and data-price lets it rank them by how they reach free shipping.
+{%- endcomment -%}
+
+{%- assign product = closest.product -%}
+
+{%- if product -%}
+  <div
+    class="mionas-product-upsell"
+    data-product-id="{{ product.id }}"
+    data-price="{{ product.price }}"
+    data-collections="{{ product.collections | map: 'handle' | join: ',' }}"
+    {{ block.shopify_attributes }}
+  >
+    <a class="mionas-product-upsell__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+      {%- if product.featured_image -%}
+        {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', sizes: '56px', alt: '' }}
+      {%- endif -%}
+    </a>
+    <div class="mionas-product-upsell__text">
+      {%- comment -%} The title attribute gives the full name on hover when the one-line name is cut. {%- endcomment -%}
+      {%- capture title_link -%}<a href="{{ product.url }}" title="{{ product.title | escape }}">{{ product.title | escape }}</a>{%- endcapture -%}
+      {% render 'mionas-text', content: title_link, variant: 'body', tag: 'p', class: 'mionas-product-upsell__title' %}
+      {%- assign price = product.price | money -%}
+      {% render 'mionas-text', content: price, variant: 'body', color: 'secondary', tag: 'p' %}
+    </div>
+    <div class="mionas-product-upsell__action">
+      {% content_for 'block', type: 'mionas-add-to-cart', id: 'upsell-add-to-cart', closest.product: product %}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-product-upsell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--radius-xl);
+  }
+
+  .mionas-product-upsell__media {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface-paper);
+  }
+
+  .mionas-product-upsell__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mionas-product-upsell__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* One line, so every card keeps the same height; the grid keeps cards wide enough for most names. */
+  .text-role.mionas-product-upsell__title {
+    font-weight: var(--card-title-font-weight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mionas-product-upsell__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mionas-product-upsell__action {
+    flex: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Product Upsell",
+  "tag": null,
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,46 @@
+{%- doc -%}
+  Renders how many items are in the cart, such as "2 productos", next to the cart page's title. Shows
+  nothing for an empty cart.
+{%- enddoc -%}
+
+{%- comment -%}
+  The title sits in its own heading section, which cart changes don't re-render, so
+  assets/mionas-cart-count.js keeps the number current from the cart's update events. The two
+  wordings are rendered here with a stand-in count, so the script swaps the number and the
+  translation keeps its plural rule.
+{%- endcomment -%}
+
+{%- liquid
+  assign one = 'mionas.cart.count' | t: count: 1
+  assign other = 'mionas.cart.count' | t: count: 999999
+  assign text = 'mionas.cart.count' | t: count: cart.item_count
+-%}
+
+<script src="{{ 'mionas-cart-count.js' | asset_url }}" type="module"></script>
+
+<mionas-cart-count
+  class="mionas-cart-count"
+  data-one="{{ one | escape }}"
+  data-other="{{ other | escape }}"
+  {% if cart.item_count == 0 %}
+    hidden
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  {% render 'mionas-text', content: text, variant: 'lead', color: 'secondary', tag: 'p', attributes: 'data-count' %}
+</mionas-cart-count>
+
+{% stylesheet %}
+  .mionas-cart-count[hidden] {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Count",
+  "tag": null,
+  "settings": [],
+  "presets": [{ "name": "Mionas: Cart Count" }]
+}
+{% endschema %}

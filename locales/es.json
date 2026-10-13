@@ -51,7 +51,6 @@
       "text": "Te hemos enviado un email con tu código de descuento. Introdúcelo al pagar tu primera compra para aplicarlo."
     },
     "cart": {
-      "title": "Tu cesta",
       "count": {
         "one": "{{ count }} producto",
         "other": "{{ count }} productos"
