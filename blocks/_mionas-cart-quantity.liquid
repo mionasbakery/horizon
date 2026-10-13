@@ -36,6 +36,25 @@
   .mionas-cart-quantity :is(.quantity-minus, .quantity-plus) {
     color: var(--brand-primary);
   }
+
+  /* Sized like the small icon button beside it, so the line's controls share one height. */
+  .mionas-cart-quantity .quantity-selector {
+    --quantity-selector-width: 112px;
+
+    box-sizing: border-box;
+    height: var(--button-size-sm-height);
+    width: var(--quantity-selector-width);
+    flex: none;
+  }
+
+  .mionas-cart-quantity .quantity-selector :is(.quantity-minus, .quantity-plus) {
+    width: calc(var(--button-size-sm-height) - var(--card-base-border-width) * 2);
+    height: 100%;
+  }
+
+  .mionas-cart-quantity .quantity-selector input {
+    max-width: calc(var(--quantity-selector-width) - var(--button-size-sm-height) * 2);
+  }
 {% endstylesheet %}
 
 {% schema %}

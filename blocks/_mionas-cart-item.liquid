@@ -159,14 +159,18 @@
     }
   }
 
-  @media screen and (min-width: 750px) {
+  /* mionas-cart-items is the products card in sections/mionas-cart.liquid: the line takes one row
+     once that card, not the window, is wide enough for it. */
+  @container mionas-cart-items (min-width: 620px) {
     .mionas-cart-item {
+      /* The photo stays in the first row so everything centres on it; the error row below is empty
+         unless a quantity change fails. */
       grid-template-columns: 96px minmax(0, 1fr) auto auto auto;
       grid-template-areas:
         'image title remove quantity total'
-        'image error error error error';
+        '. error error error error';
       column-gap: var(--space-md);
-      row-gap: var(--space-2xs);
+      row-gap: 0;
       align-items: center;
       padding: var(--space-md) var(--space-lg);
     }

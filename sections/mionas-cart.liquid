@@ -235,6 +235,7 @@
   }
 
   .mionas-cart__items {
+    container: mionas-cart-items / inline-size;
     overflow: hidden;
   }
 
@@ -248,7 +249,7 @@
     padding: var(--space-md);
   }
 
-  /* Phones show two suggestions; desktop shows as many as the card's column fits, set per position below. */
+  /* Phones show two suggestions; wider screens show all four and the grid wraps them. */
   .mionas-cart__free-shipping .mionas-product-upsell-card:nth-child(n + 3) {
     display: none;
   }
@@ -372,8 +373,27 @@
     }
 
     .mionas-cart__layout:not(.mionas-cart__layout--empty) {
-      grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
       gap: var(--space-lg);
+    }
+
+    .mionas-cart__free-shipping > * {
+      padding: var(--space-md) var(--space-lg) var(--space-lg);
+    }
+
+    .mionas-cart__summary {
+      padding: var(--space-lg);
+    }
+
+    .mionas-cart__free-shipping .mionas-product-upsell-card:nth-child(n + 3) {
+      display: flex;
+    }
+  }
+
+  /* Two columns only once the products keep room for their one-line layout beside the 400px
+     summary; narrower tablets stack everything like a phone. */
+  @media screen and (min-width: 990px) {
+    .mionas-cart__layout:not(.mionas-cart__layout--empty) {
+      grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
       align-items: start;
     }
 
@@ -407,23 +427,11 @@
       gap: var(--space-lg);
       min-width: 0;
     }
+  }
 
-    .mionas-cart__free-shipping > * {
-      padding: var(--space-md) var(--space-lg) var(--space-lg);
-    }
-
-    .mionas-cart__summary {
-      padding: var(--space-lg);
-    }
-
-    .mionas-cart__layout--top .mionas-cart__free-shipping .mionas-product-upsell-card:nth-child(n + 3) {
-      display: flex;
-    }
-
-    .mionas-cart__layout--main .mionas-cart__free-shipping .mionas-product-upsell-card:nth-child(3) {
-      display: flex;
-    }
-
+  /* The lines switch to one row by the width of their own card, not the window, so they stay
+     readable in any column. blocks/_mionas-cart-item.liquid uses the same container. */
+  @container mionas-cart-items (min-width: 620px) {
     .mionas-cart__columns {
       display: flex;
       justify-content: space-between;
@@ -431,7 +439,6 @@
       padding: var(--space-md) var(--space-lg);
       border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
     }
-
   }
 {% endstylesheet %}
 

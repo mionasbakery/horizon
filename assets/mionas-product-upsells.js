@@ -123,9 +123,11 @@ class MionasProductUpsells extends HTMLElement {
       .slice(0, 4)
       .map(({ card }) => card);
 
-    // The cards' add-to-cart block renders with its default settings, so the card look is set here.
+    // The cards' add-to-cart block renders with its default settings, so the card look and the
+    // tooltip from this block's settings are set here.
     for (const card of shown) {
-      card.querySelector('.mionas-add-to-cart')?.classList.add('mionas-add-to-cart--no-icon');
+      const wrapper = card.querySelector('.mionas-add-to-cart');
+      if (wrapper && this.dataset.buttonTooltip) wrapper.setAttribute('title', this.dataset.buttonTooltip);
       const button = card.querySelector('.mionas-button');
       button?.classList.remove('mionas-button--primary');
       button?.classList.add('mionas-button--secondary', 'mionas-button--sm');

@@ -11,6 +11,10 @@
   assign source_ids = cart.items | map: 'product_id' | uniq | slice: 0, 3 | join: ','
   assign collection_handles = block.settings.collections | map: 'handle' | join: ','
   assign heading = 'mionas.product_upsells.heading_under' | t
+  assign button_tooltip = block.settings.button_tooltip
+  if button_tooltip == blank
+    assign button_tooltip = 'actions.add_to_cart' | t
+  endif
 -%}
 
 {%- if cart.item_count > 0 -%}
@@ -39,6 +43,7 @@
       hidden
       data-url="{{ routes.product_recommendations_url }}"
       data-collections="{{ collection_handles }}"
+      data-button-tooltip="{{ button_tooltip | escape }}"
     >
       {% render 'mionas-text',
         content: heading,
@@ -62,8 +67,6 @@
     flex-direction: column;
     gap: var(--space-sm);
     margin-block-start: var(--space-sm);
-    padding-block-start: var(--space-md);
-    border-block-start: var(--card-base-border-width) solid var(--card-base-border-color);
   }
 
   mionas-product-upsells[hidden] {
@@ -88,7 +91,6 @@
     mionas-product-upsells {
       gap: var(--space-2xs);
       margin-block-start: var(--space-xs);
-      padding-block-start: var(--space-sm);
     }
 
     .text-role.mionas-product-upsells__heading {
@@ -96,8 +98,32 @@
     }
 
     .mionas-product-upsells__list {
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: var(--space-xs);
+    }
+  }
+
+  /* Four cards a row at most, then three, two and one as the free-shipping card narrows, each card
+     at least 300px so a name fits on its one line. Breakpoints are the card's width, not the
+     window's, because the card sits full width or in a column depending on the cart's setting. */
+  mionas-product-upsells {
+    container: mionas-product-upsells / inline-size;
+  }
+
+  @container mionas-product-upsells (min-width: 608px) {
+    .mionas-product-upsells__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @container mionas-product-upsells (min-width: 916px) {
+    .mionas-product-upsells__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @container mionas-product-upsells (min-width: 1224px) {
+    .mionas-product-upsells__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 {% endstylesheet %}
@@ -112,6 +138,12 @@
       "id": "collections",
       "label": "Suggest from",
       "info": "Only related products in these collections are suggested. Leave empty to suggest any related product."
+    },
+    {
+      "type": "text",
+      "id": "button_tooltip",
+      "label": "Button tooltip",
+      "info": "Shown when the pointer rests on a card's cart button. Leave empty to use the theme's own wording, which stays translated per language."
     }
   ],
   "presets": [{ "name": "Mionas: Product Upsells" }]

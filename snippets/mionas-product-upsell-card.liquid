@@ -26,9 +26,9 @@
   </a>
   <div class="mionas-product-upsell-card__text">
     {%- capture title_link -%}<a href="{{ product.url }}">{{ product.title | escape }}</a>{%- endcapture -%}
-    {% render 'mionas-text', content: title_link, variant: 'body', tag: 'p', class: 'mionas-product-upsell-card__title' %}
+    {% render 'mionas-text', content: title_link, variant: 'label', tag: 'p', class: 'mionas-product-upsell-card__title' %}
     {%- assign price = product.price | money -%}
-    {% render 'mionas-text', content: price, variant: 'label', color: 'secondary', tag: 'p' %}
+    {% render 'mionas-text', content: price, variant: 'note', color: 'secondary', tag: 'p' %}
   </div>
   <div class="mionas-product-upsell-card__action">{{ button }}</div>
 </div>
@@ -64,6 +64,7 @@
     min-width: 0;
   }
 
+  /* One line, so every card keeps the same height; the grid keeps cards wide enough for most names. */
   .text-role.mionas-product-upsell-card__title {
     font-weight: var(--card-title-font-weight);
     overflow: hidden;
@@ -78,6 +79,18 @@
 
   .mionas-product-upsell-card__action {
     flex: none;
+  }
+
+  /* Only the cart icon shows, so the name keeps the width; the label stays the button's accessible
+     name and the Product Upsells tooltip gives it in words on hover. This mirrors
+     blocks/mionas-add-to-cart.liquid's icon-only setting, which the recommendations response can't
+     carry; gap 0 because the collapsed label is still a flex item that would push the icon aside. */
+  .mionas-product-upsell-card .mionas-add-to-cart .mionas-button {
+    font-size: 0;
+    padding-inline: 0;
+    aspect-ratio: 1;
+    gap: 0;
+    justify-content: center;
   }
 
   @media screen and (min-width: 750px) {

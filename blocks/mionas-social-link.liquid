@@ -17,6 +17,7 @@
   icon: block_settings.platform,
   link: block_settings.link,
   aria_label: platform_label,
+  tooltip: block_settings.tooltip,
   open_in_new_tab: true,
   variant: block_settings.variant,
   size: block_settings.size,
@@ -45,6 +46,12 @@
       "type": "url",
       "id": "link",
       "label": "t:settings.link"
+    },
+    {
+      "type": "text",
+      "id": "tooltip",
+      "label": "Tooltip",
+      "info": "Shown when the pointer rests on the button. Leave empty for none."
     },
     {
       "type": "select",
