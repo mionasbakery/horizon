@@ -15,8 +15,7 @@
       "progress": "Progrés cap a l'enviament gratuït"
     },
     "product_upsells": {
-      "heading_under": "Per arribar a l'enviament gratuït",
-      "more": "Veure més cookies"
+      "heading_under": "Per arribar a l'enviament gratuït"
     },
     "form": {
       "email_required": "Escriu el teu correu electrònic.",
@@ -64,7 +63,6 @@
       "total": "Total",
       "unit_price": "{{ price }} / unitat",
       "summary": "Resum",
-      "shipping_note": "Fornegem dimarts i dimecres i enviem el mateix dia. T'arriba en 24–48 h a tota la Península.",
       "empty_note": "Fornegem dimarts i dimecres i enviem el mateix dia. A partir de {{ threshold }}, l'enviament és gratuït.",
       "empty_button": "Comprar cookies"
     }

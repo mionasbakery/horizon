@@ -3,10 +3,11 @@
   suggestions, the summary card and the phone checkout bar, or the empty cart.
 
   Forks sections/main-cart.liquid and the cart-page half of snippets/cart-products.liquid, so the
-  layout and the lines are Mionas markup rather than a bridge over Horizon's. Each line part is a
-  static block that receives the line, because closest can't hand a cart line to a nested block.
-  assets/component-cart-items.js still drives quantity, removal and re-rendering: the refs, ids,
-  table and on:click paths here follow cart-products.liquid and need porting on upstream merges.
+  layout and the lines are Mionas markup rather than a bridge over Horizon's. Each line is a
+  blocks/_mionas-cart-item.liquid static block that receives the line, because closest can't hand a
+  cart line to a nested block. assets/component-cart-items.js still drives quantity, removal and
+  re-rendering: the refs, ids, table and on:click paths follow cart-products.liquid and need porting
+  on upstream merges.
   The script morphs the whole section on every change, so the count, totals and bar stay current.
 {%- endcomment -%}
 
@@ -108,41 +109,7 @@
             </thead>
             <tbody role="rowgroup">
               {%- for item in cart.items -%}
-                <tr
-                  id="CartItem-{{ item.key }}"
-                  role="row"
-                  class="mionas-cart__row{% if item.parent_relationship.parent != null %} mionas-cart__row--nested{% endif %}"
-                  ref="cartItemRows[]"
-                  data-parent-key="{{ item.parent_relationship.parent.key }}"
-                  data-key="{{ item.key }}"
-                >
-                  <td class="mionas-cart__media" role="cell" headers="productImage">
-                    {%- content_for 'block', type: '_mionas-cart-image', id: 'cart-image', line: item -%}
-                  </td>
-                  <td class="mionas-cart__details" role="cell" headers="productInformation">
-                    {%- content_for 'block', type: '_mionas-cart-details', id: 'cart-details', line: item -%}
-                  </td>
-                  <td class="mionas-cart__remove" role="cell" headers="productInformation">
-                    {%- content_for 'block', type: '_mionas-cart-remove', id: 'cart-remove', line: item -%}
-                  </td>
-                  <td class="mionas-cart__quantity" role="cell" headers="quantity">
-                    {%- content_for 'block', type: '_mionas-cart-quantity', id: 'cart-quantity', line: item -%}
-                  </td>
-                  <td
-                    class="mionas-cart__error hidden"
-                    role="cell"
-                    ref="cartItemErrorContainer-{{ item.index | plus: 1 }}"
-                    headers="quantity"
-                  >
-                    <div class="mionas-cart__error-message" role="alert">
-                      <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
-                      <small ref="cartItemError-{{ item.index | plus: 1 }}"></small>
-                    </div>
-                  </td>
-                  <td class="mionas-cart__price" role="cell" headers="productTotal">
-                    {%- content_for 'block', type: '_mionas-cart-price', id: 'cart-price', line: item -%}
-                  </td>
-                </tr>
+                {%- content_for 'block', type: '_mionas-cart-item', id: 'cart-item', line: item -%}
               {%- endfor -%}
             </tbody>
           </table>
@@ -166,8 +133,6 @@
           {%- assign summary_title = 'mionas.cart.summary' | t -%}
           {% render 'mionas-text', content: summary_title, variant: 'title', transform: 'none', tag: 'h2' %}
           {%- content_for 'block', type: '_cart-summary', id: 'cart-page-summary' -%}
-          {%- assign shipping_note = 'mionas.cart.shipping_note' | t -%}
-          {% render 'mionas-text', content: shipping_note, variant: 'body', color: 'secondary', tag: 'p' %}
         </div>
       </div>
 
@@ -188,10 +153,11 @@
   <div class="mionas-cart spacing-style" style="{% render 'spacing-style', settings: section.settings %}">
     {%- comment -%}
       Cart changes re-render this section outside the cart template, where the breadcrumbs would
-      fall back to the shop's SEO title, so the morph leaves them as first rendered.
+      fall back to the shop's SEO title, so the section names the last crumb itself.
     {%- endcomment -%}
-    <div class="mionas-cart__breadcrumbs" data-skip-node-update>
-      {%- content_for 'block', type: 'mionas-breadcrumbs', id: 'breadcrumbs' -%}
+    {%- assign breadcrumb_title = 'content.cart_title' | t -%}
+    <div class="mionas-cart__breadcrumbs">
+      {%- content_for 'block', type: 'mionas-breadcrumbs', id: 'breadcrumbs', current_title: breadcrumb_title -%}
     </div>
     {% render 'cart-items-component', children: cart_content, section_id: section.id %}
   </div>
@@ -324,102 +290,6 @@
     padding: 0;
   }
 
-  .mionas-cart__row {
-    display: grid;
-    grid-template-columns: 88px minmax(0, 1fr) auto;
-    grid-template-areas:
-      'media details price'
-      'media quantity remove'
-      'media error error';
-    column-gap: var(--space-sm);
-    row-gap: var(--space-xs);
-    align-items: start;
-    padding: var(--space-md);
-    border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
-  }
-
-  .mionas-cart__row:last-child {
-    border-bottom: 0;
-  }
-
-  .mionas-cart__row--nested {
-    padding-inline-start: calc(var(--space-md) + var(--space-lg));
-  }
-
-  .mionas-cart__media {
-    grid-area: media;
-  }
-
-  .mionas-cart__details {
-    grid-area: details;
-    min-width: 0;
-  }
-
-  .mionas-cart__remove {
-    grid-area: remove;
-    justify-self: end;
-    align-self: center;
-  }
-
-  .mionas-cart__quantity {
-    grid-area: quantity;
-    align-self: center;
-  }
-
-  .mionas-cart__error {
-    grid-area: error;
-  }
-
-  .mionas-cart__error-message {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    color: var(--feedback-danger);
-  }
-
-  .mionas-cart__price {
-    grid-area: price;
-  }
-
-  /* component-cart-items.js adds these while a line leaves or arrives, and sets --row-height. */
-  .mionas-cart__row.removing {
-    overflow: hidden;
-    animation: mionas-cart-remove-row calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
-    animation-delay: var(--animation-speed);
-  }
-
-  .mionas-cart__row.adding {
-    interpolate-size: allow-keywords;
-    overflow: hidden;
-    animation: mionas-cart-add-row calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
-  }
-
-  @keyframes mionas-cart-remove-row {
-    0% {
-      height: var(--row-height);
-    }
-
-    100% {
-      opacity: 0;
-      height: 0;
-      padding-block: 0;
-      border-color: transparent;
-    }
-  }
-
-  @keyframes mionas-cart-add-row {
-    0% {
-      opacity: 0;
-      height: 0;
-      padding-block: 0;
-      border-color: transparent;
-    }
-
-    100% {
-      opacity: 1;
-      height: auto;
-    }
-  }
 
   .mionas-cart .cart-items-disabled {
     pointer-events: none;
@@ -562,38 +432,6 @@
       border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
     }
 
-    .mionas-cart__row {
-      grid-template-columns: 96px minmax(0, 1fr) auto auto;
-      grid-template-areas:
-        'media details quantity price'
-        'media remove quantity price'
-        'media error error error';
-      column-gap: var(--space-md);
-      row-gap: var(--space-2xs);
-      align-items: center;
-      padding: var(--space-md) var(--space-lg);
-    }
-
-    .mionas-cart__row--nested {
-      padding-inline-start: calc(var(--space-lg) * 2);
-    }
-
-    .mionas-cart__details {
-      align-self: end;
-    }
-
-    .mionas-cart__remove {
-      justify-self: start;
-      align-self: start;
-    }
-
-    .mionas-cart__quantity {
-      margin-inline-start: var(--space-sm);
-    }
-
-    .mionas-cart__price {
-      min-width: 72px;
-    }
   }
 {% endstylesheet %}
 

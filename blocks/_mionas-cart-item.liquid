@@ -1,0 +1,194 @@
+{%- doc -%}
+  Renders one cart line as a table row inside sections/mionas-cart.liquid: image, title, price per
+  item, remove button, quantity and line total, each a fixed child block that receives the line.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- comment -%}
+  The children are static blocks because a block can't hand a cart line to children the editor adds
+  freely, only to ones it renders itself. assets/component-cart-items.js finds the row through
+  ref="cartItemRows[]", data-key and the error refs, and adds .removing/.adding while a line leaves
+  or arrives; those follow snippets/cart-products.liquid and need porting on upstream merges.
+{%- endcomment -%}
+
+{%- assign line_number = line.index | plus: 1 -%}
+
+<tr
+  id="CartItem-{{ line.key }}"
+  role="row"
+  class="mionas-cart-item{% if line.parent_relationship.parent != null %} mionas-cart-item--nested{% endif %}"
+  ref="cartItemRows[]"
+  data-parent-key="{{ line.parent_relationship.parent.key }}"
+  data-key="{{ line.key }}"
+  {{ block.shopify_attributes }}
+>
+  <td class="mionas-cart-item__image" role="cell" headers="productImage">
+    {%- content_for 'block', type: '_mionas-cart-item-image', id: 'cart-item-image', line: line -%}
+  </td>
+  <td class="mionas-cart-item__title" role="cell" headers="productInformation">
+    {%- content_for 'block', type: '_mionas-cart-item-title', id: 'cart-item-title', line: line -%}
+    {%- content_for 'block', type: '_mionas-cart-item-price', id: 'cart-item-price', line: line -%}
+  </td>
+  <td class="mionas-cart-item__remove" role="cell" headers="productInformation">
+    {%- content_for 'block', type: '_mionas-cart-item-remove', id: 'cart-item-remove', line: line -%}
+  </td>
+  <td class="mionas-cart-item__quantity" role="cell" headers="quantity">
+    {%- content_for 'block', type: '_mionas-cart-quantity', id: 'cart-quantity', line: line -%}
+  </td>
+  <td
+    class="mionas-cart-item__error hidden"
+    role="cell"
+    ref="cartItemErrorContainer-{{ line_number }}"
+    headers="quantity"
+  >
+    <div class="mionas-cart-item__error-message" role="alert">
+      <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+      <small ref="cartItemError-{{ line_number }}"></small>
+    </div>
+  </td>
+  <td class="mionas-cart-item__total" role="cell" headers="productTotal">
+    {%- content_for 'block', type: '_mionas-cart-item-total', id: 'cart-item-total', line: line -%}
+  </td>
+</tr>
+
+{% stylesheet %}
+  .mionas-cart-item {
+    display: grid;
+    grid-template-columns: 88px auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'image title title total'
+      'image remove quantity quantity'
+      'image error error error';
+    column-gap: var(--space-sm);
+    row-gap: var(--space-xs);
+    align-items: start;
+    padding: var(--space-md);
+    border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
+  }
+
+  .mionas-cart-item:last-child {
+    border-bottom: 0;
+  }
+
+  .mionas-cart-item--nested {
+    padding-inline-start: calc(var(--space-md) + var(--space-lg));
+  }
+
+  .mionas-cart-item > td {
+    padding: 0;
+  }
+
+  .mionas-cart-item__image {
+    grid-area: image;
+  }
+
+  .mionas-cart-item__title {
+    grid-area: title;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    min-width: 0;
+  }
+
+  /* The icon button's circle pads the bin; pull it back so the bin lines up with the text above. */
+  .mionas-cart-item__remove {
+    grid-area: remove;
+    align-self: center;
+    margin-inline-start: calc((var(--icon-size-md) - var(--button-size-sm-height)) / 2);
+  }
+
+  .mionas-cart-item__quantity {
+    grid-area: quantity;
+    justify-self: start;
+    align-self: center;
+  }
+
+  .mionas-cart-item__error {
+    grid-area: error;
+  }
+
+  .mionas-cart-item__error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--feedback-danger);
+  }
+
+  .mionas-cart-item__total {
+    grid-area: total;
+  }
+
+  /* component-cart-items.js adds these while a line leaves or arrives, and sets --row-height. */
+  .mionas-cart-item.removing {
+    overflow: hidden;
+    animation: mionas-cart-item-remove calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
+    animation-delay: var(--animation-speed);
+  }
+
+  .mionas-cart-item.adding {
+    interpolate-size: allow-keywords;
+    overflow: hidden;
+    animation: mionas-cart-item-add calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
+  }
+
+  @keyframes mionas-cart-item-remove {
+    0% {
+      height: var(--row-height);
+    }
+
+    100% {
+      opacity: 0;
+      height: 0;
+      padding-block: 0;
+      border-color: transparent;
+    }
+  }
+
+  @keyframes mionas-cart-item-add {
+    0% {
+      opacity: 0;
+      height: 0;
+      padding-block: 0;
+      border-color: transparent;
+    }
+
+    100% {
+      opacity: 1;
+      height: auto;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .mionas-cart-item {
+      grid-template-columns: 96px minmax(0, 1fr) auto auto auto;
+      grid-template-areas:
+        'image title remove quantity total'
+        'image error error error error';
+      column-gap: var(--space-md);
+      row-gap: var(--space-2xs);
+      align-items: center;
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .mionas-cart-item--nested {
+      padding-inline-start: calc(var(--space-lg) * 2);
+    }
+
+    .mionas-cart-item__remove {
+      margin-inline-start: 0;
+    }
+
+    .mionas-cart-item__total {
+      min-width: 72px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Item",
+  "tag": null,
+  "settings": []
+}
+{% endschema %}

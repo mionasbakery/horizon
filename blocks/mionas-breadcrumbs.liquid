@@ -1,6 +1,8 @@
 {%- doc -%}
   Renders a breadcrumb trail nested inside a Section, sharing that section's container width and
   spacing rather than spanning full-width.
+
+  @param {string} [current_title] - Last crumb's text, for a section that re-renders outside its own template.
 {%- enddoc -%}
 
 {%- comment -%}
@@ -34,7 +36,8 @@
   {%- render 'mionas-breadcrumbs',
     home_label: home_label,
     landmark_label: landmark_label,
-    menu: block.settings.menu
+    menu: block.settings.menu,
+    current_title: current_title
   -%}
 </div>
 

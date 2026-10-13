@@ -67,8 +67,7 @@
               "settings": {
                 "collections": [
                   "comprar-cookies"
-                ],
-                "more_link": "shopify://collections/comprar-cookies"
+                ]
               },
               "blocks": {}
             }
@@ -80,48 +79,62 @@
             "product-upsells"
           ]
         },
-        "cart-image": {
-          "type": "_mionas-cart-image",
+        "cart-item": {
+          "type": "_mionas-cart-item",
           "static": true,
-          "settings": {
-            "image_ratio": "square"
-          },
-          "name": "Mionas: Cart Image",
-          "blocks": {}
-        },
-        "cart-details": {
-          "type": "_mionas-cart-details",
-          "static": true,
-          "settings": {
-            "title_variant": "title",
-            "show_vendor": false,
-            "show_unit_price": true
-          },
-          "name": "Mionas: Cart Details",
-          "blocks": {}
-        },
-        "cart-quantity": {
-          "type": "_mionas-cart-quantity",
-          "static": true,
+          "name": "Mionas: Cart Item",
           "settings": {},
-          "name": "Mionas: Cart Quantity",
-          "blocks": {}
-        },
-        "cart-remove": {
-          "type": "_mionas-cart-remove",
-          "static": true,
-          "settings": {},
-          "name": "Mionas: Cart Remove",
-          "blocks": {}
-        },
-        "cart-price": {
-          "type": "_mionas-cart-price",
-          "static": true,
-          "settings": {
-            "variant": "body"
-          },
-          "name": "Mionas: Cart Price",
-          "blocks": {}
+          "blocks": {
+            "cart-item-image": {
+              "type": "_mionas-cart-item-image",
+              "static": true,
+              "name": "Mionas: Cart Item Image",
+              "settings": {
+                "image_ratio": "square"
+              },
+              "blocks": {}
+            },
+            "cart-item-title": {
+              "type": "_mionas-cart-item-title",
+              "static": true,
+              "name": "Mionas: Cart Item Title",
+              "settings": {
+                "title_variant": "title",
+                "show_vendor": false
+              },
+              "blocks": {}
+            },
+            "cart-item-price": {
+              "type": "_mionas-cart-item-price",
+              "static": true,
+              "name": "Mionas: Cart Item Price",
+              "settings": {},
+              "blocks": {}
+            },
+            "cart-item-remove": {
+              "type": "_mionas-cart-item-remove",
+              "static": true,
+              "name": "Mionas: Cart Item Remove",
+              "settings": {},
+              "blocks": {}
+            },
+            "cart-quantity": {
+              "type": "_mionas-cart-quantity",
+              "static": true,
+              "name": "Mionas: Cart Quantity",
+              "settings": {},
+              "blocks": {}
+            },
+            "cart-item-total": {
+              "type": "_mionas-cart-item-total",
+              "static": true,
+              "name": "Mionas: Cart Item Total",
+              "settings": {
+                "variant": "body"
+              },
+              "blocks": {}
+            }
+          }
         },
         "cart-page-summary": {
           "type": "_cart-summary",

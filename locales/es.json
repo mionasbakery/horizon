@@ -15,8 +15,7 @@
       "progress": "Progreso hacia el envío gratis"
     },
     "product_upsells": {
-      "heading_under": "Para llegar al envío gratis",
-      "more": "Ver más cookies"
+      "heading_under": "Para llegar al envío gratis"
     },
     "form": {
       "email_required": "Escribe tu email.",
@@ -64,7 +63,6 @@
       "total": "Total",
       "unit_price": "{{ price }} / unidad",
       "summary": "Resumen",
-      "shipping_note": "Horneamos martes y miércoles y enviamos el mismo día. Te llega en 24–48 h a toda la Península.",
       "empty_note": "Horneamos martes y miércoles y enviamos el mismo día. A partir de {{ threshold }}, el envío es gratis.",
       "empty_button": "Comprar cookies"
     }

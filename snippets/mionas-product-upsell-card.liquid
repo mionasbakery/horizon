@@ -15,6 +15,7 @@
 {%- endcomment -%}
 <div
   class="mionas-product-upsell-card"
+  data-product-id="{{ product.id }}"
   data-price="{{ product.price }}"
   data-collections="{{ product.collections | map: 'handle' | join: ',' }}"
 >

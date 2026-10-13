@@ -1,6 +1,6 @@
 {%- doc -%}
   Renders a cart line's title and what sets the line apart: variant, custom options, subscription,
-  discounts, bundle contents and the price per item. Used inside sections/mionas-cart.liquid.
+  discounts and bundle contents. Used inside blocks/_mionas-cart-item.liquid.
 
   @param {object} line - The cart line item.
 {%- enddoc -%}
@@ -14,11 +14,6 @@
   if line.parent_relationship.parent != null
     assign nested_label = 'accessibility.nested_product' | t: product_title: line.product.title, parent_title: line.parent_relationship.parent.title | escape
     assign title_attributes = title_attributes | append: ' aria-label="' | append: nested_label | append: '"'
-  endif
-
-  assign compare_price = line.original_price
-  if line.variant.compare_at_price > line.original_price
-    assign compare_price = line.variant.compare_at_price
   endif
 -%}
 
@@ -64,67 +59,51 @@
   {%- endfor -%}
 {%- endcapture -%}
 
-{%- capture unit_price -%}
-  {%- assign final_price = line.final_price | money -%}
-  {%- if line.final_price < compare_price -%}
-    <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-    {{ 'mionas.cart.unit_price' | t: price: final_price }}
-    <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-    <s>{{ compare_price | money }}</s>
-  {%- else -%}
-    <span class="visually-hidden">{{ 'content.price' | t }}</span>
-    {{ 'mionas.cart.unit_price' | t: price: final_price }}
-  {%- endif -%}
-{%- endcapture -%}
-
-<div class="mionas-cart-details" {{ block.shopify_attributes }}>
-  <div class="mionas-cart-details__title-row">
+<div class="mionas-cart-item-title" {{ block.shopify_attributes }}>
+  <div class="mionas-cart-item-title__title-row">
     {% render 'mionas-text',
       content: title,
       variant: block_settings.title_variant,
       tag: 'a',
-      class: 'mionas-cart-details__title',
+      class: 'mionas-cart-item-title__title',
       attributes: title_attributes
     %}
     {% render 'cart-disclosure-tooltip', product: line.product, unique_id: disclosure_id, mode: 'trigger' %}
   </div>
   {%- if meta != blank -%}
-    {% render 'mionas-text', content: meta, variant: 'label', color: 'secondary', tag: 'div', class: 'mionas-cart-details__meta' %}
-  {%- endif -%}
-  {%- if block_settings.show_unit_price -%}
-    {% render 'mionas-text', content: unit_price, variant: 'body', color: 'secondary', tag: 'p' %}
+    {% render 'mionas-text', content: meta, variant: 'label', color: 'secondary', tag: 'div', class: 'mionas-cart-item-title__meta' %}
   {%- endif -%}
 </div>
 
 {% stylesheet %}
-  .mionas-cart-details {
+  .mionas-cart-item-title {
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
     min-width: 0;
   }
 
-  .mionas-cart-details__title-row {
+  .mionas-cart-item-title__title-row {
     display: flex;
     align-items: center;
     gap: var(--space-xs);
     min-width: 0;
   }
 
-  .text-role.mionas-cart-details__title {
+  .text-role.mionas-cart-item-title__title {
     font-weight: var(--card-title-font-weight);
     text-decoration: none;
     overflow-wrap: anywhere;
   }
 
-  .mionas-cart-details__meta > span {
+  .mionas-cart-item-title__meta > span {
     display: block;
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Mionas: Cart Details",
+  "name": "Mionas: Cart Item Title",
   "tag": null,
   "settings": [
     {
@@ -143,12 +122,6 @@
       "id": "show_vendor",
       "label": "Show vendor",
       "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "show_unit_price",
-      "label": "Show price per item",
-      "default": true
     }
   ]
 }

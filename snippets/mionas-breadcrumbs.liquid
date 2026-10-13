@@ -4,6 +4,7 @@
   @param {string} home_label - Copy for the first crumb.
   @param {string} landmark_label - Accessible name for the nav landmark.
   @param {object} [menu] - Linklist to derive the hierarchy from. Falls back to navigation-menu.
+  @param {string} [current_title] - Text for the last crumb; when blank it comes from the page's resource.
 {%- enddoc -%}
 {%- comment -%}
   Rendered by blocks/mionas-breadcrumbs.liquid, which owns the wrapper and shopify_attributes; this
@@ -22,6 +23,7 @@
 {% liquid
   # page_title is the SEO title (merchant-edited, sometimes tag-suffixed), not the resource name.
   # Prefer the resource's own title and fall back to page_title only when there is no resource.
+  assign given_title = current_title
   assign current_title = page_title
   case template.name
     when 'collection'
@@ -34,9 +36,10 @@
       assign current_title = blog.title | default: page_title
     when 'page'
       assign current_title = page.title | default: page_title
-    when 'cart'
-      assign current_title = 'content.cart_title' | t
   endcase
+  if given_title != blank
+    assign current_title = given_title
+  endif
 
   # The trail follows the merchant's navigation menu so crumbs match the path a visitor actually
   # clicked. Menus nest at most three levels, so two nested loops cover every case with no

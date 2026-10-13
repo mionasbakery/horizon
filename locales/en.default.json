@@ -15,8 +15,7 @@
       "progress": "Progress towards free shipping"
     },
     "product_upsells": {
-      "heading_under": "To reach free shipping",
-      "more": "See more cookies"
+      "heading_under": "To reach free shipping"
     },
     "form": {
       "email_required": "Enter your email.",
@@ -64,7 +63,6 @@
       "total": "Total",
       "unit_price": "{{ price }} each",
       "summary": "Summary",
-      "shipping_note": "We bake on Tuesdays and Wednesdays and ship the same day. It arrives in 24–48 h anywhere in mainland Spain.",
       "empty_note": "We bake on Tuesdays and Wednesdays and ship the same day. Free shipping from {{ threshold }}.",
       "empty_button": "Shop cookies"
     }
