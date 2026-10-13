@@ -1,0 +1,67 @@
+{%- doc -%}
+  Renders a cart line's image, linked to its product, inside sections/mionas-cart.liquid.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- liquid
+  case block.settings.image_ratio
+    when 'portrait'
+      assign ratio = '4 / 5'
+    when 'adapt'
+      assign ratio = line.image.aspect_ratio | default: 1
+    else
+      assign ratio = '1'
+  endcase
+-%}
+
+{%- if line.image -%}
+  {%- comment -%} The title links to the same product, so this link stays out of the tab order. {%- endcomment -%}
+  <a
+    class="mionas-cart-image"
+    href="{{ line.url }}"
+    style="--mionas-cart-image-ratio: {{ ratio }};"
+    tabindex="-1"
+    aria-hidden="true"
+    {{ block.shopify_attributes }}
+  >
+    {{- line.image | image_url: width: 240 | image_tag: loading: 'lazy', sizes: '96px', alt: '' -}}
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-cart-image {
+    display: block;
+    aspect-ratio: var(--mionas-cart-image-ratio);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface-paper);
+  }
+
+  .mionas-cart-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Image",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        { "value": "square", "label": "Square" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "adapt", "label": "Original" }
+      ],
+      "default": "square"
+    }
+  ]
+}
+{% endschema %}

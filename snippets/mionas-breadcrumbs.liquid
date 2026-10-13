@@ -34,6 +34,8 @@
       assign current_title = blog.title | default: page_title
     when 'page'
       assign current_title = page.title | default: page_title
+    when 'cart'
+      assign current_title = 'content.cart_title' | t
   endcase
 
   # The trail follows the merchant's navigation menu so crumbs match the path a visitor actually
