@@ -10,7 +10,7 @@
   assign disclosure_id = 'page-' | append: line.index
   assign title = line.product.title | escape
 
-  assign title_attributes = 'href="' | append: line.url | append: '"'
+  assign title_attributes = 'href="' | append: line.url | append: '" title="' | append: title | append: '"'
   if line.parent_relationship.parent != null
     assign nested_label = 'accessibility.nested_product' | t: product_title: line.product.title, parent_title: line.parent_relationship.parent.title | escape
     assign title_attributes = title_attributes | append: ' aria-label="' | append: nested_label | append: '"'

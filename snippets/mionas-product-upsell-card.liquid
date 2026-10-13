@@ -25,10 +25,11 @@
     {%- endif -%}
   </a>
   <div class="mionas-product-upsell-card__text">
-    {%- capture title_link -%}<a href="{{ product.url }}">{{ product.title | escape }}</a>{%- endcapture -%}
-    {% render 'mionas-text', content: title_link, variant: 'label', tag: 'p', class: 'mionas-product-upsell-card__title' %}
+    {%- comment -%} The title attribute gives the full name on hover when the one-line name is cut. {%- endcomment -%}
+    {%- capture title_link -%}<a href="{{ product.url }}" title="{{ product.title | escape }}">{{ product.title | escape }}</a>{%- endcapture -%}
+    {% render 'mionas-text', content: title_link, variant: 'body', tag: 'p', class: 'mionas-product-upsell-card__title' %}
     {%- assign price = product.price | money -%}
-    {% render 'mionas-text', content: price, variant: 'note', color: 'secondary', tag: 'p' %}
+    {% render 'mionas-text', content: price, variant: 'body', color: 'secondary', tag: 'p' %}
   </div>
   <div class="mionas-product-upsell-card__action">{{ button }}</div>
 </div>
@@ -93,17 +94,4 @@
     justify-content: center;
   }
 
-  @media screen and (min-width: 750px) {
-    .mionas-product-upsell-card {
-      gap: var(--space-xs);
-      padding: var(--space-2xs);
-      border-radius: var(--radius-full);
-    }
-
-    .mionas-product-upsell-card__media {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-full);
-    }
-  }
 {% endstylesheet %}

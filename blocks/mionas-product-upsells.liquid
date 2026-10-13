@@ -10,7 +10,6 @@
   assign latest_product = cart.items.first.product
   assign source_ids = cart.items | map: 'product_id' | uniq | slice: 0, 3 | join: ','
   assign collection_handles = block.settings.collections | map: 'handle' | join: ','
-  assign heading = 'mionas.product_upsells.heading_under' | t
   assign button_tooltip = block.settings.button_tooltip
   if button_tooltip == blank
     assign button_tooltip = 'actions.add_to_cart' | t
@@ -45,12 +44,6 @@
       data-collections="{{ collection_handles }}"
       data-button-tooltip="{{ button_tooltip | escape }}"
     >
-      {% render 'mionas-text',
-        content: heading,
-        variant: 'body',
-        tag: 'p',
-        class: 'mionas-product-upsells__heading'
-      %}
       <div class="mionas-product-upsells__list" data-list></div>
     </mionas-product-upsells>
   </div>
@@ -73,9 +66,6 @@
     display: none;
   }
 
-  .text-role.mionas-product-upsells__heading {
-    font-weight: var(--card-title-font-weight);
-  }
 
   /* The add-to-cart button's animation layers are absolutely positioned; a positioned list keeps
      them inside the card. */
@@ -93,18 +83,16 @@
       margin-block-start: var(--space-xs);
     }
 
-    .text-role.mionas-product-upsells__heading {
-      display: none;
-    }
 
     .mionas-product-upsells__list {
       gap: var(--space-xs);
     }
   }
 
-  /* Four cards a row at most, then three, two and one as the free-shipping card narrows, each card
-     at least 300px so a name fits on its one line. Breakpoints are the card's width, not the
-     window's, because the card sits full width or in a column depending on the cart's setting. */
+  /* Four cards a row at most, then two and one as the free-shipping card narrows, each card at
+     least 300px so a name fits on its one line. No three-column step, so four upsells always fill
+     their rows (4 or 2 + 2). Breakpoints are the card's width, not the window's, because the card
+     sits full width or in a column depending on the cart's setting. */
   mionas-product-upsells {
     container: mionas-product-upsells / inline-size;
   }
@@ -112,12 +100,6 @@
   @container mionas-product-upsells (min-width: 608px) {
     .mionas-product-upsells__list {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @container mionas-product-upsells (min-width: 916px) {
-    .mionas-product-upsells__list {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 

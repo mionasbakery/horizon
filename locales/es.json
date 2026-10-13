@@ -14,9 +14,6 @@
       "reached_html": "<strong>¡Perfecto!</strong> Tu pedido no paga gastos de envío.",
       "progress": "Progreso hacia el envío gratis"
     },
-    "product_upsells": {
-      "heading_under": "Para llegar al envío gratis"
-    },
     "form": {
       "email_required": "Escribe tu email.",
       "email_invalid": "Escribe un email válido.",

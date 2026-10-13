@@ -1,6 +1,6 @@
 {%- comment -%}
   Renders the cart page: breadcrumbs, title, the items card, the free-shipping card with its
-  suggestions, the summary card and the phone checkout bar, or the empty cart.
+  suggestions and the summary card, or the empty cart.
 
   Forks sections/main-cart.liquid and the cart-page half of snippets/cart-products.liquid, so the
   layout and the lines are Mionas markup rather than a bridge over Horizon's. Each line is a
@@ -8,7 +8,7 @@
   cart line to a nested block. assets/component-cart-items.js still drives quantity, removal and
   re-rendering: the refs, ids, table and on:click paths follow cart-products.liquid and need porting
   on upstream merges.
-  The script morphs the whole section on every change, so the count, totals and bar stay current.
+  The script morphs the whole section on every change, so the count and totals stay current.
 {%- endcomment -%}
 
 <script src="{{ 'component-cart-items.js' | asset_url }}" type="module" fetchpriority="low"></script>
@@ -61,28 +61,11 @@
   {%- if cart.empty? -%}
     {{ empty_state }}
   {%- else -%}
-    {%- liquid
-      if settings.currency_code_enabled_cart_total
-        assign total_text = cart.total_price | money_with_currency
-      else
-        assign total_text = cart.total_price | money
-      endif
-      assign count_text = 'mionas.cart.count' | t: count: cart.item_count
-    -%}
+    {%- assign count_text = 'mionas.cart.count' | t: count: cart.item_count -%}
     <div class="mionas-cart__layout mionas-cart__layout--{{ position }}">
       <div class="mionas-cart__title">
         {% render 'mionas-text', content: title, variant: 'display', transform: 'uppercase', tag: 'h1' %}
-        {%- assign continue_text = 'actions.continue_shopping' | t -%}
-        {%- capture continue_attributes -%}href="{{ settings.empty_cart_button_link | default: shop_url }}"{%- endcapture -%}
-        {% render 'mionas-text',
-          content: continue_text,
-          variant: 'body',
-          color: 'primary',
-          tag: 'a',
-          class: 'mionas-cart__link mionas-cart__continue',
-          attributes: continue_attributes
-        %}
-        {% render 'mionas-text', content: count_text, variant: 'body', color: 'secondary', tag: 'p', class: 'mionas-cart__count' %}
+        {% render 'mionas-text', content: count_text, variant: 'lead', color: 'secondary', tag: 'p', class: 'mionas-cart__count' %}
       </div>
 
       <div class="mionas-cart__main">
@@ -135,16 +118,6 @@
           {%- content_for 'block', type: '_cart-summary', id: 'cart-page-summary' -%}
         </div>
       </div>
-
-      <div class="mionas-cart__bar">
-        <div class="mionas-cart__bar-total">
-          {% render 'mionas-text', content: total_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
-          {% render 'mionas-text', content: total_text, variant: 'title', tag: 'span' %}
-        </div>
-        <button type="submit" form="cart-form" name="checkout" class="{{ primary_classes }} mionas-cart__bar-button">
-          {{- 'content.checkout' | t -}}
-        </button>
-      </div>
     </div>
   {%- endif -%}
 {% endcapture %}
@@ -177,7 +150,7 @@
   .mionas-cart__layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'title' 'main' 'free-shipping' 'summary' 'bar';
+    grid-template-areas: 'title' 'main' 'free-shipping' 'summary';
     gap: var(--space-md);
   }
 
@@ -191,23 +164,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-sm) var(--space-lg);
+    gap: var(--space-2xs) var(--space-sm);
   }
 
-
-  .text-role.mionas-cart__link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
-    min-height: var(--minimum-touch-target);
-    font-weight: var(--link-body-font-weight);
-    text-decoration: none;
-  }
-
-  .text-role.mionas-cart__continue {
-    display: none;
-  }
 
   .mionas-cart__main {
     grid-area: main;
@@ -249,11 +208,6 @@
     padding: var(--space-md);
   }
 
-  /* Phones show two suggestions; wider screens show all four and the grid wraps them. */
-  .mionas-cart__free-shipping .mionas-product-upsell-card:nth-child(n + 3) {
-    display: none;
-  }
-
   /* _cart-summary pads and pins its inner box for Horizon's full-bleed panel; the card holds it here. */
   .mionas-cart__summary .cart-summary__inner {
     position: static;
@@ -279,7 +233,11 @@
   }
 
   .mionas-cart__columns {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
   }
 
   .mionas-cart__table {
@@ -296,36 +254,6 @@
     pointer-events: none;
   }
 
-  /* Phones: the bar carries the total and checkout, so the summary card drops its own. */
-  @media screen and (max-width: 749px) {
-    .mionas-cart__summary :is(.cart-totals__container, .cart__checkout-button) {
-      display: none;
-    }
-  }
-
-  .mionas-cart__bar {
-    grid-area: bar;
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    margin-inline: calc(var(--page-margin) * -1);
-    padding: var(--space-sm) var(--space-md);
-    background: var(--surface-default);
-    border-top: var(--card-base-border-width) solid var(--card-base-border-color);
-    box-shadow: var(--shadow-md);
-  }
-
-  .mionas-cart__bar-total {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mionas-cart__bar-button {
-    flex: 1;
-  }
 
   .mionas-cart__layout--empty {
     display: flex;
@@ -363,15 +291,6 @@
       display: block;
     }
 
-    .mionas-cart__count,
-    .mionas-cart__bar {
-      display: none;
-    }
-
-    .text-role.mionas-cart__continue {
-      display: inline-flex;
-    }
-
     .mionas-cart__layout:not(.mionas-cart__layout--empty) {
       gap: var(--space-lg);
     }
@@ -382,10 +301,6 @@
 
     .mionas-cart__summary {
       padding: var(--space-lg);
-    }
-
-    .mionas-cart__free-shipping .mionas-product-upsell-card:nth-child(n + 3) {
-      display: flex;
     }
   }
 
@@ -433,11 +348,7 @@
      readable in any column. blocks/_mionas-cart-item.liquid uses the same container. */
   @container mionas-cart-items (min-width: 620px) {
     .mionas-cart__columns {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--space-md);
       padding: var(--space-md) var(--space-lg);
-      border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
     }
   }
 {% endstylesheet %}

@@ -14,9 +14,6 @@
       "reached_html": "<strong>Great!</strong> Your order has no shipping costs.",
       "progress": "Progress towards free shipping"
     },
-    "product_upsells": {
-      "heading_under": "To reach free shipping"
-    },
     "form": {
       "email_required": "Enter your email.",
       "email_invalid": "Enter a valid email address.",

@@ -14,9 +14,6 @@
       "reached_html": "<strong>Perfecte!</strong> La teva comanda no paga despeses d'enviament.",
       "progress": "Progrés cap a l'enviament gratuït"
     },
-    "product_upsells": {
-      "heading_under": "Per arribar a l'enviament gratuït"
-    },
     "form": {
       "email_required": "Escriu el teu correu electrònic.",
       "email_invalid": "Escriu una adreça de correu electrònic vàlida.",

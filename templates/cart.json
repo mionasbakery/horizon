@@ -99,7 +99,7 @@
               "static": true,
               "name": "Mionas: Cart Item Title",
               "settings": {
-                "title_variant": "title",
+                "title_variant": "body",
                 "show_vendor": false
               },
               "blocks": {}
@@ -108,13 +108,6 @@
               "type": "_mionas-cart-item-price",
               "static": true,
               "name": "Mionas: Cart Item Price",
-              "settings": {},
-              "blocks": {}
-            },
-            "cart-item-remove": {
-              "type": "_mionas-cart-item-remove",
-              "static": true,
-              "name": "Mionas: Cart Item Remove",
               "settings": {},
               "blocks": {}
             },
