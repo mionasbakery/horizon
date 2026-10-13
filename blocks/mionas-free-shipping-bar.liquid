@@ -20,7 +20,6 @@
     if total >= threshold_cents
       assign complete = true
     endif
-    assign threshold_text = threshold_cents | money_without_trailing_zeros
     assign label = 'mionas.free_shipping.progress' | t
     assign now = total | divided_by: 100.0 | round
   -%}
@@ -34,7 +33,6 @@
       label: label,
       max: threshold,
       now: now,
-      end_label: threshold_text,
       complete: complete
     %}
   </div>

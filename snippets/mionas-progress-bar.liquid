@@ -1,13 +1,14 @@
 {%- doc -%}
-  Renders a pill progress bar with an optional label at its end: striped while in progress, solid
-  once complete.
+  Renders a pill progress bar with an optional label at its end: striped and burning like a fuse
+  while in progress, solid once complete.
 
   @param {number} progress - How far along, from 0 to 1.
   @param {string} label - The bar's accessible name.
   @param {number} max - The goal, read out as aria-valuemax.
   @param {number} now - The current value, read out as aria-valuenow.
   @param {string} [end_label] - Text after the bar, such as the goal amount.
-  @param {boolean} [complete] - Drops the stripes and colours the end label primary.
+  @param {boolean} [complete] - Drops the stripes and the fuse, and colours the end label primary.
+    A complete bar plays a confetti burst when the page loads and when a re-render makes it complete.
 
   @example
   {% render 'mionas-progress-bar', progress: 0.4, label: 'Progress', max: 30, now: 12, end_label: '€30' %}
@@ -15,29 +16,75 @@
 
 {%- liquid
   assign end_color = 'secondary'
+  assign lit = true
   if complete
     assign end_color = 'primary'
+    assign lit = false
   endif
+  if progress <= 0
+    assign lit = false
+  endif
+
+  # Each spark: angle (deg), reach (px), delay (s), duration (s), from the free-shipping canvas.
+  assign sparks = '0,20,0,0.6|34,16,0.42,0.7|58,19,0.16,0.55|94,15,0.58,0.65|118,20,0.32,0.6|152,16,0.74,0.7|182,19,0.08,0.55|214,15,0.5,0.65|238,20,0.24,0.6|274,16,0.66,0.7|298,19,0.4,0.55|332,15,0.82,0.65' | split: '|'
 -%}
 
-<div
-  class="mionas-progress-bar{% if complete %} mionas-progress-bar--complete{% endif %}"
+<script src="{{ 'mionas-progress-bar.js' | asset_url }}" type="module"></script>
+
+<mionas-progress-bar
+  class="mionas-progress-bar{% if complete %} mionas-progress-bar--complete{% endif %}{% if lit %} mionas-progress-bar--lit{% endif %}"
+  data-complete="{{ complete | default: false }}"
   style="--mionas-progress-bar-value: {{ progress | at_least: 0 | at_most: 1 }};"
 >
-  <div
-    class="mionas-progress-bar__track"
-    role="progressbar"
-    aria-label="{{ label | escape }}"
-    aria-valuemin="0"
-    aria-valuemax="{{ max }}"
-    aria-valuenow="{{ now | at_most: max }}"
-  >
-    <div class="mionas-progress-bar__fill"></div>
+  <div class="mionas-progress-bar__fuse">
+    <div
+      class="mionas-progress-bar__track"
+      role="progressbar"
+      aria-label="{{ label | escape }}"
+      aria-valuemin="0"
+      aria-valuemax="{{ max }}"
+      aria-valuenow="{{ now | at_most: max }}"
+    >
+      <div class="mionas-progress-bar__fill"></div>
+    </div>
+    {%- if lit -%}
+      <span class="mionas-progress-bar__sparks" aria-hidden="true">
+        {%- for spark in sparks -%}
+          {%- assign v = spark | split: ',' -%}
+          <span
+            class="mionas-progress-bar__spark"
+            style="--a: {{ v[0] }}deg; --r: {{ v[1] }}px; --d: {{ v[2] }}s; --t: {{ v[3] }}s;"
+          ></span>
+        {%- endfor -%}
+      </span>
+    {%- endif -%}
+    {%- if complete -%}
+      {%- comment -%}
+        Distance x and y (px), delay (ms) and size (px) of each confetti piece. They fly up and back
+        over the bar, since the bar's end sits at the card's edge.
+      {%- endcomment -%}
+      {%- assign confetti = '-85,26,240,5|-102,-75,60,4|-6,-73,180,4|-76,-1,20,6|-6,-92,0,6|-153,12,200,6|-43,-80,160,3|-63,-2,60,6|-95,-8,140,6|2,-77,200,4|-98,27,140,4|-83,-50,20,4|-60,-24,80,3|-132,-3,120,3|2,-65,0,3|-99,46,0,5|-102,-54,120,3|-34,-41,200,4|-67,-29,0,5|-9,-40,60,3|-49,33,140,4|-20,-45,160,4|16,-94,120,5|-90,-5,60,3|-145,-45,240,6|-104,41,60,4|-113,-65,200,6|-159,-4,60,5|-124,-36,100,4|-39,-22,60,6|-37,8,100,4|-24,-37,180,5' | split: '|' -%}
+      <span class="mionas-progress-bar__flash" aria-hidden="true"></span>
+      {%- for piece in confetti -%}
+        {%- assign v = piece | split: ',' -%}
+        <span
+          class="mionas-progress-bar__confetti"
+          style="--dx: {{ v[0] }}px; --dy: {{ v[1] }}px; --s: {{ v[3] }}px; animation-delay: {{ v[2] }}ms;"
+          aria-hidden="true"
+        ></span>
+      {%- endfor -%}
+    {%- endif -%}
   </div>
   {%- if end_label != blank -%}
-    {% render 'mionas-text', content: end_label, variant: 'label', color: end_color, tag: 'span' %}
+    {% render 'mionas-text',
+      content: end_label,
+      variant: 'body',
+      color: end_color,
+      tag: 'span',
+      class: 'mionas-progress-bar__goal'
+    %}
   {%- endif -%}
-</div>
+</mionas-progress-bar>
 
 {% stylesheet %}
   .mionas-progress-bar {
@@ -46,9 +93,14 @@
     gap: var(--space-sm);
   }
 
-  .mionas-progress-bar__track {
+  /* The spark rides outside the track, which clips the fill to its rounded ends. */
+  .mionas-progress-bar__fuse {
+    position: relative;
     flex: 1;
-    height: 12px;
+  }
+
+  .mionas-progress-bar__track {
+    height: var(--space-xs);
     border-radius: var(--radius-full);
     background: var(--brand-tint);
     overflow: hidden;
@@ -70,6 +122,172 @@
     animation: none;
   }
 
+  /* While under the goal the bar burns like a fuse, as drawn in the free-shipping canvas: the fill's
+     last pixels glow and sparks shoot from its end. The glow and two lighter spark blues have no
+     design-system tokens yet; they are declared once here as placeholders. */
+  .mionas-progress-bar--lit {
+    --mionas-progress-bar-glow: rgb(190 188 255 / 0.9);
+    --mionas-progress-bar-spark-2: #5b57e0;
+    --mionas-progress-bar-spark-3: #8f8cf0;
+  }
+
+  .mionas-progress-bar--lit .mionas-progress-bar__track {
+    position: relative;
+  }
+
+  .mionas-progress-bar--lit .mionas-progress-bar__fill {
+    position: relative;
+  }
+
+  .mionas-progress-bar--lit .mionas-progress-bar__fill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 18px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, var(--mionas-progress-bar-glow));
+  }
+
+  .mionas-progress-bar__sparks {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--mionas-progress-bar-value) * 100%);
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .mionas-progress-bar__spark {
+    --c: var(--brand-primary);
+
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 8px;
+    height: 2px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, transparent, var(--c));
+    opacity: 0;
+    transform-origin: 0 50%;
+    animation: mionas-progress-bar-spark var(--t) ease-out var(--d) infinite;
+  }
+
+  .mionas-progress-bar__spark:nth-child(3n + 2) {
+    --c: var(--mionas-progress-bar-spark-2);
+  }
+
+  .mionas-progress-bar__spark:nth-child(3n) {
+    --c: var(--mionas-progress-bar-spark-3);
+  }
+
+  @keyframes mionas-progress-bar-spark {
+    0% {
+      opacity: 0;
+      transform: rotate(var(--a)) translateX(0) scaleX(0.4);
+    }
+
+    12% {
+      opacity: 1;
+      transform: rotate(var(--a)) translateX(2px) scaleX(1);
+    }
+
+    100% {
+      opacity: 0;
+      transform: rotate(var(--a)) translateX(var(--r)) scaleX(0.5);
+    }
+  }
+
+  /* Success, from the free-shipping canvas: confetti bursts from the bar's end and the goal label
+     pops when assets/mionas-progress-bar.js sees the bar load complete or turn complete. */
+  .mionas-progress-bar__confetti {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: var(--s, 5px);
+    height: var(--s, 5px);
+    border-radius: 1px;
+    background: var(--brand-primary);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mionas-progress-bar__confetti:nth-of-type(3n + 1) {
+    background: var(--brand-accent-inverse);
+  }
+
+  .mionas-progress-bar__confetti:nth-of-type(3n + 2) {
+    background: var(--brand-accent);
+  }
+
+  .mionas-progress-bar.is-celebrating .mionas-progress-bar__confetti {
+    animation: mionas-progress-bar-pop 1.3s cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  /* A soft flash at the bar's end as the burst starts. */
+  .mionas-progress-bar__flash {
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin-block-start: -12px;
+    border-radius: var(--radius-full);
+    background: radial-gradient(var(--brand-accent-inverse), transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mionas-progress-bar.is-celebrating .mionas-progress-bar__flash {
+    animation: mionas-progress-bar-flash 700ms ease-out both;
+  }
+
+  @keyframes mionas-progress-bar-flash {
+    0% {
+      opacity: 0.9;
+      transform: scale(0.4);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(3);
+    }
+  }
+
+  .mionas-progress-bar.is-celebrating .text-role.mionas-progress-bar__goal {
+    animation: mionas-progress-bar-grow 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Pieces stay solid for most of the flight and fade at the end, so the burst reads at full
+     strength instead of thinning out from the start. */
+  @keyframes mionas-progress-bar-pop {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) rotate(0) scale(0.6);
+    }
+
+    70% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) rotate(220deg) scale(1);
+    }
+  }
+
+  @keyframes mionas-progress-bar-grow {
+    from {
+      transform: scale(0.6);
+    }
+
+    to {
+      transform: scale(1);
+    }
+  }
+
   @keyframes mionas-progress-bar-stripes {
     to {
       background-position: 22.6px 0;
@@ -80,6 +298,16 @@
     .mionas-progress-bar__fill {
       animation: none;
       transition: none;
+    }
+
+    .mionas-progress-bar__spark,
+    .mionas-progress-bar__confetti,
+    .mionas-progress-bar__flash {
+      display: none;
+    }
+
+    .mionas-progress-bar.is-celebrating .text-role.mionas-progress-bar__goal {
+      animation: none;
     }
   }
 {% endstylesheet %}

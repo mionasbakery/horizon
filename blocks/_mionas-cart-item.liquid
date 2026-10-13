@@ -71,7 +71,8 @@
     column-gap: var(--space-sm);
     row-gap: var(--space-2xs);
     align-items: start;
-    padding: var(--space-md);
+    /* The design system's card inset, equal on every side at every width. */
+    padding: var(--card-base-padding);
     border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
   }
 
@@ -80,7 +81,7 @@
   }
 
   .mionas-cart-item--nested {
-    padding-inline-start: calc(var(--space-md) + var(--space-lg));
+    padding-inline-start: calc(var(--card-base-padding) + var(--space-lg));
   }
 
   .mionas-cart-item > td {
@@ -196,12 +197,8 @@
       column-gap: var(--space-md);
       row-gap: 0;
       align-items: start;
-      padding: var(--space-md) var(--space-lg);
     }
 
-    .mionas-cart-item--nested {
-      padding-inline-start: calc(var(--space-lg) * 2);
-    }
 
     .mionas-cart-item__total {
       justify-self: stretch;
@@ -230,6 +227,13 @@
 
     .mionas-cart-item__quantity {
       align-self: start;
+    }
+
+    /* The name and total drop by half the difference to the 40px quantity control, so the three
+       share one centre line without the control reaching above the line's padding. */
+    .mionas-cart-item > .mionas-cart-item__title,
+    .mionas-cart-item > .mionas-cart-item__total {
+      padding-block-start: calc((var(--button-size-sm-height) - var(--text-role-body-line-height)) / 2);
     }
 
 

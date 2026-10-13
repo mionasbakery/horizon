@@ -194,6 +194,8 @@
   }
 
   .mionas-cart__items {
+    /* blocks/_mionas-cart-item.liquid switches lines to one row by this card's width, not the
+       window's, so they stay readable in any column. */
     container: mionas-cart-items / inline-size;
     overflow: hidden;
   }
@@ -204,8 +206,10 @@
 
   /* The free-shipping card is a Mionas: Card the editor fills; its inset changes with the width, which
      the card's own padding settings can't express. */
+  /* The card holds no media to clip, so the progress bar's success confetti may fly past its edge. */
   .mionas-cart__free-shipping > * {
     padding: var(--space-md);
+    overflow: visible;
   }
 
   /* _cart-summary pads and pins its inner box for Horizon's full-bleed panel; the card holds it here. */
@@ -236,7 +240,7 @@
     display: flex;
     justify-content: space-between;
     gap: var(--space-md);
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--card-base-padding);
     border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
   }
 
@@ -295,8 +299,10 @@
       gap: var(--space-lg);
     }
 
+    /* Even top and bottom, so a reached bar (no upsells below) keeps the same space under it as
+       above it. */
     .mionas-cart__free-shipping > * {
-      padding: var(--space-md) var(--space-lg) var(--space-lg);
+      padding: var(--space-md) var(--space-lg);
     }
 
     .mionas-cart__summary {
@@ -344,13 +350,6 @@
     }
   }
 
-  /* The lines switch to one row by the width of their own card, not the window, so they stay
-     readable in any column. blocks/_mionas-cart-item.liquid uses the same container. */
-  @container mionas-cart-items (min-width: 620px) {
-    .mionas-cart__columns {
-      padding: var(--space-md) var(--space-lg);
-    }
-  }
 {% endstylesheet %}
 
 {% schema %}
