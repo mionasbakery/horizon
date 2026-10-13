@@ -1,0 +1,95 @@
+{%- doc -%}
+  Renders a compact product to add on top of what's in the cart: photo, name, price and the
+  add-to-cart button the caller passes in. Used by the cart's free-shipping suggestions.
+
+  @param {product} product - The suggested product.
+  @param {string} button - The rendered add-to-cart row; a snippet can't render a block itself.
+
+  @example
+  {% render 'mionas-product-upsell-card', product: product, button: button %}
+{%- enddoc -%}
+
+{%- comment -%}
+  data-collections lets assets/mionas-product-upsells.js keep only products from the block's
+  chosen collections, because the recommendations response can't read that block's settings.
+{%- endcomment -%}
+<div
+  class="mionas-product-upsell-card"
+  data-price="{{ product.price }}"
+  data-collections="{{ product.collections | map: 'handle' | join: ',' }}"
+>
+  <a class="mionas-product-upsell-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', sizes: '56px', alt: '' }}
+    {%- endif -%}
+  </a>
+  <div class="mionas-product-upsell-card__text">
+    {%- capture title_link -%}<a href="{{ product.url }}">{{ product.title | escape }}</a>{%- endcapture -%}
+    {% render 'mionas-text', content: title_link, variant: 'body', tag: 'p', class: 'mionas-product-upsell-card__title' %}
+    {%- assign price = product.price | money -%}
+    {% render 'mionas-text', content: price, variant: 'label', color: 'secondary', tag: 'p' %}
+  </div>
+  <div class="mionas-product-upsell-card__action">{{ button }}</div>
+</div>
+
+{% stylesheet %}
+  .mionas-product-upsell-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs);
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--radius-xl);
+  }
+
+  .mionas-product-upsell-card__media {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface-paper);
+  }
+
+  .mionas-product-upsell-card__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mionas-product-upsell-card__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .text-role.mionas-product-upsell-card__title {
+    font-weight: var(--card-title-font-weight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mionas-product-upsell-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mionas-product-upsell-card__action {
+    flex: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .mionas-product-upsell-card {
+      gap: var(--space-xs);
+      padding: var(--space-2xs);
+      border-radius: var(--radius-full);
+    }
+
+    .mionas-product-upsell-card__media {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+    }
+  }
+{% endstylesheet %}

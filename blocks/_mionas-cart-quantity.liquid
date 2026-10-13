@@ -1,0 +1,47 @@
+{%- doc -%}
+  Renders a cart line's quantity stepper and volume-pricing popover inside
+  sections/mionas-cart.liquid. The stepper is Horizon's quantity-selector snippet, which
+  assets/component-cart-items.js reads through its line_index.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- assign can_update_quantity = line.instructions.can_update_quantity | default: true, allow_false: true -%}
+
+<div class="mionas-cart-quantity" {{ block.shopify_attributes }}>
+  {% render 'volume-pricing-info', variant: line.variant, unique_id: line.index, quantity: line.quantity %}
+  {% render 'quantity-selector',
+    product: line.product,
+    variant: line.variant,
+    in_cart_quantity: line.quantity,
+    line_index: line.index,
+    class: 'cart-primary-typography',
+    can_update_quantity: can_update_quantity
+  %}
+</div>
+
+{% stylesheet %}
+  /* quantity-selector-styles reads these input variables, so the pill needs no rule on its classes. */
+  .mionas-cart-quantity {
+    --color-input-background: var(--surface-default);
+    --color-input-border: var(--card-base-border-color);
+    --style-border-width-inputs: var(--card-base-border-width);
+    --style-border-radius-inputs: var(--radius-full);
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .mionas-cart-quantity :is(.quantity-minus, .quantity-plus) {
+    color: var(--brand-primary);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Quantity",
+  "tag": null,
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,152 @@
+{%- doc -%}
+  Renders the upsell cards inside the cart page's free-shipping card while the cart is under
+  the threshold. The upsell cards come from sections/mionas-upsell-list.liquid through
+  assets/mionas-product-upsells.js; this block holds the cart data the script ranks by, and takes
+  the threshold from blocks/mionas-free-shipping-bar.liquid on the same page. Renders nothing for an
+  empty cart.
+{%- enddoc -%}
+
+{%- liquid
+  assign latest_product = cart.items.first.product
+  assign collection_handles = block.settings.collections | map: 'handle' | join: ','
+  assign heading = 'mionas.product_upsells.heading_under' | t
+-%}
+
+{%- if cart.item_count > 0 -%}
+  <script src="{{ 'mionas-product-upsells.js' | asset_url }}" type="module"></script>
+
+  <div
+    class="mionas-product-upsells"
+    data-product-id="{{ latest_product.id }}"
+    data-total="{{ cart.total_price }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- comment -%}
+      The recommendations response carries no stylesheet, so one inert card is rendered here to put
+      the card and add-to-cart files in the page's render tree, which is what ships their CSS.
+    {%- endcomment -%}
+    <template>
+      {%- capture button -%}
+        {% content_for 'block', type: 'mionas-add-to-cart', id: 'static-add-to-cart', closest.product: latest_product %}
+      {%- endcapture -%}
+      {% render 'mionas-product-upsell-card', product: latest_product, button: button %}
+      {% render 'mionas-button-class', variant: 'secondary', size: 'sm' %}
+    </template>
+
+    <mionas-product-upsells
+      data-skip-node-update
+      hidden
+      data-url="{{ routes.product_recommendations_url }}"
+      data-collections="{{ collection_handles }}"
+    >
+      {% render 'mionas-text',
+        content: heading,
+        variant: 'body',
+        tag: 'p',
+        class: 'mionas-product-upsells__heading'
+      %}
+      <div class="mionas-product-upsells__list" data-list></div>
+      {%- if block.settings.more_link != blank -%}
+        {%- capture more -%}
+          {{- 'mionas.product_upsells.more' | t -}}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+        {%- endcapture -%}
+        {%- capture more_attributes -%}href="{{ block.settings.more_link }}"{%- endcapture -%}
+        {% render 'mionas-text',
+          content: more,
+          variant: 'body',
+          color: 'primary',
+          tag: 'a',
+          class: 'mionas-product-upsells__more',
+          attributes: more_attributes
+        %}
+      {%- endif -%}
+    </mionas-product-upsells>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* A card lays its children out at their own width; the list fills the card. */
+  .mionas-product-upsells {
+    width: 100%;
+  }
+
+  mionas-product-upsells {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-sm);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--card-base-border-width) solid var(--card-base-border-color);
+  }
+
+  mionas-product-upsells[hidden] {
+    display: none;
+  }
+
+  .text-role.mionas-product-upsells__heading {
+    font-weight: var(--card-title-font-weight);
+  }
+
+  /* The add-to-cart button's animation layers are absolutely positioned; a positioned list keeps
+     them inside the card. */
+  .mionas-product-upsells__list {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .text-role.mionas-product-upsells__more {
+    display: none;
+    align-self: flex-start;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-weight: var(--link-body-font-weight);
+    text-decoration: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    mionas-product-upsells {
+      gap: var(--space-2xs);
+      margin-block-start: var(--space-xs);
+      padding-block-start: var(--space-sm);
+    }
+
+    .text-role.mionas-product-upsells__heading {
+      display: none;
+    }
+
+    .mionas-product-upsells__list {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--space-xs);
+    }
+
+    .text-role.mionas-product-upsells__more {
+      display: inline-flex;
+      min-height: 36px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Product Upsells",
+  "tag": null,
+  "settings": [
+    {
+      "type": "collection_list",
+      "id": "collections",
+      "label": "Suggest from",
+      "info": "Only related products in these collections are suggested. Leave empty to suggest any related product."
+    },
+    {
+      "type": "url",
+      "id": "more_link",
+      "label": "More products link",
+      "info": "Shown under the suggestions on desktop."
+    }
+  ],
+  "presets": [{ "name": "Mionas: Product Upsells" }]
+}
+{% endschema %}

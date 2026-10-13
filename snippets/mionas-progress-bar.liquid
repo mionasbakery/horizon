@@ -1,0 +1,85 @@
+{%- doc -%}
+  Renders a pill progress bar with an optional label at its end: striped while in progress, solid
+  once complete.
+
+  @param {number} progress - How far along, from 0 to 1.
+  @param {string} label - The bar's accessible name.
+  @param {number} max - The goal, read out as aria-valuemax.
+  @param {number} now - The current value, read out as aria-valuenow.
+  @param {string} [end_label] - Text after the bar, such as the goal amount.
+  @param {boolean} [complete] - Drops the stripes and colours the end label primary.
+
+  @example
+  {% render 'mionas-progress-bar', progress: 0.4, label: 'Progress', max: 30, now: 12, end_label: '€30' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign end_color = 'secondary'
+  if complete
+    assign end_color = 'primary'
+  endif
+-%}
+
+<div
+  class="mionas-progress-bar{% if complete %} mionas-progress-bar--complete{% endif %}"
+  style="--mionas-progress-bar-value: {{ progress | at_least: 0 | at_most: 1 }};"
+>
+  <div
+    class="mionas-progress-bar__track"
+    role="progressbar"
+    aria-label="{{ label | escape }}"
+    aria-valuemin="0"
+    aria-valuemax="{{ max }}"
+    aria-valuenow="{{ now | at_most: max }}"
+  >
+    <div class="mionas-progress-bar__fill"></div>
+  </div>
+  {%- if end_label != blank -%}
+    {% render 'mionas-text', content: end_label, variant: 'label', color: end_color, tag: 'span' %}
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mionas-progress-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .mionas-progress-bar__track {
+    flex: 1;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: var(--brand-tint);
+    overflow: hidden;
+  }
+
+  .mionas-progress-bar__fill {
+    height: 100%;
+    width: calc(var(--mionas-progress-bar-value) * 100%);
+    border-radius: inherit;
+    background-color: var(--brand-primary);
+    background-image: repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.16) 0 8px, transparent 8px 16px);
+    background-size: 22.6px 22.6px;
+    transition: width 500ms cubic-bezier(0.2, 0, 0, 1);
+    animation: mionas-progress-bar-stripes 1.2s linear infinite;
+  }
+
+  .mionas-progress-bar--complete .mionas-progress-bar__fill {
+    background-image: none;
+    animation: none;
+  }
+
+  @keyframes mionas-progress-bar-stripes {
+    to {
+      background-position: 22.6px 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mionas-progress-bar__fill {
+      animation: none;
+      transition: none;
+    }
+  }
+{% endstylesheet %}

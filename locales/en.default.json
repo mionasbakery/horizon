@@ -10,13 +10,13 @@
 {
   "mionas": {
     "free_shipping": {
-      "title": "Free shipping",
       "under_html": "From {{ threshold }}, shipping is free. You need <strong>{{ amount }}</strong> more.",
-      "reached_html": "<strong>Great!</strong> Your order has no shipping costs."
+      "reached_html": "<strong>Great!</strong> Your order has no shipping costs.",
+      "progress": "Progress towards free shipping"
     },
-    "cart_suggestions": {
+    "product_upsells": {
       "heading_under": "To reach free shipping",
-      "heading_reached": "To complete your order"
+      "more": "See more cookies"
     },
     "form": {
       "email_required": "Enter your email.",
@@ -53,6 +53,20 @@
     "newsletter_success": {
       "title": "Thanks for subscribing",
       "text": "We've sent you an email with your discount code. Enter it at checkout on your first order to apply it."
+    },
+    "cart": {
+      "title": "Your cart",
+      "count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      },
+      "product": "Product",
+      "total": "Total",
+      "unit_price": "{{ price }} each",
+      "summary": "Summary",
+      "shipping_note": "We bake on Tuesdays and Wednesdays and ship the same day. It arrives in 24–48 h anywhere in mainland Spain.",
+      "empty_note": "We bake on Tuesdays and Wednesdays and ship the same day. Free shipping from {{ threshold }}.",
+      "empty_button": "Shop cookies"
     }
   },
   "accessibility": {
