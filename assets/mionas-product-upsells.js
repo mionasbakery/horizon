@@ -81,8 +81,7 @@ class MionasProductUpsells extends HTMLElement {
   }
 
   /**
-   * Merges the related products of up to three cart items, keeping those in the block's
-   * collections. Products that reach free shipping with one unit come first, cheapest first so the
+   * Merges the related products of up to three cart items. Products that reach free shipping with one unit come first, cheapest first so the
    * order goes over the threshold as little as possible; then those that reach it with two units;
    * then the rest. Within the last two groups, a product related to more cart items goes first,
    * then Shopify's order. The cart section's CSS shows as many as its layout fits, at most four.
@@ -90,16 +89,12 @@ class MionasProductUpsells extends HTMLElement {
    * @param {number} gap - Cents left to the free-shipping threshold, above 0
    */
   #rank(docs, gap) {
-    const allowed = (this.dataset.collections ?? '').split(',').filter(Boolean);
     /** @type {Map<string, { card: HTMLElement, matches: number, position: number, price: number }>} */
     const found = new Map();
 
     for (const doc of docs) {
       [...doc.querySelectorAll('.mionas-product-upsell')].forEach((element, position) => {
         const card = /** @type {HTMLElement} */ (element);
-        const handles = (card.dataset.collections ?? '').split(',');
-        if (allowed.length > 0 && !handles.some((handle) => allowed.includes(handle))) return;
-
         const id = card.dataset.productId ?? '';
         const entry = found.get(id);
         if (entry) {

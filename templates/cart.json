@@ -124,11 +124,7 @@
             "product-upsells": {
               "type": "mionas-product-upsells",
               "name": "Mionas: Product Upsells",
-              "settings": {
-                "collections": [
-                  "comprar-cookies"
-                ]
-              },
+              "settings": {},
               "blocks": {
                 "upsell": {
                   "type": "_mionas-product-upsell",

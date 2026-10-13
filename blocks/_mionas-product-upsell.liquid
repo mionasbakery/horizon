@@ -6,8 +6,7 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  data-collections lets assets/mionas-product-upsells.js keep only products from the list's chosen
-  collections, and data-price lets it rank them by how they reach free shipping.
+  data-price lets assets/mionas-product-upsells.js rank the cards by how they reach free shipping.
 {%- endcomment -%}
 
 {%- assign product = closest.product -%}
@@ -17,7 +16,6 @@
     class="mionas-product-upsell"
     data-product-id="{{ product.id }}"
     data-price="{{ product.price }}"
-    data-collections="{{ product.collections | map: 'handle' | join: ',' }}"
     {{ block.shopify_attributes }}
   >
     <a class="mionas-product-upsell__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
@@ -91,6 +89,11 @@
 {
   "name": "Mionas: Product Upsell",
   "tag": null,
-  "settings": []
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Every suggested product uses this card, with its add-to-cart button's settings."
+    }
+  ]
 }
 {% endschema %}

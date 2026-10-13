@@ -16,13 +16,20 @@
   assign latest_product = cart.items.first.product
   assign cart_product_ids = cart.items | map: 'product_id'
   assign source_ids = cart_product_ids | uniq | slice: 0, 3 | join: ','
-  assign collection_handles = block.settings.collections | map: 'handle' | join: ','
 -%}
 
 {%- if recommendations.performed -%}
   <div class="mionas-product-upsells__results">
+    {%- comment -%}
+      Free shipping only counts towards shipped products, so pickup-only ones (courses, megacookies)
+      are never suggested.
+    {%- endcomment -%}
     {%- for product in recommendations.products -%}
-      {%- if cart_product_ids contains product.id or product.available == false or product.has_only_default_variant == false -%}
+      {%- if cart_product_ids contains product.id
+        or product.available == false
+        or product.has_only_default_variant == false
+        or product.selected_or_first_available_variant.requires_shipping == false
+      -%}
         {%- continue -%}
       {%- endif -%}
       {% content_for 'block', type: '_mionas-product-upsell', id: 'upsell', closest.product: product %}
@@ -46,7 +53,6 @@
       hidden
       data-url="{{ routes.product_recommendations_url }}"
       data-section-id="{{ section.id }}"
-      data-collections="{{ collection_handles }}"
     >
       <div class="mionas-product-upsells__list" data-list></div>
     </mionas-product-upsells>
@@ -127,10 +133,16 @@
   "tag": null,
   "settings": [
     {
-      "type": "collection_list",
-      "id": "collections",
-      "label": "Suggest from",
-      "info": "Only related products in these collections are suggested. Leave empty to suggest any related product."
+      "type": "paragraph",
+      "content": "Shows while the cart is under the Mionas: Cart section's \"Free shipping from\" amount. Needs a Mionas: Free Shipping Bar in the same card."
+    },
+    {
+      "type": "paragraph",
+      "content": "Suggests the products Shopify relates to up to three products in the cart. Shopify picks them on its own; the Search & Discovery app can pin or hide some. Only products that ship, are in stock, aren't in the cart yet and have one variant are suggested."
+    },
+    {
+      "type": "paragraph",
+      "content": "Products that reach free shipping with one unit come first, cheapest first. Then those that reach it with two units, then the rest. Up to four, as many as the card's width fits."
     }
   ],
   "presets": [{ "name": "Mionas: Product Upsells" }]
