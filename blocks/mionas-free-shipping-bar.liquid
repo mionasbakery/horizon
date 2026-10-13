@@ -39,10 +39,12 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* A card lays its children out at their own width, which for a bar is none. */
+  /* A card lays its children out at their own width, which for a bar is none. The message above
+     carries 4px of leading under its last line, so the top margin is that much smaller than the
+     upsells' to space the bar evenly. */
   .mionas-free-shipping-bar {
     width: 100%;
-    margin-block-start: var(--space-xs);
+    margin-block-start: var(--space-2xs);
   }
 {% endstylesheet %}
 
