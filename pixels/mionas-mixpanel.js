@@ -36,6 +36,9 @@ function numericId(id) {
   return id == null ? undefined : String(id).split('/').pop();
 }
 
+const customer = init.data?.customer;
+const customerId = numericId(customer?.id);
+
 function amount(money) {
   const value = Number(money?.amount);
   return Number.isFinite(value) ? value : undefined;
@@ -206,8 +209,6 @@ function checkoutProperties(checkout) {
   };
 }
 
-const customer = init.data?.customer;
-const customerId = numericId(customer?.id);
 identify(customerId, profile(customer?.firstName, customer?.lastName, customer?.email));
 
 analytics.subscribe('page_viewed', (event) => {
