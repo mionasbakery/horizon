@@ -6,7 +6,8 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  data-price lets assets/mionas-product-upsells.js rank the cards by how they reach free shipping.
+  data-price lets assets/mionas-product-upsells.js rank the cards by how they reach free shipping, and
+  with data-title it describes the product in the analytics events.
 {%- endcomment -%}
 
 {%- assign product = closest.product -%}
@@ -16,6 +17,7 @@
     class="mionas-product-upsell"
     data-product-id="{{ product.id }}"
     data-price="{{ product.price }}"
+    data-title="{{ product.title | escape }}"
     {{ block.shopify_attributes }}
   >
     <a class="mionas-product-upsell__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">

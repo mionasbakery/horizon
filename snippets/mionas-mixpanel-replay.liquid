@@ -42,6 +42,9 @@
             // Mixpanel samples each page load, but a recording already running resumes on every page.
             record_sessions_percent: recordSessionsPercent,
             record_heatmap_data: true,
+            // Shop events come only from the pixel. Off is the SDK's default today; set so an update
+            // can't turn it on. Heatmap data above still sends its own clicks and page views.
+            autocapture: false,
             // The SDK hides all text and images by default; the storefront shows only the shop's own
             // copy and product photos. Form fields stay masked.
             record_mask_all_text: false,

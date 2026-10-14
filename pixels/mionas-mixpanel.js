@@ -213,6 +213,27 @@ analytics.subscribe('product_added_to_cart', (event) => {
   track('add_to_cart', event, variantProperties(line?.merchandise, line?.quantity), customerId);
 });
 
+analytics.subscribe('product_removed_from_cart', (event) => {
+  const line = event.data?.cartLine;
+  track('remove_from_cart', event, variantProperties(line?.merchandise, line?.quantity), customerId);
+});
+
+analytics.subscribe('cart_viewed', (event) => {
+  const cart = event.data?.cart;
+  track(
+    'view_cart',
+    event,
+    {
+      currency: cart?.cost?.totalAmount?.currencyCode,
+      value: amount(cart?.cost?.totalAmount),
+      items: (cart?.lines ?? []).map((line) =>
+        item(line.merchandise?.product, line.merchandise, amount(line.merchandise?.price), line.quantity)
+      ),
+    },
+    customerId
+  );
+});
+
 analytics.subscribe('checkout_started', (event) => {
   track('begin_checkout', event, checkoutProperties(event.data?.checkout), customerId);
 });
@@ -244,4 +265,10 @@ const NEWSLETTER_POPUP_EVENTS = {
 };
 Object.entries(NEWSLETTER_POPUP_EVENTS).forEach(([shopifyName, name]) => {
   analytics.subscribe(shopifyName, (event) => track(name, event, event.customData ?? {}, customerId));
+});
+
+// Published by assets/mionas-product-upsells.js and assets/mionas-free-shipping-bar.js under their GA4 names,
+// with their parameters already set.
+['view_item_list', 'select_item', 'reach_free_shipping'].forEach((name) => {
+  analytics.subscribe(name, (event) => track(name, event, event.customData ?? {}, customerId));
 });

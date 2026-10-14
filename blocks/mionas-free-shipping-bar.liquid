@@ -23,9 +23,12 @@
     assign label = 'mionas.free_shipping.progress' | t
     assign now = total | divided_by: 100.0 | round
   -%}
-  <div
+  <script src="{{ 'mionas-free-shipping-bar.js' | asset_url }}" type="module"></script>
+
+  <mionas-free-shipping-bar
     class="mionas-free-shipping-bar"
     data-free-shipping-threshold="{{ threshold_cents }}"
+    data-total="{{ total }}"
     {{ block.shopify_attributes }}
   >
     {% render 'mionas-progress-bar',
@@ -35,7 +38,7 @@
       now: now,
       complete: complete
     %}
-  </div>
+  </mionas-free-shipping-bar>
 {%- endif -%}
 
 {% stylesheet %}
@@ -43,6 +46,7 @@
      carries 4px of leading under its last line, so the top margin is that much smaller than the
      upsells' to space the bar evenly. */
   .mionas-free-shipping-bar {
+    display: block;
     width: 100%;
     margin-block-start: var(--space-2xs);
   }

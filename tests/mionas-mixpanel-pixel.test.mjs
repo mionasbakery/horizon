@@ -230,3 +230,46 @@ test('only the page view carries traffic', async () => {
   assert.equal(sent[0].properties.utm_source, undefined);
   assert.equal(sent[0].properties.click_id_network, undefined);
 });
+
+test('the cart page and a removed line send view_cart and remove_from_cart', async () => {
+  const { sent, handlers } = runPixel();
+  const lines = [
+    { quantity: 2, merchandise: variant },
+    { quantity: 1, merchandise: { ...variant, title: 'Default Title', price: { amount: 3.9, currencyCode: 'EUR' } } },
+  ];
+  handlers.cart_viewed({
+    ...base,
+    data: { cart: { cost: { totalAmount: { amount: 12.3, currencyCode: 'EUR' } }, lines } },
+  });
+  handlers.product_removed_from_cart({ ...base, data: { cartLine: { quantity: 2, merchandise: variant } } });
+  await flush();
+
+  const events = sent.map(({ event, properties }) => [event, properties.currency, properties.value, properties.items]);
+  assert.deepEqual(events, [
+    ['view_cart', 'EUR', 12.3, [{ ...item, quantity: 2 }, { item_id: '9', item_name: 'Cookie', price: 3.9, quantity: 1 }]],
+    ['remove_from_cart', 'EUR', 8.4, [{ ...item, quantity: 2 }]],
+  ]);
+});
+
+test('forwards the events the theme publishes under their GA4 names', async () => {
+  const { sent, handlers } = runPixel();
+  const list = { item_list_id: 'cart_upsells', item_list_name: 'Cart upsells' };
+  const upsell = { item_id: '9', item_name: 'Cookie', price: 4.2, index: 0 };
+  handlers.view_item_list({ ...base, customData: { ...list, items: [upsell], free_shipping_remaining: 25.8 } });
+  handlers.select_item({ ...base, customData: { ...list, currency: 'EUR', value: 4.2, items: [{ ...upsell, quantity: 1 }] } });
+  handlers.reach_free_shipping({
+    ...base,
+    customData: { currency: 'EUR', value: 31.2, free_shipping_threshold: 30, via_upsell: true },
+  });
+  await flush();
+
+  const events = sent.map(({ event, properties }) => {
+    const { token, distinct_id, $device_id, time, $insert_id, theme_version, platform, locale, ...rest } = properties;
+    return [event, rest];
+  });
+  assert.deepEqual(events, [
+    ['view_item_list', { ...list, items: [upsell], free_shipping_remaining: 25.8 }],
+    ['select_item', { ...list, currency: 'EUR', value: 4.2, items: [{ ...upsell, quantity: 1 }] }],
+    ['reach_free_shipping', { currency: 'EUR', value: 31.2, free_shipping_threshold: 30, via_upsell: true }],
+  ]);
+});

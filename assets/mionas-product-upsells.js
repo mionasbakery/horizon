@@ -1,3 +1,32 @@
+const LIST = { item_list_id: 'cart_upsells', item_list_name: 'Cart upsells' };
+
+/**
+ * Publishes a GA4 event to Shopify customer events, which pixels/mionas-mixpanel.js forwards to Mixpanel.
+ * @param {string} name
+ * @param {Record<string, unknown>} params
+ */
+function publish(name, params) {
+  try {
+    /** @type {any} */ (window).Shopify?.analytics?.publish?.(name, params);
+  } catch {
+    // Analytics must never break the upsells.
+  }
+}
+
+/**
+ * One GA4 item for a card, with its position in the list.
+ * @param {HTMLElement} card
+ * @param {number} index
+ */
+function item(card, index) {
+  return {
+    item_id: card.dataset.productId,
+    item_name: card.dataset.title,
+    price: Number(card.dataset.price) / 100,
+    index,
+  };
+}
+
 /**
  * Fills the cart upsells from the recommendations endpoint and keeps them in step with the cart.
  * The parent block re-renders with the cart section on every change, so its data attributes are the trigger.
@@ -9,8 +38,13 @@ class MionasProductUpsells extends HTMLElement {
   #morphObserver;
   /** @type {AbortController | undefined} */
   #controller;
-  /** @type {Element[]} */
+  /** @type {HTMLElement[]} */
   #cards = [];
+  /** Cents left to free shipping when the cards were ranked. */
+  #gap = 0;
+  #threshold = 0;
+  /** The product IDs last reported as viewed, so a re-render of the same list isn't counted again. */
+  #listed = '';
 
   connectedCallback() {
     this.host = /** @type {HTMLElement} */ (this.parentElement);
@@ -25,6 +59,8 @@ class MionasProductUpsells extends HTMLElement {
     });
     this.#morphObserver.observe(this, { childList: true, subtree: true, characterData: true });
 
+    this.addEventListener('shopify:cart:lines-update', this.#onAdd);
+
     this.#load();
   }
 
@@ -32,6 +68,7 @@ class MionasProductUpsells extends HTMLElement {
     this.#cartObserver?.disconnect();
     this.#morphObserver?.disconnect();
     this.#controller?.abort();
+    this.removeEventListener('shopify:cart:lines-update', this.#onAdd);
   }
 
   async #load() {
@@ -40,6 +77,8 @@ class MionasProductUpsells extends HTMLElement {
     // Without a free-shipping bar on the page there is no threshold, and the upsells stay hidden.
     const threshold = Number(document.querySelector('[data-free-shipping-threshold]')?.getAttribute('data-free-shipping-threshold') ?? 0);
     const gap = threshold - Number(total);
+    this.#gap = gap;
+    this.#threshold = threshold;
     if (sources.length === 0 || threshold <= 0 || gap <= 0) return this.#show([]);
 
     this.#controller?.abort();
@@ -116,16 +155,58 @@ class MionasProductUpsells extends HTMLElement {
           a.position - b.position
       )
       .slice(0, 4)
-      .map(({ card }) => card);
+      .map(({ card }) => /** @type {HTMLElement} */ (card));
 
     this.#show(shown);
   }
 
-  /** @param {Element[]} cards */
+  /** @param {HTMLElement[]} cards */
   #show(cards) {
     this.#cards = cards;
     this.#paint();
+    this.#reportList();
   }
+
+  /** Reports the suggestions as a GA4 item list each time a different set of them shows. */
+  #reportList() {
+    const listed = this.#cards.map((card) => card.dataset.productId).join(',');
+    if (listed === this.#listed) return;
+    this.#listed = listed;
+    if (!listed) return;
+
+    publish('view_item_list', {
+      ...LIST,
+      items: this.#cards.map((card, index) => item(card, index)),
+      free_shipping_threshold: this.#threshold / 100,
+      free_shipping_remaining: this.#gap / 100,
+    });
+  }
+
+  /**
+   * Reports an add from one of the cards as a GA4 select_item once the cart accepts it. Shopify's own
+   * add_to_cart still counts it among all adds.
+   * @param {Event} event - A CartLinesUpdateEvent from a card's add-to-cart form
+   */
+  #onAdd = (event) => {
+    const { action, lines, promise } = /** @type {any} */ (event);
+    const card = /** @type {HTMLElement | null} */ (/** @type {Element} */ (event.target).closest('.mionas-product-upsell'));
+    if (action !== 'add' || !card) return;
+
+    const index = this.#cards.indexOf(card);
+    const quantity = lines?.[0]?.quantity ?? 1;
+    const remaining = this.#gap / 100;
+    promise?.then((/** @type {any} */ result) => {
+      if (result?.detail?.didError) return;
+      const added = { ...item(card, index), quantity };
+      publish('select_item', {
+        ...LIST,
+        currency: /** @type {any} */ (window).Shopify?.currency?.active,
+        value: Math.round(added.price * quantity * 100) / 100,
+        items: [added],
+        free_shipping_remaining: remaining,
+      });
+    }, () => {});
+  };
 
   #paint() {
     const list = this.querySelector('[data-list]');
