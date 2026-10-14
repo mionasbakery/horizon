@@ -10,8 +10,8 @@
 {
   "sections": {
     "heading": {
-      "type": "section",
-      "name": "Section - Heading",
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
       "blocks": {
         "breadcrumbs": {
           "type": "mionas-breadcrumbs",
@@ -22,40 +22,30 @@
             "padding-block-end": 0
           }
         },
-        "title": {
-          "type": "mionas-text",
-          "name": "Mionas: Text - Title",
+        "heading_group": {
+          "type": "mionas-heading-group",
+          "name": "Mionas: Heading Group",
           "settings": {
-            "text": "<p>{{ closest.collection.title }}</p>",
-            "variant": "display",
-            "color": "default",
-            "tag": "h1"
-          }
-        },
-        "description": {
-          "type": "mionas-text",
-          "name": "Mionas: Text - Description",
-          "settings": {
-            "text": "{{ closest.collection.description }}",
-            "variant": "lead",
-            "color": "default",
-            "tag": "p"
+            "eyebrow": "",
+            "eyebrow_color": "accent",
+            "heading": "<p>{{ closest.collection.title }}</p>",
+            "heading_variant": "display",
+            "heading_color": "default",
+            "heading_tag": "h1",
+            "heading_transform": "inherit",
+            "description": "{{ closest.collection.description }}",
+            "description_color": "default"
           }
         }
       },
-      "block_order": ["breadcrumbs", "title", "description"],
+      "block_order": [
+        "breadcrumbs",
+        "heading_group"
+      ],
       "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
+        "background": "default",
         "gap": 12,
         "section_width": "page-width",
-        "background_media": "none",
-        "border": "none",
-        "border_radius": 0,
         "padding-block-start": 48,
         "padding-block-end": 24
       }
@@ -97,7 +87,9 @@
           }
         }
       },
-      "block_order": ["kicker"],
+      "block_order": [
+        "kicker"
+      ],
       "settings": {
         "collection": "cursos",
         "max_products": 6,
@@ -159,7 +151,9 @@
               }
             }
           },
-          "block_order": ["image"]
+          "block_order": [
+            "image"
+          ]
         },
         "static-copy": {
           "type": "group",
@@ -209,7 +203,10 @@
               }
             }
           },
-          "block_order": ["heading", "lead"]
+          "block_order": [
+            "heading",
+            "lead"
+          ]
         }
       },
       "settings": {
@@ -224,5 +221,9 @@
       }
     }
   },
-  "order": ["heading", "course_list", "info_panel"]
+  "order": [
+    "heading",
+    "course_list",
+    "info_panel"
+  ]
 }

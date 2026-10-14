@@ -1,0 +1,447 @@
+{%- doc -%}
+  Renders one collection as a card: its image under a scrim, the title, the price and an arrow, all one link.
+
+  @param {collection} [closest.collection] - The surrounding collection, used when the Collection setting is blank. Then the page's own collection; renders nothing if none is set.
+{%- enddoc -%}
+{%- comment -%}
+  Renders nothing (a placeholder in the editor) when there is no collection or it has no published product, so a collection
+  whose products are all drafts drops off the page with no editor change (Tartas when this was
+  built). A sold-out collection stays: presale lines like Loaf cakes sell out between batches and
+  should still be findable.
+
+  The price is the lowest among products for sale, or among all of them when none is in stock. It
+  reads the first 50 products because collection.products is paginated at 50 outside a paginate
+  tag; the collections this card is used for are well below that.
+
+  The ground behind the image is surface-accent rather than dark, because a collection image can be
+  a cut-out with transparency (Cookies is); the scrim alone keeps the text readable.
+
+  Mirrors ../design-system/src/components/CollectionCard/CollectionCard.tsx and spends its tokens.
+
+  The card knows nothing about the grid it sits in: a section that sizes its cells (Mionas: Collection List)
+  overrides the image ratio from its own stylesheet.
+{%- endcomment -%}
+{%- liquid
+  # The page's global collection is the last fallback: a native Section on a collection page
+  # doesn't pass closest.collection down, so without it a blank card shows nothing there.
+  assign card_collection = block.settings.collection | default: closest.collection | default: collection
+  assign cover = card_collection.featured_image
+  assign min_price = nil
+  assign max_price = nil
+
+  assign priced = card_collection.products | where: 'available'
+  if priced.size == 0
+    assign priced = card_collection.products
+  endif
+
+  for product in priced
+    if cover == blank
+      assign cover = product.featured_image
+    endif
+    if min_price == nil or product.price_min < min_price
+      assign min_price = product.price_min
+    endif
+    if max_price == nil or product.price_max > max_price
+      assign max_price = product.price_max
+    endif
+  endfor
+
+  assign title_variant = block.settings.title_size
+  assign allowed_title_sizes = 'display|heading|subheading|title|lead|body|label|note' | split: '|'
+  unless allowed_title_sizes contains title_variant
+    assign title_variant = 'heading'
+  endunless
+
+  assign price_variant = block.settings.price_size
+  unless allowed_title_sizes contains price_variant
+    assign price_variant = 'body'
+  endunless
+
+  assign ratio = block.settings.image_ratio
+  assign allowed_ratios = 'portrait|square|landscape' | split: '|'
+  unless allowed_ratios contains ratio
+    assign ratio = 'landscape'
+  endunless
+-%}
+
+{%- if min_price != nil -%}
+  {%- liquid
+    assign title = card_collection.title | escape
+    assign price_label = min_price | money
+    assign price_prefix = block.settings.price_from_prefix | strip | escape
+    if min_price != max_price and price_prefix != blank
+      assign price_label = price_prefix | append: ' ' | append: price_label
+    endif
+
+    # A card can't see where it sits in its grid, so every card in one of the page's first two
+    # sections loads at once; that covers the cards above the fold on /collections.
+    assign image_loading = 'lazy'
+    if section.index <= 2
+      assign image_loading = 'eager'
+    endif
+  -%}
+  <a
+    href="{{ card_collection.url }}"
+    class="mionas-collection-card mionas-collection-card--{{ ratio }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- if cover != blank -%}
+      {{
+        cover
+        | image_url: width: 1600
+        | image_tag:
+          widths: '400, 600, 800, 1000, 1200, 1600',
+          sizes: '(min-width: 750px) 50vw, calc(100vw - 32px)',
+          loading: image_loading,
+          alt: '',
+          class: 'mionas-collection-card__image'
+      }}
+    {%- endif -%}
+    <span class="mionas-collection-card__scrim" aria-hidden="true"></span>
+
+    <span class="mionas-collection-card__body">
+      <span class="mionas-collection-card__copy">
+        {%- render 'mionas-text',
+          content: title,
+          variant: title_variant,
+          color: 'inverse-primary',
+          tag: 'span'
+        -%}
+        {%- if block.settings.show_price -%}
+          {%- render 'mionas-text',
+            content: price_label,
+            variant: price_variant,
+            color: 'inverse-primary',
+            tag: 'span'
+          -%}
+        {%- endif -%}
+      </span>
+      {%- if block.settings.show_arrow -%}
+        {%- render 'mionas-icon-button',
+          tag: 'span',
+          icon: 'arrow',
+          variant: block.settings.arrow_style,
+          size: block.settings.arrow_size,
+          class: 'mionas-collection-card__arrow'
+        -%}
+      {%- endif -%}
+    </span>
+  </a>
+{%- elsif request.design_mode -%}
+  {%- comment -%} Only in the editor, so a card with nothing to show can still be selected. {%- endcomment -%}
+  <div class="mionas-collection-card mionas-collection-card--{{ ratio }} mionas-collection-card--empty" {{ block.shopify_attributes }}>
+    {%- render 'mionas-text',
+      content: 'Pick a collection with a published product.',
+      variant: 'label',
+      color: 'secondary',
+      tag: 'span'
+    -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-collection-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    padding: var(--collection-card-base-padding);
+    overflow: hidden;
+    border-radius: var(--collection-card-base-radius);
+    background: var(--collection-card-base-background);
+    box-shadow: var(--collection-card-base-shadow);
+    color: var(--text-color-inverse-primary);
+    text-decoration: none;
+  }
+
+  .mionas-collection-card--portrait {
+    aspect-ratio: 4 / 5;
+  }
+
+  .mionas-collection-card--square {
+    aspect-ratio: 1 / 1;
+  }
+
+  .mionas-collection-card--landscape {
+    aspect-ratio: 4 / 3;
+  }
+
+  .mionas-collection-card__image,
+  .mionas-collection-card__scrim {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mionas-collection-card__image {
+    object-fit: cover;
+  }
+
+  .mionas-collection-card__scrim {
+    background: var(--collection-card-scrim-background);
+  }
+
+  .mionas-collection-card__body {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--collection-card-base-gap);
+  }
+
+  .mionas-collection-card__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--collection-card-copy-gap);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* The arrow is an Icon Button copy (snippets/mionas-icon-button.liquid); it only must not shrink. */
+  .mionas-collection-card__arrow {
+    flex: none;
+  }
+
+  .mionas-collection-card:focus-visible {
+    outline: var(--collection-card-state-focused-border-width) solid var(--collection-card-state-focused-border-color);
+    outline-offset: var(--collection-card-state-focused-offset);
+  }
+
+  .mionas-collection-card--empty {
+    justify-content: center;
+    align-items: center;
+    border: var(--border-width-thin) dashed var(--border-default);
+    box-shadow: none;
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .mionas-collection-card,
+    .mionas-collection-card__image {
+      transition: transform var(--collection-card-state-hover-duration) var(--collection-card-state-hover-easing);
+    }
+
+    .mionas-collection-card:hover {
+      transform: translateY(calc(var(--collection-card-state-hover-offset) * -1));
+    }
+
+    .mionas-collection-card:hover .mionas-collection-card__image {
+      transform: scale(var(--collection-card-state-hover-scale));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-collection-card {
+      padding: var(--collection-card-narrow-padding);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Collection Card",
+  "tag": null,
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Leave empty to use the collection of the section or page the card sits in, including the collection a product page was opened from. The card hides itself while the collection has no published product."
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Title Size",
+      "options": [
+        {
+          "value": "display",
+          "label": "Display"
+        },
+        {
+          "value": "heading",
+          "label": "Heading"
+        },
+        {
+          "value": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "value": "title",
+          "label": "Title"
+        },
+        {
+          "value": "lead",
+          "label": "Lead"
+        },
+        {
+          "value": "body",
+          "label": "Body"
+        },
+        {
+          "value": "label",
+          "label": "Label"
+        },
+        {
+          "value": "note",
+          "label": "Note"
+        }
+      ],
+      "default": "heading",
+      "info": "The design system's text roles, largest first."
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        }
+      ],
+      "default": "landscape",
+      "info": "The card's shape. A grid that sets its own row heights, like Mionas: Collection List, overrides it."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show Price",
+      "default": true,
+      "info": "The lowest price among the collection's products."
+    },
+    {
+      "type": "text",
+      "id": "price_from_prefix",
+      "label": "Prefix for Collections with Several Prices",
+      "default": "Desde",
+      "info": "Shown before the lowest price when the products cost different amounts. Leave empty to show the price alone.",
+      "visible_if": "{{ block.settings.show_price }}"
+    },
+    {
+      "type": "select",
+      "id": "price_size",
+      "label": "Price Size",
+      "options": [
+        {
+          "value": "display",
+          "label": "Display"
+        },
+        {
+          "value": "heading",
+          "label": "Heading"
+        },
+        {
+          "value": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "value": "title",
+          "label": "Title"
+        },
+        {
+          "value": "lead",
+          "label": "Lead"
+        },
+        {
+          "value": "body",
+          "label": "Body"
+        },
+        {
+          "value": "label",
+          "label": "Label"
+        },
+        {
+          "value": "note",
+          "label": "Note"
+        }
+      ],
+      "default": "body",
+      "info": "The design system's text roles, largest first.",
+      "visible_if": "{{ block.settings.show_price }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "Show Arrow",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "arrow_style",
+      "label": "Arrow Variant",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        },
+        {
+          "value": "ghost",
+          "label": "Ghost"
+        },
+        {
+          "value": "danger",
+          "label": "Danger"
+        },
+        {
+          "value": "inverse-primary",
+          "label": "Inverse Primary"
+        },
+        {
+          "value": "inverse-ghost",
+          "label": "Inverse Ghost"
+        },
+        {
+          "value": "inverse-outline",
+          "label": "Inverse Outline"
+        }
+      ],
+      "default": "inverse-outline",
+      "info": "The Icon Button variant. The inverse ones are made for the dark bottom of the photo.",
+      "visible_if": "{{ block.settings.show_arrow }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_size",
+      "label": "Arrow Size",
+      "options": [
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Large"
+        }
+      ],
+      "default": "md",
+      "visible_if": "{{ block.settings.show_arrow }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Collection Card"
+    }
+  ]
+}
+{% endschema %}

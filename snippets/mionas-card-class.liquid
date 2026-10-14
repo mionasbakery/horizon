@@ -1,7 +1,7 @@
 {%- doc -%}
   Builds the class list for a ../design-system/src/components/Card/Card.tsx surface and ships its CSS.
 
-  @param {string} [variant] - default, outline, plain or note. Anything else falls back to default.
+  @param {string} [variant] - default, outline, plain or accent. Anything else falls back to default.
   @param {boolean} [interactive] - Adds the pressed state, for a card that is a link.
 
   @example
@@ -16,7 +16,7 @@
   adds no class.
 {%- endcomment -%}
 {%- liquid
-  assign allowed_variants = 'default|outline|plain|note' | split: '|'
+  assign allowed_variants = 'default|outline|plain|accent' | split: '|'
   assign resolved_variant = variant | default: 'default'
   unless allowed_variants contains resolved_variant
     assign resolved_variant = 'default'
@@ -57,8 +57,8 @@
     box-shadow: none;
   }
 
-  .mionas-card.mionas-card--note {
-    background: var(--card-note-background);
+  .mionas-card.mionas-card--accent {
+    background: var(--card-accent-background);
     border: none;
     box-shadow: none;
   }

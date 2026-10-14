@@ -9,9 +9,9 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "section",
-      "name": "Section - Contact",
+    "mionas_page_heading": {
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
       "blocks": {
         "heading": {
           "type": "mionas-group",
@@ -68,38 +68,6 @@
               },
               "blocks": {}
             },
-            "mionas_text_XThTKA": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Title",
-              "settings": {
-                "text": "<p>{{ closest.page.title }}</p>",
-                "variant": "display",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_ViiDkJ": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Subtitle",
-              "settings": {
-                "text": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
-                "variant": "lead",
-                "color": "default",
-                "tag": "p",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "mionas_text_YXRcp8": {
               "type": "mionas-text",
               "name": "Mionas: Text - Description",
@@ -115,15 +83,46 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "heading_group": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
+              "settings": {
+                "eyebrow": "",
+                "eyebrow_color": "accent",
+                "heading": "<p>{{ closest.page.title }}</p>",
+                "heading_variant": "display",
+                "heading_color": "default",
+                "heading_tag": "h1",
+                "heading_transform": "inherit",
+                "description": "<p>Escríbenos por WhatsApp o visítanos en la tienda. </p>",
+                "description_color": "default"
+              }
             }
           },
           "block_order": [
             "mionas_breadcrumbs_YjmNh7",
-            "mionas_text_XThTKA",
-            "mionas_text_ViiDkJ",
+            "heading_group",
             "mionas_text_YXRcp8"
           ]
-        },
+        }
+      },
+      "block_order": [
+        "heading"
+      ],
+      "settings": {
+        "background": "default",
+        "gap": 12,
+        "section_width": "page-width",
+        "padding-block-start": 48,
+        "padding-block-end": 0,
+        "alignment": "center"
+      }
+    },
+    "main": {
+      "type": "section",
+      "name": "Section - Contact",
+      "blocks": {
         "columns": {
           "type": "mionas-group",
           "name": "Mionas: Group - Body",
@@ -230,7 +229,7 @@
                   "name": "Mionas: Divider",
                   "settings": {
                     "text": "o envíanos un mensaje",
-                    "variant": "label"
+                    "size": "sm"
                   },
                   "blocks": {}
                 },
@@ -471,7 +470,8 @@
                             "label": "hola@mionasbakery.com",
                             "link": "mailto:hola@mionasbakery.com",
                             "open_in_new_tab": false,
-                            "color": "primary", "variant": "body",
+                            "color": "primary",
+                            "variant": "body",
                             "icon": "mail",
                             "text_wrap": "normal"
                           },
@@ -484,7 +484,8 @@
                             "label": "93 334 82 46",
                             "link": "",
                             "open_in_new_tab": false,
-                            "color": "primary", "variant": "body",
+                            "color": "primary",
+                            "variant": "body",
                             "icon": "phone",
                             "text_wrap": "normal"
                           },
@@ -740,7 +741,6 @@
         }
       },
       "block_order": [
-        "heading",
         "columns",
         "responsive_css"
       ],
@@ -775,6 +775,7 @@
     }
   },
   "order": [
+    "mionas_page_heading",
     "main"
   ]
 }

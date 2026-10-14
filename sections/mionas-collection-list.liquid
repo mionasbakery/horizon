@@ -1,0 +1,183 @@
+{%- comment -%}
+  Renders a curated grid of collection cards ("Nuestra carta" on /collections).
+
+  A fork because Horizon's collection list can't express it: its bento is a fixed 12-column A–L
+  pattern (snippets/bento-grid.liquid) with no per-card size, and main-collection-list lists every
+  collection with no picker. The page's heading is a Mionas: Page Heading section above this one.
+
+  The cards are Mionas: Collection Card blocks rendered straight into the grid (their schema has
+  "tag": null), in editor order; the card knows nothing about this grid, so sizing happens here.
+  The first "Large Cards" cards are lead cards, two to a row; the rest follow three to a row on a
+  six-column grid. A card left alone in its row stretches to fill it, so adding or removing a card
+  never leaves a hole. On phones every card is full width and the same height. Which cards are large depends on a setting, so those rules are written per
+  section in a {% style %} block; the static grid is in the stylesheet.
+{%- endcomment -%}
+
+{%- liquid
+  assign large = section.settings.large_cards | default: 0
+  assign first_small = large | plus: 1
+  assign second_small = large | plus: 2
+  assign large_is_odd = large | modulo: 2
+  assign grid = '#MionasCollectionList-' | append: section.id
+-%}
+{% style %}
+  {%- comment -%}
+    Large cards are the first {{ large }}: half width, two to a row. Small cards follow at child
+    {{ first_small }} in rows of three, so a last child at 3n + first_small is alone in its row and
+    one at 3n + second_small shares it with one other; both stretch to fill. Two columns from 750
+    to 989px: large cards span the row and small ones pair up from first_small. One column on
+    phones.
+  {%- endcomment -%}
+  {%- if large > 0 -%}
+    {{ grid }} > .mionas-collection-card:nth-child(-n + {{ large }}) { grid-column: span 3; grid-row: span 3; }
+    {%- if large_is_odd == 1 -%}
+      {{ grid }} > .mionas-collection-card:nth-child({{ large }}) { grid-column: 1 / -1; }
+    {%- endif -%}
+  {%- endif -%}
+  {{ grid }} > .mionas-collection-card:last-child:nth-child(3n + {{ first_small }}) { grid-column: 1 / -1; }
+  {{ grid }} > .mionas-collection-card:last-child:nth-child(3n + {{ second_small }}),
+  {{ grid }} > .mionas-collection-card:nth-last-child(2):nth-child(3n + {{ first_small }}) { grid-column: span 3; }
+
+  @media screen and (max-width: 989px) {
+    {%- comment -%} The same selectors as above, so equal specificity and later order undo them. {%- endcomment -%}
+    {{ grid }} > .mionas-collection-card:nth-child(-n + {{ large }}),
+    {{ grid }} > .mionas-collection-card:nth-child({{ large }}),
+    {{ grid }} > .mionas-collection-card:last-child:nth-child(3n + {{ first_small }}),
+    {{ grid }} > .mionas-collection-card:last-child:nth-child(3n + {{ second_small }}),
+    {{ grid }} > .mionas-collection-card:nth-last-child(2):nth-child(3n + {{ first_small }}) { grid-column: span 1; }
+    {{ grid }} > .mionas-collection-card:nth-child(-n + {{ large }}) { grid-column: 1 / -1; }
+    {{ grid }} > .mionas-collection-card:last-child:nth-child(2n + {{ first_small }}) { grid-column: 1 / -1; }
+  }
+
+  @media screen and (max-width: 749px) {
+    {%- comment -%}
+      Phones: one column, every card the same size. :nth-child(n) twice only lifts the selector to
+      the specificity of the last-row rules above, so this wins whatever Large Cards is.
+    {%- endcomment -%}
+    {{ grid }} > .mionas-collection-card:nth-child(n):nth-child(n) { grid-column: 1 / -1; grid-row: span 2; }
+  }
+{% endstyle %}
+
+<div
+  class="section section--{{ section.settings.section_width }} spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="mionas-collection-list" id="MionasCollectionList-{{ section.id }}">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mionas-collection-list {
+    /* Rows are a small unit: small cards take two, large cards three, so lead cards are about one and
+       a half times as tall. No size token covers it; declared once per breakpoint. */
+    --mionas-collection-list-row: 136px;
+
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-rows: var(--mionas-collection-list-row);
+    gap: var(--space-md);
+  }
+
+  .mionas-collection-list > .mionas-collection-card {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: auto;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 989px) {
+    .mionas-collection-list {
+      --mionas-collection-list-row: 110px;
+
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-collection-list {
+      --mionas-collection-list-row: 74px;
+
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Collection List",
+  "blocks": [
+    {
+      "type": "mionas-collection-card"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width",
+      "info": "Page keeps the grid on the same margins as the breadcrumb and the rest of the site."
+    },
+    {
+      "type": "range",
+      "id": "large_cards",
+      "label": "Large Cards",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "info": "How many of the first cards are lead cards: half width, two to a row. The rest go three to a row."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 96
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Collection List",
+      "settings": {
+        "large_cards": 2
+      }
+    }
+  ]
+}
+{% endschema %}

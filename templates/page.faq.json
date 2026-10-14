@@ -9,9 +9,9 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "section",
-      "name": "Section - Frequently Asked Questions",
+    "mionas_page_heading": {
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
       "blocks": {
         "heading": {
           "type": "mionas-group",
@@ -68,28 +68,44 @@
               },
               "blocks": {}
             },
-            "mionas_text_tN9DKL": {
-              "type": "mionas-text",
-              "name": "Mionas: Text",
+            "heading_group": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>{{ closest.page.title }}</p>",
-                "variant": "display",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "eyebrow": "",
+                "eyebrow_color": "accent",
+                "heading": "<p>{{ closest.page.title }}</p>",
+                "heading_variant": "display",
+                "heading_color": "default",
+                "heading_tag": "h1",
+                "heading_transform": "inherit",
+                "description": "",
+                "description_color": "default"
+              }
             }
           },
           "block_order": [
             "mionas_breadcrumbs_jtFzXr",
-            "mionas_text_tN9DKL"
+            "heading_group"
           ]
-        },
+        }
+      },
+      "block_order": [
+        "heading"
+      ],
+      "settings": {
+        "background": "default",
+        "gap": 12,
+        "section_width": "page-width",
+        "padding-block-start": 48,
+        "padding-block-end": 0,
+        "alignment": "center"
+      }
+    },
+    "main": {
+      "type": "section",
+      "name": "Section - Frequently Asked Questions",
+      "blocks": {
         "body": {
           "type": "mionas-group",
           "name": "Mionas: Group - Body",
@@ -630,7 +646,6 @@
         }
       },
       "block_order": [
-        "heading",
         "body",
         "cta_card"
       ],
@@ -665,6 +680,7 @@
     }
   },
   "order": [
+    "mionas_page_heading",
     "main"
   ]
 }

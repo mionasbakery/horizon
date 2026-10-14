@@ -7,10 +7,10 @@
 {%- comment -%}
   Badges on a product card: short labels like "Sin gluten" or "Nuevo", from the product's
   custom.badges metafield -- a list of `badge` metaobjects with `label`, `kind`, and optional
-  `background_color`/`foreground_color` color fields. A background always forces the fill look
-  regardless of kind's default, so an individual badge can override its own look. No automatic
-  contrast pairing between the two fields -- the merchant can pick colors that clash, same as any
-  design tool.
+  `background_color`/`foreground_color` color fields. Each one is a Mionas Badge
+  (snippets/mionas-badge.liquid): kind information is the Outline variant, highlight the Default one,
+  and a background colour fills either. No automatic contrast pairing between the two fields --
+  the merchant can pick colors that clash, same as any design tool.
 
   A metaobject, not a tag, because mionasbakery publishes es (primary) and ca locales and tags
   aren't translatable; a metaobject's label field is.
@@ -25,11 +25,6 @@
   Deliberately not reusing ProductPromoCard's promo flag, Stamp's eyebrow, or Horizon's sale/sold-out
   chip -- a badge here is a per-product property, not a marketing device, by the store owner's
   explicit choice.
-
-  This component's custom properties live in its own stylesheet below rather than
-  assets/design-tokens.css, which is auto-generated from ../design-system and would drop them on the
-  next `npm run tokens:sync`. Their values are always token primitives (--space-*, --radius-*,
-  --brand-*, --color-*), never another component's tokens, to keep the two uncoupled.
 
   The overlay needs no native edit or fork: Horizon's own sale/sold-out badge is absolute against
   .card-gallery inside a block that accepts no children, but .product-card__content is already
@@ -55,49 +50,28 @@
     {%- for badge in badges -%}
       {%- liquid
         assign badge_kind = badge.kind.value
-        assign badge_label = badge.label.value
-        assign badge_background = badge.background_color.value
-        assign badge_foreground = badge.foreground_color.value
+        # Merchant text from a metaobject; snippets/mionas-badge.liquid expects it escaped.
+        assign badge_label = badge.label.value | escape
 
-        comment
-          snippets/mionas-text.liquid outputs `content` unfiltered and says so in its doc: callers
-          sanitise. This is merchant-authored text out of a metaobject, so it is escaped here.
-        endcomment
-        assign badge_label = badge_label | escape
-
-        comment
-          Both kinds render at the role's `default` variant. The highlight fill's foreground is
-          this component's own token, applied by the two-classes-deep rule in the stylesheet, so it
-          does not borrow a role variant to get its colour.
-        endcomment
-        assign badge_variant = 'default'
-
-        assign badge_class = 'mionas-product-badges__badge mionas-product-badges__badge--' | append: badge_kind
-
-        comment
-          background_color/foreground_color are Shopify `color` fields -- a real picker, storing
-          "#rrggbb" or blank, never free text -- so it's safe to drop straight into an inline style
-          with no escaping. Blank background means "use the kind's default fill/outline".
-        endcomment
-        assign badge_style = ''
-        if badge_background != blank
-          assign badge_class = badge_class | append: ' mionas-product-badges__badge--colored'
-          assign badge_style = '--mionas-product-badge-accent: ' | append: badge_background | append: ';'
-          if badge_foreground != blank
-            assign badge_style = badge_style | append: ' --mionas-product-badge-accent-foreground: ' | append: badge_foreground | append: ';'
-          endif
+        # information is a quiet fact (Badge's outline); highlight takes the default fill.
+        assign badge_variant = 'outline'
+        if badge_kind == 'highlight'
+          assign badge_variant = 'default'
         endif
       -%}
       {%- if badge_label != blank -%}
         {%- if kind_filter == 'all' or kind_filter == badge_kind -%}
           <li class="mionas-product-badges__item">
-            {%- render 'mionas-text',
-              content: badge_label,
-              variant: 'note',
-              color: badge_variant,
-              tag: 'span',
-              class: badge_class,
-              style: badge_style
+            {%- comment -%}
+              background_color and foreground_color are Shopify color fields, so "#rrggbb" or
+              blank, safe for the snippet's inline style.
+            {%- endcomment -%}
+            {%- render 'mionas-badge',
+              text: badge_label,
+              variant: badge_variant,
+              size: block_settings.size,
+              background: badge.background_color.value,
+              foreground: badge.foreground_color.value
             -%}
           </li>
         {%- endif -%}
@@ -134,20 +108,9 @@
 {%- endif -%}
 
 {% stylesheet %}
-  /* This component's own tokens -- see the header comment for why they live here instead of
-     assets/design-tokens.css. */
   .mionas-product-badges {
-    --mionas-product-badge-radius: var(--radius-full);
-    --mionas-product-badge-padding-block: var(--space-3xs);
-    --mionas-product-badge-padding-inline: var(--space-xs);
-    --mionas-product-badge-gap: var(--space-2xs);
-    --mionas-product-badge-letter-spacing: 0.04em;
-    --mionas-product-badge-highlight-background: var(--brand-accent);
-    --mionas-product-badge-highlight-foreground: var(--brand-accent-inverse);
-    --mionas-product-badge-information-border-color: var(--color-warm-300);
-
     display: flex;
-    gap: var(--mionas-product-badge-gap);
+    gap: var(--space-2xs);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -192,42 +155,6 @@
     bottom: var(--mionas-product-badges-inset);
     left: var(--mionas-product-badges-inset);
   }
-
-  /* Two classes deep on purpose, as blocks/mionas-stamp.liquid documents: every `.text-role--<role>`
-     sets font-weight/letter-spacing from a single-class selector in the same bundle, so equal
-     specificity would leave the winner to source order. No font-size, line-height or color here --
-     those come from the role and the variant. */
-  .text-role.mionas-product-badges__badge {
-    display: inline-block;
-    padding: var(--mionas-product-badge-padding-block) var(--mionas-product-badge-padding-inline);
-    border: 1px solid transparent;
-    border-radius: var(--mionas-product-badge-radius);
-    letter-spacing: var(--mionas-product-badge-letter-spacing);
-    text-transform: uppercase;
-  }
-
-  /* Loud, because it is promotion. --mionas-product-badge-accent is unset by default, so the
-     fallback is what renders until a --color-* modifier below sets it. */
-  .text-role.mionas-product-badges__badge--highlight {
-    background: var(--mionas-product-badge-accent, var(--mionas-product-badge-highlight-background));
-    color: var(--mionas-product-badge-highlight-foreground);
-  }
-
-  /* Quiet, because it is a fact. Same shape and size as the highlight one so the two read as one
-     family; only the fill differs. The transparent border above is what keeps them the same size. */
-  .text-role.mionas-product-badges__badge--information {
-    border-color: var(--mionas-product-badge-accent, var(--mionas-product-badge-information-border-color));
-  }
-
-  /* A colored badge always renders filled regardless of kind, since picking a color is the merchant
-     saying "make this one stand out" -- an outlined colored border alone would read weaker than the
-     highlight kind's fill. Two classes deep, matching the kind rules above, for the same
-     equal-specificity reason. */
-  .text-role.mionas-product-badges__badge--colored {
-    background: var(--mionas-product-badge-accent);
-    border-color: transparent;
-    color: var(--mionas-product-badge-accent-foreground, var(--mionas-product-badge-highlight-foreground));
-  }
 {% endstylesheet %}
 
 {% schema %}
@@ -246,6 +173,27 @@
       ],
       "default": "information",
       "info": "Which badges from the product's Badges metafield this instance renders."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Large"
+        }
+      ],
+      "default": "sm",
+      "info": "Small uses Note text, Medium Label, Large Body. Small suits a product card."
     },
     {
       "type": "select",

@@ -1,14 +1,13 @@
 {%- doc -%}
-  Renders the breadcrumb trail <nav>, shared by the standalone section and the nested block.
+  Renders the breadcrumb trail <nav>.
 
   @param {string} home_label - Copy for the first crumb.
   @param {string} landmark_label - Accessible name for the nav landmark.
   @param {object} [menu] - Linklist to derive the hierarchy from. Falls back to navigation-menu.
 {%- enddoc -%}
 {%- comment -%}
-  Shared by sections/mionas-breadcrumbs.liquid (standalone) and blocks/mionas-breadcrumbs.liquid
-  (nested). Both callers own their wrapper and shopify_attributes; this snippet emits only the
-  <nav> landmark. Mirrors the design-system Breadcrumbs + BreadcrumbLink components
+  Rendered by blocks/mionas-breadcrumbs.liquid, which owns the wrapper and shopify_attributes; this
+  snippet emits only the <nav> landmark. Mirrors the design-system Breadcrumbs + BreadcrumbLink components
   (../design-system/src/components/Breadcrumbs); no native Horizon file produces a breadcrumb trail, so
   this is a fork by necessity.
 

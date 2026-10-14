@@ -1,24 +1,23 @@
 {%- doc -%}
-  A labelled divider -- a short line of text centred between two horizontal rules.
+  A divider: a horizontal rule, optionally with a short line of text centred in it.
 {%- enddoc -%}
 {%- comment -%}
   A labelled divider -- a short line of text centred between two horizontal rules, e.g.
-  "o envíanos un mensaje" between a WhatsApp CTA and a form. No design-system component to mirror:
-  ../design-system has no Divider. Built as its own block (not inlined into whatever composition
+  "o envíanos un mensaje" between a WhatsApp CTA and a form. Mirrors
+  ../design-system/src/components/Divider/Divider.tsx and spends its tokens. Built as its own block (not inlined into whatever composition
   needed it first) because it is reused across at least two page compositions --
   templates/page.contacto.json originally had this exact markup/CSS hand-rolled inside
   blocks/mionas-contact-form.liquid, which owned no business rendering decorative copy between two
   sibling blocks it doesn't control. See docs/superpowers/specs/2026-08-12-contacto-page-design.md.
 
-  Text renders through snippets/mionas-text.liquid so Variant/Size reuse the same
+  Text renders through snippets/mionas-text.liquid so Text Size reuses the same
   ../design-system/src/components/Text/Text.tsx role vocabulary every other Mionas text block does,
   rather than this block inventing its own type scale. Colour is NOT one of the exposed settings,
-  though: this always spends --card-description-foreground (the same muted secondary-text token
-  blocks/mionas-map.liquid's empty state and the old inline divider both used), not Text's own
+  though: this always spends --divider-text-foreground (secondary ink), not Text's own
   colour axis -- ".text-role.mionas-divider__text" beats ".text-role--<color>" on specificity for
   the same reason blocks/mionas-price.liquid's ".text-role.mionas-price" does (see that file). A
-  divider is secondary copy by definition; if a caller ever needs a different colour, add the
-  setting then rather than guessing at the vocabulary now.
+  divider is secondary copy by definition. The rule's own colour is a setting (Subtle or Strong), since the
+  page heading on /collections needed a strong rule under its title.
 
   WIDTH IS FIXED AT 100%, NOT A SETTING. A divider that does not span its container has nothing to
   divide -- shrink-to-fit is never the wanted behaviour, unlike blocks/mionas-text.liquid or
@@ -30,41 +29,62 @@
   ::before/::after keep the two lines out of the DOM so the text can be centred with plain flex gap
   rather than manual width math -- moved verbatim from the original .mionas-contact-form__divider.
 
-  THE LINE RENDERS EVEN WITH BLANK TEXT. Only the middle `mionas-text` render is gated on
-  `block_settings.text` -- a divider with no label is still a divider, not nothing. This differs
+  THE LINE RENDERS EVEN WITH BLANK TEXT. Only the text and the second line are gated on
+  `block_settings.text` (one line, so the gap doesn't split it) -- a divider with no label is
+  still a divider, not nothing. This differs
   from most Mionas blocks (e.g. mionas-text itself), where blank content means the whole block
   renders nothing; a divider's job is the rule, and the text is a label on top of it, not the
   reason it exists.
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
+
+  # Each size is a text role, as in Divider.tsx.
+  assign text_variant = 'body'
+  if block_settings.size == 'sm'
+    assign text_variant = 'label'
+  endif
 %}
-<div class="mionas-divider" {{ block.shopify_attributes }}>
+<div
+  class="mionas-divider mionas-divider--{{ block_settings.thickness | default: 'thin' }} mionas-divider--{{ block_settings.color | default: 'subtle' }} spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
   <span class="mionas-divider__line"></span>
   {%- if block_settings.text != blank -%}
     {%- render 'mionas-text',
       content: block_settings.text,
-      variant: block_settings.variant,
+      variant: text_variant,
       tag: 'span',
       class: 'mionas-divider__text'
     -%}
+    <span class="mionas-divider__line"></span>
   {%- endif -%}
-  <span class="mionas-divider__line"></span>
 </div>
 
 {% stylesheet %}
   .mionas-divider {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--divider-base-gap);
     width: 100%;
     text-align: center;
   }
 
   .mionas-divider__line {
     flex: 1;
-    height: 1px;
-    background: var(--form-field-base-border-color);
+    height: var(--divider-thin-border-width);
+    background: var(--divider-subtle-border-color);
+  }
+
+  .mionas-divider--thick .mionas-divider__line {
+    height: var(--divider-thick-border-width);
+  }
+
+  /* Strong is body ink: a section rule under a heading rather than a quiet hairline between form
+     parts. */
+  .mionas-divider--strong .mionas-divider__line {
+    background: var(--divider-strong-border-color);
   }
 
   /* (0,2,0), same trick blocks/mionas-price.liquid's ".text-role.mionas-price" uses -- beats the
@@ -72,7 +92,7 @@
      block's own muted colour always wins regardless of bundle order. See the file header comment
      for why colour is fixed rather than a setting. */
   .text-role.mionas-divider__text {
-    color: var(--card-description-foreground);
+    color: var(--divider-text-foreground);
     white-space: nowrap;
   }
 {% endstylesheet %}
@@ -86,23 +106,83 @@
       "type": "text",
       "id": "text",
       "label": "Text",
-      "default": "o"
+      "default": "o",
+      "info": "Leave empty for a plain line."
     },
     {
       "type": "select",
-      "id": "variant",
-      "label": "Variant",
+      "id": "size",
+      "label": "Text Size",
       "options": [
-        { "value": "display", "label": "Display" },
-        { "value": "heading", "label": "Heading" },
-        { "value": "subheading", "label": "Subheading" },
-        { "value": "title", "label": "Title" },
-        { "value": "lead", "label": "Lead" },
-        { "value": "body", "label": "Body" },
-        { "value": "label", "label": "Label" },
-        { "value": "note", "label": "Note" }
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        }
       ],
-      "default": "body"
+      "default": "md",
+      "info": "Small uses Label text, Medium Body.",
+      "visible_if": "{{ block.settings.text != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "thickness",
+      "label": "Thickness",
+      "options": [
+        {
+          "value": "thin",
+          "label": "Thin"
+        },
+        {
+          "value": "thick",
+          "label": "Thick"
+        }
+      ],
+      "default": "thin"
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Color",
+      "options": [
+        {
+          "value": "subtle",
+          "label": "Subtle"
+        },
+        {
+          "value": "strong",
+          "label": "Strong"
+        }
+      ],
+      "default": "subtle",
+      "info": "Subtle is the light hairline used between form parts; Strong is body ink, for a rule under a heading."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

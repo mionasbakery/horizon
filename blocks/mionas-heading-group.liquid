@@ -1,10 +1,14 @@
 {%- doc -%}
-  Renders a heading with a short stamp above it, as one <hgroup>.
+  Renders a heading with an optional stamp above it, blocks beside it and description below, as one <hgroup>.
 {%- enddoc -%}
 {%- comment -%}
   Mirrors ../design-system/src/components/HeadingGroup/HeadingGroup.tsx. One block, not a group of
   a Stamp and a Text, so the eyebrow size and the gap stay fixed in one place, as the component
   intends. The eyebrow is a <p>, so a screen reader does not announce it as a heading.
+
+  Child blocks (a Mionas: Badge, a link) sit beside the heading in a wrapping row but outside the
+  heading element, so the title is read on its own -- the component's `after`; the description is a lead paragraph whose extra top margin turns the group's
+  8px gap into the component's 12px description gap.
 {%- endcomment -%}
 {%- liquid
   assign block_settings = block.settings
@@ -17,6 +21,11 @@
   endcapture
   assign heading = heading | strip
   assign heading_text = heading | strip_html | strip
+  capture description
+    render 'mionas-inline-richtext', value: block_settings.description
+  endcapture
+  assign description = description | strip
+  assign description_text = description | strip_html | strip
 -%}
 
 {%- if heading_text != blank -%}
@@ -25,12 +34,33 @@
     {%- if eyebrow_text != blank -%}
       {%- render 'mionas-stamp', content: eyebrow, size: 'body', color: block_settings.eyebrow_color, tag: 'p' -%}
     {%- endif -%}
-    {%- render 'mionas-text',
-      content: heading,
-      variant: block_settings.heading_variant,
-      color: block_settings.heading_color,
-      tag: block_settings.heading_tag
-    -%}
+    {%- capture heading_markup -%}
+      {%- render 'mionas-text',
+        content: heading,
+        variant: block_settings.heading_variant,
+        color: block_settings.heading_color,
+        transform: block_settings.heading_transform,
+        tag: block_settings.heading_tag
+      -%}
+    {%- endcapture -%}
+    {%- capture beside -%}{% content_for 'blocks' %}{%- endcapture -%}
+    {%- if beside != blank -%}
+      <div class="mionas-heading-group__row">
+        {{- heading_markup -}}
+        {{- beside -}}
+      </div>
+    {%- else -%}
+      {{- heading_markup -}}
+    {%- endif -%}
+    {%- if description_text != blank -%}
+      {%- render 'mionas-text',
+        content: description,
+        variant: 'lead',
+        color: block_settings.description_color,
+        tag: 'p',
+        class: 'mionas-heading-group__description'
+      -%}
+    {%- endif -%}
   </hgroup>
 {%- endif -%}
 
@@ -41,6 +71,30 @@
     min-width: 0;
     margin: 0;
     gap: var(--heading-group-base-gap);
+  }
+
+  /* As HeadingGroup.module.css explains: the heading's line box is trimmed to its baseline, so
+     flex-end puts the badge's bottom edge on the bottom of the heading's letters. */
+  .mionas-heading-group__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--heading-group-after-gap);
+  }
+
+  .mionas-heading-group__row > :first-child {
+    text-box: trim-end cap alphabetic;
+  }
+
+  /* Without text-box (Firefox), baselines line up instead, so the badge doesn't drop below the letters. */
+  @supports not (text-box: trim-end cap alphabetic) {
+    .mionas-heading-group__row {
+      align-items: last baseline;
+    }
+  }
+
+  .text-role.mionas-heading-group__description {
+    margin-block-start: calc(var(--heading-group-description-gap) - var(--heading-group-base-gap));
   }
 {% endstylesheet %}
 
@@ -61,14 +115,38 @@
       "id": "eyebrow_color",
       "label": "Stamp color",
       "options": [
-        { "value": "default", "label": "Default" },
-        { "value": "primary", "label": "Primary" },
-        { "value": "secondary", "label": "Secondary" },
-        { "value": "inverse-primary", "label": "Inverse primary" },
-        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
-        { "value": "accent", "label": "Accent" },
-        { "value": "accent-inverse", "label": "Accent (inverse)" },
-        { "value": "tint", "label": "Tint" }
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "inverse-primary",
+          "label": "Inverse primary"
+        },
+        {
+          "value": "inverse-primary-muted",
+          "label": "Inverse primary (muted)"
+        },
+        {
+          "value": "accent",
+          "label": "Accent"
+        },
+        {
+          "value": "accent-inverse",
+          "label": "Accent (inverse)"
+        },
+        {
+          "value": "tint",
+          "label": "Tint"
+        }
       ],
       "default": "accent"
     },
@@ -82,10 +160,16 @@
     {
       "type": "select",
       "id": "heading_variant",
-      "label": "Heading variant",
+      "label": "Heading size",
       "options": [
-        { "value": "display", "label": "Display" },
-        { "value": "heading", "label": "Heading" }
+        {
+          "value": "display",
+          "label": "Display"
+        },
+        {
+          "value": "heading",
+          "label": "Heading"
+        }
       ],
       "default": "display",
       "info": "Display for a page heading. Heading suits a dialog or a card."
@@ -95,14 +179,38 @@
       "id": "heading_color",
       "label": "Heading color",
       "options": [
-        { "value": "default", "label": "Default" },
-        { "value": "primary", "label": "Primary" },
-        { "value": "secondary", "label": "Secondary" },
-        { "value": "inverse-primary", "label": "Inverse primary" },
-        { "value": "inverse-primary-muted", "label": "Inverse primary (muted)" },
-        { "value": "accent", "label": "Accent" },
-        { "value": "accent-inverse", "label": "Accent (inverse)" },
-        { "value": "tint", "label": "Tint" }
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "inverse-primary",
+          "label": "Inverse primary"
+        },
+        {
+          "value": "inverse-primary-muted",
+          "label": "Inverse primary (muted)"
+        },
+        {
+          "value": "accent",
+          "label": "Accent"
+        },
+        {
+          "value": "accent-inverse",
+          "label": "Accent (inverse)"
+        },
+        {
+          "value": "tint",
+          "label": "Tint"
+        }
       ],
       "default": "default"
     },
@@ -111,21 +219,122 @@
       "id": "heading_tag",
       "label": "Heading tag",
       "options": [
-        { "value": "h1", "label": "h1" },
-        { "value": "h2", "label": "h2" },
-        { "value": "h3", "label": "h3" },
-        { "value": "h4", "label": "h4" },
-        { "value": "h5", "label": "h5" },
-        { "value": "h6", "label": "h6" }
+        {
+          "value": "h1",
+          "label": "h1"
+        },
+        {
+          "value": "h2",
+          "label": "h2"
+        },
+        {
+          "value": "h3",
+          "label": "h3"
+        },
+        {
+          "value": "h4",
+          "label": "h4"
+        },
+        {
+          "value": "h5",
+          "label": "h5"
+        },
+        {
+          "value": "h6",
+          "label": "h6"
+        }
       ],
       "default": "h1",
-      "info": "Pick the level from the page outline. The size comes from Heading variant at every level."
+      "info": "Pick the level from the page outline. The size comes from Heading size at every level."
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Heading case",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Inherited"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "paragraph",
+      "content": "Beside the heading: add blocks to this Heading Group (a Mionas: Badge, a Mionas: Link) and they sit after the heading on its line."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "info": "A lead paragraph under the heading. Leave blank for none."
+    },
+    {
+      "type": "select",
+      "id": "description_color",
+      "label": "Description color",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "inverse-primary",
+          "label": "Inverse primary"
+        },
+        {
+          "value": "inverse-primary-muted",
+          "label": "Inverse primary (muted)"
+        },
+        {
+          "value": "accent",
+          "label": "Accent"
+        },
+        {
+          "value": "accent-inverse",
+          "label": "Accent (inverse)"
+        },
+        {
+          "value": "tint",
+          "label": "Tint"
+        }
+      ],
+      "default": "default"
     }
   ],
   "presets": [
     {
       "name": "Mionas: Heading Group",
       "category": "t:categories.basic"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
     }
   ]
 }

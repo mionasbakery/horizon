@@ -1,0 +1,213 @@
+{%- comment -%}
+  Renders a page's heading: navigation, title and text, as editor blocks on a plain ground or the accent card.
+
+  A frame only. Everything inside is an existing block the merchant configures: Mionas: Breadcrumbs
+  (trail) and Mionas: Heading Group (title, description, and blocks beside the title such as a Mionas: Badge), or Mionas: Text and Mionas: Group for anything else. It is a
+  section rather than a group block so it owns the page's top spacing and can draw the accent card at
+  the page's width, which every template's heading uses.
+
+  Mirrors ../design-system/src/components/PageHeading/PageHeading.tsx: navigation, accent card, alignment
+  and the gap between them are page-level and live here; what names the content (eyebrow, heading,
+  count, description) is the Heading Group block's. The accent card spends the component's tokens, not
+  colour and radius settings, so it can't drift from the design system. The editor's Gap setting
+  defaults to the component's 12px gap.
+{%- endcomment -%}
+
+<div
+  class="section section--{{ section.settings.section_width }} spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div
+    class="mionas-page-heading{% if section.settings.background == 'accent' %} mionas-page-heading--accent{% endif %}"
+    style="--mionas-page-heading-gap: {{ section.settings.gap }}px; --mionas-page-heading-align: {{ section.settings.alignment | default: 'flex-start' }};"
+  >
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mionas-page-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: var(--mionas-page-heading-align);
+    gap: var(--mionas-page-heading-gap);
+  }
+
+  /* On phones the Gap setting stops at the component's own 12px, so a wide desktop gap doesn't push the page down. */
+  @media screen and (max-width: 749px) {
+    .mionas-page-heading {
+      gap: min(var(--mionas-page-heading-gap), var(--page-heading-base-gap));
+    }
+  }
+
+  .mionas-page-heading--accent {
+    padding: var(--page-heading-accent-padding);
+    border-radius: var(--page-heading-accent-radius);
+    background: var(--page-heading-accent-background);
+    color: var(--text-color-default);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Page Heading",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background",
+      "label": "Variant",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "accent",
+          "label": "Accent"
+        }
+      ],
+      "default": "default",
+      "info": "Accent puts the heading on the beige accent card of the design system."
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "flex-start",
+      "info": "Where narrower blocks sit, such as a group with a maximum width. Center matches a centred page body."
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Page Heading",
+      "settings": {
+        "background": "default"
+      },
+      "blocks": {
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {}
+        },
+        "heading_group": {
+          "type": "mionas-heading-group",
+          "name": "Mionas: Heading Group",
+          "settings": {
+            "eyebrow": "",
+            "heading": "<p>{{ closest.page.title }}</p>",
+            "heading_variant": "display",
+            "heading_tag": "h1",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "breadcrumbs",
+        "heading_group"
+      ]
+    },
+    {
+      "name": "Mionas: Page Heading: Accent",
+      "settings": {
+        "background": "accent"
+      },
+      "blocks": {
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {}
+        },
+        "heading_group": {
+          "type": "mionas-heading-group",
+          "name": "Mionas: Heading Group",
+          "settings": {
+            "eyebrow": "",
+            "heading": "<p>{{ closest.page.title }}</p>",
+            "heading_variant": "display",
+            "heading_tag": "h1",
+            "description": "<p>Una frase sobre esta página.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "breadcrumbs",
+        "heading_group"
+      ]
+    }
+  ]
+}
+{% endschema %}

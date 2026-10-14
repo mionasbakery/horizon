@@ -9,6 +9,34 @@
  */
 {
   "sections": {
+    "mionas_page_heading": {
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
+      "blocks": {
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {
+            "menu": "",
+            "home_label": "",
+            "label": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          }
+        }
+      },
+      "block_order": [
+        "breadcrumbs"
+      ],
+      "settings": {
+        "background": "default",
+        "gap": 12,
+        "section_width": "page-width",
+        "alignment": "flex-start",
+        "padding-block-start": 48,
+        "padding-block-end": 0
+      }
+    },
     "newsletter_signup": {
       "type": "mionas-split-panel",
       "blocks": {
@@ -197,7 +225,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "padding-block-start": 48,
+        "padding-block-start": 24,
         "padding-block-end": 48
       }
     },
@@ -609,6 +637,7 @@
     }
   },
   "order": [
+    "mionas_page_heading",
     "newsletter_signup",
     "newsletter_archive"
   ]

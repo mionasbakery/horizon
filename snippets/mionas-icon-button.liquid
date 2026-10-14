@@ -1,12 +1,12 @@
 {%- doc -%}
   Renders a circular icon-only button or link, a ../design-system/src/components/IconButton/IconButton.tsx mirror.
 
-  @param {string} aria_label - Accessible name; the button shows no text, so this is its only name
+  @param {string} [aria_label] - Accessible name; the button shows no text, so an a or button needs it as its only name. A span takes none.
   @param {string} [icon] - Icon name, passed through to snippets/icon.liquid
   @param {string} [svg] - Ready-made SVG markup, for an icon that lives in assets/; wins over icon
   @param {string} [variant] - A Button variant, see snippets/mionas-button-class.liquid. Defaults to primary.
   @param {string} [size] - sm, md or lg: a 40, 48 or 56px circle with a 20, 24 or 28px icon. Defaults to md.
-  @param {string} [tag] - "a" (default) or "button"
+  @param {string} [tag] - "a" (default), "button", or "span" for a decorative copy inside a larger link (aria-hidden, no name or link)
   @param {string} [link] - Destination URL for an "a"; blank renders a disabled, non-interactive link
   @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer" to an "a"
   @param {string} [attributes] - Raw extra attributes, such as a button's type and on:click. Caller-controlled only.
@@ -41,7 +41,16 @@
     </svg>
   {%- endif -%}
 {%- endcapture -%}
-{%- if tag == 'button' -%}
+{%- if tag == 'span' -%}
+  {%- comment -%}
+    The look of an icon button where the click belongs to a surrounding link (a whole-card link,
+    blocks/mionas-collection-card.liquid): a second link or button nested in it would be invalid
+    HTML and a duplicate tab stop, so this copy is hidden from assistive tech and takes no name.
+  {%- endcomment -%}
+  <span class="{{ icon_button_classes }}" aria-hidden="true" {{ shopify_attributes }}>
+    {{- icon_markup -}}
+  </span>
+{%- elsif tag == 'button' -%}
   <button class="{{ icon_button_classes }}" aria-label="{{ aria_label }}" {{ attributes }} {{ shopify_attributes }}>
     {{- icon_markup -}}
   </button>

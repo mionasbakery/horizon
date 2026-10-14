@@ -10,11 +10,28 @@
 {
   "sections": {
     "mionas_breadcrumbs_ART001": {
-      "type": "mionas-breadcrumbs",
-      "name": "Mionas: Breadcrumbs",
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
+      "blocks": {
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
+          "settings": {
+            "menu": "",
+            "home_label": "",
+            "label": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          }
+        }
+      },
+      "block_order": [
+        "breadcrumbs"
+      ],
       "settings": {
+        "background": "default",
+        "gap": 12,
         "section_width": "page-width",
-        "background_color": "",
         "padding-block-start": 12,
         "padding-block-end": 12
       }

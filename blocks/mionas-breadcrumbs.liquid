@@ -4,15 +4,15 @@
 {%- enddoc -%}
 
 {%- comment -%}
-  The breadcrumb trail as a theme block, so it can nest inside a Section and share that container's
-  width/background/spacing instead of standing as a separate full-width band (that placement is
-  sections/mionas-breadcrumbs.liquid; both render snippets/mionas-breadcrumbs.liquid).
+  The breadcrumb trail as a theme block, so it can nest inside a section (usually Mionas: Page
+  Heading) and share that container's width/background/spacing. snippets/mionas-breadcrumbs.liquid
+  owns the crumb logic.
 
   Public (no leading underscore) on purpose: Horizon sections whitelist child blocks as "@theme",
   which resolves to exactly the public blocks in blocks/ -- the filename is the whole integration.
 
   Padding is the only layout setting here; width/background/alignment are deliberately left to the
-  parent Section, since the parent's `horizontal_alignment` already shrink-wraps this block.
+  parent section, whose alignment places this block.
 {%- endcomment -%}
 {% liquid
   assign home_label = block.settings.home_label

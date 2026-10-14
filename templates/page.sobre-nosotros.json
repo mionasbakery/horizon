@@ -10,7 +10,8 @@
 {
   "sections": {
     "section_ebAgwU": {
-      "type": "section",
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
       "blocks": {
         "group_container": {
           "type": "mionas-group",
@@ -67,77 +68,38 @@
               },
               "blocks": {}
             },
-            "mionas_text_ygndnJ": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Heading",
+            "heading_group": {
+              "type": "mionas-heading-group",
+              "name": "Mionas: Heading Group",
               "settings": {
-                "text": "<p>Sobre nosotros</p>",
-                "variant": "display",
-                "color": "default",
-                "tag": "h1",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "mionas_text_k97Ddj": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Description",
-              "settings": {
-                "text": "{{ closest.collection.description }}",
-                "variant": "lead",
-                "color": "default",
-                "tag": "p",
-                "text_wrap": "normal",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "eyebrow": "",
+                "eyebrow_color": "accent",
+                "heading": "<p>Sobre nosotros</p>",
+                "heading_variant": "display",
+                "heading_color": "default",
+                "heading_tag": "h1",
+                "heading_transform": "inherit",
+                "description": "{{ closest.collection.description }}",
+                "description_color": "default"
+              }
             }
           },
           "block_order": [
             "mionas_breadcrumbs_4MYrVd",
-            "mionas_text_ygndnJ",
-            "mionas_text_k97Ddj"
+            "heading_group"
           ]
         }
       },
       "block_order": [
         "group_container"
       ],
-      "name": "Section - Heading",
       "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
+        "background": "default",
         "gap": 12,
         "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "background_media": "none",
-        "background_color": "",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_color": "",
-        "border_radius": 0,
         "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-end": 48,
+        "alignment": "center"
       }
     },
     "section_photo": {

@@ -1,0 +1,91 @@
+{%- doc -%}
+  Renders a short label in a pill: a count, a status, a tag.
+{%- enddoc -%}
+{%- comment -%}
+  Mirrors ../design-system/src/components/Badge/Badge.tsx through snippets/mionas-badge.liquid,
+  which owns the pill's markup and CSS. It knows nothing about where it sits; inside a Mionas:
+  Heading Group it lands beside the heading, which is that component's `after`.
+{%- endcomment -%}
+{%- liquid
+  assign block_settings = block.settings
+  assign text = block_settings.text | escape
+-%}
+{%- render 'mionas-badge',
+  text: text,
+  variant: block_settings.variant,
+  size: block_settings.size,
+  background: block_settings.background_color,
+  foreground: block_settings.text_color,
+  shopify_attributes: block.shopify_attributes
+-%}
+
+{% schema %}
+{
+  "name": "Mionas: Badge",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "5 colecciones",
+      "info": "A short count, status or tag."
+    },
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Variant",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "default",
+      "info": "Default for a neutral count, Outline for a quiet fact."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Large"
+        }
+      ],
+      "default": "md",
+      "info": "Small uses Note text, Medium Label, Large Body, each with its own height and padding."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "info": "Leave empty to use the surface's."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "info": "Leave empty to use the surface's. Pick a pair that stays readable; nothing checks the contrast."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mionas: Badge"
+    }
+  ]
+}
+{% endschema %}

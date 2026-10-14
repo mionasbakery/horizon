@@ -1,0 +1,105 @@
+{%- doc -%}
+  Renders a short label in a pill, a ../design-system/src/components/Badge/Badge.tsx mirror.
+
+  The pill's CSS lives here, not in a block, so every caller (blocks/mionas-badge.liquid,
+  blocks/mionas-product-badges.liquid) ships it on the pages it renders.
+
+  @param {string} text - The label, already escaped by the caller.
+  @param {string} [variant] - default or outline.
+  @param {string} [size] - sm (note text), md (default, label text) or lg (body text).
+  @param {string} [background] - A "#rrggbb" fill from a Shopify color field, over the variant's. Never free text: it goes into an inline style.
+  @param {string} [foreground] - A "#rrggbb" text colour from a Shopify color field, over the variant's.
+  @param {string} [class] - Extra classes for the caller's layout.
+  @param {string} [shopify_attributes] - The caller's block.shopify_attributes.
+{%- enddoc -%}
+{%- liquid
+  assign badge_variant = variant
+  assign allowed_variants = 'default|outline' | split: '|'
+  unless allowed_variants contains badge_variant
+    assign badge_variant = 'default'
+  endunless
+
+  # Each size is a text role plus its own padding, as in Badge.tsx.
+  case size
+    when 'sm'
+      assign badge_size = 'sm'
+      assign badge_text = 'note'
+    when 'lg'
+      assign badge_size = 'lg'
+      assign badge_text = 'body'
+    else
+      assign badge_size = 'md'
+      assign badge_text = 'label'
+  endcase
+
+  assign badge_class = 'mionas-badge mionas-badge--' | append: badge_size | append: ' mionas-badge--' | append: badge_variant
+  if class != blank
+    assign badge_class = badge_class | append: ' ' | append: class
+  endif
+
+  assign badge_style = ''
+  if background != blank
+    assign badge_style = '--badge-custom-background: ' | append: background | append: ';'
+  endif
+  if foreground != blank
+    assign badge_style = badge_style | append: ' --badge-custom-foreground: ' | append: foreground | append: ';'
+  endif
+-%}
+{%- if text != blank -%}
+  {%- assign label = '<span class="mionas-badge__label">' | append: text | append: '</span>' -%}
+  {%- render 'mionas-text',
+    content: label,
+    variant: badge_text,
+    color: 'default',
+    tag: 'span',
+    class: badge_class,
+    style: badge_style,
+    shopify_attributes: shopify_attributes
+  -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* Two classes deep so the pill beats .text-role and its colour classes, whatever order the bundles land in. */
+  .text-role.mionas-badge {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    border-radius: var(--badge-base-radius);
+    white-space: nowrap;
+  }
+
+  /* Trimmed to cap height and baseline so the fixed height centres the letters, not Archivo's line box,
+     which has more room above them than below. text-box-trim isn't inherited, so it sits on the span. */
+  .mionas-badge__label {
+    text-box: trim-both cap alphabetic;
+  }
+
+  .text-role.mionas-badge--sm {
+    height: var(--badge-size-sm-height);
+    padding-inline: var(--badge-size-sm-padding-inline);
+  }
+
+  .text-role.mionas-badge--md {
+    height: var(--badge-size-md-height);
+    padding-inline: var(--badge-size-md-padding-inline);
+  }
+
+  .text-role.mionas-badge--lg {
+    height: var(--badge-size-lg-height);
+    padding-inline: var(--badge-size-lg-padding-inline);
+  }
+
+  /* A custom colour, when set, wins over the variant's. */
+  .text-role.mionas-badge--default {
+    background: var(--badge-custom-background, var(--badge-default-background));
+    color: var(--badge-custom-foreground, var(--badge-default-foreground));
+  }
+
+  /* The stroke is an inset shadow so both variants have the same size; a custom fill hides it. */
+  .text-role.mionas-badge--outline {
+    background: var(--badge-custom-background, transparent);
+    box-shadow: inset 0 0 0 var(--badge-outline-border-width)
+      var(--badge-custom-background, var(--badge-outline-border-color));
+    color: var(--badge-custom-foreground, var(--badge-outline-foreground));
+  }
+{% endstylesheet %}

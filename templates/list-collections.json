@@ -9,161 +9,177 @@
  */
 {
   "sections": {
-    "collection_list_Wfgh3m": {
-      "type": "main-collection-list",
+    "mionas_page_heading": {
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
       "blocks": {
-        "group_4FtiAg": {
-          "type": "group",
-          "name": "Group - Header",
+        "breadcrumbs": {
+          "type": "mionas-breadcrumbs",
+          "name": "Mionas: Breadcrumbs",
           "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "custom_height": 100,
-            "background_media": "none",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "link": "",
-            "open_in_new_tab": false,
+            "menu": "",
             "padding-block-start": 0,
-            "padding-block-end": 48,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-block-end": 0,
+            "home_label": "",
+            "label": ""
+          },
+          "blocks": {}
+        },
+        "heading_group": {
+          "type": "mionas-heading-group",
+          "name": "Mionas: Heading Group",
+          "settings": {
+            "eyebrow": "",
+            "eyebrow_color": "accent",
+            "heading": "<p>Nuestra carta</p>",
+            "heading_variant": "display",
+            "heading_color": "default",
+            "heading_tag": "h1",
+            "heading_transform": "uppercase",
+            "description": "",
+            "description_color": "default"
           },
           "blocks": {
-            "text_fRMQMR": {
-              "type": "text",
-              "name": "Text",
+            "badge": {
+              "type": "mionas-badge",
+              "name": "Mionas: Badge",
               "settings": {
-                "text": "<h1>Shop by collection</h1>",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h2",
-                "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 16,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "text": "5 colecciones",
+                "variant": "default",
+                "size": "md",
+                "background_color": "",
+                "text_color": ""
+              }
             }
           },
           "block_order": [
-            "text_fRMQMR"
+            "badge"
           ]
         },
-        "static-collection-card": {
-          "type": "_collection-card",
-          "name": "Collection Card",
-          "static": true,
+        "divider": {
+          "type": "mionas-divider",
+          "name": "Mionas: Divider",
           "settings": {
-            "placement": "below_image",
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "flex-start",
-            "collection_card_gap": 8,
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0
-          },
-          "blocks": {
-            "collection_title_7YgBPU": {
-              "type": "collection-title",
-              "name": "Collection Title",
-              "settings": {
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "collection-card-image": {
-              "type": "_collection-card-image",
-              "name": "Image",
-              "static": true,
-              "settings": {
-                "image_ratio": "adapt",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "collection_title_7YgBPU"
-          ]
+            "text": "",
+            "size": "md",
+            "thickness": "thick",
+            "color": "strong",
+            "padding-block-start": 8,
+            "padding-block-end": 0
+          }
         }
       },
       "block_order": [
-        "group_4FtiAg"
+        "breadcrumbs",
+        "heading_group",
+        "divider"
       ],
-      "name": "Collection List",
       "settings": {
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "columns": 3,
-        "mobile_columns": "2",
-        "columns_gap": 12,
-        "bento_gap": 8,
-        "rows_gap": 24,
-        "max_collections": 4,
-        "icons_style": "arrow",
-        "icons_shape": "none",
+        "background": "default",
+        "gap": 16,
         "section_width": "page-width",
-        "gap": 12,
         "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-end": 0,
+        "alignment": "flex-start"
+      }
+    },
+    "mionas_collection_list_LIST01": {
+      "type": "mionas-collection-list",
+      "name": "Mionas: Collection List",
+      "blocks": {
+        "cookies": {
+          "type": "mionas-collection-card",
+          "name": "Mionas: Collection Card - Cookies",
+          "settings": {
+            "collection": "comprar-cookies",
+            "title_size": "heading",
+            "image_ratio": "landscape",
+            "show_price": true,
+            "price_from_prefix": "Desde",
+            "show_arrow": true,
+            "arrow_style": "inverse-outline",
+            "arrow_size": "md",
+            "price_size": "body"
+          }
+        },
+        "megacookies": {
+          "type": "mionas-collection-card",
+          "name": "Mionas: Collection Card - Megacookies",
+          "settings": {
+            "collection": "megacookies",
+            "title_size": "subheading",
+            "image_ratio": "landscape",
+            "show_price": true,
+            "price_from_prefix": "Desde",
+            "show_arrow": true,
+            "arrow_style": "inverse-outline",
+            "arrow_size": "md",
+            "price_size": "body"
+          }
+        },
+        "vegan-cookies": {
+          "type": "mionas-collection-card",
+          "name": "Mionas: Collection Card - Vegan Cookies",
+          "settings": {
+            "collection": "cookies-veganas",
+            "title_size": "subheading",
+            "image_ratio": "landscape",
+            "show_price": true,
+            "price_from_prefix": "Desde",
+            "show_arrow": true,
+            "arrow_style": "inverse-outline",
+            "arrow_size": "md",
+            "price_size": "body"
+          }
+        },
+        "packs": {
+          "type": "mionas-collection-card",
+          "name": "Mionas: Collection Card - Packs",
+          "settings": {
+            "collection": "packs",
+            "title_size": "heading",
+            "image_ratio": "landscape",
+            "show_price": true,
+            "price_from_prefix": "Desde",
+            "show_arrow": true,
+            "arrow_style": "inverse-outline",
+            "arrow_size": "md",
+            "price_size": "body"
+          }
+        },
+        "loaf-cakes": {
+          "type": "mionas-collection-card",
+          "name": "Mionas: Collection Card - Loaf Cakes",
+          "settings": {
+            "collection": "loaf-cakes",
+            "title_size": "subheading",
+            "image_ratio": "landscape",
+            "show_price": true,
+            "price_from_prefix": "Desde",
+            "show_arrow": true,
+            "arrow_style": "inverse-outline",
+            "arrow_size": "md",
+            "price_size": "body"
+          }
+        }
+      },
+      "block_order": [
+        "cookies",
+        "packs",
+        "megacookies",
+        "vegan-cookies",
+        "loaf-cakes"
+      ],
+      "settings": {
+        "section_width": "page-width",
+        "padding-block-start": 32,
+        "padding-block-end": 96,
+        "large_cards": 2
       }
     }
   },
   "order": [
-    "collection_list_Wfgh3m"
+    "mionas_page_heading",
+    "mionas_collection_list_LIST01"
   ]
 }

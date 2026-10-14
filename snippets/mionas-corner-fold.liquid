@@ -9,7 +9,7 @@
   @param {string} figure - The first line, nearest the long edge ("10%"). Emitted unfiltered; callers sanitise it.
   @param {string} text - The second line ("descuento"). Emitted unfiltered; callers sanitise it.
   @param {string} [side] - left or right. Defaults to left.
-  @param {string} [variant] - The Stamp size of both lines: heading, subheading, title, lead, body or label. Defaults to body.
+  @param {string} [size] - The Stamp size of both lines: heading, subheading, title, lead, body or label. Defaults to body.
   @param {string} [attributes] - Extra attributes for the custom element.
 {%- enddoc -%}
 {%- liquid
@@ -17,10 +17,10 @@
   unless side == 'right'
     assign side = 'left'
   endunless
-  assign variant = variant | default: 'body'
-  assign allowed_variants = 'heading|subheading|title|lead|body|label' | split: '|'
-  unless allowed_variants contains variant
-    assign variant = 'body'
+  assign size = size | default: 'body'
+  assign allowed_sizes = 'heading|subheading|title|lead|body|label' | split: '|'
+  unless allowed_sizes contains size
+    assign size = 'body'
   endunless
 -%}
 {%- capture lines -%}
@@ -44,7 +44,7 @@
     aria-label="{{ label }}"
     on:click="/openDialog"
   >
-    {%- render 'mionas-stamp', content: lines, size: variant, color: 'inherit', tag: 'span' -%}
+    {%- render 'mionas-stamp', content: lines, size: size, color: 'inherit', tag: 'span' -%}
   </button>
 </{{ element }}>
 
