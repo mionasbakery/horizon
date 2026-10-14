@@ -9,11 +9,6 @@
  */
 {
   "mionas": {
-    "free_shipping": {
-      "under_html": "A partir de {{ threshold }}, les despeses d'enviament són gratuïtes. Et falten <strong>{{ amount }}</strong>.",
-      "reached_html": "<strong>Perfecte!</strong> La teva comanda no paga despeses d'enviament.",
-      "progress": "Progrés cap a l'enviament gratuït"
-    },
     "form": {
       "email_required": "Escriu el teu correu electrònic.",
       "email_invalid": "Escriu una adreça de correu electrònic vàlida.",
@@ -49,18 +44,6 @@
     "newsletter_success": {
       "title": "Gràcies per subscriure't",
       "text": "T'hem enviat un correu electrònic amb el teu codi de descompte. Introdueix-lo en pagar la teva primera compra per aplicar-lo."
-    },
-    "cart": {
-      "count": {
-        "one": "{{ count }} producte",
-        "other": "{{ count }} productes"
-      },
-      "product": "Producte",
-      "total": "Total",
-      "unit_price": "{{ price }} / unitat",
-      "summary": "Resum",
-      "empty_note": "Fornegem dimarts i dimecres i enviem el mateix dia. A partir de {{ threshold }}, l'enviament és gratuït.",
-      "empty_button": "Comprar cookies"
     }
   },
   "accessibility": {

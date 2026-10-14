@@ -20,7 +20,7 @@
     if total >= threshold_cents
       assign complete = true
     endif
-    assign label = 'mionas.free_shipping.progress' | t
+    assign label = block.settings.label
     assign now = total | divided_by: 100.0 | round
   -%}
   <script src="{{ 'mionas-free-shipping-bar.js' | asset_url }}" type="module"></script>
@@ -60,6 +60,12 @@
     {
       "type": "paragraph",
       "content": "The threshold is the Mionas: Cart section's \"Free shipping from\" setting."
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Screen reader label",
+      "default": "Progreso hacia el envío gratis"
     }
   ],
   "presets": [{ "name": "Mionas: Free Shipping Bar" }]

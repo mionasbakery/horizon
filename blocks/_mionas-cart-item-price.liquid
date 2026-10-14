@@ -11,17 +11,18 @@
     assign compare_price = line.variant.compare_at_price
   endif
   assign final_price = line.final_price | money
+  assign price_text = block.settings.unit_price | replace: '[price]', final_price
 -%}
 
 {%- capture unit_price -%}
   {%- if line.final_price < compare_price -%}
     <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-    {{ 'mionas.cart.unit_price' | t: price: final_price }}
+    {{ price_text }}
     <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
     <s>{{ compare_price | money }}</s>
   {%- else -%}
     <span class="visually-hidden">{{ 'content.price' | t }}</span>
-    {{ 'mionas.cart.unit_price' | t: price: final_price }}
+    {{ price_text }}
   {%- endif -%}
 {%- endcapture -%}
 
@@ -37,6 +38,14 @@
 {
   "name": "Mionas: Cart Item Price",
   "tag": null,
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "unit_price",
+      "label": "Price per item",
+      "info": "[price] becomes the item's price.",
+      "default": "[price] / unidad"
+    }
+  ]
 }
 {% endschema %}

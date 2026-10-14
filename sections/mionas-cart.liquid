@@ -51,11 +51,10 @@
       <span class="mionas-cart__empty-icon" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
       </span>
-      {%- assign empty_title = 'content.your_cart_is_empty' | t -%}
-      {% render 'mionas-text', content: empty_title, variant: 'subheading', transform: 'uppercase', tag: 'h2' %}
-      {%- assign empty_note = 'mionas.cart.empty_note' | t: threshold: threshold_text -%}
+      {% render 'mionas-text', content: section.settings.empty_title, variant: 'subheading', transform: 'uppercase', tag: 'h2' %}
+      {%- assign empty_note = section.settings.empty_text | replace: '[threshold]', threshold_text -%}
       {% render 'mionas-text', content: empty_note, variant: 'body', color: 'secondary', tag: 'p', class: 'mionas-cart__empty-note' %}
-      <a class="{{ primary_classes }}" href="{{ routes.collections_url }}">{{ 'mionas.cart.empty_button' | t }}</a>
+      <a class="{{ primary_classes }}" href="{{ routes.collections_url }}">{{ section.settings.empty_button }}</a>
     </div>
   </div>
 {% endcapture %}
@@ -73,10 +72,8 @@
         <span class="visually-hidden" ref="cartItemCount" aria-hidden="true">{{- cart.item_count -}}</span>
         <form action="{{ routes.cart_url }}" class="mionas-cart__items" id="cart-form" method="post">
           <div class="mionas-cart__columns" aria-hidden="true">
-            {%- assign product_label = 'mionas.cart.product' | t -%}
-            {%- assign total_label = 'mionas.cart.total' | t -%}
-            {% render 'mionas-text', content: product_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
-            {% render 'mionas-text', content: total_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
+            {% render 'mionas-text', content: section.settings.product_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
+            {% render 'mionas-text', content: section.settings.total_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
           </div>
           <table class="mionas-cart__table" role="table">
             <caption class="visually-hidden" role="caption">
@@ -114,8 +111,7 @@
         </div>
 
         <div class="mionas-cart__summary">
-          {%- assign summary_title = 'mionas.cart.summary' | t -%}
-          {% render 'mionas-text', content: summary_title, variant: 'title', transform: 'none', tag: 'h2' %}
+          {% render 'mionas-text', content: section.settings.summary_title, variant: 'title', transform: 'none', tag: 'h2' %}
           {%- content_for 'block', type: '_cart-summary', id: 'cart-page-summary' -%}
         </div>
       </div>
@@ -353,6 +349,47 @@
         { "value": "main", "label": "Under the products" }
       ],
       "default": "top"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "product_label",
+      "label": "Product column",
+      "default": "Producto"
+    },
+    {
+      "type": "text",
+      "id": "total_label",
+      "label": "Total column",
+      "default": "Total"
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Summary heading",
+      "default": "Resumen"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty cart heading",
+      "default": "Tu cesta está vacía"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "empty_text",
+      "label": "Empty cart text",
+      "info": "[threshold] becomes the free-shipping amount.",
+      "default": "Horneamos martes y miércoles y enviamos el mismo día. Envío gratis a partir de [threshold]."
+    },
+    {
+      "type": "text",
+      "id": "empty_button",
+      "label": "Empty cart button",
+      "default": "Comprar cookies"
     },
     {
       "type": "header",

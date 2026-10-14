@@ -9,11 +9,6 @@
  */
 {
   "mionas": {
-    "free_shipping": {
-      "under_html": "A partir de {{ threshold }}, los gastos de envío son gratuitos. Te faltan <strong>{{ amount }}</strong>.",
-      "reached_html": "<strong>¡Perfecto!</strong> Tu pedido no paga gastos de envío.",
-      "progress": "Progreso hacia el envío gratis"
-    },
     "form": {
       "email_required": "Escribe tu email.",
       "email_invalid": "Escribe un email válido.",
@@ -49,18 +44,6 @@
     "newsletter_success": {
       "title": "Gracias por suscribirte",
       "text": "Te hemos enviado un email con tu código de descuento. Introdúcelo al pagar tu primera compra para aplicarlo."
-    },
-    "cart": {
-      "count": {
-        "one": "{{ count }} producto",
-        "other": "{{ count }} productos"
-      },
-      "product": "Producto",
-      "total": "Total",
-      "unit_price": "{{ price }} / unidad",
-      "summary": "Resumen",
-      "empty_note": "Horneamos martes y miércoles y enviamos el mismo día. A partir de {{ threshold }}, el envío es gratis.",
-      "empty_button": "Comprar cookies"
     }
   },
   "blocks": {

@@ -51,7 +51,10 @@
             "count": {
               "type": "mionas-cart-count",
               "name": "Mionas: Cart Count",
-              "settings": {}
+              "settings": {
+                "one": "[count] producto",
+                "other": "[count] productos"
+              }
             }
           },
           "block_order": [
@@ -114,12 +117,17 @@
             "free-shipping-message": {
               "type": "mionas-free-shipping",
               "name": "Mionas: Free Shipping",
-              "settings": {}
+              "settings": {
+                "under_text": "Envío gratis a partir de [threshold]. Te faltan <strong>[amount]</strong>.",
+                "reached_text": "Tu pedido tiene <strong>envío gratis</strong>."
+              }
             },
             "free-shipping-bar": {
               "type": "mionas-free-shipping-bar",
               "name": "Mionas: Free Shipping Bar",
-              "settings": {}
+              "settings": {
+                "label": "Progreso hacia el envío gratis"
+              }
             },
             "product-upsells": {
               "type": "mionas-product-upsells",
@@ -185,7 +193,9 @@
               "type": "_mionas-cart-item-price",
               "static": true,
               "name": "Mionas: Cart Item Price",
-              "settings": {},
+              "settings": {
+                "unit_price": "[price] / unidad"
+              },
               "blocks": {}
             },
             "cart-quantity": {
@@ -223,7 +233,13 @@
         "free_shipping_threshold": 30,
         "free_shipping_position": "top",
         "padding-block-start": 0,
-        "padding-block-end": 48
+        "padding-block-end": 48,
+        "product_label": "Producto",
+        "total_label": "Total",
+        "summary_title": "Resumen",
+        "empty_title": "Tu cesta está vacía",
+        "empty_text": "Horneamos martes y miércoles y enviamos el mismo día. Envío gratis a partir de [threshold].",
+        "empty_button": "Comprar cookies"
       }
     }
   },

@@ -6,14 +6,18 @@
 {%- comment -%}
   The title sits in its own heading section, which cart changes don't re-render, so
   assets/mionas-cart-count.js keeps the number current from the cart's update events. The two
-  wordings are rendered here with a stand-in count, so the script swaps the number and the
-  translation keeps its plural rule.
+  wordings are rendered here with a stand-in count, so the script swaps the number and keeps the
+  wording for one item apart. Spanish, Catalan and English have no other plural form.
 {%- endcomment -%}
 
 {%- liquid
-  assign one = 'mionas.cart.count' | t: count: 1
-  assign other = 'mionas.cart.count' | t: count: 999999
-  assign text = 'mionas.cart.count' | t: count: cart.item_count
+  assign one = block.settings.one | replace: '[count]', '1'
+  assign other = block.settings.other | replace: '[count]', '999999'
+  if cart.item_count == 1
+    assign text = one
+  else
+    assign text = block.settings.other | replace: '[count]', cart.item_count
+  endif
 -%}
 
 <script src="{{ 'mionas-cart-count.js' | asset_url }}" type="module"></script>
@@ -40,7 +44,22 @@
 {
   "name": "Mionas: Cart Count",
   "tag": null,
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "one",
+      "label": "One item",
+      "info": "[count] becomes the number of items.",
+      "default": "[count] producto"
+    },
+    {
+      "type": "text",
+      "id": "other",
+      "label": "Several items",
+      "info": "[count] becomes the number of items.",
+      "default": "[count] productos"
+    }
+  ],
   "presets": [{ "name": "Mionas: Cart Count" }]
 }
 {% endschema %}
