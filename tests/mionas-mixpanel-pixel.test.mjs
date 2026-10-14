@@ -57,9 +57,9 @@ test('sends GA4 names and parameters', async () => {
   handlers.product_viewed({ ...base, data: { productVariant: variant } });
   handlers.product_added_to_cart({ ...base, data: { cartLine: { quantity: 2, merchandise: variant } } });
   const promotion = { promotion_id: 'newsletter_popup', promotion_name: 'Newsletter popup' };
-  handlers.newsletter_popup_shown({ ...base, customData: { ...promotion, trigger: 'auto' } });
-  handlers.newsletter_popup_closed({ ...base, customData: { ...promotion, method: 'button' } });
-  handlers.newsletter_popup_subscribed({ ...base, customData: { method: 'newsletter_popup' } });
+  handlers.view_promotion({ ...base, customData: { ...promotion, trigger: 'auto' } });
+  handlers.close_promotion({ ...base, customData: { ...promotion, method: 'button' } });
+  handlers.sign_up({ ...base, customData: { method: 'newsletter_popup' } });
   await flush();
 
   const events = sent.map(({ event, properties }) => {
@@ -272,4 +272,16 @@ test('forwards the events the theme publishes under their GA4 names', async () =
     ['select_item', { ...list, currency: 'EUR', value: 4.2, items: [{ ...upsell, quantity: 1 }] }],
     ['reach_free_shipping', { currency: 'EUR', value: 31.2, free_shipping_threshold: 30, via_upsell: true }],
   ]);
+});
+
+test('a logged-in customer\'s events carry their ID, and an anonymous visitor\'s carry only the device', async () => {
+  const userOf = async (customer) => {
+    const { sent, handlers } = runPixel(customer);
+    handlers.page_viewed(base);
+    handlers.select_item({ ...base, customData: { item_list_id: 'cart_upsells' } });
+    await flush();
+    return sent.map(({ properties }) => [properties.distinct_id, properties.$user_id]);
+  };
+  assert.deepEqual(await userOf({ id: 'gid://shopify/Customer/42' }), [['42', '42'], ['42', '42']]);
+  assert.deepEqual(await userOf(null), [['$device:client-1', undefined], ['$device:client-1', undefined]]);
 });

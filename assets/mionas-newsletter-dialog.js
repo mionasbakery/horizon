@@ -9,7 +9,7 @@ const MionasDialog = /** @type {typeof import('./mionas-dialog.js').MionasDialog
 
 /** Sources of an open that count as the dialog being shown, for the funnel, as their GA4 `trigger`. */
 const SHOWN_TRIGGERS = { auto: 'auto', launcher: 'corner_fold' };
-/** The GA4 name of each funnel step. GA4 has no recommended event for a close, so close_promotion is custom. */
+/** The promotion every funnel event names. GA4 has no recommended event for a close, so close_promotion is custom. */
 const PROMOTION = { promotion_id: 'newsletter_popup', promotion_name: 'Newsletter popup' };
 /** Plain words for the debug log. */
 const OPEN_NAMES = {
@@ -176,7 +176,7 @@ class MionasNewsletterDialog extends MionasDialog {
 
     const outcome = this.#takeOwnPost() ? this.#submitOutcome() : null;
     if (outcome === 'success') {
-      this.#track('subscribed', { method: 'newsletter_popup' });
+      this.#track('sign_up', { method: 'newsletter_popup' });
       this.#showSuccess();
       this.complete();
       this.open({ source: 'signup' });
@@ -198,7 +198,7 @@ class MionasNewsletterDialog extends MionasDialog {
     const trigger = SHOWN_TRIGGERS[/** @type {keyof typeof SHOWN_TRIGGERS} */ (source)];
     if (!trigger) return;
     this.store?.write({ shownAt: Date.now() });
-    this.#track('shown', { ...PROMOTION, trigger });
+    this.#track('view_promotion', { ...PROMOTION, trigger });
   };
 
   /** @param {CustomEvent} event */
@@ -208,18 +208,17 @@ class MionasNewsletterDialog extends MionasDialog {
     this.log('dialog', 'popup closed', { how: CLOSE_NAMES[/** @type {keyof typeof CLOSE_NAMES} */ (method)] ?? method });
     if (this.completed) return;
     this.store?.write({ state: 'closed', closedAt: Date.now() });
-    this.#track('closed', { ...PROMOTION, method });
+    this.#track('close_promotion', { ...PROMOTION, method });
   };
 
   /**
-   * Sends a funnel step as the newsletter_popup_{step} customer event, which the GA4 and Mixpanel
-   * custom pixels rename.
-   * @param {'shown' | 'closed' | 'subscribed'} step
+   * Sends a funnel step as a customer event under its GA4 name, which pixels/mionas-mixpanel.js forwards.
+   * @param {'view_promotion' | 'close_promotion' | 'sign_up'} name
    * @param {Record<string, string>} params
    */
-  #track(step, params) {
+  #track(name, params) {
     try {
-      window.Shopify?.analytics?.publish?.(`newsletter_popup_${step}`, params);
+      window.Shopify?.analytics?.publish?.(name, params);
     } catch {
       // Analytics must never break the dialog.
     }

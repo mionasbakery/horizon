@@ -41,12 +41,15 @@ function amount(money) {
   return Number.isFinite(value) ? value : undefined;
 }
 
+/** Mixpanel stores an absent field better than a null one, so empty fields are left out. */
+function compact(fields) {
+  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value != null));
+}
+
 /** A customer's name and email, leaving out whatever Shopify didn't provide. */
 function profile(firstName, lastName, email) {
   const name = [firstName, lastName].filter(Boolean).join(' ');
-  const fields = { $name: name || undefined, $email: email || undefined };
-  for (const key of Object.keys(fields)) if (fields[key] == null) delete fields[key];
-  return fields;
+  return compact({ $name: name || undefined, $email: email || undefined });
 }
 
 function post(path, record) {
@@ -120,13 +123,14 @@ function trafficProperties(event) {
 
 /**
  * Sends one event over HTTP with Shopify's clientId as the device, rather than through the browser
- * SDK: clientId is the one visitor ID the storefront, the pixel and checkout all share.
+ * SDK: clientId is the one visitor ID the storefront, the pixel and checkout all share. The person is the
+ * logged-in customer unless the event names another.
  */
-function track(name, event, properties, userId) {
+function track(name, event, properties, userId = customerId) {
   const deviceId = event.clientId;
   shareClientId(deviceId);
   const page = pageProperties(event);
-  const payload = {
+  const payload = compact({
     token: TOKEN,
     distinct_id: userId ?? `$device:${deviceId}`,
     $device_id: deviceId,
@@ -138,10 +142,9 @@ function track(name, event, properties, userId) {
       .slice(-36),
     platform: 'web',
     locale: page.locale,
-  };
-  // Mixpanel stores an absent field better than a null one, and a missing value must not erase a default.
-  for (const [key, value] of Object.entries(properties)) if (value != null) payload[key] = value;
-  for (const key of Object.keys(payload)) if (payload[key] == null) delete payload[key];
+    // A missing value must not erase a default above, such as the storefront's locale.
+    ...compact(properties),
+  });
 
   themeVersion().then((theme_version) => post('/track', { event: name, properties: { ...payload, theme_version } }));
 }
@@ -151,29 +154,38 @@ function identify(userId, fields) {
   if (userId && Object.keys(fields).length) post('/engage', { $token: TOKEN, $distinct_id: userId, $set: fields });
 }
 
-function cents(value) {
+/** Rounds a euro amount to whole cents, since price × quantity can carry float noise. */
+function roundMoney(value) {
   return Number.isFinite(value) ? Math.round(value * 100) / 100 : undefined;
 }
 
 /** One GA4 item. Shopify names a product's only variant "Default Title", which says nothing. */
 function item(product, variant, price, quantity) {
-  const fields = {
+  return compact({
     item_id: numericId(product?.id),
     item_name: product?.title,
     item_variant: variant?.title === 'Default Title' ? undefined : variant?.title,
     price,
     quantity,
-  };
-  for (const key of Object.keys(fields)) if (fields[key] == null) delete fields[key];
-  return fields;
+  });
 }
 
 function variantProperties(variant, quantity) {
   const price = amount(variant?.price);
   return {
     currency: variant?.price?.currencyCode,
-    value: cents(price * quantity),
+    value: roundMoney(price * quantity),
     items: [item(variant?.product, variant, price, quantity)],
+  };
+}
+
+function cartProperties(cart) {
+  return {
+    currency: cart?.cost?.totalAmount?.currencyCode,
+    value: amount(cart?.cost?.totalAmount),
+    items: (cart?.lines ?? []).map((line) =>
+      item(line.merchandise?.product, line.merchandise, amount(line.merchandise?.price), line.quantity)
+    ),
   };
 }
 
@@ -201,41 +213,29 @@ identify(customerId, profile(customer?.firstName, customer?.lastName, customer?.
 analytics.subscribe('page_viewed', (event) => {
   const { page_location, page_type } = pageProperties(event);
   // Only the page view carries traffic: Mixpanel's attribution reads each one as a touchpoint.
-  track('page_view', event, { page_location, page_type, ...trafficProperties(event) }, customerId);
+  track('page_view', event, { page_location, page_type, ...trafficProperties(event) });
 });
 
 analytics.subscribe('product_viewed', (event) => {
-  track('view_item', event, variantProperties(event.data?.productVariant, 1), customerId);
+  track('view_item', event, variantProperties(event.data?.productVariant, 1));
 });
 
 analytics.subscribe('product_added_to_cart', (event) => {
   const line = event.data?.cartLine;
-  track('add_to_cart', event, variantProperties(line?.merchandise, line?.quantity), customerId);
+  track('add_to_cart', event, variantProperties(line?.merchandise, line?.quantity));
 });
 
 analytics.subscribe('product_removed_from_cart', (event) => {
   const line = event.data?.cartLine;
-  track('remove_from_cart', event, variantProperties(line?.merchandise, line?.quantity), customerId);
+  track('remove_from_cart', event, variantProperties(line?.merchandise, line?.quantity));
 });
 
 analytics.subscribe('cart_viewed', (event) => {
-  const cart = event.data?.cart;
-  track(
-    'view_cart',
-    event,
-    {
-      currency: cart?.cost?.totalAmount?.currencyCode,
-      value: amount(cart?.cost?.totalAmount),
-      items: (cart?.lines ?? []).map((line) =>
-        item(line.merchandise?.product, line.merchandise, amount(line.merchandise?.price), line.quantity)
-      ),
-    },
-    customerId
-  );
+  track('view_cart', event, cartProperties(event.data?.cart));
 });
 
 analytics.subscribe('checkout_started', (event) => {
-  track('begin_checkout', event, checkoutProperties(event.data?.checkout), customerId);
+  track('begin_checkout', event, checkoutProperties(event.data?.checkout));
 });
 
 analytics.subscribe('checkout_completed', (event) => {
@@ -257,18 +257,8 @@ analytics.subscribe('checkout_completed', (event) => {
   );
 });
 
-// Published by assets/mionas-newsletter-dialog.js with their GA4 parameters already set.
-const NEWSLETTER_POPUP_EVENTS = {
-  newsletter_popup_shown: 'view_promotion',
-  newsletter_popup_closed: 'close_promotion',
-  newsletter_popup_subscribed: 'sign_up',
-};
-Object.entries(NEWSLETTER_POPUP_EVENTS).forEach(([shopifyName, name]) => {
-  analytics.subscribe(shopifyName, (event) => track(name, event, event.customData ?? {}, customerId));
-});
-
-// Published by assets/mionas-product-upsells.js and assets/mionas-free-shipping-bar.js under their GA4 names,
-// with their parameters already set.
-['view_item_list', 'select_item', 'reach_free_shipping'].forEach((name) => {
-  analytics.subscribe(name, (event) => track(name, event, event.customData ?? {}, customerId));
-});
+// Published by the theme under their GA4 names, with their parameters already set: the newsletter dialog's
+// funnel, the cart upsells and the free-shipping bar.
+['view_promotion', 'close_promotion', 'sign_up', 'view_item_list', 'select_item', 'reach_free_shipping'].forEach(
+  (name) => analytics.subscribe(name, (event) => track(name, event, event.customData ?? {}))
+);
