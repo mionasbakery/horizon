@@ -23,6 +23,21 @@
 {%- endcomment -%}
 {% liquid
   assign block_settings = block.settings
+
+  # Shopify adds the locale to links picked from a resource, but a typed path such as /collections
+  # stays as written and would send /ca and /en shoppers to the Spanish page.
+  assign href = block_settings.link
+  assign locale_root = routes.root_url
+  if locale_root != '/'
+    assign href_start = href | slice: 0, 2
+    assign href_root = href | slice: 0, locale_root.size
+    if href_start != '//' and href_root != locale_root
+      assign first_character = href | slice: 0
+      if first_character == '/'
+        assign href = locale_root | append: href
+      endif
+    endif
+  endif
 %}
 {%- capture button_classes -%}
   {%- render 'mionas-button-class',
@@ -51,7 +66,7 @@
     role="link"
     aria-disabled="true"
   {% else %}
-    href="{{ block_settings.link }}"
+    href="{{ href }}"
   {% endif %}
   class="{{ button_classes }}"
   {% if block_settings.open_in_new_tab %}

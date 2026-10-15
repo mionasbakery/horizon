@@ -27,6 +27,7 @@
   --feature-card-subtitle-opacity: 0.9;
   --footer-tagline-foreground: #e0a06a;
   --footer-legal-border-color: rgba(255, 255, 255, 0.12);
+  --icon-base-size: 44px;
   --icon-button-size-md-icon-size: 24px;
   --icon-button-size-lg-icon-size: 28px;
   --list-item-state-pressed-opacity: 0.92;
@@ -226,6 +227,12 @@
   --heading-group-base-gap: 8px;
   --heading-group-description-gap: 12px;
   --heading-group-after-gap: 12px;
+  --highlight-base-gap: 16px;
+  --highlight-text-padding: calc((44px - 24px) / 2);
+  --highlight-description-gap: 3px;
+  --icon-base-radius: 999px;
+  --icon-base-background: rgba(11, 7, 140, 0.08);
+  --icon-base-icon-size: 20px;
   --icon-button-size-sm-icon-size: 20px;
   --link-base-font-weight: 500;
   --link-base-font-family: var(--font-family-archivo);
@@ -414,6 +421,7 @@
   --form-field-state-focused-foreground: #0b078c;
   --form-field-state-error-border-color: #af200b;
   --form-label-state-focused-foreground: #0b078c;
+  --icon-base-foreground: #0b078c;
   --link-base-foreground: #0b078c;
   --mega-menu-item-state-hover-foreground: #0b078c;
   --mega-menu-link-state-hover-foreground: #0b078c;

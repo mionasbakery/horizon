@@ -16,6 +16,7 @@
   icon: block.settings.icon,
   link: block.settings.link,
   aria_label: block.settings.aria_label,
+  tooltip: block.settings.tooltip,
   open_in_new_tab: block.settings.open_in_new_tab,
   variant: block.settings.variant,
   size: block.settings.size,
@@ -43,6 +44,12 @@
       "id": "aria_label",
       "label": "Accessible name",
       "info": "Announced by screen readers -- this button shows no visible text, so this is its only accessible name. Required in practice."
+    },
+    {
+      "type": "text",
+      "id": "tooltip",
+      "label": "Tooltip",
+      "info": "Shown when the pointer rests on the button. Leave empty for none."
     },
     {
       "type": "url",

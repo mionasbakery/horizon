@@ -21,6 +21,7 @@
             "padding-block-start": 0,
             "padding-block-end": 0,
             "home_label": "",
+            "current_label": "Tienda",
             "label": ""
           },
           "blocks": {}
@@ -31,7 +32,7 @@
           "settings": {
             "eyebrow": "",
             "eyebrow_color": "accent",
-            "heading": "<p>Nuestra carta</p>",
+            "heading": "<p>Nuestra tienda</p>",
             "heading_variant": "display",
             "heading_color": "default",
             "heading_tag": "h1",

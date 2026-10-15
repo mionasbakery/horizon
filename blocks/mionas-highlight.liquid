@@ -1,0 +1,72 @@
+{%- doc -%}
+  Renders a short selling point: an icon in a tinted circle, a title and an optional description.
+{%- enddoc -%}
+{%- comment -%}
+  Mirrors ../design-system/src/components/Highlight/Highlight.tsx; the icon is
+  snippets/mionas-icon.liquid, the Icon mirror.
+{%- endcomment -%}
+
+{%- liquid
+  assign title = block.settings.title | escape
+  assign description = block.settings.description | escape
+-%}
+
+<div class="mionas-highlight" {{ block.shopify_attributes }}>
+  {%- render 'mionas-icon', icon: block.settings.icon -%}
+  <div class="mionas-highlight__text">
+    {%- render 'mionas-text', content: title, variant: 'title', transform: 'none', tag: 'p' -%}
+    {%- if description != blank -%}
+      {%- render 'mionas-text', content: description, variant: 'body', color: 'secondary', tag: 'p' -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mionas-highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--highlight-base-gap);
+  }
+
+  /* Centres a one-line title on the icon; the description hangs below it. */
+  .mionas-highlight__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--highlight-description-gap);
+    padding-top: var(--highlight-text-padding);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Highlight",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "calendar", "label": "Calendar" },
+        { "value": "clock", "label": "Clock" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "tag", "label": "Tag" }
+      ],
+      "default": "calendar"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Enviamos cada miércoles"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "default": "Elaboramos tu pedido el mismo día del envío."
+    }
+  ],
+  "presets": [{ "name": "Mionas: Highlight" }]
+}
+{% endschema %}

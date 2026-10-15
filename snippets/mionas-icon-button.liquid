@@ -9,6 +9,7 @@
   @param {string} [tag] - "a" (default), "button", or "span" for a decorative copy inside a larger link (aria-hidden, no name or link)
   @param {string} [link] - Destination URL for an "a"; blank renders a disabled, non-interactive link
   @param {boolean} [open_in_new_tab] - Adds target="_blank" and rel="noopener noreferrer" to an "a"
+  @param {string} [tooltip] - Text shown when the pointer rests on the button; blank shows none
   @param {string} [attributes] - Raw extra attributes, such as a button's type and on:click. Caller-controlled only.
   @param {string} [class] - Extra classes, for the caller's own placement
   @param {string} [shopify_attributes] - Raw block.shopify_attributes to forward, if editor-owned
@@ -51,7 +52,15 @@
     {{- icon_markup -}}
   </span>
 {%- elsif tag == 'button' -%}
-  <button class="{{ icon_button_classes }}" aria-label="{{ aria_label }}" {{ attributes }} {{ shopify_attributes }}>
+  <button
+    class="{{ icon_button_classes }}"
+    aria-label="{{ aria_label }}"
+    {% if tooltip != blank %}
+      title="{{ tooltip | escape }}"
+    {% endif %}
+    {{ attributes }}
+    {{ shopify_attributes }}
+  >
     {{- icon_markup -}}
   </button>
 {%- else -%}
@@ -64,6 +73,9 @@
     {% endif %}
     class="{{ icon_button_classes }}"
     aria-label="{{ aria_label }}"
+    {% if tooltip != blank %}
+      title="{{ tooltip | escape }}"
+    {% endif %}
     {% if open_in_new_tab %}
       target="_blank"
       rel="noopener noreferrer"

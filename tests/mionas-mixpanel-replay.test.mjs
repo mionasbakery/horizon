@@ -70,6 +70,12 @@ test('records on the EU host with heatmaps, pinned SDK and form fields masked', 
   assert.equal(config.record_mask_all_inputs, undefined);
 });
 
+test('turns off the SDK\'s own event capture, since shop events come from the pixel', async () => {
+  const run = runSnippet({ cookie: 'mionas_client_id=client-1' });
+  const [[, , config]] = await run.loadSdk();
+  assert.equal(config.autocapture, false);
+});
+
 test('uses the pixel’s visitor straight after init', async () => {
   const run = runSnippet({ cookie: 'other=1; mionas_client_id=client-1' });
   await run.loadSdk();

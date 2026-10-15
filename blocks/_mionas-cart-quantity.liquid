@@ -1,0 +1,129 @@
+{%- doc -%}
+  Renders a cart line's quantity stepper and volume-pricing popover inside
+  blocks/_mionas-cart-item.liquid. The stepper is Horizon's quantity-selector snippet, which
+  assets/component-cart-items.js reads through its line_index. At a quantity of 1 its minus becomes
+  a bin that removes the line.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- comment -%}
+  The bin is a real button laid over the minus, not a restyled minus, so it carries its own
+  accessible name ("Eliminar …") and calls onLineItemRemove, which counts lines from 1. It sits
+  outside the quantity component, so its on:click path reaches the cart-items component. The section
+  re-renders on every change, so the swap follows the quantity.
+{%- endcomment -%}
+
+{%- liquid
+  assign can_update_quantity = line.instructions.can_update_quantity | default: true, allow_false: true
+  assign can_remove = line.instructions.can_remove | default: true, allow_false: true
+  assign show_remove = false
+  if line.quantity == 1 and can_remove
+    assign show_remove = true
+  endif
+-%}
+
+<div class="mionas-cart-quantity" {{ block.shopify_attributes }}>
+  {% render 'volume-pricing-info', variant: line.variant, unique_id: line.index, quantity: line.quantity %}
+  <div class="mionas-cart-quantity__control{% if show_remove %} mionas-cart-quantity__control--remove{% endif %}">
+    {% render 'quantity-selector',
+      product: line.product,
+      variant: line.variant,
+      in_cart_quantity: line.quantity,
+      line_index: line.index,
+      class: 'cart-primary-typography',
+      can_update_quantity: can_update_quantity
+    %}
+    {%- if show_remove -%}
+      {%- liquid
+        assign label = 'accessibility.remove_item' | t: title: line.title | escape
+        assign icon = 'icon-delete.svg' | inline_asset_content
+        assign tooltip = block.settings.remove_tooltip
+        if tooltip == blank
+          assign tooltip = 'actions.remove' | t
+        endif
+      -%}
+      {%- capture attributes -%}type="button" on:click="/onLineItemRemove/{{ line.index | plus: 1 }}"{%- endcapture -%}
+      {% render 'mionas-icon-button',
+        tag: 'button',
+        variant: 'ghost',
+        size: 'sm',
+        svg: icon,
+        aria_label: label,
+        tooltip: tooltip,
+        attributes: attributes,
+        class: 'mionas-cart-quantity__remove'
+      %}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  /* quantity-selector-styles reads these input variables, so the pill needs no rule on its classes. */
+  .mionas-cart-quantity {
+    --color-input-background: var(--surface-default);
+    --color-input-border: var(--card-base-border-color);
+    --style-border-width-inputs: var(--card-base-border-width);
+    --style-border-radius-inputs: var(--radius-full);
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .mionas-cart-quantity :is(.quantity-minus, .quantity-plus) {
+    color: var(--brand-primary);
+  }
+
+  /* Sized like a small icon button, so the line's controls share one height. */
+  .mionas-cart-quantity .quantity-selector {
+    --quantity-selector-width: 112px;
+
+    box-sizing: border-box;
+    height: var(--button-size-sm-height);
+    width: var(--quantity-selector-width);
+    flex: none;
+  }
+
+  .mionas-cart-quantity .quantity-selector :is(.quantity-minus, .quantity-plus) {
+    width: calc(var(--button-size-sm-height) - var(--card-base-border-width) * 2);
+    height: 100%;
+  }
+
+  .mionas-cart-quantity .quantity-selector input {
+    max-width: calc(var(--quantity-selector-width) - var(--button-size-sm-height) * 2);
+  }
+
+  .mionas-cart-quantity__control {
+    position: relative;
+  }
+
+  /* The bin covers the minus exactly, inside the stepper's border, in the danger colour. */
+  .mionas-cart-quantity__control--remove .quantity-minus {
+    visibility: hidden;
+  }
+
+  .mionas-button.mionas-icon-button.mionas-cart-quantity__remove {
+    position: absolute;
+    inset-block: var(--card-base-border-width);
+    inset-inline-start: var(--card-base-border-width);
+    width: calc(var(--button-size-sm-height) - var(--card-base-border-width) * 2);
+    height: auto;
+    color: var(--feedback-danger);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Quantity",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "remove_tooltip",
+      "label": "Remove tooltip",
+      "info": "Shown on the bin that replaces the minus at a quantity of 1. Leave empty to use the theme's own wording, which stays translated per language."
+    }
+  ]
+}
+{% endschema %}

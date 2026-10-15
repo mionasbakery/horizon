@@ -1,0 +1,63 @@
+{%- doc -%}
+  Renders how much is left to reach free shipping, or that the cart has reached it. Renders nothing
+  for an empty cart.
+
+  @param {object} section - Reads free_shipping_threshold from sections/mionas-cart.liquid's settings.
+{%- enddoc -%}
+
+{%- if cart.item_count > 0 -%}
+  {%- liquid
+    assign threshold = section.settings.free_shipping_threshold | default: 30
+    assign threshold_cents = threshold | times: 100
+    assign gap = threshold_cents | minus: cart.total_price
+    if gap <= 0
+      assign message = block.settings.reached_text
+    else
+      assign threshold_text = threshold_cents | money_without_trailing_zeros
+      assign amount_text = gap | money
+      assign message = block.settings.under_text | replace: '[threshold]', threshold_text | replace: '[amount]', amount_text
+    endif
+  -%}
+  {% render 'mionas-text',
+    content: message,
+    variant: 'body',
+    color: 'secondary',
+    tag: 'p',
+    class: 'mionas-free-shipping-message',
+    attributes: 'aria-live="polite"',
+    shopify_attributes: block.shopify_attributes
+  %}
+{%- endif -%}
+
+{% stylesheet %}
+  .text-role.mionas-free-shipping-message strong {
+    color: var(--text-color-primary);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Free Shipping",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The threshold is the Mionas: Cart section's \"Free shipping from\" setting."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "under_text",
+      "label": "Below the threshold",
+      "info": "[threshold] becomes the free-shipping amount and [amount] what's left to reach it.",
+      "default": "Envío gratis a partir de [threshold]. Te faltan <strong>[amount]</strong>."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "reached_text",
+      "label": "Threshold reached",
+      "default": "Tu pedido tiene <strong>envío gratis</strong>."
+    }
+  ],
+  "presets": [{ "name": "Mionas: Free Shipping" }]
+}
+{% endschema %}

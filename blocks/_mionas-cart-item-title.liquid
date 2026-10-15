@@ -1,0 +1,128 @@
+{%- doc -%}
+  Renders a cart line's title and what sets the line apart: variant, custom options, subscription,
+  discounts and bundle contents. Used inside blocks/_mionas-cart-item.liquid.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign disclosure_id = 'page-' | append: line.index
+  assign title = line.product.title | escape
+
+  assign title_attributes = 'href="' | append: line.url | append: '" title="' | append: title | append: '"'
+  if line.parent_relationship.parent != null
+    assign nested_label = 'accessibility.nested_product' | t: product_title: line.product.title, parent_title: line.parent_relationship.parent.title | escape
+    assign title_attributes = title_attributes | append: ' aria-label="' | append: nested_label | append: '"'
+  endif
+-%}
+
+{%- capture meta -%}
+  {%- if block_settings.show_vendor and line.product.vendor != blank -%}
+    <span>{{ line.product.vendor | escape }}</span>
+  {%- endif -%}
+  {%- if line.item_components.size != 0 -%}
+    {%- for component in line.item_components -%}
+      <span>{{ component.title | escape }}{% if component.quantity > 1 %} × {{ component.quantity }}{% endif %}</span>
+    {%- endfor -%}
+  {%- elsif line.product.has_only_default_variant == false -%}
+    <span>
+      {%- for option in line.options_with_values -%}
+        <span class="visually-hidden">{{ option.name | escape }}:</span>
+        {{- option.value | escape -}}
+        {%- unless forloop.last %}, {% endunless -%}
+      {%- endfor -%}
+    </span>
+  {%- endif -%}
+  {%- for property in line.properties -%}
+    {%- liquid
+      assign first_char = property.first | slice: 0
+      assign url_start = property.last | slice: 0, 8
+    -%}
+    {%- if property.last != blank and first_char != '_' -%}
+      <span>
+        {{- property.first | escape }}:
+        {%- comment -%} Properties are customer input, so only an https upload URL becomes a link. {%- endcomment %}
+        {% if url_start == 'https://' and property.last contains '/uploads/' -%}
+          <a href="{{ property.last | escape }}">{{ property.last | split: '/' | last | escape }}</a>
+        {%- else -%}
+          {{ property.last | escape }}
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if line.selling_plan_allocation -%}
+    <span>{{ line.selling_plan_allocation.selling_plan.name | escape }}</span>
+  {%- endif -%}
+  {%- for discount in line.line_level_discount_allocations -%}
+    <span>{{ discount.discount_application.title | escape }}</span>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="mionas-cart-item-title" {{ block.shopify_attributes }}>
+  <div class="mionas-cart-item-title__title-row">
+    {% render 'mionas-text',
+      content: title,
+      variant: block_settings.title_variant,
+      tag: 'a',
+      class: 'mionas-cart-item-title__title',
+      attributes: title_attributes
+    %}
+    {% render 'cart-disclosure-tooltip', product: line.product, unique_id: disclosure_id, mode: 'trigger' %}
+  </div>
+  {%- if meta != blank -%}
+    {% render 'mionas-text', content: meta, variant: 'label', color: 'secondary', tag: 'div', class: 'mionas-cart-item-title__meta' %}
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mionas-cart-item-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    min-width: 0;
+  }
+
+  .mionas-cart-item-title__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 0;
+  }
+
+  .text-role.mionas-cart-item-title__title {
+    font-weight: var(--card-title-font-weight);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .mionas-cart-item-title__meta > span {
+    display: block;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Item Title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "title_variant",
+      "label": "Title text",
+      "options": [
+        { "value": "body", "label": "Body" },
+        { "value": "lead", "label": "Lead" },
+        { "value": "title", "label": "Title" }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

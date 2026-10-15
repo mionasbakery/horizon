@@ -1,0 +1,424 @@
+{%- comment -%}
+  Renders the cart page's content: the items card, the free-shipping card with its suggestions and
+  the summary card, or the empty cart. The breadcrumbs and title live in the template's heading
+  section, like other pages; the empty cart brings its own title and hides that one.
+
+  Forks sections/main-cart.liquid and the cart-page half of snippets/cart-products.liquid, so the
+  layout and the lines are Mionas markup rather than a bridge over Horizon's. Each line is a
+  blocks/_mionas-cart-item.liquid static block that receives the line, because closest can't hand a
+  cart line to a nested block. assets/component-cart-items.js still drives quantity, removal and
+  re-rendering: the refs, ids, table and on:click paths follow cart-products.liquid and need porting
+  on upstream merges.
+  The script morphs the whole section on every change, so the totals stay current.
+{%- endcomment -%}
+
+<script src="{{ 'component-cart-items.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'component-cart-quantity-selector.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'volume-pricing-info.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{% render 'cart-typography-styles' %}
+{% render 'price-styles' %}
+{% render 'text-component-shimmer-styles' %}
+
+{%- liquid
+  assign threshold = section.settings.free_shipping_threshold | default: 30
+  assign threshold_text = threshold | times: 100 | money_without_trailing_zeros
+
+  case section.settings.free_shipping_position
+    when 'side', 'main'
+      assign position = section.settings.free_shipping_position
+    else
+      assign position = 'top'
+  endcase
+-%}
+
+{%- comment -%}
+  assets/mionas-product-upsells.js renders this section through the recommendations endpoint to get
+  the upsell cards with their editor settings; then only the free-shipping card is needed.
+{%- endcomment -%}
+{%- capture free_shipping_card -%}
+  {%- content_for 'block', type: 'mionas-card', id: 'free-shipping' -%}
+{%- endcapture -%}
+{%- if recommendations.performed -%}
+  {{ free_shipping_card }}
+{%- else -%}
+{%- capture primary_classes -%}
+  {%- render 'mionas-button-class', variant: 'primary' -%}
+{%- endcapture -%}
+
+{% capture empty_state %}
+  <div class="mionas-cart__layout mionas-cart__layout--empty">
+    <div class="mionas-cart__empty">
+      {% render 'mionas-text', content: section.settings.empty_title, variant: 'display', transform: 'uppercase', tag: 'h1' %}
+      {%- assign empty_note = section.settings.empty_text | replace: '[threshold]', threshold_text -%}
+      {% render 'mionas-text', content: empty_note, variant: 'lead', color: 'secondary', tag: 'p' %}
+      <a class="{{ primary_classes }}" href="{{ routes.collections_url }}">{{ section.settings.empty_button }}</a>
+    </div>
+    {%- content_for 'block', type: 'mionas-divider', id: 'highlights-divider' -%}
+    <div class="mionas-cart__highlights">
+      {%- content_for 'block', type: 'mionas-group', id: 'highlights' -%}
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture cart_content %}
+  {%- comment -%} component-cart-items.js swaps this in when the last line is removed. {%- endcomment -%}
+  <template id="empty-cart-template">{{ empty_state }}</template>
+
+  {%- if cart.empty? -%}
+    {{ empty_state }}
+  {%- else -%}
+    <div class="mionas-cart__layout mionas-cart__layout--{{ position }}">
+
+      <div class="mionas-cart__main">
+        <span class="visually-hidden" ref="cartItemCount" aria-hidden="true">{{- cart.item_count -}}</span>
+        <form action="{{ routes.cart_url }}" class="mionas-cart__items" id="cart-form" method="post">
+          <div class="mionas-cart__columns" aria-hidden="true">
+            {% render 'mionas-text', content: section.settings.product_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
+            {% render 'mionas-text', content: section.settings.total_label, variant: 'label', color: 'secondary', transform: 'uppercase', tag: 'span' %}
+          </div>
+          <table class="mionas-cart__table" role="table">
+            <caption class="visually-hidden" role="caption">
+              {{ 'content.cart_total' | t }}
+              <span>{{ cart.total_price | money_with_currency }}</span>
+            </caption>
+            <thead class="visually-hidden" role="rowgroup">
+              <tr role="row">
+                <th id="productImage" scope="col" role="columnheader">{{ 'content.product_image' | t }}</th>
+                <th id="productInformation" scope="col" role="columnheader">{{ 'content.product_information' | t }}</th>
+                <th id="quantity" scope="col" role="columnheader">{{ 'content.quantity' | t }}</th>
+                <th id="productTotal" scope="col" role="columnheader">{{ 'content.product_total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody role="rowgroup">
+              {%- for item in cart.items -%}
+                {%- content_for 'block', type: '_mionas-cart-item', id: 'cart-item', line: item -%}
+              {%- endfor -%}
+            </tbody>
+          </table>
+          {%- for item in cart.items -%}
+            {%- assign disclosure_id = 'page-' | append: item.index -%}
+            {% render 'cart-disclosure-tooltip', product: item.product, unique_id: disclosure_id, mode: 'dialog' %}
+          {%- endfor -%}
+        </form>
+      </div>
+
+      {%- comment -%}
+        The side wrapper is a real column only for the "side" position; elsewhere it dissolves
+        (display: contents) so the grid places the free-shipping card and the summary on their own.
+      {%- endcomment -%}
+      <div class="mionas-cart__side">
+        <div class="mionas-cart__free-shipping">
+          {{ free_shipping_card }}
+        </div>
+
+        <div class="mionas-cart__summary">
+          {% render 'mionas-text', content: section.settings.summary_title, variant: 'title', transform: 'none', tag: 'h2' %}
+          {%- content_for 'block', type: '_cart-summary', id: 'cart-page-summary' -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+{% endcapture %}
+
+<div class="section section--page-width">
+  <div class="mionas-cart spacing-style" style="{% render 'spacing-style', settings: section.settings %}">
+    {% render 'cart-items-component', children: cart_content, section_id: section.id %}
+  </div>
+</div>
+
+{%- endif -%}
+
+{% stylesheet %}
+  .mionas-cart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .mionas-cart__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'main' 'free-shipping' 'summary';
+    gap: var(--space-md);
+  }
+
+  /* Only the "side" position keeps this wrapper as a box, on desktop. */
+  .mionas-cart__side {
+    display: contents;
+  }
+
+
+
+  .mionas-cart__main {
+    grid-area: main;
+    min-width: 0;
+  }
+
+  .mionas-cart__free-shipping {
+    grid-area: free-shipping;
+    min-width: 0;
+  }
+
+  .mionas-cart__summary {
+    grid-area: summary;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .mionas-cart__items,
+  .mionas-cart__summary {
+    background: var(--card-base-background, var(--surface-default));
+    border: var(--card-base-border-width) solid var(--card-base-border-color);
+    border-radius: var(--card-base-radius);
+    box-shadow: var(--card-base-shadow);
+  }
+
+  .mionas-cart__items {
+    /* blocks/_mionas-cart-item.liquid switches lines to one row by this card's width, not the
+       window's, so they stay readable in any column. */
+    container: mionas-cart-items / inline-size;
+    overflow: hidden;
+  }
+
+  .mionas-cart__summary {
+    padding: var(--space-md);
+  }
+
+  /* The free-shipping card is a Mionas: Card the editor fills; its inset changes with the width, which
+     the card's own padding settings can't express. */
+  /* The card holds no media to clip, so the progress bar's success confetti may fly past its edge. */
+  .mionas-cart__free-shipping > * {
+    padding: var(--space-md);
+    overflow: visible;
+  }
+
+  /* _cart-summary pads and pins its inner box for Horizon's full-bleed panel; the card holds it here. */
+  .mionas-cart__summary .cart-summary__inner {
+    position: static;
+    padding: 0;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+
+  .mionas-cart__summary .cart__checkout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+  }
+
+  .mionas-cart__summary .cart__checkout-button::before {
+    content: '';
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+
+  .mionas-cart__columns {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--card-base-padding);
+    border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
+  }
+
+  .mionas-cart__table {
+    width: 100%;
+    border-spacing: 0;
+  }
+
+  .mionas-cart__table td {
+    padding: 0;
+  }
+
+
+  .mionas-cart .cart-items-disabled {
+    pointer-events: none;
+  }
+
+
+  .mionas-cart__layout--empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .mionas-cart__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  /* The empty title is the page's h1, so the heading section's "Tu cesta" steps aside. CSS rather
+     than Liquid, because removing the last line re-renders only this section. */
+  body:has(.mionas-cart__layout--empty) .mionas-heading-group:has(.mionas-cart-count) {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .mionas-cart__empty > .mionas-button {
+      align-self: stretch;
+    }
+  }
+
+  /* Equal columns that wrap below 260px each. A flex basis rather than a Group setting, and only
+     where the group is a row: on phones it stacks, and a basis would become a height. */
+  @media screen and (min-width: 750px) {
+    .mionas-cart__highlights .mionas-highlight {
+      flex: 1 1 260px;
+    }
+  }
+
+
+  @media screen and (min-width: 750px) {
+    .mionas-cart__layout:not(.mionas-cart__layout--empty) {
+      gap: var(--space-lg);
+    }
+
+    /* Even top and bottom, so a reached bar (no upsells below) keeps the same space under it as
+       above it. */
+    .mionas-cart__free-shipping > * {
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .mionas-cart__summary {
+      padding: var(--space-lg);
+    }
+  }
+
+  /* Two columns only once the products keep room for their one-line layout beside the 400px
+     summary; narrower tablets stack everything like a phone. */
+  @media screen and (min-width: 990px) {
+    .mionas-cart__layout:not(.mionas-cart__layout--empty) {
+      grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+      align-items: start;
+    }
+
+    .mionas-cart__layout--top {
+      grid-template-areas:
+        'free-shipping free-shipping'
+        'main summary';
+    }
+
+    /* The summary spans both rows; the flexible last row takes its extra height so the free-shipping
+       card stays right under the items. */
+    .mionas-cart__layout--main {
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        'main summary'
+        'free-shipping summary';
+    }
+
+    .mionas-cart__layout--side {
+      grid-template-areas: 'main side';
+    }
+
+    .mionas-cart__layout--side .mionas-cart__side {
+      grid-area: side;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      min-width: 0;
+    }
+  }
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping from (€)",
+      "info": "Whole euros. Must match the store's free-shipping rate; the theme can't read it.",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "free_shipping_position",
+      "label": "Free shipping card on desktop",
+      "info": "Phones always show it under the products.",
+      "options": [
+        { "value": "top", "label": "Top, full width" },
+        { "value": "side", "label": "Above the summary" },
+        { "value": "main", "label": "Under the products" }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "product_label",
+      "label": "Product column",
+      "default": "Producto"
+    },
+    {
+      "type": "text",
+      "id": "total_label",
+      "label": "Total column",
+      "default": "Total"
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Summary heading",
+      "default": "Resumen"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty cart heading",
+      "default": "Tu cesta está vacía"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "empty_text",
+      "label": "Empty cart text",
+      "info": "[threshold] becomes the free-shipping amount.",
+      "default": "Todavía no has añadido nada."
+    },
+    {
+      "type": "text",
+      "id": "empty_button",
+      "label": "Empty cart button",
+      "default": "Ver la tienda"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ]
+}
+{% endschema %}

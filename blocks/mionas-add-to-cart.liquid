@@ -141,6 +141,16 @@
       neither icon nor label.
     endcomment
     assign wrapper_classes = 'mionas-add-to-cart'
+
+    comment
+      The tooltip sits on the wrapper, which the browser shows for the button inside it: the add
+      button's own markup comes from Horizon's add-to-cart-button snippet, which takes no extra
+      attributes. An icon-only button falls back to its label so the pointer still gets words.
+    endcomment
+    assign tooltip = block_settings.tooltip
+    if tooltip == blank and block_settings.icon_only
+      assign tooltip = 'actions.add_to_cart' | t
+    endif
     if block_settings.icon_only
       assign wrapper_classes = wrapper_classes | append: ' mionas-add-to-cart--icon-only'
     elsif block_settings.show_icon == false
@@ -154,6 +164,9 @@
   <div
     class="{{ wrapper_classes }} spacing-style"
     style="{% render 'spacing-style', settings: block_settings %}"
+    {% if tooltip != blank %}
+      title="{{ tooltip | escape }}"
+    {% endif %}
     {{ block.shopify_attributes }}
   >
     {%- if render_add -%}
@@ -301,10 +314,14 @@
 
      (0,2,0) specificity is needed to outrank whichever size class is selected; aspect-ratio squares
      the button to the height that size sets, rather than naming a fixed width. */
+  /* gap 0: the collapsed label is still a flex item, and the button's gap would push the icon off
+     centre. */
   .mionas-add-to-cart--icon-only .mionas-button {
     font-size: 0;
     padding-inline: 0;
     aspect-ratio: 1;
+    gap: 0;
+    justify-content: center;
   }
 
   .mionas-add-to-cart__quick-add {
@@ -381,6 +398,12 @@
       "label": "Icon only",
       "info": "Hides the label and shows only the icon. The label stays as the button's accessible name, so screen readers still announce it.",
       "default": false
+    },
+    {
+      "type": "text",
+      "id": "tooltip",
+      "label": "Tooltip",
+      "info": "Shown when the pointer rests on the button. Leave empty for none, or for the theme's translated \"Add to cart\" when the button shows only its icon."
     },
     {
       "type": "checkbox",

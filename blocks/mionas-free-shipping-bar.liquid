@@ -1,0 +1,73 @@
+{%- doc -%}
+  Renders the cart's progress towards free shipping as a bar ending at the threshold. Renders nothing
+  for an empty cart.
+
+  @param {object} section - Reads free_shipping_threshold from sections/mionas-cart.liquid's settings.
+{%- enddoc -%}
+
+{%- comment -%}
+  The threshold lives on the cart section because Liquid can't read shipping rates and three blocks
+  need it. assets/mionas-product-upsells.js reads it from data-free-shipping-threshold.
+{%- endcomment -%}
+
+{%- if cart.item_count > 0 -%}
+  {%- liquid
+    assign threshold = section.settings.free_shipping_threshold | default: 30
+    assign threshold_cents = threshold | times: 100
+    assign total = cart.total_price
+    assign progress = total | times: 1.0 | divided_by: threshold_cents
+    assign complete = false
+    if total >= threshold_cents
+      assign complete = true
+    endif
+    assign label = block.settings.label
+    assign now = total | divided_by: 100.0 | round
+  -%}
+  <script src="{{ 'mionas-free-shipping-bar.js' | asset_url }}" type="module"></script>
+
+  <mionas-free-shipping-bar
+    class="mionas-free-shipping-bar"
+    data-free-shipping-threshold="{{ threshold_cents }}"
+    data-total="{{ total }}"
+    {{ block.shopify_attributes }}
+  >
+    {% render 'mionas-progress-bar',
+      progress: progress,
+      label: label,
+      max: threshold,
+      now: now,
+      complete: complete
+    %}
+  </mionas-free-shipping-bar>
+{%- endif -%}
+
+{% stylesheet %}
+  /* A card lays its children out at their own width, which for a bar is none. The message above
+     carries 4px of leading under its last line, so the top margin is that much smaller than the
+     upsells' to space the bar evenly. */
+  .mionas-free-shipping-bar {
+    display: block;
+    width: 100%;
+    margin-block-start: var(--space-2xs);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Free Shipping Bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The threshold is the Mionas: Cart section's \"Free shipping from\" setting."
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Screen reader label",
+      "default": "Progreso hacia el envío gratis"
+    }
+  ],
+  "presets": [{ "name": "Mionas: Free Shipping Bar" }]
+}
+{% endschema %}

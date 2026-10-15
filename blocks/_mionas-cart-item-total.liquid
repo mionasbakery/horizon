@@ -1,0 +1,57 @@
+{%- doc -%}
+  Renders a cart line's total, and its price per unit of measure when the product sells by measure,
+  inside blocks/_mionas-cart-item.liquid. The text-component wrapper is what shimmers while the cart
+  updates.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- liquid
+  if settings.currency_code_enabled_cart_items
+    assign price = line.final_line_price | money_with_currency
+    assign unit_price = line.unit_price | money_with_currency
+  else
+    assign price = line.final_line_price | money
+    assign unit_price = line.unit_price | money
+  endif
+-%}
+
+<div class="mionas-cart-item-total" {{ block.shopify_attributes }}>
+  {%- capture price_html -%}<text-component value="{{ price | strip_html }}">{{ price }}</text-component>{%- endcapture -%}
+  {% render 'mionas-text', content: price_html, variant: block.settings.variant, tag: 'p' %}
+  {%- if line.unit_price_measurement -%}
+    {%- capture unit_html -%}{% render 'unit-price', price: unit_price, measurement: line.unit_price_measurement %}{%- endcapture -%}
+    {% render 'mionas-text', content: unit_html, variant: 'label', color: 'secondary', tag: 'div' %}
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mionas-cart-item-total {
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  /* The design sets the line total at body size with medium-bold weight, below the product name. */
+  .mionas-cart-item-total > .text-role--body {
+    font-weight: var(--card-title-font-weight);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Item Total",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "Text",
+      "options": [
+        { "value": "body", "label": "Body" },
+        { "value": "title", "label": "Title" }
+      ],
+      "default": "body"
+    }
+  ]
+}
+{% endschema %}

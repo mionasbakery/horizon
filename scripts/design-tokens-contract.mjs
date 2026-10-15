@@ -221,6 +221,15 @@ export const EXPECTED_TOKENS = {
   "--badge-outline-border-color": "#cfcac2",
   "--badge-outline-border-width": "1px",
   "--badge-outline-foreground": "#101413",
+  // Icon and Highlight, spent by snippets/mionas-icon.liquid and blocks/mionas-highlight.liquid.
+  "--icon-base-size": "44px",
+  "--icon-base-radius": "999px",
+  "--icon-base-background": "rgba(11, 7, 140, 0.08)",
+  "--icon-base-foreground": "#0b078c",
+  "--icon-base-icon-size": "20px",
+  "--highlight-base-gap": "16px",
+  "--highlight-text-padding": "calc((44px - 24px) / 2)",
+  "--highlight-description-gap": "3px",
   // The three foundation font-size steps the theme spends raw, outside any role: the corporate
   // form, figure and offer card fine print, and the localization form. The steps are named for their px value
   // now (--font-size-xs became --font-size-13), so the name asserts the value -- a --font-size-13

@@ -1,0 +1,150 @@
+{%- doc -%}
+  Renders up to four products to add to the cart while it is under the free-shipping threshold, each
+  a blocks/_mionas-product-upsell.liquid card. Renders nothing for an empty cart.
+{%- enddoc -%}
+
+{%- comment -%}
+  Shopify only returns related products to the recommendations endpoint, so
+  assets/mionas-product-upsells.js asks it to render this cart section (section.id) for each cart
+  item. In that request recommendations.performed is true, sections/mionas-cart.liquid renders just
+  its free-shipping card, and this block renders the cards with the settings placed in the editor.
+  On the page itself it renders one inert card, which puts the card's CSS in the page and shows
+  the editor what the cards look like.
+{%- endcomment -%}
+
+{%- liquid
+  assign latest_product = cart.items.first.product
+  assign cart_product_ids = cart.items | map: 'product_id'
+  assign source_ids = cart_product_ids | uniq | slice: 0, 3 | join: ','
+-%}
+
+{%- if recommendations.performed -%}
+  <div class="mionas-product-upsells__results">
+    {%- comment -%}
+      Free shipping only counts towards shipped products, so pickup-only ones (courses, megacookies)
+      are never suggested.
+    {%- endcomment -%}
+    {%- for product in recommendations.products -%}
+      {%- if cart_product_ids contains product.id
+        or product.available == false
+        or product.has_only_default_variant == false
+        or product.selected_or_first_available_variant.requires_shipping == false
+      -%}
+        {%- continue -%}
+      {%- endif -%}
+      {% content_for 'block', type: '_mionas-product-upsell', id: 'upsell', closest.product: product %}
+    {%- endfor -%}
+  </div>
+{%- elsif cart.item_count > 0 -%}
+  <script src="{{ 'mionas-product-upsells.js' | asset_url }}" type="module"></script>
+
+  <div
+    class="mionas-product-upsells"
+    data-product-ids="{{ source_ids }}"
+    data-total="{{ cart.total_price }}"
+    {{ block.shopify_attributes }}
+  >
+    <template>
+      {% content_for 'block', type: '_mionas-product-upsell', id: 'upsell', closest.product: latest_product %}
+    </template>
+
+    <mionas-product-upsells
+      data-skip-node-update
+      hidden
+      data-url="{{ routes.product_recommendations_url }}"
+      data-section-id="{{ section.id }}"
+    >
+      <div class="mionas-product-upsells__list" data-list></div>
+    </mionas-product-upsells>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* A card lays its children out at their own width; the list fills the card. */
+  .mionas-product-upsells {
+    width: 100%;
+  }
+
+  /* With nothing to suggest (the goal is met) the block takes no space, so the card's gap doesn't
+     leave room below the bar. */
+  .mionas-product-upsells:has(> mionas-product-upsells[hidden]) {
+    display: none;
+  }
+
+  mionas-product-upsells {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    /* Pairs with blocks/mionas-free-shipping-bar.liquid's top margin, so the bar sits evenly between
+       the message and the upsells. */
+    margin-block-start: var(--space-xs);
+  }
+
+  mionas-product-upsells[hidden] {
+    display: none;
+  }
+
+
+  /* The add-to-cart button's animation layers are absolutely positioned; a positioned list keeps
+     them inside the card. */
+  .mionas-product-upsells__list {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-sm);
+  }
+
+
+  @media screen and (min-width: 750px) {
+    mionas-product-upsells {
+      gap: var(--space-2xs);
+    }
+
+
+    .mionas-product-upsells__list {
+      gap: var(--space-xs);
+    }
+  }
+
+  /* Four cards a row at most, then two and one as the free-shipping card narrows, each card at
+     least 300px so a name fits on its one line. No three-column step, so four upsells always fill
+     their rows (4 or 2 + 2). Breakpoints are the card's width, not the window's, because the card
+     sits full width or in a column depending on the cart's setting. */
+  mionas-product-upsells {
+    container: mionas-product-upsells / inline-size;
+  }
+
+  @container mionas-product-upsells (min-width: 608px) {
+    .mionas-product-upsells__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @container mionas-product-upsells (min-width: 1224px) {
+    .mionas-product-upsells__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Product Upsells",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows while the cart is under the Mionas: Cart section's \"Free shipping from\" amount. Needs a Mionas: Free Shipping Bar in the same card."
+    },
+    {
+      "type": "paragraph",
+      "content": "Suggests the products Shopify relates to up to three products in the cart. Shopify picks them on its own; the Search & Discovery app can pin or hide some. Only products that ship, are in stock, aren't in the cart yet and have one variant are suggested."
+    },
+    {
+      "type": "paragraph",
+      "content": "Products that reach free shipping with one unit come first, cheapest first. Then those that reach it with two units, then the rest. Up to four, as many as the card's width fits."
+    }
+  ],
+  "presets": [{ "name": "Mionas: Product Upsells" }]
+}
+{% endschema %}

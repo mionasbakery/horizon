@@ -127,6 +127,49 @@
     width: 100%;
   }
 
+  /* Horizon's add-to-cart checkmark draws in --button-color, which base.css sets on every .button
+     to the primary button's text colour. Each variant points it at its own foreground so the
+     checkmark matches the button; two classes and :hover outrank base.css's .button:hover. */
+  .mionas-button.mionas-button--primary,
+  .mionas-button.mionas-button--primary:hover {
+    --button-color: var(--button-primary-foreground);
+  }
+
+  .mionas-button.mionas-button--secondary,
+  .mionas-button.mionas-button--secondary:hover {
+    --button-color: var(--button-secondary-foreground);
+  }
+
+  .mionas-button.mionas-button--outline,
+  .mionas-button.mionas-button--outline:hover {
+    --button-color: var(--button-outline-foreground);
+  }
+
+  .mionas-button.mionas-button--ghost,
+  .mionas-button.mionas-button--ghost:hover {
+    --button-color: var(--button-ghost-foreground);
+  }
+
+  .mionas-button.mionas-button--danger,
+  .mionas-button.mionas-button--danger:hover {
+    --button-color: var(--button-danger-foreground);
+  }
+
+  .mionas-button.mionas-button--inverse-primary,
+  .mionas-button.mionas-button--inverse-primary:hover {
+    --button-color: var(--button-inverse-primary-foreground);
+  }
+
+  .mionas-button.mionas-button--inverse-ghost,
+  .mionas-button.mionas-button--inverse-ghost:hover {
+    --button-color: var(--button-inverse-ghost-foreground);
+  }
+
+  .mionas-button.mionas-button--inverse-outline,
+  .mionas-button.mionas-button--inverse-outline:hover {
+    --button-color: var(--button-inverse-outline-foreground);
+  }
+
   .mionas-button--primary {
     background: var(--button-primary-background);
     color: var(--button-primary-foreground);

@@ -1,0 +1,254 @@
+{%- doc -%}
+  Renders one cart line as a table row inside sections/mionas-cart.liquid: image, title, price per
+  item, quantity (with the remove bin at a quantity of 1) and line total, each a fixed child block
+  that receives the line.
+
+  @param {object} line - The cart line item.
+{%- enddoc -%}
+
+{%- comment -%}
+  The children are static blocks because a block can't hand a cart line to children the editor adds
+  freely, only to ones it renders itself. assets/component-cart-items.js finds the row through
+  ref="cartItemRows[]", data-key and the error refs, and adds .removing/.adding while a line leaves
+  or arrives; those follow snippets/cart-products.liquid and need porting on upstream merges.
+{%- endcomment -%}
+
+{%- assign line_number = line.index | plus: 1 -%}
+
+<tr
+  id="CartItem-{{ line.key }}"
+  role="row"
+  class="mionas-cart-item{% if line.parent_relationship.parent != null %} mionas-cart-item--nested{% endif %}"
+  ref="cartItemRows[]"
+  data-parent-key="{{ line.parent_relationship.parent.key }}"
+  data-key="{{ line.key }}"
+  {{ block.shopify_attributes }}
+>
+  <td class="mionas-cart-item__image" role="cell" headers="productImage">
+    {%- content_for 'block', type: '_mionas-cart-item-image', id: 'cart-item-image', line: line -%}
+  </td>
+  <td class="mionas-cart-item__title" role="cell" headers="productInformation">
+    {%- content_for 'block', type: '_mionas-cart-item-title', id: 'cart-item-title', line: line -%}
+  </td>
+  <td class="mionas-cart-item__price" role="cell" headers="productInformation">
+    {%- content_for 'block', type: '_mionas-cart-item-price', id: 'cart-item-price', line: line -%}
+  </td>
+  <td class="mionas-cart-item__quantity" role="cell" headers="quantity">
+    {%- content_for 'block', type: '_mionas-cart-quantity', id: 'cart-quantity', line: line -%}
+  </td>
+  <td
+    class="mionas-cart-item__error hidden"
+    role="cell"
+    ref="cartItemErrorContainer-{{ line_number }}"
+    headers="quantity"
+  >
+    <div class="mionas-cart-item__error-message" role="alert">
+      <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+      <small ref="cartItemError-{{ line_number }}"></small>
+    </div>
+  </td>
+  <td class="mionas-cart-item__total" role="cell" headers="productTotal">
+    {%- content_for 'block', type: '_mionas-cart-item-total', id: 'cart-item-total', line: line -%}
+  </td>
+</tr>
+
+{% stylesheet %}
+  /* Phones: a square photo beside two rows, the name, price and line total on top (read like a
+     receipt line) and the bin and quantity below. */
+  /* Phones: three fixed-height rows beside the photo (name, prices, quantity) and a square photo
+     sized to exactly their height, 24 + 4 + 24 + 8 + 40 = 100px. The name stays on one line so the
+     rows can't grow; keep --mionas-cart-item-image in step if a row height changes. The error row
+     only joins the grid while it shows, or its gap would push the rows past the photo. */
+  .mionas-cart-item {
+    --mionas-cart-item-image: 100px;
+
+    display: grid;
+    grid-template-columns: var(--mionas-cart-item-image) minmax(0, 1fr) auto;
+    grid-template-areas:
+      'image title total'
+      'image price price'
+      'image quantity quantity';
+    column-gap: var(--space-sm);
+    row-gap: var(--space-2xs);
+    align-items: start;
+    /* The design system's card inset, equal on every side at every width. */
+    padding: var(--card-base-padding);
+    border-bottom: var(--card-base-border-width) solid var(--card-base-border-color);
+  }
+
+  .mionas-cart-item:last-child {
+    border-bottom: 0;
+  }
+
+  .mionas-cart-item--nested {
+    padding-inline-start: calc(var(--card-base-padding) + var(--space-lg));
+  }
+
+  .mionas-cart-item > td {
+    padding: 0;
+  }
+
+  .mionas-cart-item__image {
+    grid-area: image;
+  }
+
+  .mionas-cart-item__title {
+    grid-area: title;
+    min-width: 0;
+  }
+
+  .mionas-cart-item__title .mionas-cart-item-title__title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mionas-cart-item__price {
+    grid-area: price;
+    min-width: 0;
+  }
+
+  .mionas-cart-item__quantity {
+    grid-area: quantity;
+    justify-self: start;
+    align-self: center;
+    margin-block-start: var(--space-2xs);
+  }
+
+  .mionas-cart-item__error {
+    grid-area: error;
+  }
+
+  .mionas-cart-item:has(> .mionas-cart-item__error:not(.hidden)) {
+    grid-template-areas:
+      'image title total'
+      'image price price'
+      'image quantity quantity'
+      'error error error';
+  }
+
+  .mionas-cart-item__error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--feedback-danger);
+  }
+
+  /* The line total always sits at the top of the line, level with the photo's top edge. */
+  .mionas-cart-item__total {
+    grid-area: total;
+    justify-self: end;
+    align-self: start;
+  }
+
+  /* component-cart-items.js adds these while a line leaves or arrives, and sets --row-height. */
+  .mionas-cart-item.removing {
+    overflow: hidden;
+    animation: mionas-cart-item-remove calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
+    animation-delay: var(--animation-speed);
+  }
+
+  .mionas-cart-item.adding {
+    interpolate-size: allow-keywords;
+    overflow: hidden;
+    animation: mionas-cart-item-add calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
+  }
+
+  @keyframes mionas-cart-item-remove {
+    0% {
+      height: var(--row-height);
+    }
+
+    100% {
+      opacity: 0;
+      height: 0;
+      padding-block: 0;
+      border-color: transparent;
+    }
+  }
+
+  @keyframes mionas-cart-item-add {
+    0% {
+      opacity: 0;
+      height: 0;
+      padding-block: 0;
+      border-color: transparent;
+    }
+
+    100% {
+      opacity: 1;
+      height: auto;
+    }
+  }
+
+  /* mionas-cart-items is the products card in sections/mionas-cart.liquid: the line takes one row
+     once that card, not the window, is wide enough for it. */
+  @container mionas-cart-items (min-width: 620px) {
+    .mionas-cart-item {
+      /* Everything starts at the top, so a line with extra details (options, bundle contents) keeps
+         its controls and total level with the name. The error row below is empty unless a quantity
+         change fails. */
+      grid-template-columns: 96px minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        'image title quantity total'
+        'image price quantity total';
+      grid-template-rows: auto 1fr;
+      column-gap: var(--space-md);
+      row-gap: 0;
+      align-items: start;
+    }
+
+
+    .mionas-cart-item__total {
+      justify-self: stretch;
+      align-self: start;
+    }
+
+    /* Desktop names wrap; the one-line rule is only for the phone layout's fixed rows. */
+    .mionas-cart-item__title .mionas-cart-item-title__title {
+      white-space: normal;
+    }
+
+    .mionas-cart-item__price {
+      margin-block-start: var(--space-2xs);
+    }
+
+    .mionas-cart-item__quantity {
+      margin-block-start: 0;
+    }
+
+    .mionas-cart-item:has(> .mionas-cart-item__error:not(.hidden)) {
+      grid-template-areas:
+        'image title quantity total'
+        'image price quantity total'
+        '. error error error';
+    }
+
+    .mionas-cart-item__quantity {
+      align-self: start;
+    }
+
+    /* The name and total drop by half the difference to the 40px quantity control, so the three
+       share one centre line without the control reaching above the line's padding. */
+    .mionas-cart-item > .mionas-cart-item__title,
+    .mionas-cart-item > .mionas-cart-item__total {
+      padding-block-start: calc((var(--button-size-sm-height) - var(--text-role-body-line-height)) / 2);
+    }
+
+
+
+
+    .mionas-cart-item__total {
+      min-width: 72px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mionas: Cart Item",
+  "tag": null,
+  "settings": []
+}
+{% endschema %}
