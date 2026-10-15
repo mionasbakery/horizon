@@ -554,7 +554,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text",
               "settings": {
-                "text": "<p>Que dicen nuestros clientes</p>",
+                "text": "<p>Qué dicen nuestros clientes</p>",
                 "variant": "heading",
                 "color": "primary",
                 "transform": "inherit",
