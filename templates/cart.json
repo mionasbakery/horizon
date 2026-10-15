@@ -247,7 +247,7 @@
               "settings": {
                 "icon": "calendar",
                 "title": "Enviamos cada miércoles",
-                "description": "Elaboramos tu pedido el mismo día del envío."
+                "description": "Horneamos tu pedido el mismo día del envío."
               }
             },
             "delivery-time": {
