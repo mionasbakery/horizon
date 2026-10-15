@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Mionas Release
 
-A release is a `YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, publishes a GitHub release from the tag message, then waits at the `production` environment's manual gate and pushes the tagged commit to the live theme. The release exists once `check` passes, whether or not the gate is approved. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline. For a direct push without the pipeline's gate, the user runs `/mionas-live-theme` instead.
+A release is a `YYYY.MM.DD` tag on `main`. Pushing it starts `.github/workflows/release.yml`, which runs Theme Check, publishes a GitHub release from the tag message, then waits at the `production` environment's manual gate and pushes the tagged commit to the live theme. The release exists once `check` passes, whether or not the gate is approved. A release candidate is the same tag with an `-rc.N` suffix: `.github/workflows/release-candidate.yml` pushes it to the unpublished `horizon/staging` theme, with no gate, for review through its preview link. This skill reconciles, tags and watches, and leaves the pushes to the pipeline, the only way the live theme changes.
 
 Read `shopify.theme.toml`, `package.json` and both workflows first. Every local transfer goes through `npm run theme:pull:production`, which selects the pinned production theme ID.
 

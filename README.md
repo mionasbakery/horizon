@@ -72,7 +72,7 @@ npm run theme:pull:production   # pull from the production store's Horizon theme
 npm run theme:push:production   # push to the production store's Horizon theme (live there — uses --allow-live)
 ```
 
-`theme:push:production` runs `shopify theme check` first and aborts the push if it finds any errors — e.g. a Liquid syntax error or a schema block type that doesn't resolve. This is what would have caught the contact-form block break before it reached the store.
+Only the release pipeline (`.github/workflows/release.yml`) runs `theme:push:production`; release with a `YYYY.MM.DD` tag instead of pushing by hand. It runs `shopify theme check` first and aborts the push if it finds any errors — e.g. a Liquid syntax error or a schema block type that doesn't resolve. This is what would have caught the contact-form block break before it reached the store.
 
 ### Theme Check
 
