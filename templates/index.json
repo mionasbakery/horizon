@@ -139,7 +139,7 @@
               "type": "mionas-text",
               "name": "Mionas: Text - Introduction",
               "settings": {
-                "text": "<p>Horneamos martes y miércoles y las enviamos el mismo día. Te llegan en 24–48 h a toda la Península.</p>",
+                "text": "<p>Enviamos cada miércoles y horneamos el mismo día del envío. Entrega en 24–48 h a toda la Península.</p>",
                 "variant": "lead",
                 "color": "default",
                 "transform": "inherit",
