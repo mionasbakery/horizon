@@ -209,12 +209,12 @@
                 },
                 "mionas_button_aQjVMK": {
                   "type": "mionas-button",
-                  "name": "Mionas: Button - About Us",
+                  "name": "Mionas: Button - All Collections",
                   "settings": {
-                    "label": "Sobre nosotros",
-                    "link": "shopify://pages/sobre-nosotros",
+                    "label": "Ver la tienda",
+                    "link": "/collections",
                     "open_in_new_tab": false,
-                    "variant": "ghost",
+                    "variant": "secondary",
                     "size": "lg",
                     "full_width": false,
                     "icon": "none",

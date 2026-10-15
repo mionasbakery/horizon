@@ -1,7 +1,7 @@
 {%- comment -%}
   Renders the cart page's content: the items card, the free-shipping card with its suggestions and
   the summary card, or the empty cart. The breadcrumbs and title live in the template's heading
-  section, like other pages.
+  section, like other pages; the empty cart brings its own title and hides that one.
 
   Forks sections/main-cart.liquid and the cart-page half of snippets/cart-products.liquid, so the
   layout and the lines are Mionas markup rather than a bridge over Horizon's. Each line is a
@@ -48,13 +48,14 @@
 {% capture empty_state %}
   <div class="mionas-cart__layout mionas-cart__layout--empty">
     <div class="mionas-cart__empty">
-      <span class="mionas-cart__empty-icon" aria-hidden="true">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-      </span>
-      {% render 'mionas-text', content: section.settings.empty_title, variant: 'subheading', transform: 'uppercase', tag: 'h2' %}
+      {% render 'mionas-text', content: section.settings.empty_title, variant: 'display', transform: 'uppercase', tag: 'h1' %}
       {%- assign empty_note = section.settings.empty_text | replace: '[threshold]', threshold_text -%}
-      {% render 'mionas-text', content: empty_note, variant: 'body', color: 'secondary', tag: 'p', class: 'mionas-cart__empty-note' %}
+      {% render 'mionas-text', content: empty_note, variant: 'lead', color: 'secondary', tag: 'p' %}
       <a class="{{ primary_classes }}" href="{{ routes.collections_url }}">{{ section.settings.empty_button }}</a>
+    </div>
+    {%- content_for 'block', type: 'mionas-divider', id: 'highlights-divider' -%}
+    <div class="mionas-cart__highlights">
+      {%- content_for 'block', type: 'mionas-group', id: 'highlights' -%}
     </div>
   </div>
 {% endcapture %}
@@ -248,25 +249,28 @@
   .mionas-cart__empty {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-md);
-    padding: var(--space-lg) var(--space-md);
-    text-align: center;
   }
 
-  .mionas-cart__empty-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 72px;
-    height: 72px;
-    border-radius: var(--radius-full);
-    background: var(--brand-tint);
-    color: var(--brand-primary);
+  /* The empty title is the page's h1, so the heading section's "Tu cesta" steps aside. CSS rather
+     than Liquid, because removing the last line re-renders only this section. */
+  body:has(.mionas-cart__layout--empty) .mionas-heading-group:has(.mionas-cart-count) {
+    display: none;
   }
 
-  .text-role.mionas-cart__empty-note {
-    max-width: 440px;
+  @media screen and (max-width: 749px) {
+    .mionas-cart__empty > .mionas-button {
+      align-self: stretch;
+    }
+  }
+
+  /* Equal columns that wrap below 260px each. A flex basis rather than a Group setting, and only
+     where the group is a row: on phones it stacks, and a basis would become a height. */
+  @media screen and (min-width: 750px) {
+    .mionas-cart__highlights .mionas-highlight {
+      flex: 1 1 260px;
+    }
   }
 
 
@@ -383,13 +387,13 @@
       "id": "empty_text",
       "label": "Empty cart text",
       "info": "[threshold] becomes the free-shipping amount.",
-      "default": "Horneamos martes y miércoles y enviamos el mismo día. Envío gratis a partir de [threshold]."
+      "default": "Todavía no has añadido nada."
     },
     {
       "type": "text",
       "id": "empty_button",
       "label": "Empty cart button",
-      "default": "Comprar cookies"
+      "default": "Ver la tienda"
     },
     {
       "type": "header",

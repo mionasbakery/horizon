@@ -34,6 +34,7 @@
   {%- render 'mionas-breadcrumbs',
     home_label: home_label,
     landmark_label: landmark_label,
+    current_label: block.settings.current_label,
     menu: block.settings.menu
   -%}
 </div>
@@ -54,6 +55,12 @@
       "id": "home_label",
       "label": "Home label",
       "info": "Leave empty to use the theme's own wording, which stays translated per language."
+    },
+    {
+      "type": "text",
+      "id": "current_label",
+      "label": "Current page label",
+      "info": "The last crumb. Leave empty to use the page's own title."
     },
     {
       "type": "text",

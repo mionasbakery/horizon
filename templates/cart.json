@@ -10,8 +10,8 @@
 {
   "sections": {
     "heading": {
-      "type": "section",
-      "name": "Section - Heading",
+      "type": "mionas-page-heading",
+      "name": "Mionas: Page Heading",
       "blocks": {
         "breadcrumbs": {
           "type": "mionas-breadcrumbs",
@@ -22,32 +22,21 @@
             "padding-block-end": 0
           }
         },
-        "title_row": {
-          "type": "mionas-group",
-          "name": "Mionas: Group - Title and Count",
+        "heading_group": {
+          "type": "mionas-heading-group",
+          "name": "Mionas: Heading Group",
           "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "wrap_children": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "flex-end",
-            "align_baseline": true,
-            "gap": 8,
-            "width": "fill",
-            "width_mobile": "fill",
-            "height": "fit"
+            "eyebrow": "",
+            "eyebrow_color": "accent",
+            "heading": "<p>Tu cesta</p>",
+            "heading_variant": "display",
+            "heading_color": "default",
+            "heading_tag": "h1",
+            "heading_transform": "inherit",
+            "description": "",
+            "description_color": "default"
           },
           "blocks": {
-            "title": {
-              "type": "mionas-text",
-              "name": "Mionas: Text - Title",
-              "settings": {
-                "text": "<p>Tu cesta</p>",
-                "variant": "display",
-                "color": "default",
-                "tag": "h1"
-              }
-            },
             "count": {
               "type": "mionas-cart-count",
               "name": "Mionas: Cart Count",
@@ -58,27 +47,19 @@
             }
           },
           "block_order": [
-            "title",
             "count"
           ]
         }
       },
       "block_order": [
         "breadcrumbs",
-        "title_row"
+        "heading_group"
       ],
       "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
+        "background": "default",
+        "alignment": "flex-start",
         "gap": 12,
         "section_width": "page-width",
-        "background_media": "none",
-        "border": "none",
-        "border_radius": 0,
         "padding-block-start": 48,
         "padding-block-end": 24
       }
@@ -227,6 +208,82 @@
             "border_radius": 0
           },
           "blocks": {}
+        },
+        "highlights-divider": {
+          "type": "mionas-divider",
+          "static": true,
+          "name": "Mionas: Divider",
+          "settings": {
+            "text": "",
+            "size": "md",
+            "thickness": "thin",
+            "color": "subtle",
+            "padding-block-start": 16,
+            "padding-block-end": 16
+          }
+        },
+        "highlights": {
+          "type": "mionas-group",
+          "static": true,
+          "name": "Mionas: Group - Highlights",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "wrap_children": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 24,
+            "width": "fill",
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "shipping-day": {
+              "type": "mionas-highlight",
+              "name": "Mionas: Highlight - Shipping Day",
+              "settings": {
+                "icon": "calendar",
+                "title": "Enviamos cada miércoles",
+                "description": "Elaboramos tu pedido el mismo día del envío."
+              }
+            },
+            "delivery-time": {
+              "type": "mionas-highlight",
+              "name": "Mionas: Highlight - Delivery Time",
+              "settings": {
+                "icon": "clock",
+                "title": "Entrega en 24–48 h",
+                "description": "A toda la Península. No enviamos a Baleares ni Canarias."
+              }
+            },
+            "free-shipping": {
+              "type": "mionas-highlight",
+              "name": "Mionas: Highlight - Free Shipping",
+              "settings": {
+                "icon": "truck",
+                "title": "Envío gratis a partir de 30 €",
+                "description": "Añade productos a tu cesta para ver cuánto te falta."
+              }
+            },
+            "newsletter-discount": {
+              "type": "mionas-highlight",
+              "name": "Mionas: Highlight - Newsletter Discount",
+              "settings": {
+                "icon": "tag",
+                "title": "10% de descuento",
+                "description": "En tu primera compra si te suscribes a la newsletter."
+              }
+            }
+          },
+          "block_order": [
+            "shipping-day",
+            "delivery-time",
+            "free-shipping",
+            "newsletter-discount"
+          ]
         }
       },
       "settings": {
@@ -238,8 +295,8 @@
         "total_label": "Total",
         "summary_title": "Resumen",
         "empty_title": "Tu cesta está vacía",
-        "empty_text": "Horneamos martes y miércoles y enviamos el mismo día. Envío gratis a partir de [threshold].",
-        "empty_button": "Comprar cookies"
+        "empty_text": "Todavía no has añadido nada.",
+        "empty_button": "Ver la tienda"
       }
     }
   },

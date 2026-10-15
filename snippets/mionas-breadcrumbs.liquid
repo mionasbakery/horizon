@@ -3,6 +3,7 @@
 
   @param {string} home_label - Copy for the first crumb.
   @param {string} landmark_label - Accessible name for the nav landmark.
+  @param {string} [current_label] - Copy for the last crumb, in place of the page's own title.
   @param {object} [menu] - Linklist to derive the hierarchy from. Falls back to navigation-menu.
 {%- enddoc -%}
 {%- comment -%}
@@ -37,6 +38,9 @@
     when 'cart'
       assign current_title = 'content.cart_title' | t
   endcase
+  if current_label != blank
+    assign current_title = current_label | escape
+  endif
 
   # The trail follows the merchant's navigation menu so crumbs match the path a visitor actually
   # clicked. Menus nest at most three levels, so two nested loops cover every case with no

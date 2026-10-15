@@ -1,6 +1,6 @@
 {%- doc -%}
-  Renders how many items are in the cart, such as "2 productos", next to the cart page's title. Shows
-  nothing for an empty cart.
+  Renders how many items are in the cart, such as "2 productos", as a badge next to the cart page's
+  title. Shows nothing for an empty cart.
 {%- enddoc -%}
 
 {%- comment -%}
@@ -31,10 +31,17 @@
   {% endif %}
   {{ block.shopify_attributes }}
 >
-  {% render 'mionas-text', content: text, variant: 'lead', color: 'secondary', tag: 'p', attributes: 'data-count' %}
+  {%- assign count_label = text | escape | prepend: '<span data-count>' | append: '</span>' -%}
+  {%- render 'mionas-badge', text: count_label -%}
 </mionas-cart-count>
 
 {% stylesheet %}
+  /* Flex, not the custom element's default inline, so no line box adds space under the badge and it
+     lines up with the bottom of the heading's letters. */
+  .mionas-cart-count {
+    display: flex;
+  }
+
   .mionas-cart-count[hidden] {
     display: none;
   }

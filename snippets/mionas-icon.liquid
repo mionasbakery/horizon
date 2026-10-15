@@ -1,0 +1,41 @@
+{%- doc -%}
+  Renders an icon in a tinted circle, a ../design-system/src/components/Icon/Icon.tsx mirror, for
+  blocks/mionas-icon.liquid and blocks/mionas-highlight.liquid.
+
+  @param {string} icon - calendar, clock, truck or tag. Anything else falls back to calendar.
+  @param {string} [shopify_attributes] - The caller's block.shopify_attributes, so the theme editor can still select the block.
+{%- enddoc -%}
+
+<span class="mionas-icon" aria-hidden="true" {{ shopify_attributes }}>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    {%- case icon -%}
+      {%- when 'clock' -%}
+        <circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>
+      {%- when 'truck' -%}
+        <path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/>
+      {%- when 'tag' -%}
+        <path d="M20 12l-8 8-9-9V4h7z"/><circle cx="7.5" cy="7.5" r="1.5"/>
+      {%- else -%}
+        <rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>
+    {%- endcase -%}
+  </svg>
+</span>
+
+{% stylesheet %}
+  .mionas-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-base-size);
+    height: var(--icon-base-size);
+    border-radius: var(--icon-base-radius);
+    background: var(--icon-base-background);
+    color: var(--icon-base-foreground);
+  }
+
+  .mionas-icon svg {
+    width: var(--icon-base-icon-size);
+    height: var(--icon-base-icon-size);
+  }
+{% endstylesheet %}

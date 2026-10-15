@@ -1,0 +1,27 @@
+{%- doc -%}
+  Renders an icon in a tinted circle.
+{%- enddoc -%}
+
+{%- render 'mionas-icon', icon: block.settings.icon, shopify_attributes: block.shopify_attributes -%}
+
+{% schema %}
+{
+  "name": "Mionas: Icon",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "calendar", "label": "Calendar" },
+        { "value": "clock", "label": "Clock" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "tag", "label": "Tag" }
+      ],
+      "default": "calendar"
+    }
+  ],
+  "presets": [{ "name": "Mionas: Icon" }]
+}
+{% endschema %}
