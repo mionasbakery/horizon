@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "tokens:sync": "node scripts/sync-design-tokens.mjs",
+    "tokens:check": "node scripts/check-design-tokens.mjs",
     "theme:check": "shopify theme check",
     "theme:version": "node scripts/set-theme-version.mjs",
     "theme:pull:production": "shopify theme pull --environment=production",

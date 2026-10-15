@@ -1,0 +1,31 @@
+name: Check
+
+on:
+  pull_request:
+  # Commits can land on main without a pull request, so main is checked on push too.
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Pinned to the CLI version the theme is developed with.
+      - run: npm install --global @shopify/cli@4.8.4
+      - run: npm run theme:check
+      - run: npm run tokens:check
+      # set-theme-version.mjs only replaces a line reading `dev`, so a committed release name would
+      # fail the next release's version step.
+      - name: Version snippet still reads dev
+        run: grep -qx dev snippets/mionas-version.liquid
